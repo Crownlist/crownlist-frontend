@@ -4,12 +4,12 @@ import "./globals.css";
 import { Toaster } from "../components/ui/sonner"
 
 const interSans = localFont({
-  src: "./font/Inter_24pt-Medium.ttf",
+  src: "./font/Inter_28pt-Medium.ttf",
   variable: "--font-inter-sans",
 });
 
 const interMono = localFont({
-  src: "./font/Inter_24pt-Regular.ttf",
+  src: "./font/Inter_28pt-Regular.ttf",
   variable: "--font-inter-mono",
 });
 
