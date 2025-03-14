@@ -56,7 +56,7 @@ export function SignupForm({
               <div className="grid gap-3">
                 <Label htmlFor="confirm_password">Confirm Password</Label>
                 <Input2 id="confirm_password" type="password" required />
-                <div className="text-[12px] *:[a]:hover:text-primary text-center text-balance *:[a]:underline *:[a]:underline-offset-4">
+                <p className="text-[12px] *:[a]:hover:text-primary text-center text-balance *:[a]:underline *:[a]:underline-offset-4">
                   By clicking &quot;continue&quot;, you agree to Crownlist's{" "}
                   <a
                     href="#"
@@ -72,7 +72,7 @@ export function SignupForm({
                     Privacy Policy
                   </a>
                   .
-                </div>
+                </p>
               </div>
 
               <Link href="/auth/signup/verify">
@@ -81,12 +81,12 @@ export function SignupForm({
                 </Button>
               </Link>
 
-              <div className="text-center text-sm mt-10">
+              <p className="text-center text-sm mt-10">
                 Do you have an account?{" "}
                 <a href="/auth/login" className="underline underline-offset-3">
                   Login
                 </a>
-              </div>
+              </p>
             </div>
           </form>
         </CardContent>

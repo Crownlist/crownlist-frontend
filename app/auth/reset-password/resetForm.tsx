@@ -53,12 +53,12 @@ export function ResetForm({
                 </Button>
               </Link>
 
-              <div className="text-center text-sm mt-10">
+              <p className="text-center text-sm mt-10">
                 Remember password?{" "}
                 <a href="/auth/login" className="underline underline-offset-4">
                   Login
                 </a>
-              </div>
+              </p>
             </div>
           </form>
         </CardContent>

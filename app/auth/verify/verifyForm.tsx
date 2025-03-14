@@ -124,7 +124,7 @@ export function VerifyForm({
                   <Button type="submit" className="w-full mt-">
                     Continue
                   </Button>{" "}
-                  <div className="text-center text-sm mt-4">
+                  <p className="text-center text-sm mt-4">
                     Do you have an account?{" "}
                     <a
                       href="/auth/login"
@@ -132,7 +132,7 @@ export function VerifyForm({
                     >
                       Login
                     </a>
-                  </div>
+                  </p>
                 </form>
               </Form>
             </div>

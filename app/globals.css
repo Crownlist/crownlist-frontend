@@ -1,9 +1,8 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
-
 
 @theme inline {
   --color-background: var(--background);
@@ -49,11 +48,7 @@
   --color-crown-bg-red: #e63946;
   --color-crown-paragraph: #525252;
   --color-crown-border-grey: #d6d6d6;
-  --font-inter: "Inter", sans-serif; 
-
-
-
-
+  --font-inter: "Inter", sans-serif;
 }
 
 :root {
@@ -125,4 +120,36 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.442 0.017 285.786);
+}
+
+@media only screen and (min-width: 1500px) {
+  h1 {
+    font-size: 50px;
+  }
+  p {
+    font-size: 25px;
+  }
+  p > a {
+    font-size: 25px;
+  }
+
+  .span {
+    font-size: 25px;
+  }
+  span > a {
+    font-size: 25px;
+  }
+  label {
+    font-size: 30px;
+  }
+  input,
+  button {
+    height: 60px !important;
+  }
+  button {
+    font-size: 25px;
+  }
+  .card {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
 }

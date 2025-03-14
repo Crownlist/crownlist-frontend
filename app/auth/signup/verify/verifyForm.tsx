@@ -77,7 +77,7 @@ export function VerifyForm({
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center md:items-start md:mb-[10px]">
                 <h1 className="text-2xl">Verify your email</h1>
-                <p className="text-sm text-balance mt-1">
+                <p className="text-sm text-balance mt-2">
                   Please enter the code sent to <br className="hidden md:block" />
                   &quot;Sample@gmail.com&quot;
                 </p>
@@ -105,7 +105,7 @@ export function VerifyForm({
                             </InputOTPGroup>
                           </InputOTP>
                         </FormControl>
-                        <FormDescription className="mt-2 text-[13px] text-black text-center md:text-left">
+                        <FormDescription className="span mt-2 text-[13px] text-black text-center md:text-left">
                           Didn&apos;t get the code?{" "}
                           <span>
                             {" "}
@@ -124,7 +124,7 @@ export function VerifyForm({
                   <Button type="submit" className="w-full mt-">
                     Continue
                   </Button>{" "}
-                  <div className="text-center text-sm mt-4">
+                  <p className="text-center text-sm mt-4">
                     Do you have an account?{" "}
                     <a
                       href="/auth/login"
@@ -132,7 +132,7 @@ export function VerifyForm({
                     >
                       Login
                     </a>
-                  </div>
+                  </p>
                 </form>
               </Form>
             </div>

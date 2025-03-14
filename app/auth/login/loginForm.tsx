@@ -47,25 +47,25 @@ export function LoginForm({
                 <Label htmlFor="password">Password</Label>
                 <Input2 id="password" type="password" required />
                 
-                <div className="flex items-center">
+                <p className="">
                   <a
                     href="/auth/forgot-password"
                     className="mr-auto text-sm text-crown-black underline-offset-3 underline"
                   >
                     Forgot password?
                   </a>
-                </div>
+                </p>
               </div>
               <Button type="submit" className="w-full mt-4">
                 Login
               </Button>
 
-              <div className="text-center text-sm mt-10 text-crown-black">
+              <p className="text-center text-sm mt-10 text-crown-black">
                 Don&apos;t have an account?{" "}
                 <a href="/auth/signup" className="underline underline-offset-4">
                   Sign up
                 </a>
-              </div>
+              </p>
             </div>
           </form>
         </CardContent>
