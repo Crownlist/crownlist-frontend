@@ -2,7 +2,7 @@
 export default function Home() {
   return (
     <main>
-      <h1> Welcome to Crowlist</h1>{" "}
+      <h1> Welcome to Crownlist</h1>{" "}
     </main>
   );
 }

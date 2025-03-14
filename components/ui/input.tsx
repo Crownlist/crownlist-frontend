@@ -20,6 +20,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Input2({ className, type, ...props }: React.ComponentProps<"input">) {
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   return (

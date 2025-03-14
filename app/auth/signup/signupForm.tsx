@@ -57,7 +57,7 @@ export function SignupForm({
                 <Label htmlFor="confirm_password">Confirm Password</Label>
                 <Input2 id="confirm_password" type="password" required />
                 <p className="text-[12px] *:[a]:hover:text-primary text-center text-balance *:[a]:underline *:[a]:underline-offset-4">
-                  By clicking &quot;continue&quot;, you agree to Crownlist's{" "}
+                  By clicking &quot;continue&quot;, you agree to Crownlist&apos;s{" "}
                   <a
                     href="#"
                     className="underline underline-offset-3 font-medium"
