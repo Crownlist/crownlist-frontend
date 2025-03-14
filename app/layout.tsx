@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "../components/ui/sonner"
+import { Inter } from 'next/font/google'
 
-const interSans = localFont({
-  src: "./font/Inter_28pt-Medium.ttf",
-  variable: "--font-inter-sans",
-});
-
-const interMono = localFont({
-  src: "./font/Inter_28pt-Regular.ttf",
-  variable: "--font-inter-mono",
-});
-
-
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: "Crownlist",
@@ -28,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${interSans.variable} ${interMono.variable} antialiased`}
+      className={`${inter.variable} antialiased`}
       >
         {children}
         <Toaster/>

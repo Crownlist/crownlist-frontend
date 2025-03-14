@@ -15,7 +15,7 @@ export function LoginForm({
   imageUrl?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-6 font-inter", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-5">
           <div className="h-screen relative hidden md:block md:col-span-2 lg:col-span-3">
@@ -32,7 +32,7 @@ export function LoginForm({
           <form className="p-6 md:p-10 mt-10 md:col-span-3 lg:col-span-2">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center md:items-start text-center mb-[10px]">
-                <h1 className="text-2xl text-crown-black font-inter2">Login to Crownlist</h1>
+                <h1 className="text-2xl text-crown-black">Login to Crownlist</h1>
                 <p className="text-sm text-balance mt-1 text-crown-paragraph">
                   Enter your details below
                 </p>

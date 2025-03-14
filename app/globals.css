@@ -1,8 +1,9 @@
 @import "tailwindcss";
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
+
 
 @theme inline {
   --color-background: var(--background);
@@ -48,8 +49,9 @@
   --color-crown-bg-red: #e63946;
   --color-crown-paragraph: #525252;
   --color-crown-border-grey: #d6d6d6;
-  --font-inter: ["var(--font-inter-mono)"];
-  --font-inter2: ["var(--font-inter-sans)"];
+  --font-inter: "Inter", sans-serif; 
+
+
 
 
 }
@@ -124,4 +126,3 @@
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.442 0.017 285.786);
 }
-
