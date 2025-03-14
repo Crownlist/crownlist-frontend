@@ -32,7 +32,7 @@ export function SignupForm({
           <form className="p-6 md:p-10 mt-10 md:col-span-3 lg:col-span-2">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center md:items-start text-center mb-[10px]">
-                <h1 className="text-2xl">Sign up to Crownlist</h1>
+                <h1 className="text-2xl">Sign up</h1>
                 <p className="text-sm text-balance mt-1">
                   Enter your details below
                 </p>
