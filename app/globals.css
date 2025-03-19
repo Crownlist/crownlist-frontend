@@ -52,8 +52,6 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -85,6 +83,8 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
 }
 
 .dark {
@@ -122,7 +122,7 @@
   --sidebar-ring: oklch(0.442 0.017 285.786);
 }
 
-@media only screen and (min-width: 1500px) {
+/* @media only screen and (min-width: 1500px) {
   h1 {
     font-size: 50px;
   }
@@ -151,5 +151,14 @@
   }
   .card {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  }
+} */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
