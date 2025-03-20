@@ -3,7 +3,7 @@ import login from "../../../public/assets/images/authbg.jpg";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input, Input2 } from "@/components/ui/input";
+import { Input, Input2 } from "@/components/ui/custom-input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 

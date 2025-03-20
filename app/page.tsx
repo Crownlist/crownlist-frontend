@@ -1,8 +1,9 @@
+import Hero from "@/components/Home/Hero";
 
 export default function Home() {
   return (
     <main>
-      <h1> Welcome to Crownlist</h1>{" "}
+      <Hero />
     </main>
   );
 }
