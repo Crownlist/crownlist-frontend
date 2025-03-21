@@ -1,25 +1,14 @@
 /* eslint-disable */
-"use client";
+/* eslint-disable */
+"use client"
 
-import Image from "next/image";
-import Link from "next/link";
-// import React, { useState } from "react";
-import { Input } from "./ui/custom-input";
-import { Button } from "./ui/button";
-import { Check, ChevronsUpDownIcon, Search } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import Image from "next/image"
+import Link from "next/link"
+import { useState, useEffect } from "react"
+import { Input } from "./ui/custom-input"
+import { Button } from "./ui/button"
+import { Check, ChevronsUpDownIcon, Search } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,15 +16,25 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { countries } from "@/constants/countries";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+} from "@/components/ui/dropdown-menu"
+import { countries } from "@/constants/countries"
+import { cn } from "@/lib/utils"
 
 const Header = () => {
-  const isLoggedIn = false;
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const isLoggedIn = false
+  const [search, setSearch] = useState("")
+  const [value, setValue] = useState("")
+  const [open, setOpen] = useState(false)
+  const [filteredCountries, setFilteredCountries] = useState(countries)
+
+  // Filter countries based on search input
+  useEffect(() => {
+    if (search) {
+      setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(search.toLowerCase())))
+    } else {
+      setFilteredCountries(countries)
+    }
+  }, [search])
 
   return (
     <header>
@@ -43,63 +42,31 @@ const Header = () => {
         <div className="flex justify-between w-full">
           <div className="flex items-center gap-7">
             <div className="flex items-center gap-1.5">
-              <Image
-                src="/assets/icons/gmail.svg"
-                width={24}
-                height={24}
-                alt="Gmail"
-              />
-              <small className="text-[#131416] text-sm">
-                Info@joelist.com.ng
-              </small>
+              <Image src="/assets/icons/gmail.svg" width={24} height={24} alt="Gmail" />
+              <small className="text-[#131416] text-sm">Info@joelist.com.ng</small>
             </div>
 
             <div className="flex items-center gap-1.5">
-              <Image
-                src="/assets/icons/google-maps.svg"
-                width={24}
-                height={24}
-                alt="Google Maps"
-              />
+              <Image src="/assets/icons/google-maps.svg" width={24} height={24} alt="Google Maps" />
               <small className="text-[#131416] text-sm">Kwara, Nigeria</small>
             </div>
           </div>
 
           <div className="flex items-center gap-5">
             <Link href="#">
-              <Image
-                src="/assets/icons/twitter.svg"
-                width={24}
-                height={24}
-                alt="Twitter"
-              />
+              <Image src="/assets/icons/twitter.svg" width={24} height={24} alt="Twitter" />
             </Link>
 
             <Link href="#">
-              <Image
-                src="/assets/icons/linkedin.svg"
-                width={24}
-                height={24}
-                alt="LinkedIn"
-              />
+              <Image src="/assets/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
             </Link>
 
             <Link href="#">
-              <Image
-                src="/assets/icons/instagram.svg"
-                width={24}
-                height={24}
-                alt="Instagram"
-              />
+              <Image src="/assets/icons/instagram.svg" width={24} height={24} alt="Instagram" />
             </Link>
 
             <Link href="#">
-              <Image
-                src="/assets/icons/facebook.svg"
-                width={24}
-                height={24}
-                alt="Facebook"
-              />
+              <Image src="/assets/icons/facebook.svg" width={24} height={24} alt="Facebook" />
             </Link>
           </div>
         </div>
@@ -107,12 +74,7 @@ const Header = () => {
         <div className="flex justify-between items-center w-full gap-10">
           <div className="pt-6 pb-3 flex items-center gap-8">
             <Link href="/">
-              <Image
-                src="/assets/icons/Logo.svg"
-                width={48}
-                height={48}
-                alt="Facebook"
-              />
+              <Image src="/assets/icons/Logo.svg" width={48} height={48} alt="Facebook" />
             </Link>
 
             <div className="w-full h-10 min-w-[560px] flex items-start relative">
@@ -121,7 +83,7 @@ const Header = () => {
                 placeholder="Search"
               />
 
-              <Search size={16} color="#141414"  className="absolute top-3 left-4"/>
+              <Search size={16} color="#141414" className="absolute top-3 left-4" />
 
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -131,61 +93,53 @@ const Header = () => {
                     aria-expanded={open}
                     className="w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
                   >
-                    {value
-                      ? countries.find((country) => country.name === value)
-                          ?.name
-                      : "Select country..."}
+                    {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
                     <ChevronsUpDownIcon className="opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput
+                <PopoverContent className="w-[200px] p-2">
+                  <div className="mb-2">
+                    <Input
                       placeholder="Search country..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
                       className="h-9"
                     />
-                    <CommandList>
-                      <CommandEmpty>No country found.</CommandEmpty>
-                      <CommandGroup>
-                        {countries.map((country, index) => (
-                          <CommandItem
+                  </div>
+
+                  <div className="max-h-[300px] overflow-y-auto">
+                    {filteredCountries.length === 0 ? (
+                      <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
+                    ) : (
+                      <div className="space-y-1">
+                        {filteredCountries.map((country, index) => (
+                          <div
                             key={index}
-                            value={country.name}
-                            onSelect={(currentValue: any) => {
-                              setValue(
-                                currentValue === value ? "" : currentValue
-                              );
-                              setSelectedCountry(
-                                value
-                                  ? countries.find(
-                                      (country) => country.name === value
-                                    )?.flag
-                                  : countries[0].flag
-                              );
-                              setOpen(false);
+                            className={cn(
+                              "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
+                              value === country.name && "bg-muted",
+                            )}
+                            onClick={() => {
+                              const newValue = country.name === value ? "" : country.name
+                              setValue(newValue)
+                              setOpen(false)
+                              setSearch("")
                             }}
                           >
                             <Image
-                              src={country?.flag}
+                              src={country.flag || "/placeholder.svg"}
                               alt={country.name}
                               width={24}
                               height={24}
-                              className="mr-1"
+                              className="mr-2"
                             />
-                            {country.name}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                value === country.name
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
+                            <span>{country.name}</span>
+                            {value === country.name && <Check className="ml-auto h-4 w-4" />}
+                          </div>
                         ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
+                      </div>
+                    )}
+                  </div>
                 </PopoverContent>
               </Popover>
 
@@ -199,13 +153,9 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-5">
-            <small className="text-[#141414] font-medium text-sm">
-              Category
-            </small>
+            <small className="text-[#141414] font-medium text-sm">Category</small>
 
-            <small className="text-[#141414] font-medium text-sm">
-              Post Product
-            </small>
+            <small className="text-[#141414] font-medium text-sm">Post Product</small>
 
             {isLoggedIn ? (
               <DropdownMenu>
@@ -229,11 +179,7 @@ const Header = () => {
                   Login
                 </Button>
 
-                <Button
-                  size="sm"
-                  className="px-2 py-3 rounded-[99px] text-[#141414] font-medium"
-                  variant="outline"
-                >
+                <Button size="sm" className="px-2 py-3 rounded-[99px] text-[#141414] font-medium" variant="outline">
                   Sign up
                 </Button>
               </div>
@@ -242,7 +188,57 @@ const Header = () => {
         </div>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
+
+
+
+// <Command>
+//                     <CommandInput
+//                       placeholder="Search country..."
+//                       className="h-9"
+//                     />
+//                     <CommandList>
+//                       <CommandEmpty>No country found.</CommandEmpty>
+//                       <CommandGroup>
+//                         {countries.map((country, index) => (
+//                           <CommandItem
+//                             key={index}
+//                             value={country.name}
+//                             onSelect={(currentValue: any) => {
+//                               setValue(
+//                                 currentValue === value ? "" : currentValue
+//                               );
+//                               setSelectedCountry(
+//                                 value
+//                                   ? countries.find(
+//                                       (country) => country.name === value
+//                                     )?.flag
+//                                   : countries[0].flag
+//                               );
+//                               setOpen(false);
+//                             }}
+//                           >
+//                             <Image
+//                               src={country?.flag}
+//                               alt={country.name}
+//                               width={24}
+//                               height={24}
+//                               className="mr-1"
+//                             />
+//                             {country.name}
+//                             <Check
+//                               className={cn(
+//                                 "ml-auto",
+//                                 value === country.name
+//                                   ? "opacity-100"
+//                                   : "opacity-0"
+//                               )}
+//                             />
+//                           </CommandItem>
+//                         ))}
+//                       </CommandGroup>
+//                     </CommandList>
+//                   </Command>
