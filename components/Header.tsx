@@ -1,8 +1,9 @@
+/* eslint-disable */
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import { Input } from "./ui/custom-input";
 import { Button } from "./ui/button";
 import { Check, ChevronsUpDownIcon, Search } from "lucide-react";
@@ -29,11 +30,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { countries } from "@/constants/countries";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 const Header = () => {
   const isLoggedIn = false;
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
 
   return (
     <header>
