@@ -1,38 +1,66 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Toaster } from "../components/ui/sonner";
-import { Inter } from "next/font/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import type React from "react"
+import "./globals.css"
+import { Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "Crownlist",
-  description: "",
-};
+export const metadata = {
+  title: "Crownlist - Buy and Sell Locally",
+  description: "Find great deals on furniture, clothes, electronics, and more near you.",
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
-        <main className="flex flex-col min-h-screen">
-          <Header />
-
-          <div className="flex-grow min-h-screen">{children}</div>
-
-          <Footer />
-        </main>
-        <Toaster />
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
+
+// import type { Metadata } from "next";
+// import "./globals.css";
+// import { Toaster } from "../components/ui/sonner";
+// import { Inter } from "next/font/google";
+// import Header from "@/components/Header";
+// import Footer from "@/components/Footer";
+
+// const inter = Inter({
+//   subsets: ["latin"],
+//   variable: "--font-inter",
+//   display: "swap",
+// });
+
+// export const metadata: Metadata = {
+//   title: "Crownlist",
+//   description: "",
+// };
+
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <html lang="en">
+//       <body className={`${inter.variable} antialiased`}>
+//         <main className="flex flex-col min-h-screen">
+//           <Header />
+
+//           <div className="flex-grow min-h-screen">{children}</div>
+
+//           <Footer />
+//         </main>
+//         <Toaster />
+//       </body>
+//     </html>
+//   );
+// }
