@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Input2 } from "@/components/ui/custom-input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 
 export function LoginForm({
@@ -14,6 +15,11 @@ export function LoginForm({
 }: React.ComponentProps<"div"> & {
   imageUrl?: string;
 }) {
+  const router = useRouter()
+
+  const handleClick = () =>{
+    router.push('/')
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -56,7 +62,9 @@ export function LoginForm({
                   </a>
                 </p>
               </div>
-              <Button type="submit" className="w-full mt-4">
+              <Button type="submit" className="w-full mt-4"
+              onClick={handleClick}
+              >
                 Login
               </Button>
 
