@@ -9,6 +9,7 @@ import SectionHeader from "@/components/Home/Section-header"
 import Header from "@/components/Header"
 import Hero from "@/components/Home/Hero"
 import SponsoredPost from "@/components/Home/SponsoredPost"
+import Footer from "@/components/Footer"
 
 export default function Home() {
   const sponsoredItems = [
@@ -287,7 +288,7 @@ export default function Home() {
       </main>
 
       {/* Newsletter */}
-      <section className="bg-black text-white py-10">
+      {/* <section className="bg-black text-white py-10">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -307,10 +308,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
-      <footer className="bg-black text-white py-8 border-t border-gray-800">
+      {/* <footer className="bg-black text-white py-8 border-t border-gray-800">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -392,7 +393,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/*kkk  */}
+          
         </div>
         <div className="bg-black text-white py-8 md:py-12 md:m-3  border-t border-gray-800 relative h-full">
           <Image src={"/fottertext.png"} alt={'footer'} fill className="object-fill" />
@@ -400,7 +401,8 @@ export default function Home() {
           <div className="pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
             © 2023 crownlist. All rights reserved.
           </div>
-      </footer>
+      </footer> */}
+      <Footer/>
     </div>
   )
 }

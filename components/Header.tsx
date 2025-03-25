@@ -148,7 +148,11 @@ const Header = () => {
               <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Logo" />
             </Link>
             <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setMobileMenuOpen(false)}>
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5"
+                size={100} // Increase the size 
+                strokeWidth={2}
+                style={{ width: "30px", height: "110px" }} // Override viewBox issue
+              />
             </Button>
           </div>
 
@@ -166,7 +170,7 @@ const Header = () => {
             <Link href="#" className="block text-[#141414] font-medium text-sm" onClick={() => setMobileMenuOpen(false)}>
               Category
             </Link>
-            <Link href="#" className="block text-[#141414] font-medium text-sm" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="#" className="block text-[#141414] font-medium text-[10px]" onClick={() => setMobileMenuOpen(false)}>
               Post Product
             </Link>
           </div>
@@ -228,7 +232,7 @@ const Header = () => {
 
 
       {/* Original Header with Responsive Classes */}
-      <div className="max-w-[85%] mx-auto py-2 w-full">
+      <div className="max-w-[95%] mx-auto py-2 w-full">
         <div className="hidden md:flex justify-between w-full">
           <div className="flex items-center gap-7">
             <div className="flex items-center gap-1.5">
@@ -264,12 +268,25 @@ const Header = () => {
         <div className="flex justify-between items-center w-full gap-10">
           <div className="w-full py-3 md:pt-6 md:pb-3 flex items-center justify-between md:gap-8">
             {/* Mobile Menu Toggle Button */}
-            <Button
+            {/* <Button
               variant="ghost"
               className="md:hidden w-[60px] h-[60px] flex items-center justify-center"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <AlignJustify size={316} strokeWidth={2} />
+            </Button> */}
+            <Button
+              variant="ghost"
+              className="md:hidden  flex items-center justify-center p-2 pl-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <div className="w-10 h-10 flex items-center justify-center">
+                <AlignJustify
+                  size={100} // Increase the size 
+                  strokeWidth={2}
+                  style={{ width: "30px", height: "110px" }} // Override viewBox issue
+                />
+              </div>
             </Button>
 
             <Link href="/">
