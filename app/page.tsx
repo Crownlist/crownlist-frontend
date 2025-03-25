@@ -8,8 +8,41 @@ import ProductCard from "@/components/Home/Product-card"
 import SectionHeader from "@/components/Home/Section-header"
 import Header from "@/components/Header"
 import Hero from "@/components/Home/Hero"
+import SponsoredPost from "@/components/Home/SponsoredPost"
+import Footer from "@/components/Footer"
 
 export default function Home() {
+  const sponsoredItems = [
+    {
+      id: "1",
+      title: "Men tops",
+      description: "Brand new 2018 Mercedes benz viano/sprinter ...",
+      location: "Lagos, Amuwo-Odofin",
+      category: "Hand craft",
+      price: "₦32,695,000",
+      image:
+        "/product1.png",
+    },
+    {
+      id: "2",
+      title: "Women's Dresses",
+      description: "Premium quality summer collection 2023",
+      location: "Lagos, Ikeja",
+      category: "Fashion",
+      price: "₦15,500",
+      image: "/product2.png",
+    },
+    {
+      id: "3",
+      title: "Casual Shoes",
+      description: "Comfortable leather shoes for everyday wear",
+      location: "Abuja, Central",
+      category: "Footwear",
+      price: "₦22,800",
+      image: "/product3.png",
+    },
+  ]
+  
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
@@ -94,7 +127,7 @@ export default function Home() {
           <SectionHeader title="Sponsored Post" />
 
           <div className="mb-8">
-            <div className="aspect-video relative rounded-lg overflow-hidden mb-4">
+            {/* <div className="aspect-video relative rounded-lg overflow-hidden mb-4">
               <Image
                 src="/product1.png"
                 alt="Clothing rack with colorful clothes"
@@ -112,7 +145,10 @@ export default function Home() {
                   Shop now
                 </Button>
               </div>
-            </div>
+            </div> */}
+            <SponsoredPost
+            items={sponsoredItems}
+            />
           </div>
 
           {/* Recently viewed items */}
@@ -252,7 +288,7 @@ export default function Home() {
       </main>
 
       {/* Newsletter */}
-      <section className="bg-black text-white py-10">
+      {/* <section className="bg-black text-white py-10">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -272,10 +308,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
-      <footer className="bg-black text-white py-8 border-t border-gray-800">
+      {/* <footer className="bg-black text-white py-8 border-t border-gray-800">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -357,7 +393,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/*kkk  */}
+          
         </div>
         <div className="bg-black text-white py-8 md:py-12 md:m-3  border-t border-gray-800 relative h-full">
           <Image src={"/fottertext.png"} alt={'footer'} fill className="object-fill" />
@@ -365,7 +401,8 @@ export default function Home() {
           <div className="pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
             © 2023 crownlist. All rights reserved.
           </div>
-      </footer>
+      </footer> */}
+      <Footer/>
     </div>
   )
 }
