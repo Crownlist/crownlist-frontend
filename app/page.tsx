@@ -8,8 +8,40 @@ import ProductCard from "@/components/Home/Product-card"
 import SectionHeader from "@/components/Home/Section-header"
 import Header from "@/components/Header"
 import Hero from "@/components/Home/Hero"
+import SponsoredPost from "@/components/Home/SponsoredPost"
 
 export default function Home() {
+  const sponsoredItems = [
+    {
+      id: "1",
+      title: "Men tops",
+      description: "Brand new 2018 Mercedes benz viano/sprinter ...",
+      location: "Lagos, Amuwo-Odofin",
+      category: "Hand craft",
+      price: "₦32,695,000",
+      image:
+        "/product1.png",
+    },
+    {
+      id: "2",
+      title: "Women's Dresses",
+      description: "Premium quality summer collection 2023",
+      location: "Lagos, Ikeja",
+      category: "Fashion",
+      price: "₦15,500",
+      image: "/product2.png",
+    },
+    {
+      id: "3",
+      title: "Casual Shoes",
+      description: "Comfortable leather shoes for everyday wear",
+      location: "Abuja, Central",
+      category: "Footwear",
+      price: "₦22,800",
+      image: "/product3.png",
+    },
+  ]
+  
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
@@ -94,7 +126,7 @@ export default function Home() {
           <SectionHeader title="Sponsored Post" />
 
           <div className="mb-8">
-            <div className="aspect-video relative rounded-lg overflow-hidden mb-4">
+            {/* <div className="aspect-video relative rounded-lg overflow-hidden mb-4">
               <Image
                 src="/product1.png"
                 alt="Clothing rack with colorful clothes"
@@ -112,7 +144,10 @@ export default function Home() {
                   Shop now
                 </Button>
               </div>
-            </div>
+            </div> */}
+            <SponsoredPost
+            items={sponsoredItems}
+            />
           </div>
 
           {/* Recently viewed items */}

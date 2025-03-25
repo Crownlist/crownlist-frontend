@@ -1,19 +1,20 @@
-/* eslint-disable */
 "use client"
+
 import { useState, useEffect } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { countries } from "@/constants/countries"
 import { cn } from "@/lib/utils"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import Image from "next/image"
-import { Button } from "../ui/button"
+import { Button } from ".././ui/button"
 import { Check, ChevronsUpDownIcon, Search } from "lucide-react"
-import { Input } from "../ui/input"
+import { Input } from ".././ui/custom-input" // Using custom-input like the header
 
 const Hero = () => {
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState("")
+  // Using the exact same state variables as the header
   const [search, setSearch] = useState("")
+  const [value, setValue] = useState("")
+  const [open, setOpen] = useState(false)
   const [filteredCountries, setFilteredCountries] = useState(countries)
 
   const heroImages: string[] = [
@@ -22,7 +23,7 @@ const Hero = () => {
     "/assets/images/living-room.png",
   ]
 
-  // Filter countries based on search input
+  // Exact same effect as the header
   useEffect(() => {
     if (search) {
       setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(search.toLowerCase())))
@@ -52,9 +53,9 @@ const Hero = () => {
                   The light you need to showcase you are made of black
                 </p>
 
-                {/* Improved Search Section */}
+                {/* Search Section - Mirroring the header implementation */}
                 <div className="w-full flex flex-col sm:flex-row items-center gap-2 sm:gap-0 relative mt-4 md:mt-7">
-                  {/* Search Input - Full width on all screens, with responsive adjustments */}
+                  {/* Search Input - No value or onChange like the header */}
                   <div className="relative w-full max-w-full sm:max-w-none sm:flex-1">
                     <Input
                       className="border border-[#D6D6D6] bg-white text-black w-full h-12 sm:h-10 
@@ -65,7 +66,7 @@ const Hero = () => {
                     <Search size={16} color="#141414" className="absolute top-1/2 -translate-y-1/2 left-4" />
                   </div>
 
-                  {/* Country Selector and Search Button - Side by side on all screens */}
+                  {/* Country Selector - Exact same implementation as header */}
                   <div className="flex w-full sm:w-auto mt-2 sm:mt-0">
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
@@ -78,13 +79,11 @@ const Hero = () => {
                                   bg-white text-black border-[#D6D6D6] border-r-0
                                   justify-between truncate px-3 sm:px-4"
                         >
-                          <span className="truncate">
-                            {value ? countries.find((country) => country.name === value)?.name : "Select..."}
-                          </span>
-                          <ChevronsUpDownIcon className="opacity-50 flex-shrink-0 ml-1" />
+                          {value ? countries.find((country) => country.name === value)?.name : "Select..."}
+                          <ChevronsUpDownIcon className="opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-2">
+                      <PopoverContent className="w-[200px] p-2 z-50">
                         <div className="mb-2">
                           <Input
                             placeholder="Search country..."
@@ -153,6 +152,8 @@ const Hero = () => {
 }
 
 export default Hero
+
+
 
 
 // "use client"
