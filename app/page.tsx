@@ -214,7 +214,7 @@ export default function Home() {
         <Hero />
 
         {/* Main Content */}
-        <main className="flex flex-row justify-between py-6  mx-auto w-full">
+        <main className="flex flex-row justify-between py-6  mx-auto w-full container">
           <div className="px-4 py-4 flex flex-col max-w-4xl">
             {/* Popular Items */}
             <ProductSection
@@ -254,8 +254,9 @@ export default function Home() {
           </div>
           {/* <div>Categories Dropdown</div> */}
           {/* Sidebar */}
-          <div className="relative hidden md:flex">
-            <div className="bg-white rounded-lg  p-5 w-[250px]  shadow-md absolute top-[-85px] md:top-[-120px] right-3">
+          <div className="sticky inset-0 ">
+          <div className="relative hidden md:flex w-full ">
+            <div className="bg-white rounded-lg  p-5 w-[320px]  shadow-md absolute top-[-85px] md:top-[-120px] right-3">
               <div className="flex justify-center items-center gap-2 mb-6 p-5">
                 <Image
                   src={'/cat.png'}
@@ -285,6 +286,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
+          </div>
           </div>
         </main>
       </div>
