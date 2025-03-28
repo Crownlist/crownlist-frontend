@@ -138,7 +138,7 @@ const Header = () => {
 
 
         {/* Original Header with Responsive Classes */}
-        <div className=" mx-auto py-2 w-full">
+        <div className=" mx-auto py-1 w-full">
           <div className="hidden md:flex  justify-between w-full">
             <div className="flex items-center gap-7">
               <div className="flex items-center gap-1.5">
@@ -170,13 +170,13 @@ const Header = () => {
               </Link>
             </div>
           </div>
-          <div className="  bg-white ">
+          <div className="  bg-white max-md:container">
             <div className="  flex justify-between items-center w-full gap-10 ">
-              <div className="w-full py-3 md:pt-6 md:pb-3 flex items-center justify-between md:gap-8">
+              <div className="w-full py-3 md:pt-2 md:pb-1 flex items-center justify-between md:gap-8">
                 {/* Mobile Menu Toggle Button */}
                 <Button
                   variant="ghost"
-                  className="md:hidden  flex items-center justify-center p-2 pl-2"
+                  className="md:hidden  flex items-center justify-center  pl-3"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                   <div className="w-10 h-10 flex items-center justify-center">
@@ -188,8 +188,8 @@ const Header = () => {
                   </div>
                 </Button>
 
-                <Link href="/">
-                  <Image src="/assets/icons/Logo.svg" width={48} height={48} alt="Facebook" />
+                <Link href="/" className="pr-3">
+                  <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Facebook" />
                 </Link>
 
                 {/* <div className="hidden md:flex w-full h-10 min-w-[560px] items-start relative">
@@ -264,7 +264,7 @@ const Header = () => {
               >
                 Search
               </Button>
-            </div> */}
+                  </div> */}
               </div>
 
               <div className="hidden md:flex items-center gap-3 w-full" >
@@ -274,14 +274,24 @@ const Header = () => {
                       className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
                       variant="outline"
                     >
-                      Category
+                     <div className="flex flex-row gap-1 align-middle">
+                          <div className="flex items-center">
+                            <Image src={'/pp.svg'} width={15} height={15} alt="'svg"/>
+                          </div>
+                          <div className="flex align-middle"> Category</div>
+                      </div>
                     </Button>
                     <Button
                       size="sm"
                       className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
                       variant="outline"
                     >
-                      Post Product
+                      <div className="flex flex-row gap-1 align-middle">
+                          <div className="flex items-center">
+                            <Image src={'/post.svg'} width={15} height={15} alt="'svg"/>
+                          </div>
+                          <div className="flex align-middle"> Post Product</div>
+                      </div>
                     </Button>
         
               </div>
