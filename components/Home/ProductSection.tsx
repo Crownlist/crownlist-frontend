@@ -1,0 +1,74 @@
+"use client"
+
+import { useState } from "react"
+import ProductCard from "./Product-card"
+import SectionHeader from "./Section-header"
+import { cn } from "@/lib/utils"
+
+interface Product {
+  image: string
+  title: string
+  price: string
+  description: string
+  location?: string
+  time?: string
+  distance?: string
+  isSponsored?: boolean
+  labels?: string[]
+}
+
+interface ProductSectionProps {
+  title: string
+  products: Product[]
+  showViewToggle?: boolean
+  initialView?: "grid" | "list"
+  showSeeMore?: boolean
+  onSeeMoreClick?: () => void
+}
+
+export default function ProductSection({
+  title,
+  products,
+  showViewToggle = true,
+  initialView = "grid",
+  showSeeMore = false,
+  onSeeMoreClick,
+}: ProductSectionProps) {
+  const [viewMode, setViewMode] = useState<"grid" | "list">(initialView)
+
+  return (
+    <div className="mb-8">
+      <SectionHeader title={title} showViewToggle={showViewToggle} onViewChange={setViewMode} currentView={viewMode} />
+
+      <div className={cn(viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-4 gap-4" : "flex flex-col space-y-4")}>
+        {products.map((product, index) => (
+          <ProductCard
+            key={index}
+            image={product.image}
+            title={product.title}
+            price={product.price}
+            description={product.description}
+            location={product.location}
+            time={product.time}
+            distance={product.distance}
+            isSponsored={product.isSponsored}
+            viewMode={viewMode}
+            labels={product.labels}
+          />
+        ))}
+      </div>
+
+      {showSeeMore && (
+        <div className="flex justify-center mt-6">
+          <button
+            className="text-xs font-medium text-gray-600 border border-gray-300 rounded-full px-6 py-1.5 hover:bg-gray-50 transition-colors"
+            onClick={onSeeMoreClick}
+          >
+            See more
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+

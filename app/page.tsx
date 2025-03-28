@@ -1,4 +1,5 @@
 /* eslint-disable */
+"use client"
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, ChevronDown, Search, Bell, MessageSquare, User } from "lucide-react"
@@ -10,6 +11,7 @@ import Header from "@/components/Header"
 import Hero from "@/components/Home/Hero"
 import SponsoredPost from "@/components/Home/SponsoredPost"
 import Footer from "@/components/Footer"
+import ProductSection from "@/components/Home/ProductSection"
 
 const categories = [
   { name: 'Properties', posts: '2,392,915', icon: '🏠' },
@@ -20,6 +22,132 @@ const categories = [
   { name: 'Jobs', posts: '0', icon: '💼', status: 'Coming soon' },
   { name: 'Services', posts: '0', icon: '🔧', status: 'Coming soon' },
 ];
+
+// Sample data matching the UI in the image
+const popularItems = [
+  {
+    image: "/product1.png",
+    title: "The Green Sofa",
+    description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
+    price: "₦85,000",
+    time: "2 hours ago",
+    location: "Lekki, Lagos",
+    distance: "3km away",
+    labels: ["Furniture", "Home"],
+  },
+  {
+    image: "/product2.png",
+    title: "Dr Andrews Glasgow Stove",
+    description:
+      "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+    price: "₦65,000",
+    time: "3 hours ago",
+    location: "Ikeja, Lagos",
+    distance: "5km away",
+    labels: ["Kitchen", "Appliances"],
+  },
+  {
+    image: "/product3.png",
+    title: "AMOLED Touch Screen Laptop",
+    description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
+    price: "₦625,000",
+    time: "1 day ago",
+    location: "VI, Lagos",
+    distance: "7km away",
+    labels: ["Electronics", "Laptop", "Gadget"],
+  },
+  {
+    image: "/product4.png",
+    title: "SamsungGalaxy Note20 5G",
+    description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
+    price: "₦350,000",
+    time: "5 hours ago",
+    location: "Ajah, Lagos",
+    distance: "12km away",
+    labels: ["Phone", "Samsung", "Gadget"],
+  },
+]
+
+const servicesItems = [
+  {
+    image: "/product1.png",
+    title: "Men thrift",
+    description: "Brand new thrift clothes for men. All sizes available.",
+    price: "₦25,000",
+    time: "2 hours ago",
+    location: "Surulere, Lagos",
+    distance: "3km away",
+    labels: ["Clothing", "Fashion", "Men"],
+  },
+  {
+    image: "/product2.png",
+    title: "Table and 2 folding chairs",
+    description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
+    price: "₦35,000",
+    time: "3 hours ago",
+    location: "Yaba, Lagos",
+    distance: "5km away",
+    labels: ["Furniture", "Outdoor"],
+  },
+]
+
+const phonesItems = [
+  {
+    image: "/product1.png",
+    title: "SamsungGalaxy Note20 5G",
+    description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
+    price: "₦350,000",
+    time: "5 hours ago",
+    location: "Ajah, Lagos",
+    distance: "12km away",
+    labels: ["Phone", "Samsung", "Gadget"],
+  },
+  {
+    image: "/product2.png",
+    title: "AMOLED Touch Screen Laptop",
+    description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
+    price: "₦625,000",
+    time: "1 day ago",
+    location: "VI, Lagos",
+    distance: "7km away",
+    labels: ["Electronics", "Laptop", "Gadget"],
+  },
+]
+
+const propertiesItems = [
+  {
+    image: "/product1.png",
+    title: "Table and 2 folding chairs",
+    description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
+    price: "₦35,000",
+    time: "3 hours ago",
+    location: "Yaba, Lagos",
+    distance: "5km away",
+    labels: ["Furniture", "Outdoor"],
+  },
+  {
+    image: "/product2.png",
+    title: "Small space PC gaming",
+    description:
+      "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+    price: "₦65,000",
+    time: "3 hours ago",
+    location: "Ikeja, Lagos",
+    distance: "5km away",
+    labels: ["Gaming", "Electronics"],
+  },
+]
+
+// Sponsored items data
+// const sponsoredItems = [
+//   {
+//     image: "/product1.png",
+//     title: "Men thrift",
+//     description: "Brand new thrift clothes for men. All sizes available.",
+//     buttonText: "Shop now",
+//   },
+// ]
+
 
 export default function Home() {
   const sponsoredItems = [
@@ -52,12 +180,12 @@ export default function Home() {
       image: "/product3.png",
     },
   ]
-  
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <Header />
-      
+
 
       {/* Hero Section */}
       {/* <section className="relative h-[300px]">
@@ -82,254 +210,85 @@ export default function Home() {
           </div>
         </div>
       </section> */}
-      <Hero/>
+      <div className="flex flex-col relative">
+        <Hero />
 
-      {/* Main Content */}
-      <main className="flex flex-row justify-between py-6 max-w-[1200px] mx-auto w-full">
-        <div className="px-4">
-          {/* Popular Items */}
-          <SectionHeader title="Popular in Lagos" />
+        {/* Main Content */}
+        <main className="flex flex-row justify-between py-6  mx-auto w-full">
+          <div className="px-4 py-4 flex flex-col max-w-4xl">
+            {/* Popular Items */}
+            <ProductSection
+              title="Popular in Lagos"
+              products={popularItems}
+              initialView="list"
+              showSeeMore
+              onSeeMoreClick={() => console.log("See more clicked")}
+            />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <ProductCard
-              image="/product1.png"
-              title="Vintage coffee table"
-              price="$65.00"
-              location="San Francisco"
-              time="2 hours ago"
-              distance="3 miles"
+            {/* Sponsored Post */}
+            <div className="mb-8">
+              <SectionHeader title="Sponsored post" showViewToggle={false} />
+              <SponsoredPost items={sponsoredItems} />
+            </div>
+
+            {/* Services you might need */}
+            <ProductSection title="Services you might need" products={servicesItems} initialView="list" />
+
+            {/* Phones & tablets */}
+            <ProductSection
+              title="Phones & tablets"
+              products={phonesItems}
+              initialView="list"
+              showSeeMore
+              onSeeMoreClick={() => console.log("See more clicked")}
             />
-            <ProductCard
-              image="/product2.png"
-              title="Ergonomic designer chair"
-              price="$120.00"
-              location="Oakland"
-              time="3 hours ago"
-              distance="5 miles"
-            />
-            <ProductCard
-              image="/product3.png"
-              title="PHILIPS Smart Screen (40in)"
-              price="$199.00"
-              location="Berkeley"
-              time="1 day ago"
-              distance="7 miles"
-              isSponsored
-            />
-            <ProductCard
-              image="/product4.png"
-              title="Samsung Galaxy S22 Ultra"
-              price="$650.00"
-              location="San Jose"
-              time="5 hours ago"
-              distance="12 miles"
+
+            {/* Properties */}
+            <ProductSection
+              title="Properties"
+              products={propertiesItems}
+              initialView="list"
+              showSeeMore
+              onSeeMoreClick={() => console.log("See more clicked")}
             />
           </div>
+          {/* <div>Categories Dropdown</div> */}
+          {/* Sidebar */}
+          <div className="relative hidden md:flex">
+            <div className="bg-white rounded-lg  p-5 w-[250px]  shadow-md absolute top-[-85px] md:top-[-120px] right-3">
+              <div className="flex justify-center items-center gap-2 mb-6 p-5">
+                <Image
+                  src={'/cat.png'}
+                  alt="image"
+                  width={45}
+                  height={45}
 
-          {/* See More Button */}
-          <div className="flex justify-center mb-8">
-            <Button variant="outline" className="rounded-full px-6 text-xs h-8 border-gray-300">
-              See more
-            </Button>
-          </div>
-
-          {/* Recommended for you */}
-          <SectionHeader title="Sponsored Post" />
-
-          <div className="mb-8">
-            {/* <div className="aspect-video relative rounded-lg overflow-hidden mb-4">
-              <Image
-                src="/product1.png"
-                alt="Clothing rack with colorful clothes"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-                <h3 className="text-white font-bold text-lg">Clothing</h3>
-                <p className="text-white text-sm">Find great deals on clothing near you</p>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="mt-2 bg-white text-black hover:bg-gray-100 h-7 text-xs"
-                >
-                  Shop now
-                </Button>
+                />
               </div>
-            </div> */}
-            <SponsoredPost
-            items={sponsoredItems}
-            />
-          </div>
-
-          {/* Recently viewed items */}
-          <SectionHeader title="Services you might need" />
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <ProductCard
-              image="/product1.png"
-              title="Vintage coffee table"
-              price="$65.00"
-              location="San Francisco"
-              time="2 hours ago"
-              distance="3 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Ergonomic designer chair"
-              price="$120.00"
-              location="Oakland"
-              time="3 hours ago"
-              distance="5 miles"
-            />
-          </div>
-
-          {/* Phones & tablets */}
-          <SectionHeader title="Phones & tablets" />
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <ProductCard
-              image="/product1.png"
-              title="Samsung Galaxy S22 Ultra"
-              price="$650.00"
-              location="San Jose"
-              time="5 hours ago"
-              distance="12 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="PHILIPS Smart Screen (40in)"
-              price="$199.00"
-              location="Berkeley"
-              time="1 day ago"
-              distance="7 miles"
-            />
-          </div>
-
-          {/* Featured */}
-          <SectionHeader title="Properties" />
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <ProductCard
-              image="/product1.png"
-              title="Vintage coffee table"
-              price="$65.00"
-              location="San Francisco"
-              time="2 hours ago"
-              distance="3 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Ergonomic designer chair"
-              price="$120.00"
-              location="Oakland"
-              time="3 hours ago"
-              distance="5 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Vintage coffee table"
-              price="$65.00"
-              location="San Francisco"
-              time="2 hours ago"
-              distance="3 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Ergonomic designer chair"
-              price="$120.00"
-              location="Oakland"
-              time="3 hours ago"
-              distance="5 miles"
-            />
-          </div>
-
-          {/* See More Button */}
-          <div className="flex justify-center mb-8">
-            <Button variant="outline" className="rounded-full px-6 text-xs h-8 border-gray-300">
-              See more
-            </Button>
-          </div>
-
-          {/* Featured - Second Section */}
-          <SectionHeader title="Properties" />
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <ProductCard
-              image="/product1.png"
-              title="Vintage coffee table"
-              price="$65.00"
-              location="San Francisco"
-              time="2 hours ago"
-              distance="3 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Ergonomic designer chair"
-              price="$120.00"
-              location="Oakland"
-              time="3 hours ago"
-              distance="5 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Vintage coffee table"
-              price="$65.00"
-              location="San Francisco"
-              time="2 hours ago"
-              distance="3 miles"
-            />
-            <ProductCard
-              image="/product1.png"
-              title="Ergonomic designer chair"
-              price="$120.00"
-              location="Oakland"
-              time="3 hours ago"
-              distance="5 miles"
-            />
-          </div>
-
-          {/* See More Button */}
-          <div className="flex justify-center mb-8">
-            <Button variant="outline" className="rounded-full px-6 text-xs h-8 border-gray-300">
-              See more
-            </Button>
-          </div>
-        </div>
-        {/* <div>Categories Dropdown</div> */}
-        {/* Sidebar */}
-        <div className="bg-white rounded-lg  p-5 h-full  shadow-md">
-            <div className="flex justify-center items-center gap-2 mb-6 p-5">
-              <Image
-                src={'/cat.png'}
-                alt="image"
-                width={45}
-                height={45}
-
-              />
-            </div>
-            <div className="space-y-4">
-              {categories.map((category, index) => (
-                <>
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{category.icon}</span>
-                    <div>
-                      <h3 className="font-medium">{category.name}</h3>
-                      <p className="text-sm text-gray-500">{category.posts} post</p>
+              <div className="space-y-4">
+                {categories.map((category, index) => (
+                  <div key={index}>
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{category.icon}</span>
+                        <div>
+                          <h3 className="font-medium">{category.name}</h3>
+                          <p className="text-sm text-gray-500">{category.posts} post</p>
+                        </div>
+                      </div>
+                      {category.status && (
+                        <span className="text-sm text-gray-500">{category.status}</span>
+                      )}
                     </div>
+                    <div className="border border-gray-100 w-full" />
                   </div>
-                  {category.status && (
-                    <span className="text-sm text-gray-500">{category.status}</span>
-                  )}
-                </div>
-                <div className="border border-gray-100 w-full"/>
-                </>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-      </main>
-
-      <Footer/>
+        </main>
+      </div>
+      <Footer />
     </div>
   )
 }
