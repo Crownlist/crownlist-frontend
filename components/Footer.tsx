@@ -6,7 +6,7 @@ import { Twitter, Linkedin, Instagram, Facebook, MapPin, Mail } from "lucide-rea
 
 export default function Footer() {
   return (
-    <footer className="w-full">
+    <footer className="w-full z-10">
       {/* Newsletter Section */}
       <div className="relative w-full overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -18,7 +18,7 @@ export default function Footer() {
           />
         </div>
 
-        <div className="relative z-10 max-w-[85%] mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
+        <div className="relative  max-w-[85%] mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="max-w-xs">
             <h2 className="text-3xl font-bold text-white">Sign up for news and special offers</h2>
           </div>

@@ -12,6 +12,7 @@ import Hero from "@/components/Home/Hero"
 import SponsoredPost from "@/components/Home/SponsoredPost"
 import Footer from "@/components/Footer"
 import ProductSection from "@/components/Home/ProductSection"
+import { useEffect, useRef, useState } from "react"
 
 const categories = [
   { name: 'Properties', posts: '2,392,915', icon: '🏠' },
@@ -180,6 +181,21 @@ export default function Home() {
       image: "/product3.png",
     },
   ]
+  const heroRef = useRef<HTMLDivElement | null>(null);
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const heroBottom = heroRef.current.getBoundingClientRect().bottom;
+        console.log(heroBottom)
+        setIsSticky(heroBottom <= 186); // Stick when the hero is out of view
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -211,7 +227,9 @@ export default function Home() {
         </div>
       </section> */}
       <div className="flex flex-col relative">
+        <div ref={heroRef}>
         <Hero />
+        </div>
 
         {/* Main Content */}
         <main className="flex flex-row justify-between py-6  mx-auto w-full container">
@@ -254,9 +272,9 @@ export default function Home() {
           </div>
           {/* <div>Categories Dropdown</div> */}
           {/* Sidebar */}
-          <div className="sticky inset-0 ">
-          <div className="relative hidden md:flex w-full ">
-            <div className="bg-white rounded-lg  p-5 w-[320px]  shadow-md absolute top-[-85px] md:top-[-120px] right-3">
+          <div className={`hidden md:flex w-[320px] ${isSticky ? "fixed top-25 right-[190px]" : "relative"}`}>
+          <div className="">
+            <div className={`bg-white rounded-lg  p-5 w-[320px]  shadow-md ${isSticky ? "" : "absolute top-[-85px] md:top-[-120px] right-3"}`}>
               <div className="flex justify-center items-center gap-2 mb-6 p-5">
                 <Image
                   src={'/cat.png'}
