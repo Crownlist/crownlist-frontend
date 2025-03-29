@@ -2,7 +2,7 @@
 import Image from "next/image";
 import login from "../../../public/assets/images/authbg.jpg";
 import { cn } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
+// import { Card, CardContent } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
