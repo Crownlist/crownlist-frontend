@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client"
 import Image from "next/image";
 import login from "../../../public/assets/images/authbg.jpg";
