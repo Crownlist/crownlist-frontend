@@ -238,7 +238,7 @@ export default function Home() {
             <ProductSection
               title="Popular in Lagos"
               products={popularItems}
-              initialView="list"
+              initialView="grid"
               showSeeMore
               onSeeMoreClick={() => console.log("See more clicked")}
             />
@@ -250,13 +250,13 @@ export default function Home() {
             </div>
 
             {/* Services you might need */}
-            <ProductSection title="Services you might need" products={servicesItems} initialView="list" />
+            <ProductSection title="Services you might need" products={servicesItems} initialView="grid" />
 
             {/* Phones & tablets */}
             <ProductSection
               title="Phones & tablets"
               products={phonesItems}
-              initialView="list"
+              initialView="grid"
               showSeeMore
               onSeeMoreClick={() => console.log("See more clicked")}
             />
@@ -265,16 +265,16 @@ export default function Home() {
             <ProductSection
               title="Properties"
               products={propertiesItems}
-              initialView="list"
+              initialView="grid"
               showSeeMore
               onSeeMoreClick={() => console.log("See more clicked")}
             />
           </div>
           {/* <div>Categories Dropdown</div> */}
           {/* Sidebar */}
-          <div className={`hidden md:flex w-[320px] ${isSticky ? "fixed top-25 right-[190px]" : "relative"}`}>
+          <div className={`hidden sm:flex w-[290px]  lg:w-[320px] ${isSticky ? "fixed top-25 right-0 lg:right[190px]" : "relative"}`}>
           <div className="">
-            <div className={`bg-white rounded-lg  p-5 w-[320px]  shadow-md ${isSticky ? "" : "absolute top-[-85px] md:top-[-120px] right-3"}`}>
+            <div className={`bg-white rounded-lg  p-5 w-[290px] md:w-[310px] lg:w-[320px] shadow-md ${isSticky ? "" : " absolute top-[-85px] md:top-[-120px]  right-[-38px] md:right-[-15px] "}`}>
               <div className="flex justify-center items-center gap-2 mb-6 p-5">
                 <Image
                   src={'/cat.png'}

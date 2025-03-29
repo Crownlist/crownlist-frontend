@@ -28,8 +28,9 @@ export function ResetForm({
                 priority={true}
               />
             )}
+             <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent "></div>
           </div>
-          <form className="p-6 md:p-10 mt-10 md:col-span-3 lg:col-span-2">
+          <form className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-2">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center md:items-start text-center mb-[10px]">
                 <h1 className="text-2xl">Reset Password</h1>
