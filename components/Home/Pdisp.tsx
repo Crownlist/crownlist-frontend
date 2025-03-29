@@ -161,7 +161,7 @@ const Pdisp = () => {
             <ProductSection
               title="Popular in Lagos"
               products={popularItems}
-              initialView="list"
+              initialView="grid"
               showSeeMore
               onSeeMoreClick={() => console.log("See more clicked")}
             />
@@ -179,7 +179,7 @@ const Pdisp = () => {
             <ProductSection
               title="Phones & tablets"
               products={phonesItems}
-              initialView="list"
+              initialView="grid"
               showSeeMore
               onSeeMoreClick={() => console.log("See more clicked")}
             />
@@ -188,7 +188,7 @@ const Pdisp = () => {
             <ProductSection
               title="Properties"
               products={propertiesItems}
-              initialView="list"
+              initialView="grid"
               showSeeMore
               onSeeMoreClick={() => console.log("See more clicked")}
             />

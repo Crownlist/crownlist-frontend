@@ -39,8 +39,14 @@ export default function ProductSection({
   return (
     <div className="mb-8">
       <SectionHeader title={title} showViewToggle={showViewToggle} onViewChange={setViewMode} currentView={viewMode} />
-
-      <div className={cn(viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-4 gap-4" : "flex flex-col space-y-4")}>
+  <div className="mx-auto sm:max-w-[53vw]">
+      <div className={cn(
+        // viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-4 gap-4" : "flex flex-col space-y-4"
+        viewMode === "grid"
+      ? "grid grid-cols-2 gap-4" // Grid mode: Two per row
+      : "flex flex-col space-y-4" // List mode remains unchanged'
+      
+        )}>
         {products.map((product, index) => (
           <ProductCard
             key={index}
@@ -68,6 +74,7 @@ export default function ProductSection({
           </button>
         </div>
       )}
+    </div>
     </div>
   )
 }
