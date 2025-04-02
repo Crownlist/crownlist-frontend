@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Check, ChevronsUpDown, Search } from "lucide-react"
 import { Input } from "@/components/ui/custom-input"
+import { useRouter } from "next/navigation"
 
 const Hero = () => {
   const [search, setSearch] = useState("")
@@ -16,6 +17,17 @@ const Hero = () => {
   const [heroImages, setHeroImages] = useState<string[]>([])
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+ 
+  const router = useRouter();
+
+  const handleSearch = () =>{
+    if(search == '' || value == ""){
+      router.push('/search')
+    }
+    else{
+      router.push('/search/kwara')
+    }
+  }
 
   // Example: Fetch images dynamically or set them based on some condition
   useEffect(() => {
@@ -184,6 +196,7 @@ const Hero = () => {
                 className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 
                         rounded-l-none rounded-r-[99px] text-sm 
                         flex justify-between items-center h-12 shadow-md transition-colors"
+              onClick={handleSearch}
               >
                 Search
               </Button>

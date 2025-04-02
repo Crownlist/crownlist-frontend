@@ -18,7 +18,7 @@ export default function Footer() {
           />
         </div>
 
-        <div className="relative  max-w-[85%] mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
+        <div className=" container relative   mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="max-w-xs">
             <h2 className="text-3xl font-bold text-white">Sign up for news and special offers</h2>
           </div>
@@ -44,7 +44,7 @@ export default function Footer() {
 
       {/* Main Footer */}
       <div className="bg-black text-white py-8">
-        <div className="max-w-[85%] mx-auto ">
+        <div className="container mx-auto ">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 pb-8">
             {/* Logo and Tagline */}
             <div className="md:col-span-1">

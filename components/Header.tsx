@@ -18,16 +18,46 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { countries } from "@/constants/countries"
 import { cn } from "@/lib/utils"
+import { usePathname, useRouter } from "next/navigation"
 
 
-
-const Header = () => {
+interface props {
+  hidden: boolean
+}
+const Header = ({ hidden }: props) => {
   const isLoggedIn = false
   const [search, setSearch] = useState("")
   const [value, setValue] = useState("")
   const [open, setOpen] = useState(false)
   const [filteredCountries, setFilteredCountries] = useState(countries)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
+
+
+  const handleSearch = () =>{
+    if(search == '' || value == ""){
+      router.push('/search')
+    }
+    else{
+      router.push('/search/kwara')
+    }
+  }
+  
+  // console.log(pathname)
+  const handleLogin = (e: any) => {
+    e.preventDefault();
+    router.push("/auth/login")
+  }
+
+  const handleSignUp = (e: any) => {
+    e.preventDefault()
+    router.push('/auth/signup')
+  }
+  const handleCat = (e :any) =>{
+    e.preventDefault();
+    router.push("/category")
+  }
 
   // Filter countries based on search input
   useEffect(() => {
@@ -73,7 +103,7 @@ const Header = () => {
 
             {/* Navigation Links */}
             <div className="space-y-4 mb-6">
-              <Link href="#" className="block text-[#141414] font-medium text-sm" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/category" className="block text-[#141414] font-medium text-sm" onClick={() => setMobileMenuOpen(false)}>
                 Category
               </Link>
               <Link href="#" className="block text-[#141414] font-medium text-[10px]" onClick={() => setMobileMenuOpen(false)}>
@@ -192,112 +222,146 @@ const Header = () => {
                   <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Facebook" />
                 </Link>
 
-                {/* <div className="hidden md:flex w-full h-10 min-w-[560px] items-start relative">
-              <Input
-                className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-5 ps-10 h-full placeholder:text-[#141414]"
-                placeholder="Search"
-              />
+                {!hidden && <div className="hidden md:flex w-full h-10 min-w-[560px] items-start relative">
+                  <Input
+                    className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-5 ps-10 h-full placeholder:text-[#141414]"
+                    placeholder="Search"
+                  />
 
-              <Search size={16} color="#141414" className="absolute top-3 left-4" />
+                  <Search size={16} color="#141414" className="absolute top-3 left-4" />
 
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
-                  >
-                    {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
-                    <ChevronsUpDownIcon className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-2">
-                  <div className="mb-2">
-                    <Input
-                      placeholder="Search country..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="h-9"
-                    />
-                  </div>
-
-                  <div className="max-h-[300px] overflow-y-auto">
-                    {filteredCountries.length === 0 ? (
-                      <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
-                    ) : (
-                      <div className="space-y-1">
-                        {filteredCountries.map((country, index) => (
-                          <div
-                            key={index}
-                            className={cn(
-                              "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
-                              value === country.name && "bg-muted",
-                            )}
-                            onClick={() => {
-                              const newValue = country.name === value ? "" : country.name
-                              setValue(newValue)
-                              setOpen(false)
-                              setSearch("")
-                            }}
-                          >
-                            <Image
-                              src={country.flag || "/placeholder.svg"}
-                              alt={country.name}
-                              width={24}
-                              height={24}
-                              className="mr-2"
-                            />
-                            <span>{country.name}</span>
-                            {value === country.name && <Check className="ml-auto h-4 w-4" />}
-                          </div>
-                        ))}
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
+                      >
+                        {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
+                        <ChevronsUpDownIcon className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-2">
+                      <div className="mb-2">
+                        <Input
+                          placeholder="Search country..."
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                          className="h-9"
+                        />
                       </div>
-                    )}
-                  </div>
-                </PopoverContent>
-              </Popover>
 
-              <Button
-                size="sm"
-                className="bg-[#141414] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
-              >
-                Search
-              </Button>
-                  </div> */}
+                      <div className="max-h-[300px] overflow-y-auto">
+                        {filteredCountries.length === 0 ? (
+                          <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
+                        ) : (
+                          <div className="space-y-1">
+                            {filteredCountries.map((country, index) => (
+                              <div
+                                key={index}
+                                className={cn(
+                                  "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
+                                  value === country.name && "bg-muted",
+                                )}
+                                onClick={() => {
+                                  const newValue = country.name === value ? "" : country.name
+                                  setValue(newValue)
+                                  setOpen(false)
+                                  setSearch("hahahah")
+                                }}
+                              >
+                                <Image
+                                  src={country.flag || "/placeholder.svg"}
+                                  alt={country.name}
+                                  width={24}
+                                  height={24}
+                                  className="mr-2"
+                                />
+                                <span>{country.name}</span>
+                                {value === country.name && <Check className="ml-auto h-4 w-4" />}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+
+                  <Button
+                    size="sm"
+                    className="bg-[#141414] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
+                    onClick={handleSearch}
+                  >
+                    Search
+                  </Button>
+                </div>}
               </div>
 
-              <div className="hidden md:flex items-center gap-3 w-full" >
-                
-                <Button
+              {hidden &&
+                <div className="hidden md:flex items-center gap-3 w-full" >
+
+                  <Button
+                    size="sm"
+                    className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                    variant="outline"
+                    onClick={handleCat}
+                  >
+                    <div className="flex flex-row gap-1 align-middle">
+                      <div className="flex items-center">
+                        <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
+                      </div>
+                      <div className="flex align-middle"> Category</div>
+                    </div>
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                    variant="outline"
+                  >
+                    <div className="flex flex-row gap-1 align-middle">
+                      <div className="flex items-center">
+                        <Image src={'/post.svg'} width={15} height={15} alt="'svg" />
+                      </div>
+                      <div className="flex align-middle"> Post Product</div>
+                    </div>
+                  </Button>
+
+                </div>}
+
+              <div className="hidden md:flex items-center gap-3">
+
+                {!hidden &&
+                  <div className="hidden md:flex items-start gap-1 justify-center" >
+
+                    <Button
                       size="sm"
-                      className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                      className={`${pathname == '/category' ? 'border-2  border-b-[#141414] border-x-transparent border-t-transparent' : 'border-none'}  shadow-none px-2 py-1 rounded-none text-[#141414] font-medium `}
                       variant="outline"
+                      onClick={handleCat} 
                     >
-                     <div className="flex flex-row gap-1 align-middle">
-                          <div className="flex items-center">
-                            <Image src={'/pp.svg'} width={15} height={15} alt="'svg"/>
-                          </div>
-                          <div className="flex align-middle"> Category</div>
+                      <div className="flex flex-row gap-1 align-middle">
+                        <div className="flex items-center">
+                          <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
+                        </div>
+                        <div className="flex align-middle"> Category</div>
                       </div>
                     </Button>
                     <Button
                       size="sm"
-                      className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                      className={`${pathname == '/cwwategory' ? 'border-b-gray-950' : 'border-none'}  shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium `}
                       variant="outline"
                     >
                       <div className="flex flex-row gap-1 align-middle">
-                          <div className="flex items-center">
-                            <Image src={'/post.svg'} width={15} height={15} alt="'svg"/>
-                          </div>
-                          <div className="flex align-middle"> Post Product</div>
+                        <div className="flex items-center">
+                          <Image src={'/post.svg'} width={15} height={15} alt="'svg" />
+                        </div>
+                        <div className="flex align-middle"> Post Product</div>
                       </div>
                     </Button>
-        
-              </div>
 
-              <div className="hidden md:flex items-center gap-3">
-
+                  </div>
+                }
                 {isLoggedIn ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger>Category</DropdownMenuTrigger>
@@ -311,16 +375,19 @@ const Header = () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <div className="flex items-center gap-5">
+                  <div className="flex items-center gap-2 ">
                     <Button
                       size="sm"
                       className="border-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
                       variant="outline"
+                      onClick={handleLogin}
                     >
                       Login
                     </Button>
 
-                    <Button size="sm" className="px-2 py-3 rounded-[99px] text-[#141414] font-medium" variant="outline">
+                    <Button size="sm" className="px-2 py-3 rounded-[99px] text-[#141414] font-medium" variant="outline"
+                      onClick={handleSignUp}
+                    >
                       Sign up
                     </Button>
                   </div>
