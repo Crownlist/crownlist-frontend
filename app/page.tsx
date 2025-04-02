@@ -200,32 +200,9 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
-      <Header />
-
+      <Header hidden={true} />
 
       {/* Hero Section */}
-      {/* <section className="relative h-[300px]">
-        <Image
-          src="/placeholder.svg?height=400&width=1200"
-          alt="Living room with couch and coffee table"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/30">
-          <div className="h-full flex flex-col justify-center px-4 max-w-[1200px] mx-auto">
-            <h1 className="text-white text-3xl font-bold mb-1">
-              Discover top deals
-              <br />
-              tailored for you
-            </h1>
-            <p className="text-white text-sm mb-4">Find exactly what you're looking for in your area</p>
-            <div className="flex">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm">Browse now</Button>
-            </div>
-          </div>
-        </div>
-      </section> */}
       <div className="flex flex-col relative">
         <div ref={heroRef}>
         <Hero />
@@ -233,7 +210,7 @@ export default function Home() {
 
         {/* Main Content */}
         <main className="flex flex-row justify-between py-6  mx-auto w-full container">
-          <div className="px-4 py-4 flex flex-col max-w-4xl">
+          <div className=" py-4 flex flex-col max-w-4xl">
             {/* Popular Items */}
             <ProductSection
               title="Popular in Lagos"
@@ -289,14 +266,22 @@ export default function Home() {
                   <div key={index}>
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{category.icon}</span>
+                        <span className="text-2xl">
+                          {category.icon}
+                        </span>
                         <div>
-                          <h3 className="font-medium">{category.name}</h3>
-                          <p className="text-sm text-gray-500">{category.posts} post</p>
+                          <h3 className="font-medium">
+                            {category.name}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            {category.posts} post
+                          </p>
                         </div>
                       </div>
                       {category.status && (
-                        <span className="text-sm text-gray-500">{category.status}</span>
+                        <span className="text-sm text-gray-500">
+                          {category.status}
+                        </span>
                       )}
                     </div>
                     <div className="border border-gray-100 w-full" />
