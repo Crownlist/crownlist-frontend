@@ -209,11 +209,11 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <main className="flex flex-row justify-between py-6  mx-auto w-full container">
+        <main className="flex flex-row justify-between py-6  mx-auto w-full container max-md:px-4">
           <div className=" py-4 flex flex-col max-w-4xl">
             {/* Popular Items */}
             <ProductSection
-              title="Popular in Lagos"
+              title="Trending Now"
               products={popularItems}
               initialView="grid"
               showSeeMore

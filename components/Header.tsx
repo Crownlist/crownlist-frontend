@@ -69,7 +69,7 @@ const Header = ({ hidden }: props) => {
   }, [search])
 
   return (
-    <nav className="bg-white sticky inset-0 z-[999] ">
+    <nav className="bg-white sticky inset-0 z-[999] shadow-md ">
       <div className='container mx-auto flex items-center justify-between gap-2'>
         {/* Mobile Menu */}
 
@@ -200,9 +200,9 @@ const Header = ({ hidden }: props) => {
               </Link>
             </div>
           </div>
-          <div className="  bg-white max-md:container">
+          <div className="  bg-white max-md:container ">
             <div className="  flex justify-between items-center w-full gap-10 ">
-              <div className="w-full py-3 md:pt-2 md:pb-1 flex items-center justify-between md:gap-8">
+              <div className="w-full py-2 md:pt-2 md:pb-1 flex items-center justify-between md:gap-8">
                 {/* Mobile Menu Toggle Button */}
                 <Button
                   variant="ghost"
