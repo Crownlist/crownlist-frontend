@@ -18,7 +18,7 @@ export default function Footer() {
           />
         </div>
 
-        <div className=" container relative max-md:px-3   mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
+        <div className=" container relative max-md:px-4   mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="max-w-xs">
             <h2 className="text-3xl font-bold text-white">Sign up for news and special offers</h2>
           </div>
