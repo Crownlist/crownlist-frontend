@@ -399,6 +399,7 @@ export default function PropertyPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {properties.map((property) => (
                 <div key={property.id} className="border rounded-lg overflow-hidden">
+                   <Link href={'/product'}>
                   {/* Property Image */}
                   <div className="relative h-[200px]">
                     <Image
@@ -434,6 +435,7 @@ export default function PropertyPage() {
                     {/* Price */}
                     <div className="font-medium">{property.price}</div>
                   </div>
+                  </Link>
                 </div>
               ))}
             </div>

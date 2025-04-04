@@ -69,12 +69,12 @@ const Header = ({ hidden }: props) => {
   }, [search])
 
   return (
-    <nav className="bg-white sticky inset-0 z-[999] shadow-md ">
+    <nav className="bg-white sticky inset-0 z-[999] shadow-sm ">
       <div className='container mx-auto flex items-center justify-between gap-2'>
         {/* Mobile Menu */}
 
         <div
-          className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-xl transform transition-transform duration-300 ease-in-out 
+          className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-sm transform transition-transform duration-300 ease-in-out 
     ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:hidden h-screen overflow-y-auto`}
         >
           <div className="h-full flex flex-col p-6">
