@@ -66,7 +66,7 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
 
   return (
     <div className="w-full max-w-3xl">
-      <div className="text-[#333] font-medium text-base mb-2">Sponsored post</div>
+      {/* <div className="text-[#333] font-medium text-base mb-2">Sponsored post</div> */}
       <div className="relative w-full h-[400px] rounded-lg overflow-hidden">
         {/* Main Image */}
         <div className="absolute inset-0 transition-opacity duration-500">

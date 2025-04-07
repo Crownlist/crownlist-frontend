@@ -202,8 +202,8 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <main className="flex flex-col-reverse md:flex-row gap-3 md:gap-12  justify-between py-6  mx-auto w-full container max-md:px-4">
-          <div className=" py-4 flex flex-col max-w-4xl">
+        <main className="flex flex-col-reverse gap-3 md:gap-12  justify-between py-6  mx-auto w-full container max-md:px-4">
+          <div className=" py-4 flex flex-col  md:w-full">
             {/* Popular Items */}
             <ProductSection
               title="Trending Now"

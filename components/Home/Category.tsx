@@ -30,7 +30,8 @@ export default function CategoryGrid() {
 
   return (
     <div className="py-8 md:px-4  mx-auto justify-center  sticky inset-18 z-[9]">
-      <div className="flex flex-wrap justify-start gap-x-2 md:gap-x-4 gap-y-8">
+        <div className="text-black font-semibold text-lg  mb-5">Category Picks</div>
+      <div className="flex flex-wrap justify-center md:justify-start gap-x-2 md:gap-x-4 gap-y-8">
         {categories.map((cat) => {
           const isActive = pathname === "/product" // Change logic if needed
           return (
