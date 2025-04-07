@@ -13,16 +13,9 @@ import SponsoredPost from "@/components/Home/SponsoredPost"
 import Footer from "@/components/Footer"
 import ProductSection from "@/components/Home/ProductSection"
 import { useEffect, useRef, useState } from "react"
+import CategoryGrid from "@/components/Home/Category"
 
-const categories = [
-  { name: 'Properties', posts: '2,392,915', icon: '🏠' },
-  { name: 'Phone and tablets', posts: '8,238', icon: '💻' },
-  { name: 'Fashion', posts: '8,238', icon: '👜' },
-  { name: 'Electronics', posts: '8,238', icon: '🔌' },
-  { name: 'Cars', posts: '0', icon: '🚗', status: 'Coming soon' },
-  { name: 'Jobs', posts: '0', icon: '💼', status: 'Coming soon' },
-  { name: 'Services', posts: '0', icon: '🔧', status: 'Coming soon' },
-];
+
 
 // Sample data matching the UI in the image
 const popularItems = [
@@ -209,7 +202,7 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <main className="flex flex-row justify-between py-6  mx-auto w-full container max-md:px-4">
+        <main className="flex flex-col-reverse md:flex-row gap-3 md:gap-12  justify-between py-6  mx-auto w-full container max-md:px-4">
           <div className=" py-4 flex flex-col max-w-4xl">
             {/* Popular Items */}
             <ProductSection
@@ -248,8 +241,11 @@ export default function Home() {
             />
           </div>
           {/* <div>Categories Dropdown</div> */}
+          <div className="relative">
+            <CategoryGrid/>
+          </div>
           {/* Sidebar */}
-          <div className={`hidden sm:flex w-[290px]  lg:w-[320px] ${isSticky ? "fixed top-25 right-0 lg:right[190px]" : "relative"}`}>
+          {/* <div className={`hidden sm:flex w-[290px]  lg:w-[320px] ${isSticky ? "fixed top-25 right-0 lg:right[190px]" : "relative"}`}>
           <div className="">
             <div className={`bg-white rounded-lg  p-5 w-[290px] md:w-[310px] lg:w-[320px] shadow-md ${isSticky ? "" : " absolute top-[-85px] md:top-[-120px]  right-[-38px] md:right-[-15px] "}`}>
               <div className="flex justify-center items-center gap-2 mb-6 p-5">
@@ -290,7 +286,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          </div>
+          </div> */}
         </main>
       </div>
       <Footer />
