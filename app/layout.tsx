@@ -2,7 +2,7 @@ import type React from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
-// import { Toaster } from "react-hot-toast"
+import Head from "next/head"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,6 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head>
+        <meta name="theme-color" content="#1F058F" />
+        <meta name="msapplication-navbutton-color" content="#1F058F" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="#1F058F" />
+      </Head>
       <body className={inter.className}>
       {/* <Toaster position="top-center" /> */}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>

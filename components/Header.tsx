@@ -290,7 +290,7 @@ const Header = ({ hidden }: props) => {
 
                   <Button
                     size="sm"
-                    className="bg-[#141414] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
+                    className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
                     onClick={handleSearch}
                   >
                     Search
