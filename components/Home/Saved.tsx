@@ -82,8 +82,8 @@ export default function Saved() {
 
         <div className="space-y-6">
           {savedItems.map((item) => (
-            <Link href='/product'>
-            <div key={item.id} className="flex flex-col sm:flex-row gap-4 border p-4 rounded-xl bg-white mb-2">
+            <Link href='/product' key={item.id}>
+            <div  className="flex flex-col sm:flex-row gap-4 border p-4 rounded-xl bg-white mb-2">
               <Image
                 src={item.image}
                 alt={item.title}
