@@ -1,6 +1,6 @@
 /* eslint-disable */
 import Footer from "@/components/Footer"
-import Header from "@/components/Header"
+import Header from "@/components/Header1"
 import SearchCategory from "@/components/Home/SearchCategory"
 
 interface PageProps {

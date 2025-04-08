@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 
 const Hero = () => {
   const [search, setSearch] = useState("")
+  const [searchCountry, setSearchCountry] = useState("")
   const [value, setValue] = useState("")
   const [open, setOpen] = useState(false)
   const [filteredCountries, setFilteredCountries] = useState(countries)
@@ -22,7 +23,7 @@ const Hero = () => {
   const router = useRouter();
 
   const handleSearch = () =>{
-    if(search == '' || value == ""){
+    if(search == '' || searchCountry == ""){
       router.push('/search')
     }
     else{
@@ -40,12 +41,12 @@ const Hero = () => {
   }, [])
 
   useEffect(() => {
-    if (search) {
-      setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(search.toLowerCase())))
+    if (searchCountry) {
+      setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(searchCountry.toLowerCase())))
     } else {
       setFilteredCountries(countries)
     }
-  }, [search])
+  }, [searchCountry])
 
   // Auto-slide functionality
   useEffect(() => {
@@ -150,8 +151,8 @@ const Hero = () => {
                   <div className="mb-2">
                     <Input
                       placeholder="Search country..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
+                      value={searchCountry}
+                      onChange={(e) => setSearchCountry(e.target.value)}
                       className="h-9"
                     />
                   </div>
@@ -221,7 +222,7 @@ const Hero = () => {
       </div>
 
       <button
-        className="absolute left-2 sm:left-6 md:left-10 lg:left-14 top-1/2 -translate-y-1/2 w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] rounded-full bg-black/30 hover:bg-black/50 border-none text-white cursor-pointer transition-all z-20 flex items-center justify-center"
+        className="max-sm:hidden absolute left-2 sm:left-6 md:left-10 lg:left-14 top-1/2 -translate-y-1/2 w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] rounded-full bg-black/30 hover:bg-black/50 border-none text-white cursor-pointer transition-all z-20 flex items-center justify-center"
         onClick={goToPrevSlide}
         aria-label="Previous slide"
       >
@@ -241,7 +242,7 @@ const Hero = () => {
       </button>
 
       <button
-        className="absolute right-2 sm:right-6 md:right-10 lg:right-14 top-1/2 -translate-y-1/2 w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] rounded-full bg-black/30 hover:bg-black/50 border-none text-white cursor-pointer transition-all z-20 flex items-center justify-center"
+        className="max-sm:hidden absolute right-2 sm:right-6 md:right-10 lg:right-14 top-1/2 -translate-y-1/2 w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] rounded-full bg-black/30 hover:bg-black/50 border-none text-white cursor-pointer transition-all z-20 flex items-center justify-center"
         onClick={goToNextSlide}
         aria-label="Next slide"
       >
