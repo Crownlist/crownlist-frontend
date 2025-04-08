@@ -43,15 +43,15 @@ export default function Footer() {
       </div>
 
       {/* Main Footer */}
-      <div className="bg-black text-white py-8">
+      <div className="bg-black text-white py-8 max-sm:px-2">
         <div className="container mx-auto max-md:px-3 ">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 pb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-8">
             {/* Logo and Tagline */}
             <div className="md:col-span-1">
               <Image src="/assets/icons/Logo.svg" width={30} height={30} alt="Joelist Logo" />
               <p className="mt-4 text-sm text-gray-400">Joelist your number one product listing company</p>
             </div>
-
+            
             {/* Company Links */}
             <div>
               <h3 className="font-medium mb-4">Company</h3>
@@ -117,7 +117,11 @@ export default function Footer() {
                 </div>
               </div>
 
-              <h3 className="font-medium mt-6 mb-2">Socials</h3>
+              
+            </div>
+
+            <div>
+            <h3 className="font-medium  mb-4">Socials</h3>
               <div className="flex space-x-4">
                 <Link href="#" className="text-gray-400 hover:text-white transition-colors">
                   <Twitter size={20} />

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import ProductCard from "@/components/Home/Product-card"
 import SectionHeader from "@/components/Home/Section-header"
-import Header from "@/components/Header"
+import Header from "@/components/Header1"
 import Hero from "@/components/Home/Hero"
 import SponsoredPost from "@/components/Home/SponsoredPost"
 import Footer from "@/components/Footer"
@@ -220,11 +220,14 @@ export default function Home() {
             </div>
 
             {/* Services you might need */}
-            <ProductSection title="Services you might need" products={servicesItems} initialView="grid" />
+            <ProductSection title="Featured Electronics" products={servicesItems} initialView="grid" 
+            showSeeMore
+            onSeeMoreClick={() => console.log("See more clicked")}
+            />
 
             {/* Phones & tablets */}
             <ProductSection
-              title="Phones & tablets"
+              title="Featured Phones & tablets"
               products={phonesItems}
               initialView="grid"
               showSeeMore
@@ -233,7 +236,7 @@ export default function Home() {
 
             {/* Properties */}
             <ProductSection
-              title="Properties"
+              title="Featured Properties"
               products={propertiesItems}
               initialView="grid"
               showSeeMore

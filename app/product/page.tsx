@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, Heart, ChevronDown, ChevronUp, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Header from "@/components/Header"
+import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
 import ProductDetails from "@/components/Home/ProductDetails"
