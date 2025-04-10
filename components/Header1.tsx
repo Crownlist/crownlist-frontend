@@ -105,19 +105,19 @@ const Header = ({ hidden }: props) => {
 
                 <Search size={16} color="#141414" className="absolute top-3 left-4" />
 
-                <Popover open={open} onOpenChange={setOpen}>
+                <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       role="combobox"
-                      aria-expanded={open}
+                      // aria-expanded={open}
                       className=" h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
                     >
                       {value ? countries.find((country) => country.name === value)?.name : "kwara..."}
                       <ChevronsUpDownIcon className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-2">
+                  <PopoverContent className="w-[200px] p-2  z-[999] ">
                     <div className="mb-2">
                       <Input
                         placeholder="Search country..."
@@ -268,7 +268,7 @@ const Header = ({ hidden }: props) => {
 
 
         {/* Original Header with Responsive Classes */}
-        <div className=" mx-auto py-1 w-full">
+        <div className=" mx-auto py-1 pt-2 w-full">
           <div className="hidden md:flex  justify-between w-full">
             <div className="flex items-center gap-7">
               <div className="flex items-center gap-1.5">
@@ -302,7 +302,7 @@ const Header = ({ hidden }: props) => {
           </div>
           <div className="  bg-white max-md:container ">
             <div className="  flex justify-between items-center w-full gap-10 ">
-              <div className="w-full py-2 md:pt-2 md:pb-1 flex items-center justify-between md:gap-8">
+              <div className="w-full py-2 md:pt-1 md:pb-1 flex items-center justify-between md:gap-8">
                 {/* Mobile Menu Toggle Button */}
                 <Button
                   variant="ghost"
@@ -318,7 +318,7 @@ const Header = ({ hidden }: props) => {
                   </div>
                 </Button>
 
-                <Link href="/" className="max-md:pr-3">
+                <Link href="/" className="max-md:pr-3 max-sm:mt-1">
                   <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Facebook" />
                 </Link>
 
