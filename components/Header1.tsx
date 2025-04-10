@@ -318,14 +318,14 @@ const Header = ({ hidden }: props) => {
                   </div>
                 </Button>
 
-                <Link href="/" className="pr-3">
+                <Link href="/" className="max-md:pr-3">
                   <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Facebook" />
                 </Link>
 
                 {!hidden &&
-                  <div className="hidden md:flex w-full h-10 min-w-[560px] items-start relative">
+                  <div className="hidden md:flex w-full h-10 items-start relative">
                     <Input
-                      className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-5 ps-10 h-full placeholder:text-[#141414]"
+                      className="border border-[#D6D6D6] rounded w-full xl:max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-1 xl:px-10 ps-10 h-full placeholder:text-[#141414]"
                       placeholder="Search"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
@@ -339,9 +339,14 @@ const Header = ({ hidden }: props) => {
                           variant="outline"
                           role="combobox"
                           aria-expanded={open}
-                          className="w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
+                          className="xl:w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
                         >
+                          <div className='hidden xl:flex'>
                           {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
+                          </div>
+                          <div className='hidden max-xl:flex'>
+                          {value ? countries.find((country) => country.name === value)?.name : "Kwara"}
+                          </div>
                           <ChevronsUpDownIcon className="opacity-50" />
                         </Button>
                       </PopoverTrigger>

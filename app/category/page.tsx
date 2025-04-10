@@ -26,7 +26,7 @@ export default function CategoryPage() {
               <div className="md:w-[60%]">
                 <div className="flex flex-col md:flex-row w-full justify-between gap-3">
                   {/* Property Column */}
-                  <div className="flex flex-row  w-full justify-around ">
+                  <div className="flex flex-row  w-full justify-around gap-3 ">
                   <div className="space-y-5">
                     <h3 className="text-lg font-medium text-gray-800">Property</h3>
                     <div className="space-y-4">
@@ -62,7 +62,7 @@ export default function CategoryPage() {
                   </div>
                   </div>
 
-                  <div className="flex flex-row  w-full justify-around">
+                  <div className="flex flex-row  w-full justify-around gap-3">
                   {/* Fashion Column */}
 
                   <div className="space-y-5">
