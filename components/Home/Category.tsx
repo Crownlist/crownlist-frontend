@@ -46,7 +46,7 @@ export default function CategoryGrid() {
                         >
                             <div className="relative w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
                                 {/* <Image src={cat.icon} alt={cat.name} width={36} height={36} /> */}
-                                <span className="text-2xl">{cat.icon}</span>
+                                <span className="text-3xl">{cat.icon}</span>
                                 {cat.hot && (
                                     <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full font-bold shadow">
                                         Hot

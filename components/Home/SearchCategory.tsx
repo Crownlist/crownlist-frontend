@@ -156,7 +156,7 @@ export default function PropertyPage() {
   )
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-6">
+    <div className=" mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Link href="/" className="hover:text-gray-700">
@@ -230,7 +230,8 @@ export default function PropertyPage() {
                 onClick={() => toggleFilter("property")}
               >
                 <span className="font-medium">
-                  Property type<span className="text-gray-400">(1)</span>
+                  Category
+                  <span className="text-gray-400 pl-1">(1)</span>
                 </span>
                 {expandedFilters.property ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
               </button>
@@ -282,7 +283,7 @@ export default function PropertyPage() {
                         onChange={(e) => setLocationSearch(e.target.value)}
                       />
                     </div>
-                    <button className="bg-black text-white px-4 py-1.5 text-sm">Search</button>
+                    <button className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white px-4 py-1.5 text-sm">Search</button>
                   </div>
 
                   {/* Location Checkboxes */}
@@ -396,7 +397,7 @@ export default function PropertyPage() {
         <div className="flex-1">
           {viewMode === "grid" ? (
             // Grid View (2 columns)
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {properties.map((property) => (
                 <div key={property.id} className="border rounded-lg overflow-hidden">
                    <Link href={'/product'}>

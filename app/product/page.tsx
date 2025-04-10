@@ -145,6 +145,7 @@ export default function ProductDetailPage() {
                     <span className="text-gray-700 truncate">Furnished room and parlor in Eleko Junction, Poygate for rent</span>
                 </div>
 
+
                 <div className="flex flex-col md:flex-row gap-4 md:justify-between w-full">
                     {/* Left Column - Product Images */}
                     <div className=" w-full   ">
@@ -397,7 +398,9 @@ export default function ProductDetailPage() {
                             </Accordion>
                         </div>
 
-
+                        <div className="flex md:hidden w-full h-full mt-2 md:justify-end">
+                            <ProductDetails />
+                        </div>
                         {/* You might also like these */}
                         <div className="mt-8">
                             <h3 className="font-medium text-lg mb-4">You might also like these</h3>
@@ -435,8 +438,8 @@ export default function ProductDetailPage() {
                     </div>
 
                     {/* Right Column - Product Details */}
-                    <div className="w-full h-full mt-2">
-                    <ProductDetails/>
+                    <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
+                        <ProductDetails />
                     </div>
                 </div>
             </div>

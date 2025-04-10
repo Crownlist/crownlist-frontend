@@ -23,6 +23,8 @@ const Hero = () => {
   const router = useRouter();
 
   const handleSearch = () =>{
+    console.log('search', search );
+    console.log('searchCountry', searchCountry);
     if(search == '' || searchCountry == ""){
       router.push('/search')
     }
@@ -172,8 +174,9 @@ const Hero = () => {
                             onClick={() => {
                               const newValue = country.name === value ? "" : country.name
                               setValue(newValue)
+                              setSearchCountry(newValue)
                               setOpen(false)
-                              setSearch("")
+                              // setSearch("")
                             }}
                           >
                             <Image

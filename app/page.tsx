@@ -83,6 +83,26 @@ const servicesItems = [
     distance: "5km away",
     labels: ["Furniture", "Outdoor"],
   },
+  {
+    image: "/product3.png",
+    title: "Women thrift",
+    description: "Brand new thrift clothes for men. All sizes available.",
+    price: "₦75,000",
+    time: "2 hours ago",
+    location: "Badagry, Lagos",
+    distance: "3km away",
+    labels: ["Clothing", "Fashion", "Men"],
+  },
+  {
+    image: "/product4.png",
+    title: "Men shirts",
+    description: "Brand new thrift clothes for men. All sizes available.",
+    price: "₦75,000",
+    time: "2 hours ago",
+    location: "Badagry, Lagos",
+    distance: "3km away",
+    labels: ["Clothing", "Fashion", "Men"],
+  },
 ]
 
 const phonesItems = [
@@ -105,6 +125,26 @@ const phonesItems = [
     location: "VI, Lagos",
     distance: "7km away",
     labels: ["Electronics", "Laptop", "Gadget"],
+  },
+  {
+    image: "/product4.png",
+    title: "Men shirts",
+    description: "Brand new thrift clothes for men. All sizes available.",
+    price: "₦75,000",
+    time: "2 hours ago",
+    location: "Badagry, Lagos",
+    distance: "3km away",
+    labels: ["Clothing", "Fashion", "Men"],
+  },
+  {
+    image: "/product2.png",
+    title: "Lenovo PC",
+    description: "Brand new thrift clothes for men. All sizes available.",
+    price: "₦75,000",
+    time: "2 hours ago",
+    location: "Badagry, Lagos",
+    distance: "3km away",
+    labels: ["Clothing", "Fashion", "Men"],
   },
 ]
 
@@ -130,6 +170,29 @@ const propertiesItems = [
     distance: "5km away",
     labels: ["Gaming", "Electronics"],
   },
+  {
+    image: "/product3.png",
+    title: "Samsung s25 Ultra",
+    description:
+      "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+    price: "₦65,000",
+    time: "3 hours ago",
+    location: "Ikeja, Lagos",
+    distance: "5km away",
+    labels: ["Gaming", "Electronics"],
+  },
+  {
+    image: "/product2.png",
+    title: "Small space PC gaming",
+    description:
+      "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+    price: "₦65,000",
+    time: "3 hours ago",
+    location: "Ikeja, Lagos",
+    distance: "5km away",
+    labels: ["Gaming", "Electronics"],
+  },
+
 ]
 
 // Sponsored items data
