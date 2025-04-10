@@ -36,15 +36,15 @@ const Header = ({ hidden }: props) => {
   const pathname = usePathname()
 
 
-  const handleSearch = () =>{
-    if(search == '' || value == ""){
+  const handleSearch = () => {
+    if (search == '' || searchCountry == "") {
       router.push('/search')
     }
-    else{
+    else {
       router.push('/search/kwara')
     }
   }
-  
+
   // console.log(pathname)
   const handleLogin = (e: any) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ const Header = ({ hidden }: props) => {
     e.preventDefault()
     router.push('/auth/signup')
   }
-  const handleCat = (e :any) =>{
+  const handleCat = (e: any) => {
     e.preventDefault();
     router.push("/category")
   }
@@ -71,16 +71,16 @@ const Header = ({ hidden }: props) => {
 
   return (
     <nav className="bg-white sticky inset-0 z-[999] shadow-sm ">
-      <div className='container mx-auto flex items-center justify-between gap-2'>
+      <div className='container w-full mx-auto flex items-center justify-between gap-2'>
         {/* Mobile Menu */}
 
         <div
           className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-sm transform transition-transform duration-300 ease-in-out 
     ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:hidden h-screen overflow-y-auto`}
         >
-          <div className="h-full flex flex-col p-6">
+          <div className="h-full flex flex-col  gap-3">
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 p-6">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
                 <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Logo" />
               </Link>
@@ -93,70 +93,169 @@ const Header = ({ hidden }: props) => {
               </Button>
             </div>
 
-            {/* Search Input */}
-            <div className="relative mb-6">
-              <Input
-                className="border border-[#D6D6D6] rounded w-full py-2 px-4 ps-9 placeholder:text-[#141414] text-sm"
-                placeholder="Search"
-              />
-              <Search size={16} color="#141414" className="absolute top-2.5 left-3" />
-            </div>
+            {/* Search Input on mobile */}
+            <div className="px-6">
+              <div className="flex w-full h-10 min-w-[100%] items-start relative ">
+                <Input
+                  className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-3 ps-10 h-full placeholder:text-[#141414]"
+                  placeholder="Search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
 
+                <Search size={16} color="#141414" className="absolute top-3 left-4" />
+
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className=" h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
+                    >
+                      {value ? countries.find((country) => country.name === value)?.name : "kwara..."}
+                      <ChevronsUpDownIcon className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-2">
+                    <div className="mb-2">
+                      <Input
+                        placeholder="Search country..."
+                        value={searchCountry}
+                        onChange={(e) => setSearchCountry(e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="max-h-[300px] overflow-y-auto">
+                      {filteredCountries.length === 0 ? (
+                        <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
+                      ) : (
+                        <div className="space-y-1">
+                          {filteredCountries.map((country, index) => (
+                            <div
+                              key={index}
+                              className={cn(
+                                "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
+                                value === country.name && "bg-muted",
+                              )}
+                              onClick={() => {
+                                const newValue = country.name === value ? "" : country.name
+                                setValue(newValue)
+                                setSearchCountry(newValue)
+                                setOpen(false)
+                                // setSearch("hahahah")
+                              }}
+                            >
+                              <Image
+                                src={country.flag || "/placeholder.svg"}
+                                alt={country.name}
+                                width={24}
+                                height={24}
+                                className="mr-2"
+                              />
+                              <span>{country.name}</span>
+                              {value === country.name && <Check className="ml-auto h-4 w-4" />}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
+                <Button
+                  size="sm"
+                  className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
+                  onClick={handleSearch}
+                >
+                  Search
+                </Button>
+              </div>
+            </div>
             {/* Navigation Links */}
-            <div className="space-y-4 mb-6">
-              <Link href="/category" className="block text-[#141414] font-medium text-sm" onClick={() => setMobileMenuOpen(false)}>
-                Category
+            <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-4  p-6">
+              <Link href='/category'
+                className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
+              >
+                <div className="flex flex-row gap-2 justify-start align-middle">
+                  <div className="flex ">
+                    <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
+                  </div>
+                  <div className="flex "> Category</div>
+                </div>
               </Link>
-              <Link href="#" className="block text-[#141414] font-medium text-[10px]" onClick={() => setMobileMenuOpen(false)}>
-                Post Product
+              <Link href='/'
+                className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
+              >
+                <div className="flex flex-row gap-2 align-middle items-center">
+                  <div className="flex items-center">
+                    <Image src={'/post.svg'} width={15} height={15} alt="'svg" />
+                  </div>
+                  <div className="flex align-middle items-center"> Post Product</div>
+                </div>
               </Link>
             </div>
 
-            {/* Auth Buttons */}
-            {!isLoggedIn && (
-              <div className="flex flex-col gap-3 mb-8">
-                <Button
-                  size="sm"
-                  className="border-none px-4 py-3 rounded-full text-[#141414] font-medium w-full"
-                  variant="outline"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Login
-                </Button>
-                <Button
-                  size="sm"
-                  className="px-4 py-3 rounded-full text-[#141414] font-medium w-full"
-                  variant="outline"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Sign up
-                </Button>
-              </div>
-            )}
+            {/* Auth Buttons on mobile */}
 
-            {/* Contact & Social Links */}
+
+            {/* Contact & Social Links on mobile */}
             <div className="mt-auto space-y-3">
-              <div className="flex items-center gap-2">
-                <Image src="/assets/icons/gmail.svg" width={20} height={20} alt="Gmail" />
-                <small className="text-[#131416] text-xs">Info@joelist.com.ng</small>
-              </div>
-              <div className="flex items-center gap-2">
-                <Image src="/assets/icons/google-maps.svg" width={20} height={20} alt="Google Maps" />
-                <small className="text-[#131416] text-xs">Kwara, Nigeria</small>
-              </div>
-              <div className="flex items-center gap-4 mt-2">
-                <Link href="#">
-                  <Image src="/assets/icons/twitter.svg" width={24} height={24} alt="Twitter" />
-                </Link>
-                <Link href="#">
-                  <Image src="/assets/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
-                </Link>
-                <Link href="#">
-                  <Image src="/assets/icons/instagram.svg" width={24} height={24} alt="Instagram" />
-                </Link>
-                <Link href="#">
-                  <Image src="/assets/icons/facebook.svg" width={24} height={24} alt="Facebook" />
-                </Link>
+              {!isLoggedIn && (
+                <div className="flex flex-col gap-5 mb-10 p-6">
+                  <div>
+                    If you already have an account, click <span>
+                     <Link href='/auth/login'
+                     className="text-[#2a0bc0]"> Login</Link>
+                    </span> to access your profile. If you’re a new user, click <span>
+                     <Link href='/auth/signup'
+                     className="text-[#2a0bc0]"> Sign Up</Link>
+                    </span> to create an account.
+                  </div>
+                  <div className="flex flex-row gap-4">
+                    <Button
+                      size="sm"
+                      className="border-none px-2 py-3 rounded-[99px] bg-[#1F058F] hover:bg-[#2a0bc0] text-white font-medium w-[90px]"
+                      variant="outline"
+                      onClick={handleLogin}
+                    >
+                      Login
+                    </Button>
+
+                    <Button size="sm" className="px-2 py-3 rounded-[99px] bg-white hover:bg-[#2a0bc0]  w-[90px] font-medium" variant="outline"
+                      onClick={handleSignUp}
+                    >
+                      Sign up
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className='bg-[#FAFAFA] p-6 w-full'>
+                <div className="flex flex-row gap-3">
+                  <div className="flex items-center gap-2">
+                    <Image src="/assets/icons/gmail.svg" width={20} height={20} alt="Gmail" />
+                    <small className="text-[#131416] text-xs">Info@joelist.com.ng</small>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Image src="/assets/icons/google-maps.svg" width={20} height={20} alt="Google Maps" />
+                    <small className="text-[#131416] text-xs">Kwara, Nigeria</small>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mt-2">
+                  <Link href="#">
+                    <Image src="/assets/icons/twitter.svg" width={24} height={24} alt="Twitter" />
+                  </Link>
+                  <Link href="#">
+                    <Image src="/assets/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
+                  </Link>
+                  <Link href="#">
+                    <Image src="/assets/icons/instagram.svg" width={24} height={24} alt="Instagram" />
+                  </Link>
+                  <Link href="#">
+                    <Image src="/assets/icons/facebook.svg" width={24} height={24} alt="Facebook" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -223,82 +322,84 @@ const Header = ({ hidden }: props) => {
                   <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Facebook" />
                 </Link>
 
-                {!hidden && <div className="hidden md:flex w-full h-10 min-w-[560px] items-start relative">
-                  <Input
-                    className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-5 ps-10 h-full placeholder:text-[#141414]"
-                    placeholder="Search"
-                    value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                  />
+                {!hidden &&
+                  <div className="hidden md:flex w-full h-10 min-w-[560px] items-start relative">
+                    <Input
+                      className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-5 ps-10 h-full placeholder:text-[#141414]"
+                      placeholder="Search"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
 
-                  <Search size={16} color="#141414" className="absolute top-3 left-4" />
+                    <Search size={16} color="#141414" className="absolute top-3 left-4" />
 
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
-                      >
-                        {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
-                        <ChevronsUpDownIcon className="opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-2">
-                      <div className="mb-2">
-                        <Input
-                          placeholder="Search country..."
-                          value={searchCountry}
-                          onChange={(e) => setSearchCountry(e.target.value)}
-                          className="h-9"
-                        />
-                      </div>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
+                        >
+                          {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
+                          <ChevronsUpDownIcon className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-2">
+                        <div className="mb-2">
+                          <Input
+                            placeholder="Search country..."
+                            value={searchCountry}
+                            onChange={(e) => setSearchCountry(e.target.value)}
+                            className="h-9"
+                          />
+                        </div>
 
-                      <div className="max-h-[300px] overflow-y-auto">
-                        {filteredCountries.length === 0 ? (
-                          <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
-                        ) : (
-                          <div className="space-y-1">
-                            {filteredCountries.map((country, index) => (
-                              <div
-                                key={index}
-                                className={cn(
-                                  "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
-                                  value === country.name && "bg-muted",
-                                )}
-                                onClick={() => {
-                                  const newValue = country.name === value ? "" : country.name
-                                  setValue(newValue)
-                                  setOpen(false)
-                                  setSearch("hahahah")
-                                }}
-                              >
-                                <Image
-                                  src={country.flag || "/placeholder.svg"}
-                                  alt={country.name}
-                                  width={24}
-                                  height={24}
-                                  className="mr-2"
-                                />
-                                <span>{country.name}</span>
-                                {value === country.name && <Check className="ml-auto h-4 w-4" />}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                        <div className="max-h-[300px] overflow-y-auto">
+                          {filteredCountries.length === 0 ? (
+                            <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
+                          ) : (
+                            <div className="space-y-1">
+                              {filteredCountries.map((country, index) => (
+                                <div
+                                  key={index}
+                                  className={cn(
+                                    "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
+                                    value === country.name && "bg-muted",
+                                  )}
+                                  onClick={() => {
+                                    const newValue = country.name === value ? "" : country.name
+                                    setValue(newValue)
+                                    setSearchCountry(newValue)
+                                    setOpen(false)
+                                    // setSearch("hahahah")
+                                  }}
+                                >
+                                  <Image
+                                    src={country.flag || "/placeholder.svg"}
+                                    alt={country.name}
+                                    width={24}
+                                    height={24}
+                                    className="mr-2"
+                                  />
+                                  <span>{country.name}</span>
+                                  {value === country.name && <Check className="ml-auto h-4 w-4" />}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
 
-                  <Button
-                    size="sm"
-                    className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
-                    onClick={handleSearch}
-                  >
-                    Search
-                  </Button>
-                </div>}
+                    <Button
+                      size="sm"
+                      className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
+                      onClick={handleSearch}
+                    >
+                      Search
+                    </Button>
+                  </div>}
               </div>
 
               {hidden &&
@@ -341,7 +442,7 @@ const Header = ({ hidden }: props) => {
                       size="sm"
                       className={`${pathname == '/category' ? 'border-2  border-b-[#141414] border-x-transparent border-t-transparent' : 'border-none'}  shadow-none px-2 py-1 rounded-none text-[#141414] font-medium `}
                       variant="outline"
-                      onClick={handleCat} 
+                      onClick={handleCat}
                     >
                       <div className="flex flex-row gap-1 align-middle">
                         <div className="flex items-center">

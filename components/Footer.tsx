@@ -34,7 +34,7 @@ export default function Footer() {
                 placeholder="Enter your email"
                 className="rounded-l-full rounded-r-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white"
               />
-              <Button className="rounded-r-full rounded-l-none bg-[#3B0DF2] hover:bg-[#2E0ABF] text-white border-0">
+              <Button className="rounded-r-full rounded-l-none bg-[#1F058F] hover:bg-[#2a0bc0] text-white border-0">
                 Subscribe
               </Button>
             </div>

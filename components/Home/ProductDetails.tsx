@@ -23,14 +23,14 @@ const ProductDetails = () => {
     }
 
     return (
-        <section className="w-full">
+        <section className="w-full max-w-2xl justify-end">
             <Toaster /> {/* Toast Notifications */}
             <div className=" w-full  mx-auto">
-                {/*  bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto */}
+                {/*  bg-white p-6 rounded-lg shadow-md md:shadow-lg w-full max-w-md mx-auto */}
                 {/* Toggle between Product Details and Request Call UI */}
                 {view === "default" && (
                     // ============= Product Details Card =============
-                    <div className="bg-white p-6 rounded-lg border w-full shadow-lg">
+                    <div className="bg-white p-6 rounded-lg border w-full shadow-md md:shadow-lg">
                         <h1 className="text-xl font-medium mb-4">Furnished room and parlor in Eleko Junction, Poygate for rent</h1>
 
                         {/* Seller Information */}
@@ -74,7 +74,7 @@ const ProductDetails = () => {
 
                         {/* Action Buttons */}
                         <div className="space-y-3">
-                            <Button className="w-full bg-black text-white hover:bg-gray-800"
+                            <Button className="w-full  text-white bg-[#1F058F] hover:bg-[#2a0bc0]"
                                 onClick={() => setView("requestCall")}
                             >Request call</Button>
                             <Button variant="outline" className="w-full"
@@ -153,7 +153,7 @@ const ProductDetails = () => {
                         {/* Request Call Button */}
                         <button
                             onClick={() => handleSubmit("Message sent")}
-                            className="bg-black text-white px-4 py-2 rounded-lg w-full"
+                            className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white px-4 py-2 rounded-lg w-full"
                         >
                             Request Call
                         </button>
@@ -198,7 +198,7 @@ const ProductDetails = () => {
                         >See Store</button>
                         <button
                             onClick={() => setView("sendMessage")}
-                            className="bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-gray-100 hover:text-black"
+                            className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white px-4 py-2 rounded-lg w-full "
                         >
                             Message Seller
                         </button>
@@ -219,7 +219,7 @@ const ProductDetails = () => {
                         <textarea placeholder="Message" className="border p-2 w-full mt-2" />
                         <button
                             onClick={() => handleSubmit("Message sent")}
-                             className="bg-black text-white px-4 py-2 rounded-lg w-full hover:bg-gray-100 hover:text-black mt-2"
+                             className=" text-white px-4 py-2 rounded-lg w-full bg-[#1F058F] hover:bg-[#2a0bc0] mt-2"
                         >
                             Send Message
                         </button>
