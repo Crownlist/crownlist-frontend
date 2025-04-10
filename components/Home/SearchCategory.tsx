@@ -168,13 +168,13 @@ export default function PropertyPage() {
 
       {/* Search Results Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-lg font-medium">
+        <h1 className="text-[13px] sm:text-lg font-medium">
           Search results - Property<span className="text-gray-500">(318321 result found)</span>
         </h1>
         <div className="flex items-center gap-4">
           {/* Sort Dropdown */}
-          <div className="flex items-center gap-2 text-sm relative">
-            <span className="text-gray-500">Sort by:</span>
+          <div className="flex items-center gap-2 text-[13px] max-sm:text-sm relative">
+            <span className="text-gray-500 ">Sort by:</span>
             <button className="font-medium flex items-center gap-1" onClick={toggleSortDropdown}>
               {sortOption}
               <ChevronDown size={14} className="ml-1" />
