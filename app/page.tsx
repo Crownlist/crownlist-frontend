@@ -14,6 +14,7 @@ import Footer from "@/components/Footer"
 import ProductSection from "@/components/Home/ProductSection"
 import { useEffect, useRef, useState } from "react"
 import CategoryGrid from "@/components/Home/Category"
+import { useRouter } from "next/navigation"
 
 
 
@@ -239,12 +240,16 @@ export default function Home() {
   ]
   const heroRef = useRef<HTMLDivElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const router = useRouter()
 
+  const handleSeeMore = () =>{
+    router.push('/product')
+  }
   useEffect(() => {
     const handleScroll = () => {
       if (heroRef.current) {
         const heroBottom = heroRef.current.getBoundingClientRect().bottom;
-        console.log(heroBottom)
+        // console.log(heroBottom)
         setIsSticky(heroBottom <= 186); // Stick when the hero is out of view
       }
     };
@@ -273,7 +278,7 @@ export default function Home() {
               products={popularItems}
               initialView="grid"
               showSeeMore
-              onSeeMoreClick={() => console.log("See more clicked")}
+              onSeeMoreClick={handleSeeMore}
             />
 
             {/* Sponsored Post */}
@@ -285,7 +290,7 @@ export default function Home() {
             {/* Services you might need */}
             <ProductSection title="Featured Electronics" products={servicesItems} initialView="grid" 
             showSeeMore
-            onSeeMoreClick={() => console.log("See more clicked")}
+            onSeeMoreClick={handleSeeMore}
             />
 
             {/* Phones & tablets */}
@@ -294,7 +299,7 @@ export default function Home() {
               products={phonesItems}
               initialView="grid"
               showSeeMore
-              onSeeMoreClick={() => console.log("See more clicked")}
+              onSeeMoreClick={handleSeeMore}
             />
 
             {/* Properties */}
@@ -303,7 +308,7 @@ export default function Home() {
               products={propertiesItems}
               initialView="grid"
               showSeeMore
-              onSeeMoreClick={() => console.log("See more clicked")}
+              onSeeMoreClick={handleSeeMore}
             />
           </div>
           {/* <div>Categories Dropdown</div> */}

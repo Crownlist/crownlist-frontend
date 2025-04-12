@@ -19,6 +19,12 @@ import {
 import { countries } from "@/constants/countries"
 import { cn } from "@/lib/utils"
 import { usePathname, useRouter } from "next/navigation"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 
 interface props {
@@ -35,6 +41,15 @@ const Header = ({ hidden }: props) => {
   const router = useRouter()
   const pathname = usePathname()
 
+  const categories = [
+    { name: "Phones & Tablets", icon: "/pandt.jpg", hot: true },
+    { name: "Electronics", icon: "/elect.jpg", hot: true },
+    { name: "Properties", icon: "/prop.jpg", hot: true },
+    { name: "Fashion", icon: "/fashion.jpg" },
+    { name: "Cars", icon: "/cars.jpg", isComingSoon: true },
+    { name: "Jobs", icon: "/jobs.jpg", isComingSoon: true },
+    { name: "Services", icon: "/serve.jpg", isComingSoon: true },
+  ]
 
   const handleSearch = () => {
     if (search == '' || searchCountry == "") {
@@ -113,7 +128,7 @@ const Header = ({ hidden }: props) => {
                       // aria-expanded={open}
                       className=" h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
                     >
-                      {value ? countries.find((country) => country.name === value)?.name : "kwara..."}
+                      {value ? countries.find((country) => country.name === value)?.name : "Select."}
                       <ChevronsUpDownIcon className="opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -175,16 +190,43 @@ const Header = ({ hidden }: props) => {
             </div>
             {/* Navigation Links */}
             <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-4  p-6">
-              <Link href='/category'
-                className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
-              >
-                <div className="flex flex-row gap-2 justify-start align-middle">
-                  <div className="flex ">
-                    <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
-                  </div>
-                  <div className="flex "> Category</div>
-                </div>
-              </Link>
+
+              <Accordion type="single" collapsible className="w-full border-transparent border-2 border-b-[#F5F5F5]">
+                <AccordionItem value="item-1" className={` rounded-none shadow-none  items-start  `}>
+                  <AccordionTrigger>
+                    <div className=" w-full text-start  ">
+                      <div className="flex flex-row gap-2 justify-start align-middle">
+                        <div className="flex ">
+                          <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
+                        </div>
+                        <div className="flex "> Category</div>
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="flex flex-col space-y-5 pl-2 pt-2 ">
+                      {categories.map((cat, idx) => (
+                        <div key={idx} className={`flex items-center justify-between ${idx == 6 ?  'border-none' : 'border-transparent border-2 border-b-[#F5F5F5]' } p-3`}>
+                          {/* Left side (icon + name) */}
+                          <div className="flex items-center gap-3">
+                            <Image src={cat.icon} width={25} height={25} alt={cat.name} className="rounded-md" />
+                            <span className="text-sm font-medium">{cat.name}</span>
+                          </div>
+
+                          {/* Right side (post count or coming soon) */}
+                          <div className="text-xs text-gray-500">
+                            {cat.isComingSoon ? (
+                              <span className="text-gray-400">Coming soon</span>
+                            ) : (
+                              <span>8,238 post</span> // You can customize post count if you want to make it dynamic
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
               <Link href='/'
                 className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
               >
@@ -206,11 +248,11 @@ const Header = ({ hidden }: props) => {
                 <div className="flex flex-col gap-5 mb-10 p-6">
                   <div>
                     If you already have an account, click <span>
-                     <Link href='/auth/login'
-                     className="text-[#2a0bc0]"> Login</Link>
+                      <Link href='/auth/login'
+                        className="text-[#2a0bc0]"> Login</Link>
                     </span> to access your profile. If you’re a new user, click <span>
-                     <Link href='/auth/signup'
-                     className="text-[#2a0bc0]"> Sign Up</Link>
+                      <Link href='/auth/signup'
+                        className="text-[#2a0bc0]"> Sign Up</Link>
                     </span> to create an account.
                   </div>
                   <div className="flex flex-row gap-4">
@@ -342,10 +384,10 @@ const Header = ({ hidden }: props) => {
                           className="xl:w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
                         >
                           <div className='hidden xl:flex'>
-                          {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
+                            {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
                           </div>
                           <div className='hidden max-xl:flex'>
-                          {value ? countries.find((country) => country.name === value)?.name : "Kwara"}
+                            {value ? countries.find((country) => country.name === value)?.name : "Select.."}
                           </div>
                           <ChevronsUpDownIcon className="opacity-50" />
                         </Button>
