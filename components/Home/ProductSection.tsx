@@ -43,7 +43,7 @@ export default function ProductSection({
       <div className={cn(
         // viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-4 gap-4" : "flex flex-col space-y-4"
         viewMode === "grid"
-      ? "grid grid-cols-2  md:grid-cols-4 gap-0.5 md:gap-4" // Grid mode: Two per row
+      ? "grid grid-cols-2  sm:grid-cols-3 lg:grid-cols-4 gap-0.5 md:gap-4" // Grid mode: Two per row
       : "flex flex-col space-y-4" // List mode remains unchanged'
       
         )}>

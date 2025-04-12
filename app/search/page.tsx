@@ -21,7 +21,7 @@ export default function SearchPage() {
                             Home
                         </Link>
                         <ChevronRight size={16} />
-                        <span className="text-gray-700">Property</span>
+                        <span className="text-gray-700">Search</span>
                     </div>
                     <div className="flex flex-row gap-0">
                         <p className="font-semibold">Search results - Property </p>

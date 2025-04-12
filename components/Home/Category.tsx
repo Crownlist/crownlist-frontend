@@ -17,13 +17,13 @@ import Image from "next/image"
 //   ];
 
 const categories = [
-    { name: "Phones & Tablets", icon: "/video.png", hot: true },
-    { name: "Electronics", icon: "/lab-scale.png", hot: true },
-    { name: "Properties", icon: "/protection.png", hot: true },
-    { name: "Fashion", icon: "/dress.png" },
-    { name: "Cars", icon: "/car.png", isComingSoon: true },
-    { name: "Jobs", icon: "/new-job.png", isComingSoon: true },
-    { name: "Services", icon: "/service.png", isComingSoon: true },
+    { name: "Phones & Tablets", icon: "/pandt.jpg", hot: true },
+    { name: "Electronics", icon: "/lappy.jpg", hot: true },
+    { name: "Properties", icon: "/prop.jpg", hot: true },
+    { name: "Fashion", icon: "/fashion.jpg" },
+    { name: "Cars", icon: "/cars.jpg", isComingSoon: true },
+    { name: "Jobs", icon: "/jobs.jpg", isComingSoon: true },
+    { name: "Services", icon: "/serve.jpg", isComingSoon: true },
 ]
 
 export default function CategoryGrid() {

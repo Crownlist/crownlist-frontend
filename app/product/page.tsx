@@ -135,11 +135,11 @@ export default function ProductDetailPage() {
                     </Link>
                     <ChevronRight size={14} />
                     <Link href="/property" className="hover:text-gray-700">
-                        Property
+                       Category
                     </Link>
                     <ChevronRight size={14} />
                     <Link href="/property?type=student" className="hover:text-gray-700">
-                        Student
+                        Property
                     </Link>
                     <ChevronRight size={14} />
                     <span className="text-gray-700 truncate">Furnished room and parlor in Eleko Junction, Poygate for rent</span>

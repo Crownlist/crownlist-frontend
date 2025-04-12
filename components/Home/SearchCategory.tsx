@@ -58,7 +58,7 @@ export default function PropertyPage() {
   const sortOptions = ["All", "Newest first", "Lowest price", "Highest price"]
 
   // Property type options
-  const propertyTypes = ["Student", "Personal", "Office"]
+  const propertyTypes = ["Phone and tablet", "Electronic", "Property", "Fashion"]
 
   // Location options
   const locations = ["Abuja", "Oyo", "Kwara", "Jos", "Lagos", "Ibadan", "Port Harcourt", "Kano", "Enugu", "Kaduna"]
@@ -163,7 +163,7 @@ export default function PropertyPage() {
           Home
         </Link>
         <ChevronRight size={16} />
-        <span className="text-gray-700">Property</span>
+        <span className="text-gray-700">Search</span>
       </div>
 
       {/* Search Results Header */}
@@ -260,7 +260,7 @@ export default function PropertyPage() {
 
             {/* Location */}
             <div className="border-b pb-4">
-              <button
+                <button
                 className="flex items-center justify-between w-full text-left mb-4"
                 onClick={() => toggleFilter("location")}
               >
