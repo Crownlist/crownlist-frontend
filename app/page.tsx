@@ -15,6 +15,7 @@ import ProductSection from "@/components/Home/ProductSection"
 import { useEffect, useRef, useState } from "react"
 import CategoryGrid from "@/components/Home/Category"
 import { useRouter } from "next/navigation"
+import CategoryScroll from "@/components/Home/CategoryScroll"
 
 
 
@@ -311,8 +312,11 @@ export default function Home() {
             />
           </div>
           {/* <div>Categories Dropdown</div> */}
-          <div className="relative">
+          <div className="relative sm:hidden">
             <CategoryGrid/>
+          </div>
+          <div className="relative max-sm:hidden">
+            <CategoryScroll />
           </div>
           {/* Sidebar */}
           {/* <div className={`hidden sm:flex w-[290px]  lg:w-[320px] ${isSticky ? "fixed top-25 right-0 lg:right[190px]" : "relative"}`}>
