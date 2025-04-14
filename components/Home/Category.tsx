@@ -16,6 +16,7 @@ import Image from "next/image"
 //     { name: 'Services', posts: '0', icon: '🔧', status: 'Coming soon' },
 //   ];
 
+
 const categories = [
     { name: "Phones & Tablets", icon: "/video.png", hot: true },
     { name: "Electronics", icon: "/lab-scale.png", hot: true },
