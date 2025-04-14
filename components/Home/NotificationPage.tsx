@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 
 
-const savedItems = [
+const savedNotification = [
   {
     id: 1,
     title: "Promotion",
@@ -49,7 +49,7 @@ export default function NotificationPage() {
   }
 
   const handleMarkAllAsRead = () => {
-    const allIds = savedItems.map((item) => item.id)
+    const allIds = savedNotification.map((item) => item.id)
     setOpenedNotifications(new Set(allIds))
   }
 
@@ -103,7 +103,7 @@ export default function NotificationPage() {
        </div>
 
         <div className="space-y-6">
-          {savedItems.map((item) => (
+          {savedNotification.map((item) => (
             <Link href='' key={item.id} onClick={() => handleNotificationClick(item.id)}>
             <div  className="flex flex-col sm:flex-row gap-4 border p-4 rounded-xl bg-white mb-2">
               <Image
