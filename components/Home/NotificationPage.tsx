@@ -61,7 +61,7 @@ export default function NotificationPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <div className=" flex flex-col md:flex-row">
       {/* Top nav for small screen */}
       <div className="md:hidden p-4 border-b flex justify-between items-center">
         <h1 className="font-semibold text-lg">Menu</h1>
