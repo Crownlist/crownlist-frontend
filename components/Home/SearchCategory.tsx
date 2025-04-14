@@ -58,7 +58,7 @@ export default function PropertyPage() {
   const sortOptions = ["All", "Newest first", "Lowest price", "Highest price"]
 
   // Property type options
-  const propertyTypes = ["Student", "Personal", "Office"]
+  const propertyTypes = ["Phone and tablet", "Electronic", "Property", "Fashion"]
 
   // Location options
   const locations = ["Abuja", "Oyo", "Kwara", "Jos", "Lagos", "Ibadan", "Port Harcourt", "Kano", "Enugu", "Kaduna"]
@@ -156,25 +156,25 @@ export default function PropertyPage() {
   )
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-6">
+    <div className=" mx-auto px-4 py-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Link href="/" className="hover:text-gray-700">
           Home
         </Link>
         <ChevronRight size={16} />
-        <span className="text-gray-700">Property</span>
+        <span className="text-gray-700">Search</span>
       </div>
 
       {/* Search Results Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-lg font-medium">
+        <h1 className="text-[13px] sm:text-lg font-medium">
           Search results - Property<span className="text-gray-500">(318321 result found)</span>
         </h1>
         <div className="flex items-center gap-4">
           {/* Sort Dropdown */}
-          <div className="flex items-center gap-2 text-sm relative">
-            <span className="text-gray-500">Sort by:</span>
+          <div className="flex items-center gap-2 text-[13px] max-sm:text-sm relative">
+            <span className="text-gray-500 ">Sort by:</span>
             <button className="font-medium flex items-center gap-1" onClick={toggleSortDropdown}>
               {sortOption}
               <ChevronDown size={14} className="ml-1" />
@@ -230,7 +230,8 @@ export default function PropertyPage() {
                 onClick={() => toggleFilter("property")}
               >
                 <span className="font-medium">
-                  Property type<span className="text-gray-400">(1)</span>
+                  Category
+                  <span className="text-gray-400 pl-1">(1)</span>
                 </span>
                 {expandedFilters.property ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
               </button>
@@ -259,7 +260,7 @@ export default function PropertyPage() {
 
             {/* Location */}
             <div className="border-b pb-4">
-              <button
+                <button
                 className="flex items-center justify-between w-full text-left mb-4"
                 onClick={() => toggleFilter("location")}
               >
@@ -282,7 +283,7 @@ export default function PropertyPage() {
                         onChange={(e) => setLocationSearch(e.target.value)}
                       />
                     </div>
-                    <button className="bg-black text-white px-4 py-1.5 text-sm">Search</button>
+                    <button className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white px-4 py-1.5 text-sm">Search</button>
                   </div>
 
                   {/* Location Checkboxes */}
@@ -396,7 +397,7 @@ export default function PropertyPage() {
         <div className="flex-1">
           {viewMode === "grid" ? (
             // Grid View (2 columns)
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {properties.map((property) => (
                 <div key={property.id} className="border rounded-lg overflow-hidden">
                    <Link href={'/product'}>

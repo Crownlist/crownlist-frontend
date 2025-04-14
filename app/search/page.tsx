@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight,  Upload } from "lucide-react"
+import { ChevronRight, Upload } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 // import { Checkbox } from "@/components/ui/checkbox"
@@ -21,7 +21,7 @@ export default function SearchPage() {
                             Home
                         </Link>
                         <ChevronRight size={16} />
-                        <span className="text-gray-700">Property</span>
+                        <span className="text-gray-700">Search</span>
                     </div>
                     <div className="flex flex-row gap-0">
                         <p className="font-semibold">Search results - Property </p>
@@ -109,7 +109,10 @@ export default function SearchPage() {
                                             <label className="block mb-1 text-sm">Description</label>
                                             <Textarea className="w-full min-h-[100px]" />
                                         </div>
-                                        <Button className="w-full bg-black hover:bg-gray-800 text-white mt-3">Request product</Button>
+                                        <div className="flex w-full justify-center">
+                                            <Button className="flex w-full justify-center max-w-xl md:p-6 items-center bg-[#1F058F] hover:bg-[#2a0bc0] text-white mt-3  ">
+                                                Request product</Button>
+                                        </div>
                                     </form>
                                 </div>
                                 <div className="w-full h-auto relative md:w-1/2 p-6 ">

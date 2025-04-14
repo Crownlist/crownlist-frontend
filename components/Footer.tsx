@@ -8,44 +8,37 @@ export default function Footer() {
   return (
     <footer className="w-full z-10">
       {/* Newsletter Section */}
-      <div className="relative w-full overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/fotter1.png"
-            alt="Background"
-            fill
-            className="object-cover brightness-[0.85] shadow  shadow-black"
-          />
+      <div className="relative w-full bg-[#1F058F]">
+       <div className='container mx-auto'>
+        <div className="flex flex-row w-full justify-between sm:justify-evenly md:gap-24 p-5 text-white align-middle items-center  ">
+           <div className="flex align-middle font-semibold">Have something to sell?</div>
+           <Button className="flex align-middle rounded-full bg-transparent   hover:bg-[#2a0bc0] text-white border-2 border-white">Post ads..</Button>
         </div>
-
-        <div className=" container relative max-md:px-4   mx-auto py-12 md:py-20 flex flex-col md:flex-row justify-between items-start gap-8">
-          <div className="max-w-xs">
-            <h2 className="text-3xl font-bold text-white">Sign up for news and special offers</h2>
-          </div>
-
-          <div className="max-w-md">
-            <p className="text-white mb-4">
-              Get the latest cars, car news, buying tips and updates straight to your inbox. Sign up to our newsletter
-              now.
-            </p>
-            <div className="flex">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="rounded-l-full rounded-r-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white"
-              />
-              <Button className="rounded-r-full rounded-l-none bg-[#3B0DF2] hover:bg-[#2E0ABF] text-white border-0">
-                Subscribe
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Main Footer */}
       <div className="bg-black text-white py-8 max-sm:px-2">
         <div className="container mx-auto max-md:px-3 ">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-8">
+        <div className='flex flex-col justify-between gap-2 border-b border-[#FFFFFF40] pb-4 md:flex-row'>
+          <div>
+            <h6 className='mb-0 font-semibold text-white'>
+              Join our newsletter
+            </h6>
+            <span className='text-sm text-white'>
+              We’ll send you a nice letter once per week. No spam.
+            </span>
+          </div>
+          <div className='flex items-center gap-3'>
+            <Input
+              placeholder='Enter your email'
+              type="email" 
+              className=' bg-gray-800 border-gray-700 text-white sm:min-w-[300px]'
+            />
+            <Button className="rounded-r-full rounded-l-full  bg-[#1F058F] hover:bg-[#2a0bc0] text-white border-0">Subscribe</Button>
+          </div>
+        </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-8 mt-3 ">
             {/* Logo and Tagline */}
             <div className="md:col-span-1">
               <Image src="/assets/icons/Logo.svg" width={30} height={30} alt="Joelist Logo" />
@@ -119,6 +112,15 @@ export default function Footer() {
 
               
             </div>
+
+            {/* <div>
+            <h3 className="font-medium mb-4">Newsletter</h3>
+            <p className="flex items-center gap-2 text-sm text-gray-400">Subscribe to our newsletter for updates on our projects and events.</p>
+            <div className="flex flex-col space-y-3">
+              <Input type="email" placeholder="Your email address" className="bg-gray-800 border-gray-700 text-white" />
+              <Button className="bg-primary hover:bg-primary-dark text-white">Subscribe</Button>
+            </div>
+          </div> */}
 
             <div>
             <h3 className="font-medium  mb-4">Socials</h3>

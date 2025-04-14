@@ -4,6 +4,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
+import Image from "next/image"
 
 // const categories1 = [
 //     { name: 'Properties', posts: '2,392,915', icon: '🏠' },
@@ -17,13 +18,13 @@ import clsx from "clsx"
 
 
 const categories = [
-    { name: "Phones & Tablets", icon: "💻", hot: true },
-    { name: "Electronics", icon: "🔌", hot: true },
-    { name: "Cars", icon: "🚗", hot: true },
-    { name: "Properties", icon: "🏠", hot: true },
-    { name: "Fashion", icon: "👜" },
-    { name: "Jobs", icon: "💼" },
-    { name: "Services", icon: "🔧" },
+    { name: "Phones & Tablets", icon: "/video.png", hot: true },
+    { name: "Electronics", icon: "/lab-scale.png", hot: true },
+    { name: "Properties", icon: "/protection.png", hot: true },
+    { name: "Fashion", icon: "/dress.png" },
+    { name: "Cars", icon: "/car.png", isComingSoon: true },
+    { name: "Jobs", icon: "/new-job.png", isComingSoon: true },
+    { name: "Services", icon: "/service.png", isComingSoon: true },
 ]
 
 export default function CategoryGrid() {
@@ -39,25 +40,32 @@ export default function CategoryGrid() {
                     return (
                         <Link
                             key={cat.name}
-                            href="/product"
+                            href={`${cat.isComingSoon ? '#' : '/product'}`}
                             className={clsx(
                                 "w-20 flex flex-col items-center text-center relative group transition-all hover:scale-105",
                                 isActive && cat.name === "Health & Beauty" && "bg-blue-100 rounded-xl py-1"
                             )}
                         >
                             <div className="relative w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
-                                {/* <Image src={cat.icon} alt={cat.name} width={36} height={36} /> */}
-                                <span className="text-2xl">{cat.icon}</span>
+                                <Image src={cat.icon} alt={cat.name} width={38} height={38} />
+                                {/* <span className="text-3xl">{cat.icon}</span> */}
                                 {cat.hot && (
                                     <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full font-bold shadow">
                                         Hot
                                     </span>
                                 )}
+                                {cat.isComingSoon && (
+                                    <div className="absolute z-10 w-max top-full mt-2 left-1/2 -translate-x-1/2 rounded bg-black text-white text-[10px] px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                        Coming soon
+                                    </div>
+                                )}
                             </div>
                             <p className="text-xs mt-2">{cat.name}</p>
                         </Link>
                     )
+
                 })}
+
             </div>
         </div>
     )
