@@ -22,7 +22,7 @@ const ChatBot = () => {
       )}
 
       {/* Floating Button */}
-      <Link href={'/'} target='blank' >
+      <Link href={'https://wa.link/j7i3df'} target='blank' >
       <button
         className="bg-white text-white p-3 rounded-full shadow-lg hover:bg-gray-200 transition" 
       >
