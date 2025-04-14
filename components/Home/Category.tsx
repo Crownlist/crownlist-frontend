@@ -15,6 +15,7 @@ import clsx from "clsx"
 //     { name: 'Services', posts: '0', icon: '🔧', status: 'Coming soon' },
 //   ];
 
+
 const categories = [
     { name: "Phones & Tablets", icon: "💻", hot: true },
     { name: "Electronics", icon: "🔌", hot: true },

@@ -17,7 +17,6 @@ import CategoryGrid from "@/components/Home/Category"
 
 
 
-// Sample data matching the UI in the image
 const popularItems = [
   {
     image: "/product1.png",
