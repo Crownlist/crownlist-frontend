@@ -50,14 +50,14 @@ const Header = ({ hidden }: props) => {
     { name: "Cars", icon: "/car.png", isComingSoon: true },
     { name: "Jobs", icon: "/new-job.png", isComingSoon: true },
     { name: "Services", icon: "/service.png", isComingSoon: true },
-]
+  ]
   const navItems = [
-   { title:"Notification", link:'/notification'},
-    {title:"Messages", link:'/messages'},
-    {title:"Saved", link:'/saved'},
-    {title:"Sellers hub", link:'/'},
-    {title:"User hub", link:'/'},
-    {title:"Logout", link:"/"},
+    { title: "Notification", link: '/notification' },
+    { title: "Messages", link: '/messages' },
+    { title: "Saved", link: '/saved' },
+    { title: "Sellers hub", link: '/' },
+    { title: "User hub", link: '/' },
+    { title: "Logout", link: "/" },
   ]
 
   const handleSearch = () => {
@@ -106,7 +106,7 @@ const Header = ({ hidden }: props) => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6 p-6">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Logo" />
+                <Image src="/newlogo.jpg" width={100} height={100} alt="Logo" />
               </Link>
               <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setMobileMenuOpen(false)}>
                 <X className="h-5 w-5"
@@ -215,7 +215,7 @@ const Header = ({ hidden }: props) => {
                   <AccordionContent>
                     <div className="flex flex-col space-y-5 pl-2 pt-2 ">
                       {categories.map((cat, idx) => (
-                        <div key={idx} className={`flex items-center justify-between ${idx == 6 ?  'border-none' : 'border-transparent border-2 border-b-[#F5F5F5]' } p-3`}>
+                        <div key={idx} className={`flex items-center justify-between ${idx == 6 ? 'border-none' : 'border-transparent border-2 border-b-[#F5F5F5]'} p-3`}>
                           {/* Left side (icon + name) */}
                           <div className="flex items-center gap-3">
                             <Image src={cat.icon} width={25} height={25} alt={cat.name} className="rounded-md" />
@@ -246,9 +246,47 @@ const Header = ({ hidden }: props) => {
                   <div className="flex align-middle items-center"> Post Product</div>
                 </div>
               </Link>
-            </div>
 
-            {/* Auth Buttons on mobile */}
+              {/* Auth Buttons on mobile */}
+              {isLoggedIn && (
+                <Accordion
+                  type="single"
+                  collapsible
+                   className="w-full border-transparent border-2 border-b-[#F5F5F5]"
+                  onValueChange={(value) => setOpenChev(value === "profile")}
+                >
+                  <AccordionItem value="profile" className="border-none">
+                    <AccordionTrigger className="flex items-center gap-2  hover:no-underline">
+                    <div className='flex flex-row gap-3 items-center'>
+                     <div className='flex'>
+                      <Image
+                        src="/profile.png"
+                        width={30}
+                        height={30}
+                        alt="Profile"
+                        className="rounded-full"
+                      />
+                      </div>
+                      <span className="text-sm font-medium flex">Jimoh Adesina</span>
+                      </div>
+                      {/* {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />} */}
+                    </AccordionTrigger>
+
+                    <AccordionContent className="pl-10 pt-1 space-y-2">
+                      {navItems.map((item, id) => (
+                        <Link
+                          key={id}
+                          href={item.link}
+                          className="block text-sm text-gray-700 hover:text-green-700 transition"
+                        >
+                          {item.title}
+                        </Link>
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              )}
+            </div>
 
 
             {/* Contact & Social Links on mobile */}
@@ -285,26 +323,26 @@ const Header = ({ hidden }: props) => {
               <div className='bg-[#FAFAFA] p-6 w-full'>
                 <div className="flex flex-row gap-3">
                   <div className="flex items-center gap-2">
-                    <Image src="/assets/icons/gmail.svg" width={20} height={20} alt="Gmail" />
+                    <Image src="/icons/gmail.svg" width={20} height={20} alt="Gmail" />
                     <small className="text-[#131416] text-xs">Info@joelist.com.ng</small>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Image src="/assets/icons/google-maps.svg" width={20} height={20} alt="Google Maps" />
+                    <Image src="/icons/maps.svg" width={20} height={20} alt="Google Maps" />
                     <small className="text-[#131416] text-xs">Kwara, Nigeria</small>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mt-2">
                   <Link href="#">
-                    <Image src="/assets/icons/twitter.svg" width={24} height={24} alt="Twitter" />
+                    <Image src="/icons/twitter.svg" width={24} height={24} alt="Twitter" />
                   </Link>
                   <Link href="#">
-                    <Image src="/assets/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
+                    <Image src="/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
                   </Link>
                   <Link href="#">
-                    <Image src="/assets/icons/instagram.svg" width={24} height={24} alt="Instagram" />
+                    <Image src="/icons/instagram.svg" width={24} height={24} alt="Instagram" />
                   </Link>
                   <Link href="#">
-                    <Image src="/assets/icons/facebook.svg" width={24} height={24} alt="Facebook" />
+                    <Image src="/icons/facebook.svg" width={24} height={24} alt="Facebook" />
                   </Link>
                 </div>
               </div>
@@ -323,37 +361,37 @@ const Header = ({ hidden }: props) => {
           <div className="hidden md:flex  justify-between w-full">
             <div className="flex items-center gap-7">
               <div className="flex items-center gap-1.5">
-                <Image src="/assets/icons/gmail.svg" width={24} height={24} alt="Gmail" />
+                <Image src="/icons/gmail.svg" width={24} height={24} alt="Gmail" />
                 <small className="text-[#131416] text-sm">Info@joelist.com.ng</small>
               </div>
 
               <div className="flex items-center gap-1.5">
-                <Image src="/assets/icons/google-maps.svg" width={24} height={24} alt="Google Maps" />
+                <Image src="/icons/maps.svg" width={24} height={24} alt="Google Maps" />
                 <small className="text-[#131416] text-sm">Kwara, Nigeria</small>
               </div>
             </div>
 
             <div className="flex items-center gap-5">
               <Link href="#">
-                <Image src="/assets/icons/twitter.svg" width={24} height={24} alt="Twitter" />
+                <Image src="/icons/twitter.svg" width={24} height={24} alt="Twitter" />
               </Link>
 
               <Link href="#">
-                <Image src="/assets/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
+                <Image src="/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
               </Link>
 
               <Link href="#">
-                <Image src="/assets/icons/instagram.svg" width={24} height={24} alt="Instagram" />
+                <Image src="/icons/instagram.svg" width={24} height={24} alt="Instagram" />
               </Link>
 
               <Link href="#">
-                <Image src="/assets/icons/Facebook.svg" width={24} height={24} alt="Facebook" />
+                <Image src="/icons/facebook.svg" width={24} height={24} alt="Facebook" />
               </Link>
             </div>
           </div>
           <div className="  bg-white max-md:container ">
-            <div className="  flex justify-between items-center w-full gap-10 ">
-              <div className="w-full py-2 md:pt-1 md:pb-1 flex items-center justify-between md:gap-8">
+            <div className="  flex  justify-between items-center w-full gap-10 ">
+              <div className="w-full py-2 md:pt-1 md:pb-1 flex max-sm:flex-row-reverse items-center justify-between md:gap-8">
                 {/* Mobile Menu Toggle Button */}
                 <Button
                   variant="ghost"
@@ -370,7 +408,7 @@ const Header = ({ hidden }: props) => {
                 </Button>
 
                 <Link href="/" className="max-md:pr-3 max-sm:mt-1">
-                  <Image src="/assets/icons/Logo.svg" width={40} height={40} alt="Facebook" />
+                  <Image src="/newlogo.jpg" width={100} height={100} alt="Logo" />
                 </Link>
 
                 {!hidden &&
@@ -524,30 +562,30 @@ const Header = ({ hidden }: props) => {
                 }
                 {isLoggedIn ? (
                   <DropdownMenu onOpenChange={setOpenChev}>
-                  <DropdownMenuTrigger className="flex  items-center gap-2 focus:outline-none">
-                    <Image
-                      src="/profile.png" // Replace with actual image path
-                      width={30}
-                      height={30}
-                      alt="Profile"
-                      className="rounded-full"
-                    />
-                    <span className="text-sm font-medium">Jimoh Adesina</span>
-                    {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  </DropdownMenuTrigger>
-            
-                  <DropdownMenuContent className="w-48 mt-2">
-                    {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
-                    {/* <DropdownMenuSeparator /> */}
-                    {navItems.map((item, id) => (
-                      <DropdownMenuItem key={id}>
-                        <Link href={item.link}>
-                        {item.title}
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    <DropdownMenuTrigger className="flex  items-center gap-2 focus:outline-none">
+                      <Image
+                        src="/profile.png" // Replace with actual image path
+                        width={30}
+                        height={30}
+                        alt="Profile"
+                        className="rounded-full"
+                      />
+                      <span className="text-sm font-medium">Jimoh Adesina</span>
+                      {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent className="w-48 mt-2">
+                      {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
+                      {/* <DropdownMenuSeparator /> */}
+                      {navItems.map((item, id) => (
+                        <DropdownMenuItem key={id}>
+                          <Link href={item.link}>
+                            {item.title}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
                   <div className="flex items-center gap-2 ">
                     <Button

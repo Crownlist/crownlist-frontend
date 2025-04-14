@@ -4,6 +4,7 @@ import { useState } from "react"
 import ProductCard from "./Product-card"
 import SectionHeader from "./Section-header"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface Product {
   image: string
@@ -67,10 +68,20 @@ export default function ProductSection({
       {showSeeMore && (
         <div className="flex justify-center mt-6">
           <button
-            className="text-xs font-medium text-gray-600 border border-gray-300 rounded-full px-6 py-1.5 hover:bg-gray-50 transition-colors"
+            className="text-xs font-medium text-gray-600 border border-gray-300 rounded-full px-6 py-1.5 hover:bg-gray-50 transition-colors flex flex-row  items-center gap-2 align-middle"
             onClick={onSeeMoreClick}
           >
+            <div className="flex items-center">
             See more
+            </div> 
+            <div className="flex items-center">
+              <Image
+                src={'/seemore.svg'}
+                height={15}
+                width={15}
+                alt="arrow"
+              />
+            </div>
           </button>
         </div>
       )}

@@ -67,14 +67,14 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
   return (
     <div className="w-full  md:flex md:justify-center">
       {/* <div className="text-[#333] font-medium text-base mb-2">Sponsored post</div> */}
-      <div className="relative w-full h-[400px] rounded-lg overflow-hidden max-w-3xl">
+      <div className="relative w-full h-[400px] rounded-lg overflow-hidden ">
         {/* Main Image */}
         <div className="absolute inset-0 transition-opacity duration-500">
           <Image
             src={currentItem.image || "/placeholder.svg"}
             alt={currentItem.title}
             fill
-            className="object-cover"
+            className=" boject-cover sm:object-contain"
             priority
           />
         </div>
