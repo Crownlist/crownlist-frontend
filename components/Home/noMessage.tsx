@@ -1,21 +1,9 @@
 "use client"
 
-import { cn } from "@/lib/utils"
-import { MenuIcon } from "lucide-react"
-import { useState } from "react"
 import Image from "next/image"
 import { Button } from "../ui/button"
 
 export default function NoMessagePage() {
-  const navItems = [
-    "Notification",
-    "Messages",
-    "Saved",
-    "Sellers hub",
-    "User hub",
-  ]
-
-  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="flex w-full h-full  md:flex-row bg-white">

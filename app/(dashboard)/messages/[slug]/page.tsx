@@ -1,5 +1,4 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header1";
+
 import Message from "@/components/Home/Message";
 
 

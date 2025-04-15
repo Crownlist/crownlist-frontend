@@ -5,28 +5,16 @@ import {
     SidebarInset,
     SidebarTrigger
   } from '@/components/ui/cu-sidebar'
-  import {  ChevronDown, } from 'lucide-react'
   import Image from 'next/image'
   import { AppSidebar } from '@/components/cu-app-sidebar'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import Link from 'next/link'
-// import { useState } from 'react'
-  
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
+
   export const metadata = {
     title: 'Customer | Dashboard'
   }
   
   export default function Layout({ children }: { children: React.ReactNode }) {
     // const [openChev, setOpenChev] = useState(false)
-
-    const navItems = [
-        // { title: "Home", link: '/' },
-        // // { title: "Messages", link: '/messages' },
-        // // { title: "Saved", link: '/saved' },
-        // // { title: "Sellers hub", link: '/' },
-        // // { title: "User hub", link: '/' },
-        // // { title: "Logout", link: "/" },
-      ]
     return (
       <SidebarCustomer>
         <AppSidebar />

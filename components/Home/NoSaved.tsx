@@ -1,21 +1,9 @@
 "use client"
 
-import { cn } from "@/lib/utils"
 import Link from "next/link"
-import { HeartIcon, MenuIcon } from "lucide-react"
-import { useState } from "react"
+import { HeartIcon} from "lucide-react"
 
 export default function NoSavedPage() {
-  const navItems = [
-    "Notification",
-    "Messages",
-    "Saved",
-    "Sellers hub",
-    "User hub",
-  ]
-
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-
   return (
     <div className="flex flex-col md:flex-row bg-white">
       {/* Main Content */}

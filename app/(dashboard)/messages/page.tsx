@@ -1,5 +1,3 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header1";
 import NoMessagePage from "@/components/Home/noMessage";
 
 

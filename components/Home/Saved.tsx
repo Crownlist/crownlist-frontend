@@ -1,6 +1,6 @@
 "use client"
 
-import { HeartIcon, MapPinIcon, MenuIcon } from "lucide-react"
+import { HeartIcon, MapPinIcon } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
