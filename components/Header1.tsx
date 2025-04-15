@@ -53,9 +53,9 @@ const Header = ({ hidden }: props) => {
     { name: "Sneakers", icon: "/car.png", isComingSoon: true },
   ]
   const navItems = [
-    { title: "Notification", link: '/notification' },
-    { title: "Messages", link: '/messages' },
-    { title: "Saved", link: '/saved' },
+    { title: "Notification", link: '/buyer/notification' },
+    { title: "Messages", link: '/buyer/messages' },
+    { title: "Saved", link: '/buyer/saved' },
     { title: "Sellers hub", link: '/' },
     { title: "User hub", link: '/' },
     { title: "Logout", link: "/" },

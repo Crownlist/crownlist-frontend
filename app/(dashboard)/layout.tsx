@@ -10,7 +10,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 
   export const metadata = {
-    title: 'Customer | Dashboard'
+    title: 'Buyer | Dashboard'
   }
   
   export default function Layout({ children }: { children: React.ReactNode }) {
@@ -22,7 +22,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-u
           <header className=' flex items-center justify-between border-b px-3 py-2 bg-white sticky inset-0 z-[999]'>
             <div className='flex items-center gap-2'>
               <SidebarTrigger className='hidden md:inline-flex' />
-              <h5 className='hidden text-2xl font-semibold md:block'>Customer</h5>
+              <h5 className='hidden text-2xl font-semibold md:block'>Buyer</h5>
               <Image
                 src={'/newlogo.jpg'}
                 alt='fixorshublogo'
