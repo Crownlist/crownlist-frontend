@@ -27,32 +27,32 @@ import { usePathname } from 'next/navigation'
 const items = [
   {
     title: 'Notification',
-    url: '/notification',
+    url: '/buyer/notification',
     icon: Mail
   },
   {
     title: 'Messages',
-    url: '/messages',
+    url: '/buyer/messages',
     icon: MessageCircleMore
   },
   {
     title: 'Saved',
-    url: '/saved',
+    url: '/buyer/saved',
     icon: Bookmark
   },
   {
     title: 'Sellers hub',
-    url: '/sellers-hub',
+    url: '/buyer/sellers-hub',
     icon: Send
   },
   {
     title: 'User hub',
-    url: '/users-hub',
+    url: '/buyer/users-hub',
     icon: User
   },
   {
     title: 'Logout',
-    url: '/logout',
+    url: '/buyer/logout',
     icon: Lock
   }
 ]
