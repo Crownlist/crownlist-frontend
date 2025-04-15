@@ -6,13 +6,8 @@ import NoSavedPage from "@/components/Home/NoSaved";
 
 export default function Home() {
     return (
-        <div className="flex flex-col min-h-screen bg-white">
-            {/* Header */}
-            <Header hidden={false} />
-            <div className="container mx-auto  py-6 max-md:px-5">
+        <div className="flex w-full h-full justify-center items-center align-middle">
                 <NoSavedPage />
             </div>
-            <Footer />
-        </div>
     )
 }

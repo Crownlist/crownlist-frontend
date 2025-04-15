@@ -50,6 +50,7 @@ const Header = ({ hidden }: props) => {
     { name: "Cars", icon: "/car.png", isComingSoon: true },
     { name: "Jobs", icon: "/new-job.png", isComingSoon: true },
     { name: "Services", icon: "/service.png", isComingSoon: true },
+    { name: "Sneakers", icon: "/car.png", isComingSoon: true },
   ]
   const navItems = [
     { title: "Notification", link: '/notification' },

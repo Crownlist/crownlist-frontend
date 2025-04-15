@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import Head from "next/head"
 import ChatBot from "../components/Home/ChatBot"
+import NextTopLoader from 'nextjs-toploader'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="#1F058F" />
       </Head>
       <body className={inter.className}>
+      <NextTopLoader color='#1F058F' showSpinner={false} />
       {/* <Toaster position="top-center" /> */}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}

@@ -41,7 +41,7 @@ export default function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-8 mt-3 ">
             {/* Logo and Tagline */}
             <div className="md:col-span-1">
-              <Image src="/newlogo.jpg" width={100} height={100} alt="Joelist Logo" />
+              <Image src="/logofooter.jpg" width={100} height={100} alt="Joelist Logo" />
               <p className="mt-4 text-sm text-gray-400">Joelist your number one product listing company</p>
             </div>
             

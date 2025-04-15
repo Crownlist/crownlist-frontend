@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -149,23 +150,23 @@ export default function MessagingInterface() {
     }
 
     return (
-        <div className="flex w-full max-h-[calc(100dvh-150px)] md:max-h-[calc(100dvh-110px)] overflow-hidden max-w-6xl mx-auto bg-white shadow-sm">
+        <div className="flex w-full max-h-[calc(100dvh-150px)] md:max-h-[calc(100dvh-110px)] overflow-hidden  mx-auto bg-white shadow-sm">
             {/* Conversation List - hidden on mobile when conversation is active */}
             <div
                 className={cn(
-                    "w-full lg:w-[360px] border-r border-gray-200 flex flex-col",
+                    " border-r w-full lg:w-[360px] border-gray-200 flex flex-col",
                     showMobileConversation ? "hidden lg:flex" : "flex",
                 )}
             >
                 <div className="p-4 border-b border-gray-200">
                     <h1 className="text-xl font-semibold">Messages</h1>
                 </div>
-                <div className="flex-1 overflow-y-auto ">
+                <div className=" overflow-y-auto ">
                     {conversations.map((conversation) => (
                         <div
                             key={conversation.id}
                             className={cn(
-                                "flex items-start p-4 hover:bg-gray-50 cursor-pointer relative",
+                                "flex items-start p-4 hover:bg-gray-50 cursor-pointer relative w-[]",
                                 conversation.unread &&
                                 "before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-black before:rounded-full",
                             )}
@@ -193,7 +194,7 @@ export default function MessagingInterface() {
                                     </div>
                                     <span className="text-xs text-gray-500">{conversation.time}</span>
                                 </div>
-                                <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
+                                <p className="text-sm text-gray-600 ">{conversation.lastMessage}</p>
                             </div>
                         </div>
                     ))}

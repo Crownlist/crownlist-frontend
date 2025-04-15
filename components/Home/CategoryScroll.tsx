@@ -11,6 +11,8 @@ const categories = [
   { title: "Cars", cta: "Coming soon", img: "/assets/images/cars.png", comingSoon: true },
   { title: "Jobs", cta: "Coming soon", img: "/assets/images/jobs.png", comingSoon: true },
   { title: "Services", cta: "Coming soon", img: "/assets/images/services.png", comingSoon: true },
+  { title: "Sneakers", cta: "Coming soon", img: "/assets/images/cars.png", comingSoon: true },
+
 ]
 
 const CategoryScroll = () => {
