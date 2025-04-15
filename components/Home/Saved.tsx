@@ -1,8 +1,7 @@
 "use client"
 
-import { HeartIcon, MapPinIcon, MenuIcon } from "lucide-react"
+import { HeartIcon, MapPinIcon } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
@@ -38,46 +37,10 @@ const savedItems = [
 ]
 
 export default function Saved() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const navItems = ["Notification", "Messages", "Saved", "Sellers hub", "User hub"]
-
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Top nav for small screen */}
-      <div className="md:hidden p-4 border-b flex justify-between items-center">
-        <h1 className="font-semibold text-lg">Menu</h1>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <MenuIcon />
-        </button>
-      </div>
-
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          "w-full md:w-64 p-4 md:p-6 border-r md:block",
-          sidebarOpen ? "block" : "hidden md:block"
-        )}
-      >
-        <nav className="space-y-2">
-          {navItems.map((item) => (
-            <div
-              key={item}
-              className={cn(
-                "px-4 py-2 rounded-md text-sm cursor-pointer",
-                item === "Saved" ? "bg-gray-100 font-semibold" : "hover:bg-gray-50"
-              )}
-            >
-              {item}
-            </div>
-          ))}
-        </nav>
-        <div className="mt-10 pt-6 border-t">
-          <div className="text-sm text-gray-600 cursor-pointer hover:underline">Logout</div>
-        </div>
-      </aside>
-
+    <div className="flex flex-col md:flex-row">
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8">
+      <main className="flex-1 md:p-8">
         <h2 className="text-xl font-semibold mb-6">Saved</h2>
 
         <div className="space-y-6">
