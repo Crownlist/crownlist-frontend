@@ -1,18 +1,15 @@
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronRight, Upload } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-// import { Checkbox } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
-import Header from "@/components/Header1"
-import Footer from "@/components/Footer"
+/* eslint-disable */
+import React from 'react'
+import Image from 'next/image'
+import { Textarea } from '../ui/textarea'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
+import Link from 'next/link'
+import { ChevronRight, Upload } from 'lucide-react'
 
-export default function SearchPage() {
+const NoSearchCat = ({cat, subcat}:any)=> {
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Header */}
-            <Header hidden={false} />
             <div className="container mx-auto  py-6 max-md:px-5">
                 {/* Breadcrumb */}
                 <div className="flex flex-col gap-1">
@@ -21,10 +18,12 @@ export default function SearchPage() {
                             Home
                         </Link>
                         <ChevronRight size={16} />
-                        <span className="text-gray-700">Search</span>
+                        <span className="text-gray-700">Category</span>
+                        <ChevronRight size={16} />
+                        <span className="text-gray-700">{cat}</span>
                     </div>
                     <div className="flex flex-row gap-0">
-                        <p className="font-semibold">Search results - Property </p>
+                        <p className="font-semibold">Search results - {subcat} </p>
                         <p className="font-light">(0 result found)</p>
                     </div>
                 </div>
@@ -39,24 +38,7 @@ export default function SearchPage() {
 
                     {/* Main Content */}
                     <div className="flex flex-col relative w-full">
-                        {/* Top Bar */}
-                        {/* <div className="flex justify-end items-center mb-8">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-gray-500">Sort by:</span>
-                <button className="font-medium flex items-center gap-1">All</button>
-              </div>
-              <div className="flex items-center gap-2 border-l pl-4">
-                <button className="p-1 bg-gray-100 rounded">
-                  <Grid size={18} />
-                </button>
-                <button className="p-1">
-                  <List size={18} />
-                </button>
-              </div>
-            </div>
-                      </div> */}
-
+                  
                         {/* No Results */}
                         <div className="flex flex-col items-center justify-center text-center py-1">
                             <div className="mb-2 text-purple-600">
@@ -129,87 +111,8 @@ export default function SearchPage() {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div>
     )
 }
 
-{/* Filter Sections */ }
-//   {/* <div className="space-y-4">
-//     {/* Property Type */}
-//     <div className="border-b pb-4">
-//       <button className="flex items-center justify-between w-full text-left">
-//         <span className="font-medium">
-//           Property type<span className="text-gray-400">(1)</span>
-//         </span>
-//         <ChevronDown size={18} />
-//       </button>
-//     </div>
-
-//     {/* Location */}
-//     <div className="border-b pb-4">
-//       <button className="flex items-center justify-between w-full text-left">
-//         <span className="font-medium">Location</span>
-//         <ChevronDown size={18} />
-//       </button>
-//     </div>
-
-//     {/* Seller Type */}
-//     <div className="border-b pb-4">
-//       <button className="flex items-center justify-between w-full text-left">
-//         <span className="font-medium">Seller type</span>
-//         <ChevronDown size={18} />
-//       </button>
-//     </div>
-
-//     {/* Price */}
-//     <div className="border-b pb-4">
-//       <button className="flex items-center justify-between w-full text-left mb-4">
-//         <span className="font-medium">Price</span>
-//         <ChevronDown size={18} />
-//       </button>
-
-//       <div className="space-y-4">
-//         {/* Min-Max Inputs */}
-//         <div className="flex items-center gap-2">
-//           <div>
-//             <label className="text-sm text-gray-500 mb-1 block">Min</label>
-//             <Input className="h-10 border-gray-300" />
-//           </div>
-//           <div className="pt-6">→</div>
-//           <div>
-//             <label className="text-sm text-gray-500 mb-1 block">Max</label>
-//             <Input className="h-10 border-gray-300" />
-//           </div>
-//         </div>
-
-//         {/* Price Range Checkboxes */}
-//         {/* <div className="space-y-2">
-//           <div className="flex items-center gap-2">
-//             <Checkbox id="under20k" />
-//             <label htmlFor="under20k" className="text-sm">
-//               Under ₦20K <span className="text-gray-400">(293 post)</span>
-//             </label>
-//           </div>
-//           <div className="flex items-center gap-2">
-//             <Checkbox id="n20-n110k" />
-//             <label htmlFor="n20-n110k" className="text-sm">
-//               ₦20 - ₦1,10K <span className="text-gray-400">(73,448 post)</span>
-//             </label>
-//           </div>
-//           <div className="flex items-center gap-2">
-//             <Checkbox id="n110k-n11m" />
-//             <label htmlFor="n110k-n11m" className="text-sm">
-//               ₦1,10K - ₦11M <span className="text-gray-400">(22,414 post)</span>
-//             </label>
-//           </div>
-//           <div className="flex items-center gap-2">
-//             <Checkbox id="n11m-n54m" />
-//             <label htmlFor="n11m-n54m" className="text-sm">
-//               ₦11M - ₦54M <span className="text-gray-400">(76,509 post)</span>
-//             </label>
-//           </div>
-//         </div> */}
-//       </div>
-//     </div>
-//   </div> */}
+export default NoSearchCat

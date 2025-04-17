@@ -25,6 +25,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import CategoryModal from "./Home/CategoryModal"
 
 
 interface props {
@@ -41,17 +42,79 @@ const Header = ({ hidden }: props) => {
   const router = useRouter()
   const pathname = usePathname()
   const [openChev, setOpenChev] = useState(false)
+  const [openCat, setOpenCat] = useState(false)
 
   const categories = [
-    { name: "Phones & Tablets", icon: "/video.png", hot: true },
-    { name: "Electronics", icon: "/lab-scale.png", hot: true },
-    { name: "Properties", icon: "/protection.png", hot: true },
-    { name: "Fashion", icon: "/dress.png" },
-    { name: "Cars", icon: "/car.png", isComingSoon: true },
-    { name: "Jobs", icon: "/new-job.png", isComingSoon: true },
-    { name: "Services", icon: "/service.png", isComingSoon: true },
-    { name: "Sneakers", icon: "/car.png", isComingSoon: true },
+    {
+      name: "Phones & Tablets",
+      icon: "/video.png",
+      hot: true,
+      subcategories: [
+        { name: "Mobile phone", href: "/category/phone-tablets?subcategory=mobile" },
+        { name: "Accessories", href: "/category/phone-tablets?subcategory=accessories" },
+        { name: "Tablets", href: "/category/phone-tablets?subcategory=tablets" },
+        { name: "Smart watches", href: "/category/phone-tablets?subcategory=watches" },
+      ],
+    },
+    {
+      name: "Electronics",
+      icon: "/lab-scale.png",
+      hot: true,
+      subcategories: [
+        { name: "Hardware", href: "/category/electronics?subcategory=hardware" },
+        { name: "Monitors", href: "/category/electronics?subcategory=monitors" },
+        { name: "Laptops", href: "/category/electronics?subcategory=laptops" },
+        { name: "Headphones", href: "/category/electronics?subcategory=headphones" },
+        { name: "Music equipment", href: "/category/electronics?subcategory=music" },
+        { name: "Cameras", href: "/category/electronics?subcategory=cameras" },
+      ],
+    },
+    {
+      name: "Properties",
+      icon: "/protection.png",
+      hot: true,
+      subcategories: [
+        { name: "Student", href: "/category/property?subcategory=student" },
+        { name: "Personal", href: "/category/property?subcategory=personal" },
+        { name: "Office", href: "/category/property?subcategory=office" },
+      ],
+    },
+    {
+      name: "Fashion",
+      icon: "/dress.png",
+      subcategories: [
+        { name: "Bags", href: "/category/fashion?subcategory=bags" },
+        { name: "Clothes", href: "/category/fashion?subcategory=clothes" },
+        { name: "Jewelry", href: "/category/fashion?subcategory=jewelry" },
+        { name: "Shoes", href: "/category/fashion?subcategory=shoes" },
+      ],
+    },
+    {
+      name: "Cars",
+      icon: "/car.png",
+      isComingSoon: true,
+      subcategories: [],
+    },
+    {
+      name: "Jobs",
+      icon: "/new-job.png",
+      isComingSoon: true,
+      subcategories: [],
+    },
+    {
+      name: "Services",
+      icon: "/service.png",
+      isComingSoon: true,
+      subcategories: [],
+    },
+    {
+      name: "Sneakers",
+      icon: "/car.png",
+      isComingSoon: true,
+      subcategories: [],
+    },
   ]
+
   const navItems = [
     { title: "Notification", link: '/buyer/notification' },
     { title: "Messages", link: '/buyer/messages' },
@@ -82,7 +145,8 @@ const Header = ({ hidden }: props) => {
   }
   const handleCat = (e: any) => {
     e.preventDefault();
-    router.push("/category")
+    // router.push("/category")
+    setOpenCat(true)
   }
 
   // Filter countries based on search input
@@ -201,42 +265,68 @@ const Header = ({ hidden }: props) => {
             {/* Navigation Links */}
             <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-4  p-6">
 
-              <Accordion type="single" collapsible className="w-full border-transparent border-2 border-b-[#F5F5F5]">
-                <AccordionItem value="item-1" className={` rounded-none shadow-none  items-start  `}>
-                  <AccordionTrigger>
-                    <div className=" w-full text-start  ">
-                      <div className="flex flex-row gap-2 justify-start align-middle">
-                        <div className="flex ">
-                          <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
-                        </div>
-                        <div className="flex "> Category</div>
+              <Accordion type="single" collapsible className="w-full">
+                {categories.map((cat, idx) => (
+                  <AccordionItem
+                    key={idx}
+                    value={`cat-${idx}`}
+                    className="border-b border-[#F5F5F5]"
+                  >
+                    <AccordionTrigger disabled={cat.isComingSoon}>
+                      <div className="flex items-center gap-3">
+                        <Image
+                          src={cat.icon}
+                          width={25}
+                          height={25}
+                          alt={cat.name}
+                          className="rounded-md"
+                        />
+                        <span className="text-sm font-medium">{cat.name}</span>
+                        {/* {cat.hot && (
+                          <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">
+                            HOT
+                          </span>
+                        )} */}
                       </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="flex flex-col space-y-5 pl-2 pt-2 ">
-                      {categories.map((cat, idx) => (
-                        <div key={idx} className={`flex items-center justify-between ${idx == 6 ? 'border-none' : 'border-transparent border-2 border-b-[#F5F5F5]'} p-3`}>
-                          {/* Left side (icon + name) */}
-                          <div className="flex items-center gap-3">
-                            <Image src={cat.icon} width={25} height={25} alt={cat.name} className="rounded-md" />
-                            <span className="text-sm font-medium">{cat.name}</span>
-                          </div>
 
-                          {/* Right side (post count or coming soon) */}
-                          <div className="text-xs text-gray-500">
-                            {cat.isComingSoon ? (
-                              <span className="text-gray-400">Coming soon</span>
-                            ) : (
-                              <span>8,238 post</span> // You can customize post count if you want to make it dynamic
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
+                      <div className="ml-auto text-xs text-gray-500">
+                        {cat.isComingSoon ? (
+                          <span className="text-gray-400">Coming soon</span>
+                        ) : (
+                          <span>8,238 posts</span>
+                        )}
+                      </div>
+                    </AccordionTrigger>
+
+                    {!cat.isComingSoon && cat.subcategories.length > 0 && (
+                      <AccordionContent className="pl-6 transition-all duration-300 ease-in-out overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
+                        <Accordion type="single" collapsible className="w-full">
+                          {cat.subcategories.map((sub, subIdx) => (
+                            <AccordionItem
+                              key={subIdx}
+                              value={`sub-${idx}-${subIdx}`}
+                              className="border-b border-dashed border-gray-200"
+                            >
+                              <AccordionTrigger className="py-2 px-2 text-left text-sm text-gray-700 hover:text-black">
+                                {sub.name}
+                              </AccordionTrigger>
+                              <AccordionContent className="text-sm text-gray-500 px-2 py-2">
+                                <Link
+                                  href={sub.href}
+                                  className="hover:underline text-blue-600"
+                                >
+                                  View all posts in {sub.name}
+                                </Link>
+                              </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
+                      </AccordionContent>
+                    )}
+                  </AccordionItem>
+                ))}
               </Accordion>
+
               <Link href='/'
                 className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
               >
@@ -253,22 +343,22 @@ const Header = ({ hidden }: props) => {
                 <Accordion
                   type="single"
                   collapsible
-                   className="w-full border-transparent border-2 border-b-[#F5F5F5]"
+                  className="w-full border-transparent border-2 border-b-[#F5F5F5]"
                   onValueChange={(value) => setOpenChev(value === "profile")}
                 >
                   <AccordionItem value="profile" className="border-none">
                     <AccordionTrigger className="flex items-center gap-2  hover:no-underline">
-                    <div className='flex flex-row gap-3 items-center'>
-                     <div className='flex'>
-                      <Image
-                        src="/profile.png"
-                        width={30}
-                        height={30}
-                        alt="Profile"
-                        className="rounded-full"
-                      />
-                      </div>
-                      <span className="text-sm font-medium flex">Jimoh Adesina</span>
+                      <div className='flex flex-row gap-3 items-center'>
+                        <div className='flex'>
+                          <Image
+                            src="/profile.png"
+                            width={30}
+                            height={30}
+                            alt="Profile"
+                            className="rounded-full"
+                          />
+                        </div>
+                        <span className="text-sm font-medium flex">Jimoh Adesina</span>
                       </div>
                       {/* {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />} */}
                     </AccordionTrigger>
@@ -502,7 +592,7 @@ const Header = ({ hidden }: props) => {
 
                   <Button
                     size="sm"
-                    className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                    className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium relative"
                     variant="outline"
                     onClick={handleCat}
                   >
@@ -609,6 +699,8 @@ const Header = ({ hidden }: props) => {
             </div>
           </div>
         </div>
+        {/* category modal */}
+        <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
       </div>
     </nav>
   )

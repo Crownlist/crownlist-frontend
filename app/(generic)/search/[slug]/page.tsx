@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Footer from "@/components/Footer"
 import Header from "@/components/Header1"
-import SearchCategory from "@/components/Home/SearchCategory"
+import SearchCategory from "@/components/Home/SearchCategories"
 
 interface PageProps {
   params: Promise<{ slug: string }>

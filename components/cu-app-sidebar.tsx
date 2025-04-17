@@ -16,7 +16,6 @@ import {
   Send,
   Mail,
   MessageCircleMore,
-  Lock,
   LogOut
 } from 'lucide-react'
 import Image from 'next/image'
@@ -50,11 +49,11 @@ const items = [
     url: '/buyer/users-hub',
     icon: User
   },
-  {
-    title: 'Logout',
-    url: '/buyer/logout',
-    icon: Lock
-  }
+  // {
+  //   title: 'Logout',
+  //   url: '/buyer/logout',
+  //   icon: Lock
+  // }
 ]
 
 export function AppSidebar() {
@@ -71,7 +70,7 @@ export function AppSidebar() {
           height={36}
         />
       </SidebarHeader>
-      <SidebarContent className='mt-4 px-2'>
+      <SidebarContent className='mt-4 px-2 max-sm:mt-20'>
         <SidebarMenu className='space-y-2'>
           {items.map(item => (
             <SidebarMenuItem
