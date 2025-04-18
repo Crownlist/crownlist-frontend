@@ -1,11 +1,9 @@
-/* eslint-disable */
+
 "use client"
-import Image from "next/image"
-import Link from "next/link"
-import { Heart, ChevronDown, Search, Bell, MessageSquare, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import ProductCard from "@/components/Home/Product-card"
+// import Image from "next/image"
+// import Link from "next/link"
+// import { Heart, ChevronDown, Search, Bell, MessageSquare, User } from "lucide-react"
+// import ProductCard from "@/components/Home/Product-card"
 import SectionHeader from "@/components/Home/Section-header"
 import Header from "@/components/Header1"
 import Hero from "@/components/Home/Hero"
@@ -241,6 +239,7 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
   const router = useRouter()
+  console.log(isSticky)
 
   const handleSeeMore = () =>{
     router.push('/product')
