@@ -16,7 +16,9 @@ import {
   Send,
   Mail,
   MessageCircleMore,
-  LogOut
+  LogOut,
+  UserRoundPen
+ 
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -24,6 +26,14 @@ import { usePathname } from 'next/navigation'
 
 // Menu items.
 const items = [
+
+  {
+    title: 'Profile',
+    url: '/buyer/profile',
+    icon:  UserRoundPen
+  },
+
+
   {
     title: 'Notification',
     url: '/buyer/notification',
