@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import Image from 'next/image';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import Image from "next/image";
 import { Input } from "@/components/ui/custom-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { countries } from "@/constants/countries";
+import { nigerianStates, State } from "../../constants/states";
+import { Eye, EyeOff } from "lucide-react";
 
 interface FormData {
   fullName: string;
@@ -17,24 +20,31 @@ interface FormData {
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
+  countryCode: string;
 }
 
 export default function ProfilePage() {
   const [formData, setFormData] = useState<FormData>({
-    fullName: "", 
+    fullName: "",
     email: "",
     phone: "",
-    country: "",
+    country: "Nigeria",
     state: "",
     address: "",
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
+    countryCode: "",
   });
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -51,21 +61,22 @@ export default function ProfilePage() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Optional: Add custom validation, P.S will change later
-    if (!formData.fullName || !formData.email || !formData.phone) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required profile fields",
-      });
-      return;
-    }
-    if (formData.oldPassword || formData.newPassword || formData.confirmPassword) {
-      if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
+
+    if (
+      formData.oldPassword ||
+      formData.newPassword ||
+      formData.confirmPassword
+    ) {
+      if (
+        !formData.oldPassword ||
+        !formData.newPassword ||
+        !formData.confirmPassword
+      ) {
         toast({
           title: "Error",
           description: "Please fill in all password fields",
         });
-        console.log(  "Please fill in all password fields")
+
         return;
       }
       if (formData.newPassword !== formData.confirmPassword) {
@@ -73,7 +84,7 @@ export default function ProfilePage() {
           title: "Error",
           description: "New password and confirm password do not match",
         });
-        console.log("Please fill in all password fields")
+        console.log("Please fill in all password fields");
         return;
       }
     }
@@ -89,12 +100,13 @@ export default function ProfilePage() {
       fullName: "",
       email: "",
       phone: "",
-      country: "",
+      country: "Nigeria",
       state: "",
       address: "",
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
+      countryCode: "",
     });
     setProfileImage(null);
     toast({
@@ -102,6 +114,15 @@ export default function ProfilePage() {
       description: "Changes discarded",
     });
   };
+
+  useEffect(() => {
+    const selectedCountry = countries.find((c) => c.name === formData.country);
+    setFormData((prev) => ({
+      ...prev,
+      state: "", // Reset state
+      countryCode: selectedCountry?.code || "",
+    }));
+  }, [formData.country]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -165,37 +186,70 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+234 | 081 000 0000"
-                  required
-                />
+                <div className="relative">
+                  <select
+                    id="countryCode"
+                    name="countryCode"
+                    value={formData.countryCode}
+                    onChange={handleChange}
+                    className="absolute left-0 top-0 h-full bg-transparent border-r border-gray-300 px-2 text-sm focus:outline-none"
+                    style={{ width: "100px" }}
+                  >
+                    {countries.map((country: (typeof countries)[number]) => (
+                      <option
+                        key={`${country.code}-${country.name}`}
+                        value={country.code}
+                      >
+                        {country.code}
+                      </option>
+                    ))}
+                  </select>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="081 000 0000"
+                    className="pl-28"
+                    required
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="country">Country</Label>
-                <Input
+                <select
                   id="country"
                   name="country"
-                  type="text"
                   value={formData.country}
                   onChange={handleChange}
-                  placeholder="Enter your country"
-                />
+                  className="w-full p-2 border rounded-md"
+                >
+                  {countries.map((country: (typeof countries)[number]) => (
+                    <option
+                      key={`${country.code}-${country.name}`}
+                      value={country.name}
+                    >
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="state">State</Label>
-                <Input
+                <select
                   id="state"
                   name="state"
-                  type="text"
                   value={formData.state}
                   onChange={handleChange}
-                  placeholder="Enter your state"
-                />
+                  className="w-full p-2 border rounded-md"
+                >
+                  {nigerianStates.map((state: State) => (
+                    <option key={state.value} value={state.value}>
+                      {state.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
@@ -216,36 +270,67 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="oldPassword">Old Password</Label>
-                <Input
-                  id="oldPassword"
-                  name="oldPassword"
-                  type="password"
-                  value={formData.oldPassword}
-                  onChange={handleChange}
-                  placeholder="Enter old password"
-                />
+                <div className="relative">
+                  <Input
+                    id="oldPassword"
+                    name="oldPassword"
+                    type={showOldPassword ? "text" : "password"}
+                    value={formData.oldPassword}
+                    onChange={handleChange}
+                    placeholder="Enter old password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowOldPassword(!showOldPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  >
+                    {showOldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="newPassword">New Password</Label>
-                <Input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  placeholder="Enter new password"
-                />
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    name="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    value={formData.newPassword}
+                    onChange={handleChange}
+                    placeholder="Enter new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  >
+                    {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm new password"
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

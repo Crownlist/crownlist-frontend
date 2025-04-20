@@ -21,7 +21,7 @@ export function LoginForm({
 
   const handleClick = (e : any) => {
     e.preventDefault();
-    router.push('/')
+    router.push('/buyer/profile')
   }
   return (
     <div className={cn("flex w-full h-full font-inter", className)} {...props}>

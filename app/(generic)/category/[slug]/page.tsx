@@ -1,11 +1,11 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header1";
-import SearchCategory from "@/components/Home/SearchCategory";
-import { Metadata } from "next";
+import Footer from "@/components/Footer"
+import Header from "@/components/Header1"
+import SearchCategory from "@/components/Home/SearchCategory"
+// import { Metadata } from "next"
 
-interface PageProps {
-  params: { slug: string }; // Removed Promise wrapper
-  searchParams: { [key: string]: string | string[] | undefined };
+interface PageProp {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 const filterData = {
@@ -25,34 +25,37 @@ const filterData = {
     label: "Fashion",
     options: ["Bags", "Clothes", "Jewelry", "Shoes"],
   },
-};
-
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const formattedCategory = formatTitle(params.slug);
-  return {
-    title: `${formattedCategory} | CrownList`,
-    description: `Browse ${formattedCategory} listings on CrownList`,
-  };
 }
 
-const formatTitle = (slug: string) => 
-  slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+// Title formatter
+const formatTitle = (slug: string) => slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 
-export default function CategoryPage({ params, searchParams }: PageProps) {
-  const category = params.slug; // No need to await since params is not a Promise
+// export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+//   const formattedCategory = formatTitle(params.slug)
+//   return {
+//     title: `${formattedCategory} | CrownList`,
+//     description: `Browse ${formattedCategory} listings on CrownList`,
+//   }
+// }
 
-  const subcategory = typeof searchParams.subcategory === 'string'
-    ? searchParams.subcategory
-    : Array.isArray(searchParams.subcategory)
-      ? searchParams.subcategory[0]
-      : undefined;
+export default async function CategoryPage(props: PageProp) {
+  const {slug} = await props.params
+  const searchParams = await props.searchParams
+  const category = slug
 
-  const formattedCategory = formatTitle(category);
-  const formattedSubcategory = subcategory ? formatTitle(subcategory) : undefined;
+  const subcategoryParam = searchParams?.subcategory
+  const subcategory = typeof subcategoryParam === "string"
+    ? subcategoryParam
+    : Array.isArray(subcategoryParam)
+    ? subcategoryParam[0]
+    : undefined
+
+  const formattedCategory = formatTitle(category)
+  const formattedSubcategory = subcategory ? formatTitle(subcategory) : undefined
 
   const filters = category in filterData
     ? filterData[category as keyof typeof filterData]
-    : { label: formattedCategory, options: [] };
+    : { label: formattedCategory, options: [] }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -69,14 +72,14 @@ export default function CategoryPage({ params, searchParams }: PageProps) {
       </main>
       <Footer />
     </div>
-  );
+  )
 }
 
 export function generateStaticParams() {
   return [
-    { slug: 'property' },
-    { slug: 'phones-tablets' },
-    { slug: 'electronics' },
-    { slug: 'fashion' },
-  ];
+    { slug: "property" },
+    { slug: "phones-tablets" },
+    { slug: "electronics" },
+    { slug: "fashion" },
+  ]
 }

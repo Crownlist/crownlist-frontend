@@ -98,7 +98,7 @@ export default function SearchPage() {
                                         </div>
                                     </form>
                                 </div>
-                                <div className="w-full h-auto relative md:w-1/2 p-6 ">
+                                <div className="w-full h-auto relative md:w-1/2 p-6 max-sm:hidden ">
                                     <Image
                                         src="/hanger.png"
                                         alt="Clothing on hangers"
