@@ -9,7 +9,7 @@ export default function MobileCategoryView({ onClose }: { onClose: () => void })
       {/* Header with logo and close button */}
       <div className="flex justify-between items-center p-4">
         <div className="w-16 h-10 bg-[#1a237e] flex items-center justify-center rounded">
-          <span className="text-white font-bold text-sm">Jo-EList</span>
+          <span className="text-white font-bold text-sm">Crownlist</span>
         </div>
         <button onClick={onClose}>
           <X size={20} className="text-gray-400" />
@@ -133,7 +133,7 @@ export default function MobileCategoryView({ onClose }: { onClose: () => void })
             <div className="text-xs text-gray-500">0 post</div>
           </div>
         </div>
-        <div className="text-xs text-gray-500">Coming soon</div>
+        <div className="text-xs text-gray-500"> soon</div>
       </div>
 
       {/* Jobs */}
@@ -152,7 +152,7 @@ export default function MobileCategoryView({ onClose }: { onClose: () => void })
             <div className="text-xs text-gray-500">0 post</div>
           </div>
         </div>
-        <div className="text-xs text-gray-500">Coming soon</div>
+        <div className="text-xs text-gray-500">soon</div>
       </div>
 
       {/* Services */}
@@ -171,7 +171,7 @@ export default function MobileCategoryView({ onClose }: { onClose: () => void })
             <div className="text-xs text-gray-500">0 post</div>
           </div>
         </div>
-        <div className="text-xs text-gray-500">Coming soon</div>
+        <div className="text-xs text-gray-500"> soon</div>
       </div>
 
       {/* Post Product */}
