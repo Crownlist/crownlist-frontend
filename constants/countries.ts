@@ -1250,3 +1250,10 @@ export const countries = [
         "name": "Zimbabwe"
     }
 ]
+
+const seenCodes = new Set();
+export const uniqueCountries = countries.filter((country) => {
+  if (seenCodes.has(country.code)) return false;
+  seenCodes.add(country.code);
+  return true;
+});

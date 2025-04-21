@@ -5,7 +5,7 @@ export interface State {
   }
   
   export const nigerianStates: State[] = [
-    { value: "", label: "Select a state" },
+    { value: "Select a state", label: "Select a state" },
     { value: "Abia", label: "Abia" },
     { value: "Adamawa", label: "Adamawa" },
     { value: "Akwa Ibom", label: "Akwa Ibom" },

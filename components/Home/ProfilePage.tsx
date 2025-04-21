@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent} from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/custom-input";
+import { Select,SelectContent, SelectValue, SelectItem, SelectTrigger } from "../ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { uniqueCountries } from "@/constants/countries";
 import { countries } from "@/constants/countries";
-import { nigerianStates, State } from "../../constants/states";
+import { nigerianStates } from "../../constants/states";
 import { Eye, EyeOff } from "lucide-react";
 
 interface FormData {
@@ -34,7 +36,7 @@ export default function ProfilePage() {
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
-    countryCode: "",
+    countryCode: "+234",
   });
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -84,7 +86,6 @@ export default function ProfilePage() {
           title: "Error",
           description: "New password and confirm password do not match",
         });
-        console.log("Please fill in all password fields");
         return;
       }
     }
@@ -106,7 +107,7 @@ export default function ProfilePage() {
       oldPassword: "",
       newPassword: "",
       confirmPassword: "",
-      countryCode: "",
+      countryCode: "+234",
     });
     setProfileImage(null);
     toast({
@@ -115,14 +116,7 @@ export default function ProfilePage() {
     });
   };
 
-  useEffect(() => {
-    const selectedCountry = countries.find((c) => c.name === formData.country);
-    setFormData((prev) => ({
-      ...prev,
-      state: "", // Reset state
-      countryCode: selectedCountry?.code || "",
-    }));
-  }, [formData.country]);
+ 
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -169,7 +163,6 @@ export default function ProfilePage() {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Jimoh Adesina"
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -181,76 +174,98 @@ export default function ProfilePage() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="sample@gmail.com"
-                  required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <div className="relative">
-                  <select
-                    id="countryCode"
-                    name="countryCode"
+              <Label htmlFor="phone">Phone Number</Label>
+              <div className="border border-gray-300 flex flex-row rounded-lg  gap-0">
+                <div className="w-[120px] sm:w-[120px]">
+                  <Select 
+                 
                     value={formData.countryCode}
-                    onChange={handleChange}
-                    className="absolute left-0 top-0 h-full bg-transparent border-r border-gray-300 px-2 text-sm focus:outline-none"
-                    style={{ width: "100px" }}
+                    onValueChange={(value) => setFormData((prev) => ({ ...prev, countryCode: value }))
+
+                    }
                   >
-                    {countries.map((country: (typeof countries)[number]) => (
-                      <option
-                        key={`${country.code}-${country.name}`}
-                        value={country.code}
-                      >
-                        {country.code}
-                      </option>
-                    ))}
-                  </select>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="081 000 0000"
-                    className="pl-28"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
-                <select
-                  id="country"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                >
-                  {countries.map((country: (typeof countries)[number]) => (
-                    <option
-                      key={`${country.code}-${country.name}`}
-                      value={country.name}
+                    <SelectTrigger className="w-full cursor-pointer rounded-l-lg rounded-r-none w-[100px]">
+                      <SelectValue placeholder="Select code" />
+                    </SelectTrigger>
+                    <SelectContent className=" max-w-[200px] max-h-[250px]">
+                    {uniqueCountries.map((country) => (
+                    <SelectItem
+                      key={`${country.name}-${country.code}`}
+                      value={country.code}
                     >
-                      {country.name}
-                    </option>
+                      {country.code}
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <select
-                  id="state"
-                  name="state"
-                  value={formData.state}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-md"
-                >
-                  {nigerianStates.map((state: State) => (
-                    <option key={state.value} value={state.value}>
-                      {state.label}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="081 000 0000"
+                  className="  rounded-r-lg rounded-l-none"
+                />
               </div>
+            </div>
+
+          <div className="space-y-2">
+          <Label htmlFor="country">Country</Label>
+          <Select
+            value={formData.country}
+            onValueChange={(value) => {
+              setFormData((prev) => ({
+                ...prev,
+                country: value,
+                state: "", 
+              }));
+            }}
+          >
+            <SelectTrigger className="w-full cursor-pointer">
+              <SelectValue placeholder="Nigeria" />
+            </SelectTrigger>
+            <SelectContent className=" max-w-[200px] max-h-[250px]">
+              {countries.map((country, index) => (
+                <SelectItem
+                  key={`${country.code}-${country.name}-${index}`}
+                  value={country.name}
+                >
+                  {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+        <Label htmlFor="state">State</Label>
+        <Select
+          value={formData.state}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, state: value }))
+          }
+        >
+          <SelectTrigger className="w-full cursor-pointer">
+            <SelectValue placeholder="Select a state" />
+          </SelectTrigger>
+          <SelectContent className=" max-w-[200px] max-h-[250px]">
+            {nigerianStates.map((state) => (
+              <SelectItem key={state.value} value={state.value}>
+                {state.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+
+              
               <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
                 <Input
