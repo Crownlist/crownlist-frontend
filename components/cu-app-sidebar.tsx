@@ -72,8 +72,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible='icon'>
-      <SidebarHeader className='px-3 py-4 max-sm:hidden'>
-        <Link href='/'>
+      <SidebarHeader className='px-3 py-4'>
+        <Link href='/' >
         <Image
           src={'/newlogo.jpg'}
           alt='fixorshublogo'
