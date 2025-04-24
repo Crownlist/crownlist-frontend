@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+// import clsx from "clsx"
 
 const categories = [
   {
@@ -89,33 +90,24 @@ export default function CategoryScroll() {
   const [showModal, setShowModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
-  // Close modal when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (showModal) {
-        const target = e.target as HTMLElement
-        if (!target.closest(".modal-content") && !target.closest(".category-button")) {
-          setShowModal(false)
-        }
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [showModal])
-
   const handleCategoryClick = (index: number, comingSoon: boolean) => {
     if (comingSoon) return
-
     setSelectedCategory(index)
     setShowModal(true)
-
-    // Debug
-    console.log(`Clicked category: ${categories[index].title}`)
-    console.log(`Show modal: true`)
   }
+
+  const closeModal = () => {
+    setShowModal(false)
+    setSelectedCategory(null)
+  }
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal()
+    }
+    document.addEventListener("keydown", handleKey)
+    return () => document.removeEventListener("keydown", handleKey)
+  }, [])
 
   return (
     <div className="space-y-2 relative">
@@ -147,19 +139,30 @@ export default function CategoryScroll() {
         ))}
       </div>
 
-      {/* Modal for subcategories - Mobile */}
+      {/* Modal */}
       {showModal && selectedCategory !== null && (
-        <div className="inset-0  z-50 flex items-end justify-center">
-          <div className="modal-content bg-white w-full rounded-t-xl p-4 animate-slide-up">
-            <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
-            <h3 className="font-medium mb-3">{categories[selectedCategory].title}</h3>
-            <ul className="space-y-3">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={closeModal} // ← Close modal when clicking the backdrop
+        >
+          <div
+            className="modal-content bg-white rounded-lg w-full max-w-md shadow-xl p-5 relative animate-fade-in"
+            onClick={(e) => e.stopPropagation()} // ← Prevent closing when clicking inside the modal
+          >
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={closeModal}
+            >
+              <X size={20} />
+            </button>
+            <h3 className="text-lg font-semibold mb-4">{categories[selectedCategory].title}</h3>
+            <ul className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
               {categories[selectedCategory].subcategories.map((subcat) => (
                 <li key={subcat.name}>
                   <Link
                     href={subcat.href}
-                    className="block py-2 hover:text-blue-600 transition-colors"
-                    onClick={() => setShowModal(false)}
+                    className="block py-2 px-2 rounded hover:bg-gray-100 transition"
+                    onClick={closeModal}
                   >
                     {subcat.name}
                   </Link>
@@ -169,42 +172,6 @@ export default function CategoryScroll() {
           </div>
         </div>
       )}
-
-      {/* Modal for subcategories - Desktop */}
-      {/* {showModal && selectedCategory !== null && (
-        <div className=" fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div
-            className="modal-content bg-white rounded-lg shadow-xl p-4 w-64 pointer-events-auto animate-fade-in"
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <h3 className="font-medium mb-3 pb-2 border-b">{categories[selectedCategory].title}</h3>
-            <ul className="space-y-2">
-              {categories[selectedCategory].subcategories.map((subcat) => (
-                <li key={subcat.name}>
-                  <Link
-                    href={subcat.href}
-                    className="block py-1 hover:text-blue-600 transition-colors"
-                    onClick={() => setShowModal(false)}
-                  >
-                    {subcat.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )} */}
-
-      {/* Debug info */}
-      {/* <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
-        <p>Selected category: {selectedCategory !== null ? categories[selectedCategory].title : "none"}</p>
-        <p>Show modal: {showModal ? "true" : "false"}</p>
-      </div> */}
     </div>
   )
 }
