@@ -32,20 +32,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-u
               />
             </div>
             <div className='hidden items-center gap-4 md:flex'>
-              {/* <div className='flex items-center gap-1'>
-                <Avatar>
-                  <AvatarImage src='/Avatar.png' />
-                  <AvatarFallback>OR</AvatarFallback>
-                </Avatar>
-                <div className='hidden flex-col gap-1 md:flex'>
-                  <span className='text-sm font-semibold text-[black]'>
-                    Olivia Rhye
-                  </span>
-                  <span className='text-xs text-[#2B2B2B]'>
-                    olivia@untitledui.com
-                  </span>
-                </div>
-              </div> */}
               <div className='flex items-center gap-1'>
               <DropdownMenu >
                     <DropdownMenuTrigger className="flex  items-center gap-1 focus:outline-none">

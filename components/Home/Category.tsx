@@ -113,16 +113,16 @@ export default function CategoryGrid() {
   return (
     <div className="py-5 mx-auto justify-center sticky inset-18 z-[9]">
       <div className="text-black font-semibold text-lg mb-5">Category Picks</div>
-      <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 justify-center items-start">
+      <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 justify-center items-start relative">
         {categories.map((cat) => {
           const isActive = pathname === "/product" // Change logic if needed
           const hasSubcategories = cat.subcategories && cat.subcategories.length > 0
 
           return (
-            <div key={cat.name} className="relative" ref={(el) => {(categoryRefs.current[cat.name] = el)}}>
+            <div key={cat.name} className="" ref={(el) => { (categoryRefs.current[cat.name] = el) }}>
               <div
                 className={clsx(
-                  "w-20 flex flex-col items-center text-center relative group transition-all hover:scale-105 cursor-pointer",
+                  "w-20 flex flex-col items-center text-center  group transition-all hover:scale-105 cursor-pointer",
                   isActive && cat.name === "Health & Beauty" && "bg-blue-100 rounded-xl py-1",
                 )}
                 onClick={() => handleCategoryClick(cat.name, hasSubcategories, !!cat.isComingSoon)}
@@ -130,7 +130,7 @@ export default function CategoryGrid() {
                 <div className="relative w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
                   <Image src={cat.icon || "/placeholder.svg"} alt={cat.name} width={38} height={38} />
                   {cat.isComingSoon && (
-                    <span className="absolute -top-2 -right-5 bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold shadow">
+                    <span className="absolute -top-2 -right-0 bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold shadow">
                       soon.
                     </span>
                   )}
@@ -139,7 +139,7 @@ export default function CategoryGrid() {
               </div>
 
               {/* Subcategories Popup */}
-              {activeCategory === cat.name && hasSubcategories && (
+              {/* {activeCategory === cat.name && hasSubcategories && (
                 <div
                   ref={popupRef}
                   className="absolute z-20 bg-white rounded-lg shadow-lg p-3 mt-2 w-48 left-0 transform border border-gray-200"
@@ -160,7 +160,36 @@ export default function CategoryGrid() {
                     ))}
                   </ul>
                 </div>
+              )} */}
+              {activeCategory === cat.name && hasSubcategories && (
+                <div
+                  ref={popupRef}
+                  className={clsx(
+                    "absolute z-30 rounded-xl shadow-2xl border bg-white transition-all duration-300 ease-in-out",
+                    "w-64 sm:w-72 md:w-80 p-5 mt-3 left-[20vw] ",
+                    "md:left-auto md:translate-x-0 md:mt-2 md:w-60 md:absolute"
+                  )}
+                >
+                  {/* Arrow Tip */}
+                  <div className="hidden md:block absolute -top-2 left-10 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-200"></div>
+
+                  <h3 className="font-semibold text-sm text-gray-800 mb-3">{cat.name}</h3>
+                  <ul className="space-y-2">
+                    {cat.subcategories.map((subcat) => (
+                      <li key={subcat.name}>
+                        <Link
+                          href={subcat.href}
+                          onClick={() => setActiveCategory(null)}
+                          className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                        >
+                          {subcat.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
+
             </div>
           )
         })}
