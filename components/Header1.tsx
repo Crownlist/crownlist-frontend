@@ -116,6 +116,7 @@ const Header = ({ hidden }: props) => {
   ]
 
   const navItems = [
+    //{ title: "Profile", link: '/buyer/profile' },
     { title: "Notification", link: '/buyer/notification' },
     { title: "Messages", link: '/buyer/messages' },
     { title: "Saved", link: '/buyer/saved' },

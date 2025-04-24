@@ -8,7 +8,7 @@ import {
   import Image from 'next/image'
   import { AppSidebar } from '@/components/cu-app-sidebar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-
+import Link from 'next/link'
   export const metadata = {
     title: 'Buyer | Dashboard'
   }
@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-u
             <div className='flex items-center gap-2'>
               <SidebarTrigger className='hidden md:inline-flex' />
               <h5 className='hidden text-2xl font-semibold md:block'>Buyer</h5>
+              <Link href='/'>
               <Image
                 src={'/newlogo.jpg'}
                 alt='fixorshublogo'
@@ -30,6 +31,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-u
                 height={36}
                 className='md:hidden'
               />
+              
+              </Link>
             </div>
             <div className='hidden items-center gap-4 md:flex'>
               <div className='flex items-center gap-1'>
