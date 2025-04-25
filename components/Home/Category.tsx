@@ -4,8 +4,16 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
 import Image from "next/image"
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
+// ... (keep your categories array the same)
 const categories = [
   {
     name: "Phones & Tablets",
@@ -80,52 +88,39 @@ const categories = [
 
 export default function CategoryGrid() {
   const pathname = usePathname()
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const popupRef = useRef<HTMLDivElement>(null)
-  const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
+  // const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<typeof categories[0] | null>(null)
 
-  // Close popup when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setActiveCategory(null)
-      }
+  const handleCategoryClick = (category: typeof categories[0]) => {
+    if (category.isComingSoon) return
+
+    if (category.subcategories && category.subcategories.length > 0) {
+      setSelectedCategory(category)
+      setDialogOpen(true)
     }
+  }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
-
-  const handleCategoryClick = (categoryName: string, hasSubcategories: boolean, isComingSoon: boolean) => {
-    if (isComingSoon) return
-
-    if (hasSubcategories) {
-      // Toggle the active category
-      setActiveCategory(activeCategory === categoryName ? null : categoryName)
-    } else {
-      // If no subcategories, navigate directly (handled by Link component)
-      setActiveCategory(null)
-    }
+  const closeDialog = () => {
+    setDialogOpen(false)
+    setSelectedCategory(null)
   }
 
   return (
     <div className="py-5 mx-auto justify-center sticky inset-18 z-[9]">
       <div className="text-black font-semibold text-lg mb-5">Category Picks</div>
-      <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 justify-center items-start relative">
+      <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 justify-center items-start">
         {categories.map((cat) => {
-          const isActive = pathname === "/product" // Change logic if needed
-          const hasSubcategories = cat.subcategories && cat.subcategories.length > 0
+          const isActive = pathname === "/product" 
 
           return (
-            <div key={cat.name} className="" ref={(el) => { (categoryRefs.current[cat.name] = el) }}>
+            <div key={cat.name} className="">
               <div
                 className={clsx(
-                  "w-20 flex flex-col items-center text-center  group transition-all hover:scale-105 cursor-pointer",
+                  "w-20 flex flex-col items-center text-center group transition-all hover:scale-105 cursor-pointer",
                   isActive && cat.name === "Health & Beauty" && "bg-blue-100 rounded-xl py-1",
                 )}
-                onClick={() => handleCategoryClick(cat.name, hasSubcategories, !!cat.isComingSoon)}
+                onClick={() => handleCategoryClick(cat)}
               >
                 <div className="relative w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
                   <Image src={cat.icon || "/placeholder.svg"} alt={cat.name} width={38} height={38} />
@@ -137,63 +132,35 @@ export default function CategoryGrid() {
                 </div>
                 <p className="text-xs mt-2">{cat.name}</p>
               </div>
-
-              {/* Subcategories Popup */}
-              {/* {activeCategory === cat.name && hasSubcategories && (
-                <div
-                  ref={popupRef}
-                  className="absolute z-20 bg-white rounded-lg shadow-lg p-3 mt-2 w-48 left-0 transform border border-gray-200"
-                >
-                  <div className="absolute -top-2 left-1/5 transform  w-4 h-4 bg-white rotate-45 border-t border-l border-gray-200"></div>
-                  <h3 className="font-medium text-sm mb-2 pb-2 border-b">{cat.name}</h3>
-                  <ul className="space-y-2">
-                    {cat.subcategories.map((subcat) => (
-                      <li key={subcat.name}>
-                        <Link
-                          href={subcat.href}
-                          className="block text-sm hover:text-blue-600 transition-colors"
-                          onClick={() => setActiveCategory(null)}
-                        >
-                          {subcat.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )} */}
-              {activeCategory === cat.name && hasSubcategories && (
-                <div
-                  ref={popupRef}
-                  className={clsx(
-                    "absolute z-30 rounded-xl shadow-2xl border bg-white transition-all duration-300 ease-in-out",
-                    "w-64 sm:w-72 md:w-80 p-5 mt-3 left-[20vw] ",
-                    "md:left-auto md:translate-x-0 md:mt-2 md:w-60 md:absolute"
-                  )}
-                >
-                  {/* Arrow Tip */}
-                  <div className="hidden md:block absolute -top-2 left-10 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-200"></div>
-
-                  <h3 className="font-semibold text-sm text-gray-800 mb-3">{cat.name}</h3>
-                  <ul className="space-y-2">
-                    {cat.subcategories.map((subcat) => (
-                      <li key={subcat.name}>
-                        <Link
-                          href={subcat.href}
-                          onClick={() => setActiveCategory(null)}
-                          className="block text-sm text-gray-600 hover:text-blue-600 transition-colors"
-                        >
-                          {subcat.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
             </div>
           )
         })}
       </div>
+
+      {/* ShadCN Dialog for Subcategories */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] ">
+          <DialogHeader>
+            <DialogTitle>{selectedCategory?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {selectedCategory?.subcategories?.map((subcat) => (
+              <Link 
+                key={subcat.name} 
+                href={subcat.href}
+                onClick={closeDialog}
+              >
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-left"
+                >
+                  {subcat.name}
+                </Button>
+              </Link>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
