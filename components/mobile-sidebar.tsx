@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -13,12 +13,7 @@ interface MobileSidebarProps {
 }
 
 export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
-    const [activeTab, setActiveTab] = useState("dashboard")
-
-    const handleNavClick = (tab: string) => {
-        setActiveTab(tab)
-        onClose()
-    }
+    const pathname = usePathname()
 
     return (
         <>
@@ -31,78 +26,87 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             >
                 <div className="absolute top-4 right-4">
                     <Button variant="ghost" size="icon" onClick={onClose}>
-                        <X className="h-5 w-5" />
+                        <X className="h-7 w-7" />
                     </Button>
                 </div>
                 <div className="flex sm:hidden absolute top-4 left-4">
-                        <Link href="/" className="flex items-center">
-                            <div className="  rounded">
-                                <Image
-                                    src={'/newlogo.jpg'}
-                                    alt='fixorshublogo'
-                                    width={101}
-                                    height={26}
-                                />
-                            </div>
-                        </Link>
-                    </div>
+                    <Link href="/" className="flex items-center">
+                        <div className="rounded">
+                            <Image
+                                src={'/newlogo.jpg'}
+                                alt='fixorshublogo'
+                                width={101}
+                                height={26}
+                            />
+                        </div>
+                    </Link>
+                </div>
                 <nav className="p-4 space-y-2 my-5">
-                  
                     <Link
-                        href="/dashboard"
+                        href="/seller/dashboard"
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-                            activeTab === "dashboard" ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/dashboard") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
                         )}
-                        onClick={() => handleNavClick("dashboard")}
+                        onClick={onClose}
                     >
                         <Home className="h-5 w-5" />
                         <span>Dashboard</span>
                     </Link>
 
                     <Link
-                        href="/product"
+                        href="/seller/product"
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-                            activeTab === "product" ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/product") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
                         )}
-                        onClick={() => handleNavClick("product")}
+                        onClick={onClose}
                     >
                         <Package className="h-5 w-5" />
                         <span>Product</span>
                     </Link>
 
                     <Link
-                        href="/messages"
+                        href="/seller/messages"
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-                            activeTab === "messages" ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/messages") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
                         )}
-                        onClick={() => handleNavClick("messages")}
+                        onClick={onClose}
                     >
                         <MessageSquare className="h-5 w-5" />
                         <span>Messages</span>
                     </Link>
 
                     <Link
-                        href="/analytics"
+                        href="/seller/analytics"
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-                            activeTab === "analytics" ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/analytics") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
                         )}
-                        onClick={() => handleNavClick("analytics")}
+                        onClick={onClose}
                     >
                         <PieChart className="h-5 w-5" />
                         <span>Analytics</span>
                     </Link>
 
                     <Link
-                        href="/settings"
+                        href="/seller/settings"
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-                            activeTab === "settings" ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/settings") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
                         )}
-                        onClick={() => handleNavClick("settings")}
+                        onClick={onClose}
                     >
                         <Settings className="h-5 w-5" />
                         <span>Settings</span>
@@ -112,7 +116,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                 <div className="absolute bottom-8 w-full px-4">
                     <Link
                         href="/logout"
-                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary"
                         onClick={onClose}
                     >
                         <LogOut className="h-5 w-5" />

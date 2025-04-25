@@ -26,11 +26,11 @@ export default function ClientLayout({ children }: RootLayoutProps) {
         {/* Mobile menu button */}
         <Button
           variant="ghost"
-          size="icon"
-          className="fixed top-4 left-4 z-50 md:hidden"
+        //   size="lg"
+          className="fixed top-2.5 left-4 z-50 md:hidden h-10"
           onClick={() => setIsMobileMenuOpen(true)}
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-10 w-6 text-white" />
         </Button>
 
         {/* Mobile sidebar */}
