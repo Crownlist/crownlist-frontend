@@ -1,24 +1,15 @@
+/* eslint-disable */
 "use client"
 import { useState } from "react"
-import { Card } from "@/components/ui/card"
+// import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Check, ChevronDown, Plus } from "lucide-react"
+import { Check, Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
 
-// const categories = [
-//     { id: 'property', title: "House", image: "/assets/images/house2.png" },
-//     { id: 'phone', title: "Phone & tablets", image: "/assets/images/pandt2.png" },
-//     { id: 'fashion', title: "Fashion", image: "/assets/images/fashion2.png" },
-//     { id: 'electronics', title: "Electronics", image: "/assets/images/elect2.png" },
-// ];
-// const subCategories = [
-//     { id: "student", name: "Student" },
-//     { id: "personal", name: "Personal" },
-//     { id: "office", name: "Office" }
-// ]
+
 const categories = [
     {
         id: 'property', title: "Properties", image: "/assets/images/house2.png", subcategories: [
@@ -71,7 +62,7 @@ export default function ProductPostFlow() {
         }
         setStep(step + 1)
     }
-    const handleBu = (cat: any) => {
+    const handleBu = (cat : any) => {
         setSelectedCategory(cat.id)
         setSelectedSubCategory(cat.subcategories)
         console.log(selectedSubCategory)
@@ -95,7 +86,7 @@ export default function ProductPostFlow() {
                         <div className="text-sm text-gray-500 mb-6">
                             Post product <span className="text-[#1F058F] font-medium px-2"> &gt;<span className="pl-2"> Post details</span></span>
                         </div>)}
-                    {step === 3 &&  (
+                    {step === 3 && (
                         //  {/* Breadcrumb */}
                         <div className="text-sm text-gray-500 mb-6">
                             Post product <span className="text-[#1F058F] font-medium px-2"> &gt; ... &gt;<span className="pl-2"> other details</span></span>
@@ -240,7 +231,7 @@ export default function ProductPostFlow() {
                             {/* Right side: Stepper */}
                             <div className="w-full md:w-64 flex flex-col">
                                 <div className="flex flex-col items-start">
-                                    <div className="text-gray-400 text-sm mb-2">Step 1 of 3</div>
+                                    <div className="text-gray-400 text-sm mb-2">Step 2 of 3</div>
 
                                     {/* Steps */}
                                     <div className="flex flex-col gap-2">
@@ -323,10 +314,10 @@ export default function ProductPostFlow() {
                                     </div>
                                 </div>
                             </div>
-                              {/* Right side: Stepper */}
-                              <div className="w-full md:w-64 flex flex-col">
+                            {/* Right side: Stepper */}
+                            <div className="w-full md:w-64 flex flex-col">
                                 <div className="flex flex-col items-start">
-                                    <div className="text-gray-400 text-sm mb-2">Step 1 of 3</div>
+                                    <div className="text-gray-400 text-sm mb-2">Step 3 of 3</div>
 
                                     {/* Steps */}
                                     <div className="flex flex-col gap-2">
@@ -351,35 +342,35 @@ export default function ProductPostFlow() {
                     </>
                 )}
 
-                { step === 4 && (
-                         
-                             <div className=" flex flex-col w-full h-full justify-center items-center align-middle">
-                                 <div className="mb-4 flex justify-center">
-                                     <Image
-                                         src={'/box.png'}
-                                         width={80}
-                                         height={80}
-                                         alt="box"
-                                     />
-                                 </div>
-             
-                                 <h2 className="text-xl font-semibold mb-2">Post is under review</h2>
-                                 <p className="text-gray-500 mb-8">Your post is under review will be live upon approval is there’s any issue we will communicate it with you</p>
-                                 <div className="flex flex-row gap-10">
-                                 <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-md">See Post</Button>
-                                 <Button className="border-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-md">Go Back Home </Button>
-                                 </div>
-                                 <div className="mt-16 text-center text-gray-600 text-sm">
-                                     <p>For further assistance reach out via our 24/7</p>
-                                     <p>
-                                         via email at{" "}
-                                         <a href="mailto:support@crownlist.com" className="text-[#1F058F]">
-                                             support@crownlist.com
-                                         </a>
-                                     </p>
-                                 </div>
-                             </div>
-                         
+                {step === 4 && (
+
+                    <div className=" flex flex-col min-h-[80dvh] w-full h-full justify-center items-center align-middle ">
+                        <div className="mb-4 flex justify-center">
+                            <Image
+                                src={'/hourglass.png'}
+                                width={80}
+                                height={80}
+                                alt="box"
+                            />
+                        </div>
+
+                        <h2 className="text-xl font-semibold mb-2">Post is under review</h2>
+                        <p className="text-gray-500 mb-8">Your post is under review will be live upon approval is there’s any issue we will communicate it with you</p>
+                        <div className="flex flex-row gap-10">
+                            <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full">See Post</Button>
+                            <Button className="border border-[#1F058F] hover:bg-[#2e0a94] hover:text-white text-black px-8 py-2 bg-white rounded-full">Go Back Home </Button>
+                        </div>
+                        <div className="mt-16 text-center text-gray-600 text-sm">
+                            <p>For further assistance reach out via our 24/7</p>
+                            <p>
+                                via email at{" "}
+                                <a href="mailto:support@crownlist.com" className="text-[#1F058F]">
+                                    support@crownlist.com
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+
                 )}
 
                 {/* Stepper */}
@@ -396,7 +387,7 @@ export default function ProductPostFlow() {
                 </div> */}
 
                 {/* Action Buttons */}
-                <div className={`flex gap-4 mt-10 ${step ===4 ? "hidden": ''}`}>
+                <div className={`flex gap-4 mt-10 ${step === 4 ? "hidden" : ''}`}>
                     {step > 1 && (
                         <Button
                             variant="outline"
