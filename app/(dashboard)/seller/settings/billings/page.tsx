@@ -39,7 +39,7 @@ export default function BillingsSettingsPage() {
           </div>
           <h3 className="text-xl font-medium mb-2">No billing</h3>
           <p className="text-gray-500 mb-6">You currently have no billing history to display</p>
-          <Button className="bg-[#1F058F] hover:bg-[#2a0bc0]" onClick={handleClick}>Post product</Button>
+          {/* <Button className="bg-[#1F058F] hover:bg-[#2a0bc0]" onClick={handleClick}>Pricing </Button> */}
         </div>
       </div>
 
