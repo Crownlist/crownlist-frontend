@@ -55,7 +55,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">
                     Contact us
                   </Link>
                 </li>
@@ -67,7 +67,7 @@ export default function Footer() {
               <h3 className="font-medium mb-4">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
                     FAQs
                   </Link>
                 </li>
