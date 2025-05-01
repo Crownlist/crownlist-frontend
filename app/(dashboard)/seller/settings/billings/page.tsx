@@ -1,16 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { Receipt } from "lucide-react"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 
 export default function BillingsSettingsPage() {
-    const router = useRouter()
-    const handleClick = ( ) => {
-        // e.preventDefault()
-       router.push('/seller/settings/billings/1')
-    }
+    // const router = useRouter()
+    // const handleClick = ( ) => {
+    //     // e.preventDefault()
+    //    router.push('/seller/settings/billings/1')
+    // }
   return (
     <div className="p-4 md:p-6">
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
@@ -39,7 +39,7 @@ export default function BillingsSettingsPage() {
           </div>
           <h3 className="text-xl font-medium mb-2">No billing</h3>
           <p className="text-gray-500 mb-6">You currently have no billing history to display</p>
-          <Button className="bg-[#1F058F] hover:bg-[#2a0bc0]" onClick={handleClick}>Post product</Button>
+          {/* <Button className="bg-[#1F058F] hover:bg-[#2a0bc0]" onClick={handleClick}>Pricing </Button> */}
         </div>
       </div>
 

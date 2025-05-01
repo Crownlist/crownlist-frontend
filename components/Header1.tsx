@@ -120,8 +120,8 @@ const Header = ({ hidden }: props) => {
     { title: "Notification", link: '/buyer/notification' },
     { title: "Messages", link: '/buyer/messages' },
     { title: "Saved", link: '/buyer/saved' },
-    { title: "Sellers hub", link: '/' },
-    { title: "User hub", link: '/' },
+    { title: "Sellers hub", link: '/seller/dashboard' },
+    { title: "User hub", link: '/buyer/profile' },
     { title: "Logout", link: "/" },
   ]
 

@@ -115,7 +115,8 @@ export default function CategoryScroll() {
 
       <div className="flex overflow-x-auto no-scrollbar gap-4 py-1">
         {categories.map((cat, idx) => (
-          <div key={idx} className="relative min-w-[140px] h-[160px] rounded-xl overflow-hidden flex-shrink-0">
+          <div key={idx} className="relative min-w-[140px] h-[160px] rounded-xl overflow-hidden flex-shrink-0"
+          onClick={() => handleCategoryClick(idx, cat.comingSoon)}>
             <Image
               src={cat.img || "/placeholder.svg?height=160&width=140"}
               alt={cat.title}
