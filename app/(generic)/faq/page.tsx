@@ -28,6 +28,7 @@ export default function FAQSection() {
 
     <>
     <Header hidden={false} />
+  
 
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex flex-col items-center text-center mb-10">
