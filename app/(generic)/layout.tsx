@@ -6,6 +6,7 @@ import Head from "next/head"
 // import ChatBot from "@/components/Home/ChatBot"
 import NextTopLoader from 'nextjs-toploader'
 import ChatBot from "@/components/Home/ChatBot"
+import BottomNav from "@/components/BottomNav"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
           <ChatBot />
+          <BottomNav />
         </ThemeProvider>
       </body>
     </html>

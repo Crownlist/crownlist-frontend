@@ -79,7 +79,7 @@ const categories = [
     subcategories: [],
   },
   {
-    name: "Sneakers",
+    name: "Home applicances & furniture",
     icon: "/car.png",
     isComingSoon: true,
     subcategories: [],
