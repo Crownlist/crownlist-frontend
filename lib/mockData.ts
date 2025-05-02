@@ -1,5 +1,63 @@
 // utils/mockData.ts
-
+export  const termsAndConditions = [
+  {
+    id: 1,
+    title: "ACCEPTANCE OF THE TERMS",
+    content: "These Terms and Conditions of Use (the “Terms”) constitute a binding and enforceable legal contract between CROWNLIST and you. By accessing or using the CROWNLIST website and mobile applications (collectively, the “Platform”), you agree to be bound by these Terms. If you do not agree with any part of these Terms, please do not access or use the Platform.",
+  },
+  {
+    id: 2,
+    title: "ACCOUNT REGISTRATION",
+    content: "To use certain features of the Platform, you must register an account (the “Account”). You may create an Account by providing your name, email address, and password. Alternatively, you can sign up directly using your Google account. You are responsible for maintaining the confidentiality of your Account details and for all activities that occur under your Account.",
+  },
+  {
+    id: 3,
+    title: "TARGET AUDIENCE",
+    content: "CROWNLIST is primarily targeted at students and youth, but anyone can use the Platform to buy or sell items across various categories, including but not limited to: - Property - Fashion - Electronics - Mobile and Tablet - Jobs - Cars - Services",
+  },
+  {
+    id: 4,
+    title: "USER CONTENT",
+    content: "Users are solely responsible for the content they post on the Platform (“User Content”). CROWNLIST does not pre-screen User Content but reserves the right to remove any content that violates these Terms or is deemed inappropriate at our discretion.",
+    subSections: [
+      {
+        id: "4.1",
+        title: "Prohibited Content",
+        content: "Users must not post content that: - Is false, misleading, or deceptive - Infringes on any third-party rights - Contains explicit or pornographic material - Promotes illegal activities - Violates any applicable laws or regulations",
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "LISTING AND FEES",
+    content: "CROWNLIST allows free listings by default. Users may promote their listings (featured) for a small fee, and also have the option to upgrade their Accounts for enhanced features that may lead to increased visibility and trust.",
+  },
+  {
+    id: 6,
+    title: "DISPUTE RESOLUTION",
+    content: "While CROWNLIST aims to provide a satisfactory experience for all users, we are not responsible for resolving disputes between users. Users are encouraged to communicate directly to resolve any issues amicably.",
+  },
+  {
+    id: 7,
+    title: "PRIVACY POLICY",
+    content: "Your privacy is important to us. Please review our Privacy Policy, which outlines how we collect, use, and protect your personal information. (Note: You may need to develop a Privacy Policy later.)",
+  },
+  {
+    id: 8,
+    title: "GOVERNING LAW",
+    content: "These Terms shall be governed by the laws of the Federal Republic of Nigeria. Any disputes arising from these Terms shall be resolved in accordance with applicable laws.",
+  },
+  {
+    id: 9,
+    title: "MODIFICATIONS TO THE TERMS",
+    content: "CROWNLIST reserves the right to modify these Terms at any time. Any changes will be effective immediately upon posting on the Platform. Your continued use of the Platform after changes signifies your acceptance of the modified Terms.",
+  },
+  {
+    id: 10,
+    title: "CONTACT INFORMATION",
+    content: "For any questions or concerns regarding these Terms, please contact us at: [support@crownlist.ng](mailto:support@crownlist.ng).",
+  },
+];
 export const mockData = [
     // Phones & Tablets
     ...Array.from({ length: 9 }).map((_, i) => ({
