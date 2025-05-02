@@ -42,7 +42,7 @@ export default function Footer() {
             {/* Logo and Tagline */}
             <div className="md:col-span-1">
               <Image src="/logofooter.jpg" width={100} height={100} alt="crownlist Logo" />
-              <p className="mt-4 text-sm text-gray-400">Crownlist your number one product listing company</p>
+              <p className="mt-4 text-sm text-gray-400">Crownlist your free trusted marketplace</p>
             </div>
             
             {/* Company Links */}
@@ -74,6 +74,11 @@ export default function Footer() {
                 <li>
                   <Link href="/safety" className="text-sm text-gray-400 hover:text-white transition-colors">
                     Safety
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+                    Share feedback
                   </Link>
                 </li>
               </ul>
@@ -153,7 +158,7 @@ export default function Footer() {
 
         {/* Copyright and Payment Methods */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-gray-800">
-          <p className="text-sm text-gray-500 mb-4 md:mb-0">©2025 Joelist. All rights reserved.</p>
+          <p className="text-sm text-gray-500 mb-4 md:mb-0">©2025 Crownlist. All rights reserved.</p>
 
           <div className="flex space-x-3">
             {/* <Image
@@ -184,13 +189,13 @@ export default function Footer() {
               alt="Shop Pay"
             // className="grayscale"
             />
-            <Image
+            {/* <Image
               src="/icons/mastercard.svg"
               width={24}
               height={24}
               alt="Mastercard"
-            // className="grayscale"
-            />
+             className="grayscale"
+            /> */}
             <Image
               src="/icons/visa.svg"
               width={24}

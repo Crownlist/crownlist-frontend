@@ -78,7 +78,7 @@ const categories = [
     subcategories: [],
   },
   {
-    title: "Sneakers",
+    title: "Home applicances & furniture",
     cta: "Coming soon",
     img: "/assets/images/cars.png",
     comingSoon: true,
