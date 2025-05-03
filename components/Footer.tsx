@@ -50,8 +50,8 @@ export default function Footer() {
               <h3 className="font-medium mb-4">Company</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    About Us
+                  <Link href="/about-us" className="text-sm text-gray-400 hover:text-white transition-colors">
+                    About us
                   </Link>
                 </li>
                 <li>
@@ -72,7 +72,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href="/safety" className="text-sm text-gray-400 hover:text-white transition-colors">
                     Safety
                   </Link>
                 </li>
@@ -89,13 +89,13 @@ export default function Footer() {
               <h3 className="font-medium mb-4">Legal</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    Terms and condition
+                  <Link href="/terms-and-conditions" className="text-sm text-gray-400 hover:text-white transition-colors">
+                    Terms
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    Privacy policy
+                  <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">
+                    Privacy
                   </Link>
                 </li>
               </ul>
