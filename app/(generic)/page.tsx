@@ -241,8 +241,8 @@ export default function Home() {
   const router = useRouter()
   console.log(isSticky)
 
-  const handleSeeMore = () =>{
-    router.push('/product')
+  const handleSeeMore = (url: string) =>{
+    router.push(url)
   }
   useEffect(() => {
     const handleScroll = () => {
@@ -261,6 +261,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <Header hidden={true} />
+      
 
       {/* Hero Section */}
       <div className="flex flex-col relative">
@@ -277,7 +278,7 @@ export default function Home() {
               products={popularItems}
               initialView="grid"
               showSeeMore
-              onSeeMoreClick={handleSeeMore}
+              onSeeMoreClick={() => handleSeeMore("/sponsored")}
             />
 
             {/* Sponsored Post */}
@@ -289,7 +290,7 @@ export default function Home() {
             {/* Services you might need */}
             <ProductSection title="Featured Electronics" products={servicesItems} initialView="grid" 
             showSeeMore
-            onSeeMoreClick={handleSeeMore}
+            onSeeMoreClick={() => handleSeeMore("/category/electronics")}
             />
 
             {/* Phones & tablets */}
@@ -298,7 +299,7 @@ export default function Home() {
               products={phonesItems}
               initialView="grid"
               showSeeMore
-              onSeeMoreClick={handleSeeMore}
+              onSeeMoreClick={() => handleSeeMore("/category/phone-tablets")}
             />
 
             {/* Properties */}
@@ -307,7 +308,7 @@ export default function Home() {
               products={propertiesItems}
               initialView="grid"
               showSeeMore
-              onSeeMoreClick={handleSeeMore}
+              onSeeMoreClick={() => handleSeeMore("/category/property")}
             />
           </div>
           {/* <div>Categories Dropdown</div> */}

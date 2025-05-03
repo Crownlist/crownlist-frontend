@@ -78,7 +78,7 @@ const categories = [
     subcategories: [],
   },
   {
-    title: "Home applicances & furniture",
+    title: "Home Appliances and Furniture",
     cta: "Coming soon",
     img: "/assets/images/cars.png",
     comingSoon: true,

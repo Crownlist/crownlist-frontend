@@ -51,12 +51,12 @@ export default function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    About us
+                    About Us
                   </Link>
                 </li>
                 <li>
                   <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    Contact us
+                    Contact Us
                   </Link>
                 </li>
               </ul>
@@ -77,7 +77,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">
                     Share feedback
                   </Link>
                 </li>
@@ -157,53 +157,53 @@ export default function Footer() {
         
 
         {/* Copyright and Payment Methods */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-gray-800">
-          <p className="text-sm text-gray-500 mb-4 md:mb-0">©2025 Crownlist. All rights reserved.</p>
-
+        <div className=" items-center pt-6 border-t border-gray-800">
+          <p className="text-sm text-center text-gray-500 mb-4 md:mb-0">©2025 Crownlist. All rights reserved.</p>
+{/* 
           <div className="flex space-x-3">
-            {/* <Image
+            <Image
                 src="/placeholder.svg?height=24&width=24"
                 width={24}
                 height={24}
                 alt="YouTube"
                 className="grayscale"
-              /> */}
+              />
             <Image
               src="/icons/apple-pay.svg"
               width={24}
               height={24}
               alt="Apple Pay"
-            // className="grayscale"
+              className="grayscale"
             />
             <Image
               src="/icons/google-pay.svg"
               width={24}
               height={24}
               alt="Google Pay"
-            // className="grayscale"
+            className="grayscale"
             />
             <Image
               src="/icons/shop-pay.svg"
               width={24}
               height={24}
               alt="Shop Pay"
-            // className="grayscale"
+             className="grayscale"
             />
-            {/* <Image
+            <Image
               src="/icons/mastercard.svg"
               width={24}
               height={24}
               alt="Mastercard"
              className="grayscale"
-            /> */}
+            />
             <Image
               src="/icons/visa.svg"
               width={24}
               height={24}
               alt="Visa"
-            // className="grayscale"
+            className="grayscale"
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

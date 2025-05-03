@@ -19,6 +19,7 @@ const categories = [
     name: "Phones & Tablets",
     icon: "/video.png",
     hot: true,
+    href: "/category/phone-tablets",
     subcategories: [
       { name: "Mobile phone", href: "/category/phone-tablets?subcategory=mobile" },
       { name: "Accessories", href: "/category/phone-tablets?subcategory=accessories" },
@@ -30,6 +31,7 @@ const categories = [
     name: "Electronics",
     icon: "/lab-scale.png",
     hot: true,
+    href: "/category/electronics",
     subcategories: [
       { name: "Hardware", href: "/category/electronics?subcategory=hardware" },
       { name: "Monitors", href: "/category/electronics?subcategory=monitors" },
@@ -43,6 +45,7 @@ const categories = [
     name: "Properties",
     icon: "/protection.png",
     hot: true,
+    href: "/category/property",
     subcategories: [
       { name: "Student", href: "/category/property?subcategory=student" },
       { name: "Personal", href: "/category/property?subcategory=personal" },
@@ -53,6 +56,7 @@ const categories = [
     name: "Fashion",
     icon: "/dress.png",
     hot: true,
+    href: "/category/fashion",
     subcategories: [
       { name: "Bags", href: "/category/fashion?subcategory=bags" },
       { name: "Clothes", href: "/category/fashion?subcategory=clothes" },
@@ -79,7 +83,7 @@ const categories = [
     subcategories: [],
   },
   {
-    name: "Home applicances & furniture",
+    name: "Home Appliances and Furniture",
     icon: "/car.png",
     isComingSoon: true,
     subcategories: [],
