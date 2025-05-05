@@ -27,7 +27,7 @@ interface Product {
 
 
 
-export default function ProductDetailPage({ productId }: { productId: string }) {
+export default function ProductDetailPage() {
     const [currentImage, setCurrentImage] = useState(0)
     const [expandedSections, setExpandedSections] = useState({
         description: false,
@@ -160,7 +160,8 @@ export default function ProductDetailPage({ productId }: { productId: string }) 
 
 
     const currentProduct: Product = {
-        id: productId || "1",
+        // id: productId || "1",
+        id: 1,
         title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
         postedDate: "12/1/2024", 
         condition: "Brand New"
@@ -409,7 +410,7 @@ export default function ProductDetailPage({ productId }: { productId: string }) 
                         <div className="flex md:hidden w-full h-full mt-2 md:justify-end">
                             <ProductDetails 
                                 postedDate={currentProduct.postedDate}
-                                condition={currentProduct.condition} productId={""} />
+                                condition={currentProduct.condition}/>
                         </div>
                         {/* You might also like these */}
                         <div className="mt-8">
@@ -455,7 +456,7 @@ export default function ProductDetailPage({ productId }: { productId: string }) 
                         <ProductDetails 
                          postedDate={currentProduct.postedDate}
                          condition={currentProduct.condition}
-                         productId={""} />
+                         />
                     </div>
                 </div>
             </div>

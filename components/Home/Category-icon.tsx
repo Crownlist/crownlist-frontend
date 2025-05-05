@@ -1,4 +1,3 @@
-/* eslint-disable */
 import type { ReactNode } from "react"
 
 interface CategoryIconProps {

@@ -12,7 +12,7 @@ import { Copy } from "lucide-react";
 interface ProductDetailsProps {
     postedDate: string; 
     condition: "Brand New" | "Used"
-    productId: string; 
+    // productId: string; 
   }
 
 
@@ -214,11 +214,13 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                         <p>Type your message, enquiry, or concern for the seller</p>
 
                         <div className="flex items-center gap-3 mt-4">
-                            <img
-                                src="/profile.png"
+                          
+                            <Image 
+                               src="/profile.png"
                                 alt="Seller Avatar"
-                                className="w-10 h-10 rounded-full"
-                            />
+                                className="w-10 h-10 rounded-full">
+
+                            </Image>
                             <div>
                                 <h3 className="font-semibold">Oyekings Properties</h3>
                                 <p className="text-sm flex items-center p-2">
