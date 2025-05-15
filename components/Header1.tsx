@@ -450,7 +450,7 @@ const Header = ({ hidden }: props) => {
 
         {/* Original Header with Responsive Classes */}
         <div className=" mx-auto py-1 pt-2 w-full">
-          <div className="hidden md:flex  justify-between w-full">
+          <div className="hidden   justify-between w-full  md:hidden">
             <div className="flex items-center gap-7">
               <div className="flex items-center gap-1.5">
                 <Image src="/icons/gmail.svg" width={24} height={24} alt="Gmail" />

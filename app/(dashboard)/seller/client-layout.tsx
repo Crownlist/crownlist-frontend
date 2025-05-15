@@ -4,9 +4,9 @@ import type React from "react"
 import { useState } from "react"
 import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import DashboardHeader from "@/components/admin-dashboard-header"
-import DashboardSidebar from "@/components/admin-dashboard-sidebar"
-import MobileSidebar from "@/components/admin-mobile-sidebar"
+import DashboardHeader from "@/components/dashboard-header"
+import DashboardSidebar from "@/components/dashboard-sidebar"
+import MobileSidebar from "@/components/mobile-sidebar"
 
 interface RootLayoutProps {
   children: React.ReactNode

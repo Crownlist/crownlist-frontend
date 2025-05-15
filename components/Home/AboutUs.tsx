@@ -82,7 +82,7 @@ const AboutUs = () => {
                                 Our Story
                             </div>
                             <div className='flex font-light  p-2 '>
-                            CROWNLIST began with a simple yet powerful idea in 2025: a student&aposs desire to easily locate nearby hostels. What started as a focused solution quickly blossomed into a broader vision after a week of dedicated research. Recognizing the need for a user-friendly platform to buy and sell a variety of goods, organized by category, CROWNLIST was born. Starting with essentials like real estate and home appliances, our journey is one of continuous growth, with plans to expand our offerings to meet the diverse needs of our community.
+                            CROWNLIST began with a simple yet powerful idea in 2025, students desire to easily locate nearby hostels. What started as a focused solution quickly blossomed into a broader vision after a week of dedicated research. Recognizing the need for a user-friendly platform to buy and sell a variety of goods, organized by category, CROWNLIST was born. Starting with essentials like real estate and home appliances, our journey is one of continuous growth, with plans to expand our offerings to meet the diverse needs of our community.
                             </div>
                         </div>
                     </div>

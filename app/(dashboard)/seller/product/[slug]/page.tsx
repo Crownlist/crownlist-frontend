@@ -62,7 +62,7 @@ export default function ProductPostFlow() {
         }
         setStep(step + 1)
     }
-    const handleBu = (cat : any) => {
+    const handleBu = (cat: any) => {
         setSelectedCategory(cat.id)
         setSelectedSubCategory(cat.subcategories)
         console.log(selectedSubCategory)
@@ -214,12 +214,12 @@ export default function ProductPostFlow() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Regular price</label>
-                                        <Input placeholder="Enter price" />
+                                        <Input placeholder="Enter price" type="number" />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Discount Price <span className="pl-1 font-extralight text-gray-400">(optional)</span></label>
-                                        <Input placeholder="NGN ₦" />
+                                        <Input placeholder="NGN ₦" type="number" />
                                     </div>
                                 </div>
 
@@ -306,6 +306,7 @@ export default function ProductPostFlow() {
                                         </div>
                                         <div>
                                             <Input
+                                                type="number"
                                                 value={contactInfo.phoneNumber}
                                                 onChange={(e) => setContactInfo({ ...contactInfo, phoneNumber: e.target.value })}
                                                 placeholder="Phone number"
