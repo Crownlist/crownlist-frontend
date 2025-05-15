@@ -8,6 +8,9 @@ import { Button } from "../ui/button";
 import { Copy } from "lucide-react";
 
 
+import { popularItems, servicesItems, phonesItems, propertiesItems,sponsoredItems } from "@/app/(generic)/page";
+
+
 
 interface ProductDetailsProps {
     postedDate: string; 
@@ -34,6 +37,16 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
         setView("default")
     }
 
+      const products =[
+        ...propertiesItems,
+        ...phonesItems,
+        ...sponsoredItems,
+        ...popularItems,
+        ...servicesItems,
+    ];
+    // const product = products; 
+    // const { id, image, title, price, description, location, time, distance, isSponsored } = product;
+
        
     
     return (
@@ -45,7 +58,7 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                 {view === "default" && (
                     // ============= Product Details Card =============
                     <div className="bg-white p-6 rounded-lg border w-full shadow-md md:shadow-lg">
-                        <h1 className="text-xl font-medium mb-4">Furnished room and parlor in Eleko Junction, Poygate for rent</h1>
+                        <h1 className="text-xl font-medium mb-4">{products[0]?.title || "Default Title"}</h1>
 
                         {/* Seller Information */}
                         <div className="flex items-center gap-3 mb-4">
@@ -61,13 +74,13 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                         {/* Price */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2">
-                                <span className="text-xl font-bold">$90.15</span>
+                                <span className="text-xl font-bold">{products[0]?.price || "N/A"}</span>
                                 <span className="text-sm text-gray-500 line-through">$99.95</span>
                             </div>
                         </div>
                             {/* Added Posted Date */}
                             <p className="text-[12px] text-gray-600 mt-2 mb-2">
-                                <span className="font-medium">Posted:</span>{postedDate || "12/1/2024"}
+                                <span className="font-medium">{'time' in products[0] ? products[0].time : "N/A"}</span>{postedDate || "12/1/2024"}
                             </p>
                                         
 

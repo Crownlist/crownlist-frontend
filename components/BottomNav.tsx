@@ -2,16 +2,16 @@
 
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Home, MessageSquare, Bell, Search, ShoppingBag } from "lucide-react"
+import { Home, MessageSquare, Bookmark, ShoppingBag, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useRef } from "react"
 
 const navItems = [
-  { name: "Category", path: "/category", icon: Home },
-  { name: "Contact", path: "/contact", icon: MessageSquare },
-  { name: "Notification", path: "/notification", icon: Bell },
-  { name: "Product", path: "/product", icon: ShoppingBag },
-  { name: "Search", path: "/search", icon: Search },
+  { name: "Home", path: "/", icon: Home },
+  { name: "Saved", path: "/", icon: Bookmark },
+  { name: "Sell", path: "/", icon: ShoppingBag },
+  { name: "Messages", path: "/", icon: MessageSquare },
+  { name: "Profile", path: "/", icon: User },
 ]
 
 export default function BottomNav() {
@@ -50,9 +50,9 @@ export default function BottomNav() {
       )}
     >
       <div className="flex justify-around items-center h-16">
-        {navItems.map((item) => (
+        {navItems.map((item, index) => (
           <Button
-            key={item.path}
+            key={index}
             variant="ghost"
             className={cn(
               "flex flex-col items-center gap-1 h-full",
