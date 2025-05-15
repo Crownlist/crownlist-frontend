@@ -71,7 +71,7 @@ export default function MessagingInterface() {
     ]
 
     // Update the messages object to include empty conversations
-    const messages: Record<string, Message[]> = {
+ const messages: Record<string, Message[]> = {
         oyekings: [
             {
                 id: "1",
