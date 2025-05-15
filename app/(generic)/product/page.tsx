@@ -10,6 +10,22 @@ import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
 import ProductDetails from "@/components/Home/ProductDetails"
+import { number } from "zod"
+
+interface Product {
+    id: any;
+    title: string;
+    postedDate: string;
+    condition: "Brand New" | "Used";
+    // Additional fields for similarProducts
+    description?: string;
+    location?: string;
+    features?: string[];
+    price?: string;
+    image?: string;
+  }
+
+
 
 export default function ProductDetailPage() {
     const [currentImage, setCurrentImage] = useState(0)
@@ -76,7 +92,7 @@ export default function ProductDetailPage() {
     ]
 
     // Similar products
-    const similarProducts = [
+    const similarProducts: Product[] = [
         {
             id: 1,
             title: "The Green hostel",
@@ -85,6 +101,8 @@ export default function ProductDetailPage() {
             features: ["One room", "Gate"],
             price: "₦95,232",
             image: "/product1.png",
+            condition: "Used",
+            postedDate: "12/1/2024",
         },
         {
             id: 2,
@@ -94,6 +112,8 @@ export default function ProductDetailPage() {
             features: ["Room & parlor", "24hrs solar"],
             price: "₦595,232",
             image: "/product2.png",
+            postedDate: "12/2/2024",
+            condition: "Brand New",
         },
         {
             id: 3,
@@ -103,6 +123,9 @@ export default function ProductDetailPage() {
             features: ["Room & parlor", "24hrs solar"],
             price: "₦595,232",
             image: "/product4.png",
+            postedDate: "12/3/2024",
+            condition: "Used",
+
         },
         {
             id: 4,
@@ -112,6 +135,9 @@ export default function ProductDetailPage() {
             features: ["Room & parlor", "24hrs solar"],
             price: "₦595,232",
             image: "/product2.png",
+            postedDate: "12/4/2024",
+            condition: "Brand New",
+
         },
     ]
 
@@ -132,6 +158,28 @@ export default function ProductDetailPage() {
         setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))
     }
 
+
+    const currentProduct: Product = {
+        // id: productId || "1",
+        id: 1,
+        title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
+        postedDate: "12/1/2024", 
+        condition: "Brand New"
+      };
+    
+
+   
+
+      const safetyTips = [
+        "Do not send money or personal information until you’ve seen the product.",
+        "Meet the seller in a safe, public location.",
+        "Inspect the product thoroughly before payment.",
+        "Avoid deals that seem too good to be true.",
+        "Use secure payment methods; avoid cash for high-value items.",
+    ];
+
+      
+
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Header */}
@@ -151,13 +199,14 @@ export default function ProductDetailPage() {
                         Property
                     </Link>
                     <ChevronRight size={14} />
+
                     <span className="text-gray-700 truncate">Furnished room and parlor in Eleko Junction, Poygate for rent</span>
                 </div>
 
 
                 <div className="flex flex-col md:flex-row gap-4 md:justify-between w-full">
                     {/* Left Column - Product Images */}
-                    <div className=" w-full   ">
+                    <div className=" w-full">
                         {/* Main Image */}
                         <div className="relative mb-2 md:mb-4">
                             <div className="relative h-[200px] md:h-[400px] w-full ">
@@ -340,18 +389,36 @@ export default function ProductDetailPage() {
 
                                     </AccordionContent>
                                 </AccordionItem>
+
+
+                                {/* Safety Tips Section */}
+                            <AccordionItem value="safety-tips" className="border-b pb-4">
+                            <AccordionTrigger className="flex items-center justify-between w-full text-left py-2">
+                                <span className="font-medium">Safety Tips</span>
+                            </AccordionTrigger>
+                            <AccordionContent className="mt-2 text-gray-600">
+                                <ul className="list-disc pl-5 space-y-2">
+                                {safetyTips.map((tip, index) => (
+                                    <li key={index} className="text-sm">{tip}</li>
+                                ))}
+                                </ul>
+                            </AccordionContent>
+                            </AccordionItem>
                             </Accordion>
                         </div>
 
                         <div className="flex md:hidden w-full h-full mt-2 md:justify-end">
-                            <ProductDetails />
+                            <ProductDetails 
+                                postedDate={currentProduct.postedDate}
+                                condition={currentProduct.condition}/>
                         </div>
                         {/* You might also like these */}
                         <div className="mt-8">
                             <h3 className="font-medium text-lg mb-4">You might also like these</h3>
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {similarProducts.map((product) => (
-                                    <div key={product.id} className="border rounded-lg overflow-hidden">
+                                    <Link href={`/product/${product.id}`} className="w-full" key={product.id}>
+                                    <div className="border rounded-lg overflow-hidden">
                                         <div className="relative h-[160px]">
                                             <Image
                                                 src={product.image || "/placeholder.svg"}
@@ -368,7 +435,7 @@ export default function ProductDetailPage() {
                                             <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
                                             <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center ">
                                                 <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">{product.location}</div>
-                                                {product.features.map((feature, index) => (
+                                                {(product.features ?? []).map((feature, index) => (
                                                     <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
                                                         {feature}
                                                     </div>
@@ -377,6 +444,8 @@ export default function ProductDetailPage() {
                                             <div className="font-medium text-sm mt-2">{product.price}</div>
                                         </div>
                                     </div>
+                                    
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -384,7 +453,10 @@ export default function ProductDetailPage() {
 
                     {/* Right Column - Product Details */}
                     <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
-                        <ProductDetails />
+                        <ProductDetails 
+                         postedDate={currentProduct.postedDate}
+                         condition={currentProduct.condition}
+                         />
                     </div>
                 </div>
             </div>
