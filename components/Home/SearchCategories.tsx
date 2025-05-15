@@ -77,7 +77,7 @@ export default function PropertyPage() {
  // Sample property data
  const properties = [
   {
-    id: 1,
+    id: '1',
     title: "The Green hostel",
     description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
     location: "Eleko",
@@ -86,7 +86,7 @@ export default function PropertyPage() {
     image: "/cat1.png",
   },
   {
-    id: 2,
+    id: '2',
     title: "St Andrews Glasgow Green",
     description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
     location: "Poly gate",
@@ -95,7 +95,7 @@ export default function PropertyPage() {
     image: "/cat2.png",
   },
   {
-    id: 3,
+    id: '3',
     title: "The Green hostel",
     description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
     location: "Eleko",
@@ -104,7 +104,7 @@ export default function PropertyPage() {
     image: "/cat3.png",
   },
   {
-    id: 4,
+    id: '4',
     title: "St Andrews Glasgow Green",
     description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
     location: "Poly gate",
@@ -113,7 +113,7 @@ export default function PropertyPage() {
     image: "/cat4.png",
   },
   {
-    id: 5,
+    id: '5',
     title: "The Green hostel",
     description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
     location: "Eleko",
@@ -122,7 +122,7 @@ export default function PropertyPage() {
     image: "/cat1.png",
   },
   {
-    id: 6,
+    id: '6',
     title: "St Andrews Glasgow Green",
     description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
     location: "Poly gate",
@@ -131,7 +131,7 @@ export default function PropertyPage() {
     image: "/cat3.png",
   },
   {
-    id: 7,
+    id: '7',
     title: "The Green hostel",
     description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
     location: "Eleko",
@@ -140,7 +140,7 @@ export default function PropertyPage() {
     image: "/cat2.png",
   },
   {
-    id: 8,
+    id: '8',
     title: "St Andrews Glasgow Green",
     description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
     location: "Poly gate",

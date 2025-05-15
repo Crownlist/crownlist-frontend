@@ -22,15 +22,15 @@ interface PropertyGridProps {
 export default function PropertyGrid({ properties, viewMode = "grid" }: PropertyGridProps) {
   return (
     <div
-      className={`grid ${
-        viewMode === "grid"
+      className={`grid ${viewMode === "grid"
           ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
           : "grid-cols-1 gap-4"
-      }`}
+        }`}
     >
       {properties.map((property) => (
         <Link key={property.id} href={`/product/${property.id}`}>
           <ProductCard
+            id={property.id}
             image={property.image}
             title={property.title}
             price={property.price}

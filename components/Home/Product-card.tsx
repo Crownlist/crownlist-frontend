@@ -8,7 +8,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 
 interface ProductCardProps {
-  id: string
+  id: string | number
   image: string
   title: string
   price: string
@@ -17,7 +17,7 @@ interface ProductCardProps {
   time?: string
   distance?: string
   isSponsored?: boolean
-  condition: string
+  condition?: string
   viewMode?: "grid" | "list"
   labels?: string[]
 }

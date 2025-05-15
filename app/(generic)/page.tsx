@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation"
 import CategoryScroll from "@/components/Home/CategoryScroll"
 
 
-export const popularItems = [
+ const popularItems = [
   {
     id: "1",
     image: "/product1.png",
@@ -68,7 +68,7 @@ export const popularItems = [
   },
 ]
 
-export const servicesItems = [
+ const servicesItems = [
   {
     id: "5",
     image: "/product1.png",
@@ -119,7 +119,7 @@ export const servicesItems = [
   },
 ]
 
-export const phonesItems = [
+ const phonesItems = [
   {
     id: "9",
     image: "/product1.png",
@@ -170,7 +170,7 @@ export const phonesItems = [
   },
 ]
 
-export const propertiesItems = [
+const propertiesItems = [
   {
     id: "13",
     image: "/product1.png",
@@ -224,7 +224,7 @@ export const propertiesItems = [
   },
 ]
 
-  export const sponsoredItems = [
+   const sponsoredItems = [
     {
       id: "17",
       title: "Men tops",
