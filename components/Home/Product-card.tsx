@@ -5,8 +5,10 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Heart } from "lucide-react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface ProductCardProps {
+  id: string
   image: string
   title: string
   price: string
@@ -15,11 +17,13 @@ interface ProductCardProps {
   time?: string
   distance?: string
   isSponsored?: boolean
+  condition: string
   viewMode?: "grid" | "list"
   labels?: string[]
 }
 
 export default function ProductCard({
+  id,
   image,
   title,
   price,
@@ -28,16 +32,26 @@ export default function ProductCard({
   time,
   distance,
   isSponsored,
+  condition,
   viewMode = "grid",
   labels = [],
 }: ProductCardProps) {
   const [liked, setLiked] = useState(false)
+  const router = useRouter();
+
+  
+  const handleClick = () => {
+    router.push(`/product/${id}`)
+  }
+  
 
   return (
     <div
+      onClick={handleClick}
       className={cn(
-        "group relative rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow",
+        "group relative rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow  cursor-pointer",
         viewMode === "list" && "flex",
+        
       )}
     >
       <div
@@ -82,7 +96,7 @@ export default function ProductCard({
         <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
           {location && <span className="text-gray-500 text-xs">{location}</span>}
           {time && <span className="text-gray-500 text-xs">Used</span>}
-          {distance && <span className="text-gray-500 text-xs">Automatic</span>}
+          {distance && <span className="text-gray-500 text-xs">{distance}</span>}
         </div>
 
         {/* {labels.length > 0 && (

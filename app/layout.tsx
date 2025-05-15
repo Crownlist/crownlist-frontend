@@ -1,8 +1,9 @@
+
 import type React from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
-import Head from "next/head"
+// import Head from "next/head"
 // import ChatBot from "../components/Home/ChatBot"
 import NextTopLoader from 'nextjs-toploader'
 
@@ -20,11 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
+      {/* <Head>
         <meta name="theme-color" content="#1F058F" />
         <meta name="msapplication-navbutton-color" content="#1F058F" />
         <meta name="apple-mobile-web-app-status-bar-style" content="#1F058F" />
-      </Head>
+      </Head> */}
       <body className={inter.className}>
       <NextTopLoader color='#1F058F' showSpinner={false} />
       {/* <Toaster position="top-center" /> */}

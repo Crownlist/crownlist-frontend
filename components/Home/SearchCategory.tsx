@@ -3,11 +3,18 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { ChevronRight,  ArrowLeft, ArrowRight, Search, Check, ChevronDown, ChevronUp, Loader2, SlidersHorizontal } from "lucide-react";
+import { Button } from "../ui/button"; // Adjust the path if necessary
 import Link from "next/link";
 import PropertyGrid from "./PropertyGrid";
 import PropertyList from "./PropertyList";
 import { mockData } from "@/lib/mockData";
 import NoSearchCat from "./NoSearchCat";
+import {   
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue, } from "../ui/select";
 
 interface SearchCategoryProps {
   category: string;
@@ -36,10 +43,16 @@ export default function SearchCategory({
   const [locationSearch, setLocationSearch] = useState("");
   const [selectedPropertyTypes, setSelectedPropertyTypes] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedPriceOptions, setSelectedPriceOptions] = useState<string[]>([]);
+    const [selectedPeriod, setSelectedPeriod] = useState<string[]>([]);
+
+
   const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [selectedCondition, setSelectedCondition] = useState<string>("all");
+
   const itemsPerPage = 9;
 
   const activeSubcategory = propSubcategory || (typeof propSearchParams?.subcategory === 'string' ? propSearchParams.subcategory : undefined);
@@ -75,7 +88,7 @@ export default function SearchCategory({
         break;
     }
     return results;
-  }, [category, activeSubcategory, selectedPropertyTypes, selectedLocations, priceRange, sortOption]);
+  }, [category, activeSubcategory, selectedPropertyTypes, selectedLocations, priceRange, sortOption, selectedPriceOptions, selectedPeriod ]);
 
   const totalPages = Math.max(1, Math.ceil(filteredResults.length / itemsPerPage));
   const paginatedResults = useMemo(() => {
@@ -110,6 +123,14 @@ export default function SearchCategory({
     setSelectedLocations(prev => prev.includes(location) ? prev.filter(l => l !== location) : [...prev, location]);
   };
 
+   const tooglePrice = (price: string) => {
+    setSelectedPriceOptions(prev => prev.includes(price) ? prev.filter(l => l !== price) : [...prev, price]);
+  };
+
+     const tooglePeriod = (period: string) => {
+    setSelectedPriceOptions(prev => prev.includes(period) ? prev.filter(l => l !== period) : [...prev, period]);
+  };
+
   const handleSortOptionSelect = (option: string) => {
     setSortOption(option);
     setSortDropdownOpen(false);
@@ -121,6 +142,8 @@ export default function SearchCategory({
   };
 
   const locationOptions = ["Lagos", "Abuja", "Ibadan", "Port Harcourt"].filter(location => location.toLowerCase().includes(locationSearch.toLowerCase()));
+  const priceOptions = ["Call for price", "Free"].filter(location => location.toLowerCase().includes(locationSearch.toLowerCase()));
+   const periodOptions = ["With picture only", "Premium items only",  "With phone number"];
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-gray-500" /></div>;
@@ -131,9 +154,10 @@ export default function SearchCategory({
   }
 
   return (
-    <div className="mx-auto px-4 py-6">
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+    <div className="mx-auto px-4 py-6 ">
+      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4 ">
         <Link href="/" className="hover:text-gray-700">Home</Link>
+      
         <ChevronRight size={16} />
         <span className="text-gray-700">{categoryTitle}</span>
         {subcategoryTitle && (<><ChevronRight size={16} /><span className="text-gray-700">{subcategoryTitle}</span></>)}
@@ -165,11 +189,13 @@ export default function SearchCategory({
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col md:flex-row gap-8 ">
         {(showMobileFilters || typeof window === 'undefined' || window.innerWidth >= 768) && (
-          <div className="w-full md:w-[220px] shrink-0">
+          <div className="w-full md:w-[220px] shrink-0 border border-grey-200 p-4 rounded-sm shadow-sm">
             <div className="space-y-4">
-              <div className="border-b pb-4">
+
+
+               {/* <div className="border-b pb-4">
                 <button onClick={() => toggleFilter("property")} className="flex items-center justify-between w-full text-left mb-4">
                   <span className="font-medium">{filters.label}{selectedPropertyTypes.length > 0 && (<span className="text-gray-400 pl-1">(1)</span>)}</span>
                   {expandedFilters.property ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -187,8 +213,31 @@ export default function SearchCategory({
                     })}
                   </div>
                 )}
+              </div> */}
+
+
+                {/* keyword */}
+               <div className=" pb-2">
+                <button onClick={() => toggleFilter("location")} className="flex items-center justify-between w-full text-left mb-4">
+                  <span className="font-medium">Keyword</span>
+                  {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </button>
+                {expandedFilters.location && (
+                  <div className="space-y-3">
+                    <div className="flex rounded-full overflow-hidden border border-gray-300">
+                      <div className="flex-1 flex items-center pl-3">
+                       
+                        <input type="text" placeholder="Keyword.." className="w-full py-1.5 text-sm focus:outline-none" value={locationSearch} onChange={(e) => setLocationSearch(e.target.value)} />
+                      </div>
+                    </div>
+                   
+                  </div>
+                )}
               </div>
-              <div className="border-b pb-4">
+
+           {/* location */}
+
+               <div className=" pb-2">
                 <button onClick={() => toggleFilter("location")} className="flex items-center justify-between w-full text-left mb-4">
                   <span className="font-medium">Location</span>
                   {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -197,24 +246,89 @@ export default function SearchCategory({
                   <div className="space-y-3">
                     <div className="flex rounded-full overflow-hidden border border-gray-300">
                       <div className="flex-1 flex items-center pl-3">
-                        <Search size={14} className="text-gray-400 mr-2" />
-                        <input type="text" placeholder="Search locations" className="w-full py-1.5 text-sm focus:outline-none" value={locationSearch} onChange={(e) => setLocationSearch(e.target.value)} />
+                        {/* <Search size={14} className="text-gray-400 mr-2" /> */}
+                        <input type="text" placeholder="State, city.." className="w-full py-1.5 text-sm focus:outline-none" value={locationSearch} onChange={(e) => setLocationSearch(e.target.value)} />
                       </div>
                     </div>
-                    <div className="max-h-[200px] overflow-y-auto pr-2 space-y-2">
+                    {/* <div className="max-h-[200px] overflow-y-auto pr-2 space-y-2">
                       {locationOptions.map(location => (
                         <div key={location} className="flex items-center gap-2">
                           <div className={`h-4 w-4 rounded flex items-center justify-center ${selectedLocations.includes(location) ? "bg-green-500 text-white" : "border border-gray-300"}`} onClick={() => toggleLocation(location)}>{selectedLocations.includes(location) && <Check size={12} />}</div>
                           <label className="text-sm cursor-pointer" onClick={() => toggleLocation(location)}>{location}</label>
                         </div>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>
+
+              {/* Condition */}
+
+              
+               <div className=" pb-4">
+                {/* <button onClick={() => toggleFilter("condition")} className="flex items-center justify-between w-full text-left mb-4"></button>
+                  <span className="font-medium">Property Type</span>
+                  {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />} */}
+                 <span className="font-medium">Condition</span>
+                {expandedFilters.location && (
+                 <Select
+                value={selectedCondition}
+                onValueChange={(value) => {
+                  setSelectedCondition(value);
+        }}
+      >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select condition" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="brand-new">Brand New</SelectItem>
+              <SelectItem value="used">Used</SelectItem>
+            </SelectContent>
+          </Select>
+                )}
+              </div>
+
+     
+              {/* Transaction */} 
+
+    
+               <div className=" pb-4">
+                {/* <button onClick={() => toggleFilter("condition")} className="flex items-center justify-between w-full text-left mb-4"></button>
+                  <span className="font-medium">Property Type</span>
+                  {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />} */}
+                 <span className="font-medium">Transaction</span>
+                {expandedFilters.location && (
+                 <Select
+                value={selectedCondition}
+                onValueChange={(value) => {
+                  setSelectedCondition(value);
+        }}
+      >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select condition" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="brand-new">Sell</SelectItem>
+              <SelectItem value="used">Buy</SelectItem>
+              <SelectItem value="used">Rent</SelectItem>
+              <SelectItem value="used">Exchange</SelectItem>
+
+
+            </SelectContent>
+          </Select>
+                )}
+              </div>
+
+          
+
+              {/* Price Filter */}
+
+           
               <div className="border-b pb-4">
                 <button onClick={() => toggleFilter("price")} className="flex items-center justify-between w-full text-left mb-4">
-                  <span className="font-medium">Price</span>
+                  <span className="font-medium">Price range </span>
                   {expandedFilters.price ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </button>
                 {expandedFilters.price && (
@@ -233,9 +347,76 @@ export default function SearchCategory({
                   </div>
                 )}
               </div>
+
+               <div className="max-h-[200px] overflow-y-auto pr-2 space-y-2">
+                      {priceOptions.map(price => (
+                        <div key={price} className="flex items-center gap-2">
+                          <div className={`h-4 w-4 rounded flex items-center justify-center ${selectedPriceOptions.includes(price) ? "bg-green-500 text-white" : "border border-gray-300"}`} onClick={() => tooglePrice(price)}>{selectedPriceOptions.includes(price) && <Check size={12} />}</div>
+                          <label className="text-sm cursor-pointer" onClick={() => tooglePrice(price)}>{price}</label>
+                        </div>
+                      ))}
+                    </div>
+
+
+                    {/* period */}
+
+                        
+              <div className="border-b pb-4">
+                {/* <button onClick={() => toggleFilter("price")} className="flex items-center justify-between w-full text-left mb-4">
+                </button> */}
+
+                  <span className="font-medium">Period </span>
+
+                  {expandedFilters.location && (
+                 <Select
+                value={selectedCondition}
+                onValueChange={(value) => {
+                  setSelectedCondition(value);
+        }}
+      >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select condition" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="brand-new">Yesterday</SelectItem>
+              <SelectItem value="used">Last week</SelectItem>
+              <SelectItem value="used">Last two weeks</SelectItem>
+              <SelectItem value="used">Last month</SelectItem>
+              <SelectItem value="used">Last Year</SelectItem>
+
+
+
+            </SelectContent>
+          </Select>
+                )}
+               
+              </div>
+
+               <div className="max-h-[200px] overflow-y-auto pr-2 space-y-2">
+                      {periodOptions.map(period => (
+                        <div key={period} className="flex items-center gap-2">
+                          <div className={`h-4 w-4 rounded flex items-center justify-center ${selectedPeriod.includes(period) ? "bg-green-500 text-white" : "border border-gray-300"}`} onClick={() => tooglePeriod(period)}>{selectedPeriod.includes(period) && <Check size={12} />}</div>
+                          <label className="text-sm cursor-pointer" onClick={() => tooglePeriod(period)}>{period}</label>
+                        </div>
+                      ))}
+                    </div>
+
+
+
+               <Button
+                  size="sm"
+                  className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-2 px-10  text-sm flex justify-center items-center h-full cursor-pointer"
+                >
+                  <Search/>
+                  Search
+                </Button>
             </div>
           </div>
         )}
+
+
+       
 
         <div className="flex-1">
           {viewMode === "grid" ? <PropertyGrid properties={paginatedResults} /> : <PropertyList properties={paginatedResults} />}
