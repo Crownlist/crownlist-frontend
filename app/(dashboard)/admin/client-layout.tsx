@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Menu } from "lucide-react"
+import { AlignLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import DashboardHeader from "@/components/admin-dashboard-header"
 import DashboardSidebar from "@/components/admin-dashboard-sidebar"
@@ -30,7 +30,8 @@ export default function ClientLayout({ children }: RootLayoutProps) {
           className="fixed top-2.5 left-4 z-50 md:hidden h-10"
           onClick={() => setIsMobileMenuOpen(true)}
         >
-          <Menu className="h-10 w-6 text-white" />
+          {/* <Menu className="h-10 w-6 text-black" /> */}
+          <AlignLeft className="h-10 w-6 text-black"/>
         </Button>
 
         {/* Mobile sidebar */}
