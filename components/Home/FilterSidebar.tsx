@@ -30,7 +30,11 @@ export default function FilterSidebar({
 
   return (
     <div className="w-full md:w-[220px] shrink-0">
+
+      
       <div className="space-y-4">
+
+        
         {filters.map((filter) => (
           <div key={filter.label} className="border-b pb-4">
             <button
@@ -46,6 +50,7 @@ export default function FilterSidebar({
             </button>
             {expandedFilters[filter.label.toLowerCase()] && (
               <div className="space-y-2">
+
                 {filter.label === "Location" && (
                   <div className="flex rounded-full overflow-hidden border border-gray-300">
                     <div className="flex-1 flex items-center pl-3">

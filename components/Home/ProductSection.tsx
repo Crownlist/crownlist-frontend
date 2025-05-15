@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 
 interface Product {
+  id: string
   image: string
   title: string
   price: string
@@ -14,6 +15,7 @@ interface Product {
   location?: string
   time?: string
   distance?: string
+  condition: string
   isSponsored?: boolean
   labels?: string[]
 }
@@ -50,7 +52,8 @@ export default function ProductSection({
         )}>
         {products.map((product, index) => (
           <ProductCard
-            key={index}
+           key={index}
+           id={product.id}
             image={product.image}
             title={product.title}
             price={product.price}
@@ -59,6 +62,7 @@ export default function ProductSection({
             time={product.time}
             distance={product.distance}
             isSponsored={product.isSponsored}
+            condition={product.condition}
             viewMode={viewMode}
             labels={product.labels}
           />

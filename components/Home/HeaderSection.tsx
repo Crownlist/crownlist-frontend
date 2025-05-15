@@ -25,6 +25,7 @@ export default function HeaderSection({
         <Link href="/" className="hover:text-gray-700">
           Home
         </Link>
+      
         <ChevronRight size={16} />
         <span className="text-gray-700">{categoryTitle}</span>
         {subcategoryTitle && (
@@ -37,6 +38,7 @@ export default function HeaderSection({
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-[13px] sm:text-lg font-medium">
+          
           {categoryTitle}
           {subcategoryTitle && ` - ${subcategoryTitle}`}
           <span className="text-gray-500"> ({resultsCount} results found)</span>
