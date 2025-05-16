@@ -1,265 +1,23 @@
 /* eslint-disable */
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight, Heart} from "lucide-react"
+import { ChevronRight, Heart, ChevronDown, ChevronUp, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
 import ProductDetails from "@/components/Home/ProductDetails"
-// import { number } from "zod"
-import { useParams } from "next/navigation"
-
-
-// this is the original proudct detail page
-const popularItems = [
-    {
-      id: "1",
-      image: "/product1.png",
-      title: "The Green Sofa",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦85,000",
-      time: "2 hours ago",
-      location: "Lekki, Lagos",
-      distance: "3km away",
-      labels: ["Furniture", "Home"],
-      condition: "New",
-    },
-    {
-      id: "2",
-      image: "/product2.png",
-      title: "Dr Andrews Glasgow Stove",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Kitchen", "Appliances"],
-      condition: "New",
-    },
-    {
-      id: "3",
-      image: "/product3.png",
-      title: "AMOLED Touch Screen Laptop",
-      description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
-      price: "₦625,000",
-      time: "1 day ago",
-      location: "VI, Lagos",
-      distance: "7km away",
-      labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
-    },
-    {
-      id: "4",
-      image: "/product4.png",
-      title: "SamsungGalaxy Note20 5G",
-      description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
-      price: "₦350,000",
-      time: "5 hours ago",
-      location: "Ajah, Lagos",
-      distance: "12km away",
-      labels: ["Phone", "Samsung", "Gadget"],
-      condition: "New",
-    },
-  ]
-  
-   const servicesItems = [
-    {
-      id: "5",
-      image: "/product1.png",
-      title: "Men thrift",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦25,000",
-      time: "2 hours ago",
-      location: "Surulere, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-    {
-      id: "6",
-      image: "/product2.png",
-      title: "Table and 2 folding chairs",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦35,000",
-      time: "3 hours ago",
-      location: "Yaba, Lagos",
-      distance: "5km away",
-      labels: ["Furniture", "Outdoor"],
-      condition: "New",
-    },
-    {
-      id: "7",
-      image: "/product3.png",
-      title: "Women thrift",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-    {
-      id: "8",
-      image: "/product4.png",
-      title: "Men shirts",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-  ]
-  
-   const phonesItems = [
-    {
-      id: "9",
-      image: "/product1.png",
-      title: "SamsungGalaxy Note20 5G",
-      description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
-      price: "₦350,000",
-      time: "5 hours ago",
-      location: "Ajah, Lagos",
-      distance: "12km away",
-      labels: ["Phone", "Samsung", "Gadget"],
-      condition: "New",
-    },
-    {
-      id: "10",
-      image: "/product2.png",
-      title: "AMOLED Touch Screen Laptop",
-      description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
-      price: "₦625,000",
-      time: "1 day ago",
-      location: "VI, Lagos",
-      distance: "7km away",
-      labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
-    },
-    {
-      id: "11",
-      image: "/product4.png",
-      title: "Men shirts",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-    {
-      id: "12",
-      image: "/product2.png",
-      title: "Lenovo PC",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-  ]
-  
-  const propertiesItems = [
-    {
-      id: "13",
-      image: "/product1.png",
-      title: "Table and 2 folding chairs",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦35,000",
-      time: "3 hours ago",
-      location: "Yaba, Lagos",
-      distance: "5km away",
-      labels: ["Furniture", "Outdoor"],
-      condition: "New",
-    },
-    {
-      id: "14",
-      image: "/product2.png",
-      title: "Small space PC gaming",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
-    },
-    {
-      id: "15",
-      image: "/product3.png",
-      title: "Samsung s25 Ultra",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
-    },
-    {
-      id: "16",
-      image: "/product2.png",
-      title: "Small space PC gaming",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
-    },
-  ]
-  
-     const sponsoredItems = [
-      {
-        id: "17",
-        title: "Men tops",
-        description: "Brand new 2018 Mercedes benz viano/sprinter ...",
-        location: "Lagos, Amuwo-Odofin",
-        category: "Hand craft",
-        price: "₦32,695,000",
-        image:
-          "/product1.png",
-      },
-      {
-        id: "18",
-        title: "Women's Dresses",
-        description: "Premium quality summer collection 2023",
-        location: "Lagos, Ikeja",
-        category: "Fashion",
-        price: "₦15,500",
-        image: "/product2.png",
-      },
-      {
-        id: "19",
-        title: "Casual Shoes",
-        description: "Comfortable leather shoes for everyday wear",
-        location: "Abuja, Central",
-        category: "Footwear",
-        price: "₦22,800",
-        image: "/product3.png",
-      },
-    ]
-
+import { number } from "zod"
 
 interface Product {
-    id: string;
+    id: any;
     title: string;
     postedDate: string;
     condition: "Brand New" | "Used";
+    // Additional fields for similarProducts
     description?: string;
     location?: string;
     features?: string[];
@@ -269,57 +27,28 @@ interface Product {
 
 
 
- const similarProducts: Product[] = [
-        {
-            id: "1",
-            title: "The Green hostel",
-            description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
-            location: "Eleko",
-            features: ["One room", "Gate"],
-            price: "₦95,232",
-            image: "/product1.png",
-            condition: "Used",
-            postedDate: "12/1/2024",
-        },
-        {
-            id: "2",
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product2.png",
-            postedDate: "12/2/2024",
-            condition: "Brand New",
-        },
-        {
-            id: '3',
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product4.png",
-            postedDate: "12/3/2024",
-            condition: "Used",
+export default function ProductDetailPage() {
+    const [currentImage, setCurrentImage] = useState(0)
+    const [expandedSections, setExpandedSections] = useState({
+        description: false,
+        overview: false,
+        delivery: true,
+        reviews: false,
+    })
+    const [openSection, setOpenSection] = useState<string | null>(null);
 
-        },
-        {
-            id: '4',
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product2.png",
-            postedDate: "12/4/2024",
-            condition: "Brand New",
+    const tSection = (section: string) => {
+        setOpenSection((prev) => (prev === section ? null : section)); // Close if same, else open new one
+    };
 
-        },
-    ]
+    //overview
+    const overviewData = [
+        { facility: "Wifi", detail: "No" },
+        { facility: "Water", detail: "Yes" },
+        { facility: "Generator", detail: "You pay weekly for fuel" },
+        { facility: "Neighbor", detail: "3 apartment" },
+    ];
 
-
-    
     //Reviews
     const reviews = [
         {
@@ -362,73 +91,56 @@ interface Product {
         "/product4.png",
     ]
 
+    // Similar products
+    const similarProducts: Product[] = [
+        {
+            id: 1,
+            title: "The Green hostel",
+            description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
+            location: "Eleko",
+            features: ["One room", "Gate"],
+            price: "₦95,232",
+            image: "/product1.png",
+            condition: "Used",
+            postedDate: "12/1/2024",
+        },
+        {
+            id: 2,
+            title: "St Andrews Glasgow Green",
+            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+            location: "Poly gate",
+            features: ["Room & parlor", "24hrs solar"],
+            price: "₦595,232",
+            image: "/product2.png",
+            postedDate: "12/2/2024",
+            condition: "Brand New",
+        },
+        {
+            id: 3,
+            title: "St Andrews Glasgow Green",
+            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+            location: "Poly gate",
+            features: ["Room & parlor", "24hrs solar"],
+            price: "₦595,232",
+            image: "/product4.png",
+            postedDate: "12/3/2024",
+            condition: "Used",
 
+        },
+        {
+            id: 4,
+            title: "St Andrews Glasgow Green",
+            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+            location: "Poly gate",
+            features: ["Room & parlor", "24hrs solar"],
+            price: "₦595,232",
+            image: "/product2.png",
+            postedDate: "12/4/2024",
+            condition: "Brand New",
 
-      const currentProduct: Product = {
-        // id: productId || "1",
-        id: "1",
-        title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
-        postedDate: "12/1/2024", 
-        condition: "Brand New"
-      };
-    
+        },
+    ]
 
-   
-
-      const safetyTips = [
-        "Do not send money or personal information until you’ve seen the product.",
-        "Meet the seller in a safe, public location.",
-        "Inspect the product thoroughly before payment.",
-        "Avoid deals that seem too good to be true.",
-        "Use secure payment methods; avoid cash for high-value items.",
-    ];
-
-
-
-
-    const products =[
-        ...propertiesItems,
-        ...phonesItems,
-        ...sponsoredItems,
-        ...popularItems,
-        ...servicesItems,
-    ];
-
-
-
-
-
-
-
-export default function ProductDetailPage() {
-    const [currentImage, setCurrentImage] = useState(0)
-    const [expandedSections, setExpandedSections] = useState({
-        description: false,
-        overview: false,
-        delivery: true,
-        reviews: false,
-    })
-    const [openSection, setOpenSection] = useState<string | null>(null);
-    const [product, setProduct] = useState<Product | null>(null)
-
-    const {id}= useParams()
-    console.log("this is the id", id)
-
-
-    const tSection = (section: string) => {
-        setOpenSection((prev) => (prev === section ? null : section)); // Close if same, else open new one
-    };
-
-    //overview
-    const overviewData = [
-        { facility: "Wifi", detail: "No" },
-        { facility: "Water", detail: "Yes" },
-        { facility: "Generator", detail: "You pay weekly for fuel" },
-        { facility: "Neighbor", detail: "3 apartment" },
-    ];
-
-
-   
     // Toggle section expansion
     const toggleSection = (section: string) => {
         setExpandedSections((prev) => ({
@@ -446,17 +158,26 @@ export default function ProductDetailPage() {
         setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))
     }
 
-    useEffect(() => { 
-        const productItem = products.find((item) => item.id === id) as Product | undefined;
 
-        setProduct(productItem || null);
-    }, [id]);
+    const currentProduct: Product = {
+        // id: productId || "1",
+        id: 1,
+        title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
+        postedDate: "12/1/2024", 
+        condition: "Brand New"
+      };
+    
 
+   
 
-    console.log("this is the product", product);
+      const safetyTips = [
+        "Do not send money or personal information until you’ve seen the product.",
+        "Meet the seller in a safe, public location.",
+        "Inspect the product thoroughly before payment.",
+        "Avoid deals that seem too good to be true.",
+        "Use secure payment methods; avoid cash for high-value items.",
+    ];
 
-
-  
       
 
     return (
@@ -479,7 +200,7 @@ export default function ProductDetailPage() {
                     </Link>
                     <ChevronRight size={14} />
 
-                    <span className="text-gray-700 truncate">{product?.title}</span>
+                    <span className="text-gray-700 truncate">Furnished room and parlor in Eleko Junction, Poygate for rent</span>
                 </div>
 
 
@@ -548,7 +269,7 @@ export default function ProductDetailPage() {
                                         </span>
                                     </AccordionTrigger>
                                     <AccordionContent className="mt-2 text-gray-600">
-                                        <p>{product?.title}</p>
+                                        <p>Furnished room and parlor in Eleko Junction, Poygate for rent...</p>
                                     </AccordionContent>
                                 </AccordionItem>
 
@@ -579,8 +300,8 @@ export default function ProductDetailPage() {
 
                                         {/* Property Description */}
                                         <p className="text-[#525252] text-sm mt-4">
-                                        16 bed en suite property to let, 4 wheelchair access bedrooms, with communal kitchens and dining/lounge areas.
-                                        Reception/office with a surveillance monitor. CCTV throughout inside and out.
+                                            16 bed en suite property to let, 4 wheelchair access bedrooms, with communal kitchens and dining/lounge areas.
+                                            Reception/office with a surveillance monitor. CCTV throughout inside and out.
                                         </p>
                                     </AccordionContent>
                                 </AccordionItem>
