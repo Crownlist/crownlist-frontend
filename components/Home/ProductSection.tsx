@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 
 interface Product {
-  id: string
+  id: string | number
   image: string
   title: string
   price: string

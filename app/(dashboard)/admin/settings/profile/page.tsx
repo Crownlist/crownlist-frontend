@@ -66,7 +66,7 @@ export default function AdminProfileSettingsPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">number</label>
-              <Input defaultValue="+234 081 000 000 0000" className="w-full" />
+              <Input defaultValue="+234 081 000 000 0000" className="w-full" type="number" />
             </div>
 
             <div>

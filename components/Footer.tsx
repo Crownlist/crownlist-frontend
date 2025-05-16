@@ -10,9 +10,11 @@ export default function Footer() {
       {/* Newsletter Section */}
       <div className="relative w-full bg-[#1F058F]">
        <div className='container mx-auto'>
-        <div className="flex flex-row w-full justify-between sm:justify-evenly md:gap-24 p-5 text-white align-middle items-center  ">
+        <div className="flex flex-row w-full justify-between sm:justify-evenly md:gap-18 p-5 text-white align-middle items-center  ">
            <div className="flex align-middle font-semibold">Have something to sell?</div>
+            <Link href={'/seller/dashboard'}>       
            <Button className="flex align-middle rounded-full bg-transparent   hover:bg-[#2a0bc0] text-white border-2 border-white">Post ads..</Button>
+           </Link>
         </div>
         </div>
       </div>
@@ -38,10 +40,11 @@ export default function Footer() {
             <Button className="rounded-r-full rounded-l-full  bg-[#1F058F] hover:bg-[#2a0bc0] text-white border-0">Subscribe</Button>
           </div>
         </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-8 mt-3 ">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 pb-8 mt-3 ">
             {/* Logo and Tagline */}
             <div className="md:col-span-1">
-              <Image src="/logofooter.jpg" width={100} height={100} alt="crownlist Logo" />
+              <Image src="/logofooter.jpg" width={120} height={120} alt="crownlist Logo" className="max-sm:hidden"/>
+              <Image src="/logofooter.jpg" width={100} height={100} alt="crownlist Logo" className="sm:hidden" />
               <p className="mt-4 text-sm text-gray-400">Crownlist your free trusted marketplace</p>
             </div>
             
@@ -118,14 +121,6 @@ export default function Footer() {
               
             </div>
 
-            {/* <div>
-            <h3 className="font-medium mb-4">Newsletter</h3>
-            <p className="flex items-center gap-2 text-sm text-gray-400">Subscribe to our newsletter for updates on our projects and events.</p>
-            <div className="flex flex-col space-y-3">
-              <Input type="email" placeholder="Your email address" className="bg-gray-800 border-gray-700 text-white" />
-              <Button className="bg-primary hover:bg-primary-dark text-white">Subscribe</Button>
-            </div>
-          </div> */}
 
             <div>
             <h3 className="font-medium  mb-4">Socials</h3>
