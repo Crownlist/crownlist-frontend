@@ -276,10 +276,13 @@ export default function ProductPostFlow() {
                                 </div>
 
                                 <div>
+                                    <div className="grid grid-cols-2 gap-4" >
                                     <h2 className="text-lg font-medium mb-3">Facilities</h2>
+                                    <h2 className="text-lg font-medium mb-3 max-md:hidden">Details</h2>
+                                    </div>
                                     <div className="space-y-4">
                                         {[1, 2, 3].map((_, i) => (
-                                            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
                                                 <Input placeholder="Name" />
                                                 <Input placeholder="Description" />
                                             </div>
