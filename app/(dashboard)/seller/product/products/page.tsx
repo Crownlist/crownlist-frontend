@@ -4,11 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteModal from "@/components/Home/DeleteModal";
 
 export default function ProductDashboard() {
     const [activeTab, setActiveTab] = useState("product");
     const [activeFilter, setActiveFilter] = useState("all");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const handleDelete = () => {
+        // perform delete logic here
+        console.log("Post deleted!");
+        setIsModalOpen(false);
+    };
     const products = [
         {
             id: 1,
@@ -107,7 +114,7 @@ export default function ProductDashboard() {
                     {/* Product Cards */}
                     <div className="space-y-4 gap-3 flex flex-col w-full h-full">
                         {filtered.map((product) => (
-                            <Link href={'/seller/product/product_details'}  key={product.id}>
+                            // <Link href={'/seller/product/product_details'} key={product.id}>
                                 <div key={product.id}
                                     className="flex max-md:flex-col flex-row bg-white rounded-xl shadow p-4 gap-5 md:gap-7  md:items-center  overflow-hidden"
                                 >
@@ -147,7 +154,7 @@ export default function ProductDashboard() {
                                                         Edit
                                                     </div>
                                                 </Button>
-                                                <Button className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]">
+                                                <Button className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]" onClick={() => setIsModalOpen(true)}>
                                                     <div className="flex hover:text-[#1F058F]">
                                                         <Image src={'/del.svg'} width={15} height={15} alt='svg' />
                                                     </div>
@@ -160,7 +167,7 @@ export default function ProductDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                            </Link>
+                            // </Link>
                         ))}
                     </div>
 
@@ -216,7 +223,11 @@ export default function ProductDashboard() {
                     </div>
                 </>
             )}
-
+            <DeleteModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onDelete={handleDelete}
+            />
         </div>
     );
 }
