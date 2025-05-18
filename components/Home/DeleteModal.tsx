@@ -34,7 +34,7 @@ export default function DeleteModal({ isOpen, onClose, onDelete }: DeleteModalPr
         <img src="/del.svg" alt="Delete icon" className="mx-auto mb-4 w-8 h-8" />
         <h2 className="text-lg font-semibold mb-2">Are you sure you want to delete post?</h2>
         <p className="text-sm text-gray-600 mb-6">
-          This action will delete post data temporarily. If you're not ready to delete post, you can cancel for now instead.
+          This action will delete post data temporarily. If you&apos;re not ready to delete post, you can cancel for now instead.
         </p>
         <div className="flex justify-center gap-4">
           <button
