@@ -3,11 +3,12 @@
 import { useState } from "react"
 // import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Check, Plus } from "lucide-react"
+import { Check, ChevronRight, Layers, Plus, Zap } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
+import Link from "next/link"
 
 
 const categories = [
@@ -277,8 +278,8 @@ export default function ProductPostFlow() {
 
                                 <div>
                                     <div className="grid grid-cols-2 gap-4" >
-                                    <h2 className="text-lg font-medium mb-3">Facilities</h2>
-                                    <h2 className="text-lg font-medium mb-3 max-md:hidden">Details</h2>
+                                        <h2 className="text-lg font-medium mb-3">Facilities</h2>
+                                        <h2 className="text-lg font-medium mb-3 max-md:hidden">Details</h2>
                                     </div>
                                     <div className="space-y-4">
                                         {[1, 2, 3].map((_, i) => (
@@ -345,8 +346,245 @@ export default function ProductPostFlow() {
                         </div>
                     </>
                 )}
-
                 {step === 4 && (
+                    <div className="w-full mx-auto p-4 md:p-6">
+                        {/* Breadcrumb */}
+                        <div className="flex items-center text-sm mb-6">
+                            <Link href="/post-product" className="text-gray-500 hover:text-gray-700">
+                                Post product
+                            </Link>
+                            <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
+                            <span className="text-gray-500">...</span>
+                            <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
+                            <span className="text-[#1F058F] font-medium">Plan details</span>
+                        </div>
+
+                        <h1 className="text-xl font-semibold mb-2">Plan details</h1>
+                        <p className="text-gray-600 mb-8">Select your plan</p>
+
+                        {/* Pricing Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            {/* Basic Plan */}
+                            <div className="border rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <div className="flex justify-center mb-4">
+                                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <Zap className="h-5 w-5 text-[#1F058F]" />
+                                        </div>
+                                    </div>
+                                    <h3 className="text-center text-[#1F058F] font-semibold text-lg mb-2">Basic plan</h3>
+                                    <div className="text-center mb-2">
+                                        <span className="text-3xl font-bold">₦0.00</span>
+                                        <span className="text-gray-500 ml-1">per month</span>
+                                    </div>
+                                    <p className="text-center text-gray-600 mb-6">Our basic plan to get you started</p>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F] hover:text-white"
+                                    >
+                                        Get started
+                                    </Button>
+                                </div>
+
+                                <div className="border-t p-6">
+                                    <h4 className="font-medium mb-2">FEATURES</h4>
+                                    <p className="text-gray-600 mb-4">
+                                        Everything in our <span className="font-medium">free plan</span> plus....
+                                    </p>
+                                    <ul className="space-y-3">
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Access to basic features</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Basic reporting and analytics</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Up to 10 individual users</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>20GB individual data each user</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Basic chat and email support</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Standard Plan */}
+                            <div className="border rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <div className="flex justify-center mb-4">
+                                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <Layers className="h-5 w-5 text-[#1F058F]" />
+                                        </div>
+                                    </div>
+                                    <h3 className="text-center text-[#1F058F] font-semibold text-lg mb-2">Standard plan</h3>
+                                    <div className="text-center mb-2">
+                                        <span className="text-3xl font-bold">₦500</span>
+                                        <span className="text-gray-500 ml-1">per month</span>
+                                    </div>
+                                    <p className="text-center text-gray-600 mb-6">Our most popular plan</p>
+                                    <Button className="w-full bg-[#1F058F] hover:bg-[#2a0bc0]">Get started</Button>
+                                </div>
+
+                                <div className="border-t p-6">
+                                    <h4 className="font-medium mb-2">FEATURES</h4>
+                                    <p className="text-gray-600 mb-4">
+                                        Everything in <span className="font-medium">Basic</span> plus....
+                                    </p>
+                                    <ul className="space-y-3">
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Access to basic features</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Basic reporting and analytics</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Up to 10 individual users</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>20GB individual data each user</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Basic chat and email support</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Premium Plan */}
+                            <div className="border rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <div className="flex justify-center mb-4">
+                                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <Layers className="h-5 w-5 text-[#1F058F]" />
+                                        </div>
+                                    </div>
+                                    <h3 className="text-center text-[#1F058F] font-semibold text-lg mb-2">Premium plan</h3>
+                                    <div className="text-center mb-2">
+                                        <span className="text-3xl font-bold">₦800</span>
+                                        <span className="text-gray-500 ml-1">per month</span>
+                                    </div>
+                                    <p className="text-center text-gray-600 mb-6">Best for large teams</p>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F] hover:text-white"
+                                    >
+                                        Get started
+                                    </Button>
+                                </div>
+
+                                <div className="border-t p-6">
+                                    <h4 className="font-medium mb-2">FEATURES</h4>
+                                    <p className="text-gray-600 mb-4">
+                                        Everything in <span className="font-medium">Business</span> plus....
+                                    </p>
+                                    <ul className="space-y-3">
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Access to basic features</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Basic reporting and analytics</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Up to 10 individual users</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>20GB individual data each user</span>
+                                        </li>
+                                        <li className="flex items-start">
+                                            <div className="mr-2 mt-1 flex-shrink-0">
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                            </div>
+                                            <span>Basic chat and email support</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        {/* <div className="flex gap-4 justify-end">
+                       <Button variant="outline">Back</Button>
+                       <Button className="bg-[#1F058F] hover:bg-[#2a0bc0]">Continue</Button>
+                     </div> */}
+                    </div>
+                )}
+
+                {step === 5 && (
 
                     <div className=" flex flex-col min-h-[80dvh] w-full h-full justify-center items-center align-middle ">
                         <div className="mb-4 flex justify-center">
@@ -391,7 +629,7 @@ export default function ProductPostFlow() {
                 </div> */}
 
                 {/* Action Buttons */}
-                <div className={`flex gap-4 mt-10 ${step === 4 ? "hidden" : ''}`}>
+                <div className={`flex gap-4 mt-10 ${step === 5 ? "hidden" : ''}`}>
                     {step > 1 && (
                         <Button
                             variant="outline"
@@ -405,7 +643,7 @@ export default function ProductPostFlow() {
                         className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8"
                         onClick={handleContinue}
                     >
-                        {step === 3 ? "Submit" : "Continue"}
+                        {step === 4 ? "Submit" : "Continue"}
                     </Button>
                     <Button
                         variant="outline"
