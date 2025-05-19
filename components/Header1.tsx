@@ -108,7 +108,7 @@ const Header = ({ hidden }: props) => {
       subcategories: [],
     },
     {
-      name: "Sneakers",
+      name: "Home Appliances and Furniture",
       icon: "/car.png",
       isComingSoon: true,
       subcategories: [],
