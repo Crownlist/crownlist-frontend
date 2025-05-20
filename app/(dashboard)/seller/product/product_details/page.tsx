@@ -94,18 +94,18 @@ export default function ProductDetailPage() {
     }
 
     return (
-        <div className=" mx-auto px-4 py-3 md:py-6 relative">
+        <div className=" mx-auto px-10 py-3 md:py-6 relative">
             {/* Breadcrumb */}
             <div className='flex max-md:flex-col w-full md:justify-between'>
-            <nav className="text-sm text-muted-foreground p-3 md:mb-5">
-                <span>Product</span> &gt; <span className='text-[#1F058F]'>... &gt;</span> <span className="text-[#1F058F]">{product.title}</span>
-            </nav>
+                <nav className="text-sm text-muted-foreground p-3 md:mb-5">
+                    <span>Product</span> &gt; <span className='text-[#1F058F]'>... &gt;</span> <span className="text-[#1F058F]">{product.title}</span>
+                </nav>
 
-            {/* Edit/Delete Buttons */}
-            <div className="flex gap-2 justify-end w-full">
-                <Button variant="ghost" size="icon"><Edit size={18} /></Button>
-                <Button variant="ghost" size="icon"><Trash2 size={18} /></Button>
-            </div>
+                {/* Edit/Delete Buttons */}
+                <div className="flex gap-2 justify-end w-full">
+                    <Button variant="ghost" size="icon"><Edit size={18} /></Button>
+                    <Button variant="ghost" size="icon"><Trash2 size={18} /></Button>
+                </div>
             </div>
 
             {/* Image Viewer */}
@@ -207,11 +207,13 @@ export default function ProductDetailPage() {
                     <AccordionContent className="mt-2 space-y-4 flex flex-col md:flex-row gap-12 justify-between">
                         {/* Overall Rating */}
                         <div className="flex w-full flex-col">
-                            <p className="text-2xl font-bold text-white">4</p>
-                            <div className="flex items-center">
-                                {Array.from({ length: 5 }).map((_, index) => (
-                                    <span key={index} className={`text-yellow-400 text-xl ${index < 4 ? "" : "opacity-50"}`}>★</span>
-                                ))}
+                            <div className='flex flex-row gap-3'>
+                                <p className="text-2xl font-bold text-black">4</p>
+                                <div className="flex items-center">
+                                    {Array.from({ length: 5 }).map((_, index) => (
+                                        <span key={index} className={`text-yellow-400 text-xl ${index < 4 ? "" : "opacity-50"}`}>★</span>
+                                    ))}
+                                </div>
                             </div>
                             <p className="text-gray-400 text-sm mt-2">Overall rating</p>
                             <div className="mt-2 space-y-1 max-w-xl">
