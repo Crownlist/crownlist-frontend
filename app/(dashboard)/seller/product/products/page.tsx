@@ -98,12 +98,12 @@ export default function ProductDashboard() {
                         </Button>
                     </div>
                     {/* Status Filters */}
-                    <div className="flex gap-2 mb-6 border-[1.5px] border-[#1F058F] p-2 rounded-md">
+                    <div className="flex gap-1 sm:gap-2 mb-6 border-[1.5px] border-[#1F058F] p-2 rounded-md">
                         {["all", "live", "reviewing", "decline"].map((status) => (
                             <Button
                                 key={status}
                                 // variant={activeFilter === status ? "default" : status === "decline" ? "destructive" : "outline"}
-                                className={`px-5 rounded-md ${activeFilter === status ? "bg-[#1F058F] hover:bg-[#2f0a94dc]" : ' text-black shadow-none bg-transparent hover:bg-transparent hover:text-[#1F058F]'}`}
+                                className={`px-4 sm:px-5 rounded-md ${activeFilter === status ? "bg-[#1F058F] hover:bg-[#2f0a94dc]" : ' text-black shadow-none bg-transparent hover:bg-transparent hover:text-[#1F058F]'}`}
                                 onClick={() => setActiveFilter(status)}
                             >
                                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -127,8 +127,9 @@ export default function ProductDashboard() {
                                             className="object-cover rounded-md"
                                         />
                                         {product.featured && (
-                                            <span className="absolute top-2 left-2 bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded">
-                                                Featured
+                                            <span className="absolute top-2 left-2  text-white text-xs font-semibold px-2 py-1 rounded">
+                                                {/* Featured */}
+                                                <Image src={'/featured.png'} alt="ftd" width={55} height={55} />
                                             </span>
                                         )}
                                     </div>
