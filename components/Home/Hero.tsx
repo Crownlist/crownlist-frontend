@@ -111,16 +111,16 @@ const Hero = () => {
 
       {/* Static Content */}
       <div className="relative z-10 h-[350px] sm:h-[450px] md:h-[550px] lg:h-[650px]">
-        <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-0 lg:max-w-[600px] lg:ml-52 text-white">
+        <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-0 lg:ml-52 text-white">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[60px] font-bold leading-tight lg:leading-[66px] text-shadow-sm">
           Sell it, Find it, Enjoy it !
           </h1>
 
-          <p className="text-base md:text-lg font-normal mt-2 md:mt-5 text-shadow-sm max-w-[90%]">
+          <p className="text-base md:text-lg font-normal mt-2 md:mt-5 text-shadow-sm max-w-[90%] lg:max-w-[600px]">
           Connect with Local Sellers and Discover Exactly What You’ve Been Searching For
           </p>
 
-          <div className="w-full flex flex-col sm:flex-row items-center gap-2 sm:gap-0 relative mt-4 md:mt-7">
+          <div className="w-full flex flex-col sm:flex-row items-center gap-2 sm:gap-0 relative mt-4 md:mt-7 lg:max-w-[600px]">
             <div className="relative w-full max-w-full sm:max-w-none sm:flex-1">
               <Input
                 className="border border-[#D6D6D6] bg-white/90 backdrop-blur-sm text-black w-full h-12 sm:h-12 
