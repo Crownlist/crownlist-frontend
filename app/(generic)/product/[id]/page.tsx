@@ -39,7 +39,7 @@ const popularItems = [
       location: "Ikeja, Lagos",
       distance: "5km away",
       labels: ["Kitchen", "Appliances"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "3",
@@ -51,7 +51,7 @@ const popularItems = [
       location: "VI, Lagos",
       distance: "7km away",
       labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "4",
@@ -102,7 +102,7 @@ const popularItems = [
       location: "Badagry, Lagos",
       distance: "3km away",
       labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "8",
@@ -153,7 +153,7 @@ const popularItems = [
       location: "Badagry, Lagos",
       distance: "3km away",
       labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "12",
@@ -206,7 +206,7 @@ const popularItems = [
       location: "Ikeja, Lagos",
       distance: "5km away",
       labels: ["Gaming", "Electronics"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "16",

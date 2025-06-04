@@ -5,9 +5,54 @@ import { Textarea } from '../ui/textarea'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import Link from 'next/link'
-import { ChevronRight, Upload } from 'lucide-react'
+import { ChevronRight, Upload, Heart } from 'lucide-react'
 
 const NoSearchCat = ({cat, subcat}:any)=> {
+
+  const similarProducts = [
+    {
+      id: 1,
+      title: "The Green hostel",
+      description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
+      location: "Eleko",
+      features: ["One room", "Gate"],
+      price: "₦95,232",
+      image: "/product1.png",
+    },
+    {
+      id: 2,
+      title: "St Andrews Glasgow Green",
+      description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+      location: "Poly gate",
+      features: ["Room & parlor", "24hrs solar"],
+      price: "₦595,232",
+      image: "/product2.png",
+    },
+    {
+      id: 3,
+      title: "St Andrews Glasgow Green",
+      description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+      location: "Poly gate",
+      features: ["Room & parlor", "24hrs solar"],
+      price: "₦595,232",
+      image: "/product4.png",
+    },
+    {
+      id: 4,
+      title: "St Andrews Glasgow Green",
+      description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+      location: "Poly gate",
+      features: ["Room & parlor", "24hrs solar"],
+      price: "₦595,232",
+      image: "/product2.png",
+    },
+  ]
+
+
+
+
+
+
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <div className="container mx-auto  py-6 max-md:px-5">
@@ -109,6 +154,44 @@ const NoSearchCat = ({cat, subcat}:any)=> {
                             </div>
                         </div>
                     </div>
+
+
+
+
+                      {/* You might also like these */}
+                          <div className="mt-8 mb-8 px-4 md:px-0 max-w-7xl mx-auto">
+                            <h3 className="font-medium text-lg mb-4">You might also like these</h3>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                              {similarProducts.map((product) => (
+                                <div key={product.id} className="border rounded-lg overflow-hidden">
+                                  <div className="relative h-[160px] cursor-pointer">
+                                    <Image
+                                      src={product.image || "/placeholder.svg"}
+                                      alt={product.title}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                    <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                      <Heart size={14} className="text-gray-500" />
+                                    </button>
+                                  </div>
+                                  <div className="p-3 shadow-sm hover:shadow-xl transition duration-200 cursor-pointer">
+                                    <h4 className="font-medium text-sm">{product.title}</h4>
+                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                                    <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center">
+                                      <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">{product.location}</div>
+                                      {product.features.map((feature, index) => (
+                                        <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
+                                          {feature}
+                                        </div>
+                                      ))}
+                                    </div>
+                                    <div className="font-medium text-sm mt-2">{product.price}</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                 </div>
             </div>
         </div>
