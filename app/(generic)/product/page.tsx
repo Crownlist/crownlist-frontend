@@ -172,7 +172,7 @@ export default function ProductDetailPage() {
 
       const safetyTips = [
         "Do not send money or personal information until you’ve seen the product.",
-        "Meet the seller in a safe, public location.",
+        "Meet the seller in a safe and public location.",
         "Inspect the product thoroughly before payment.",
         "Avoid deals that seem too good to be true.",
         "Use secure payment methods; avoid cash for high-value items.",
