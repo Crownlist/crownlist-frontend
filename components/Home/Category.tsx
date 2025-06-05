@@ -65,9 +65,9 @@ const categories = [
     ],
   },
   {
-    name: "Cars",
+    name: "Home Appliances and Furniture",
     icon: "/car.png",
-    isComingSoon: true,
+    isComingSoon: false,
     subcategories: [],
   },
   {
@@ -83,7 +83,7 @@ const categories = [
     subcategories: [],
   },
   {
-    name: "Home Appliances and Furniture",
+    name: "Cars",
     icon: "/car.png",
     isComingSoon: true,
     subcategories: [],
