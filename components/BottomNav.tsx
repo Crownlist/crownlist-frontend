@@ -8,10 +8,10 @@ import { useState, useEffect, useRef } from "react"
 
 const navItems = [
   { name: "Home", path: "/", icon: Home },
-  { name: "Saved", path: "/", icon: Bookmark },
+  { name: "Saved", path: "/buyer/saved", icon: Bookmark },
   { name: "Sell", path: "/", icon: ShoppingBag },
-  { name: "Messages", path: "/", icon: MessageSquare },
-  { name: "Profile", path: "/", icon: User },
+  { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
+  { name: "Profile", path: "/buyer/profile", icon: User },
 ]
 
 export default function BottomNav() {
