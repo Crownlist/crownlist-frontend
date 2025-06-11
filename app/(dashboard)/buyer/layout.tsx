@@ -9,6 +9,7 @@ import {
   import { AppSidebar } from '@/components/cu-app-sidebar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import Link from 'next/link'
+import BottomNav from '@/components/BottomNav'
   export const metadata = {
     title: 'Buyer | Dashboard'
   }
@@ -71,6 +72,7 @@ import Link from 'next/link'
           {/* </div> */}
          
         </SidebarInset>
+        <BottomNav/>
       </SidebarCustomer>
     )
   }
