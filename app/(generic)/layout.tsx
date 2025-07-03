@@ -1,12 +1,9 @@
 import type React from "react"
 import "../globals.css"
 import { Inter } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
 import Head from "next/head"
-// import ChatBot from "@/components/Home/ChatBot"
-import NextTopLoader from 'nextjs-toploader'
 import ChatBot from "@/components/Home/ChatBot"
-import BottomNav from "@/components/BottomNav"
+import Wrapper from "@/client/wrapper"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,13 +25,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="#1F058F" />
       </Head>
       <body className={inter.className}>
-      <NextTopLoader color='#1F058F' showSpinner={false} />
-      {/* <Toaster position="top-center" /> */}
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
+         <Wrapper> {children} </Wrapper>
           <ChatBot />
-          <BottomNav />
-        </ThemeProvider>
       </body>
     </html>
   )
