@@ -14,6 +14,9 @@ import { useEffect, useRef, useState } from "react"
 import CategoryGrid from "@/components/Home/Category"
 import { useRouter } from "next/navigation"
 import CategoryScroll from "@/components/Home/CategoryScroll"
+import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store"
 
 
  const popularItems = [
@@ -272,6 +275,11 @@ export default function Home() {
   const [isSticky, setIsSticky] = useState(false);
   const router = useRouter()
   console.log(isSticky)
+
+  // new implementation
+  const { userData } = useSelector((state: RootState) => state.userData);
+  const { isLoading } = useGetAuthUser("User");
+ console.log('api', userData, isLoading)
 
   const handleSeeMore = (url: string) =>{
     router.push(url)

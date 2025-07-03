@@ -5,9 +5,13 @@ import login from "../../../public/assets/images/authbg.jpg";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 // import { Card, CardContent } from "@/components/ui/card";
-import { Input, Input2 } from "@/components/ui/custom-input";
+// import { Input, Input2 } from "@/components/ui/custom-input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAdminSigninHook, useFetchData } from "@/lib/signin-hook";
+import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 
 export function LoginForm({
@@ -17,12 +21,22 @@ export function LoginForm({
 }: React.ComponentProps<"div"> & {
   imageUrl?: string;
 }) {
-  const router = useRouter()
 
-  const handleClick = (e : any) => {
-    e.preventDefault();
-    router.push('/buyer/profile')
-  }
+  const {
+    handleSnack,
+    snackBarOpen,
+    setSnackBarOpen,
+    register,
+    errors,
+    isLoading,
+    handleSubmit,
+    onSubmit,
+    handleGoogleSignup,
+    googleLoading,
+  } = useAdminSigninHook();
+
+
+
   return (
     <div className={cn("flex w-full h-full font-inter", className)} {...props}>
       <div className="w-full h-full flex flex-row justify-between relative ">
@@ -39,7 +53,8 @@ export function LoginForm({
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent "></div>
         </div>
-        <form className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-2">
+        <form className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-2"
+          onSubmit={handleSubmit(onSubmit)} >
           <div className="flex flex-col gap-6 justify-center w-full md:px-20">
             <div className="flex flex-col items-start md:items-start text-start mb-[10px]">
               <h1 className="text-2xl text-crown-black font-semibold">Login to Crownlist</h1>
@@ -50,12 +65,31 @@ export function LoginForm({
 
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="" required />
+              <Input id="email" type="email" placeholder=""
+                {...register("email", {
+                  required: "Email is required",
+                })}
+                disabled={isLoading || googleLoading} />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
             <div className="grid gap-3">
               <Label htmlFor="password">Password</Label>
-              <Input2 id="password" type="password" required />
+              <Input id="password" type="password" placeholder=""
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                })}
+                disabled={isLoading || googleLoading}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password.message}</p>
+              )}
 
               <p className="">
                 <a
@@ -67,29 +101,33 @@ export function LoginForm({
               </p>
             </div>
             <Button type="submit" className="w-full h-full mt-3"
-              onClick={handleClick}
+               disabled={isLoading || googleLoading}
             >
               <div className="flex flex-row gap-3 py-1 items-center ">
-                Login</div>
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Login"
+              )}</div>
             </Button>
-               
+
             <div className="flex flex-col w-full h-full gap-1 justify-center  items-center">
               <div className="flex flex-row w-full h-full gap-1 justify-center  items-center">
                 <div className="flex border border-[#525252] h-[1px] w-[100%] justify-center" />
                 <div className="text-[#525252] flex align-middle justify-center h-full ">OR</div>
                 <div className="border border-[#525252] h-[1px] w-[100%]" />
               </div>
-              <Button  className="w-full h-full bg-white text-black  border border-[#D6D6D6] hover:text-white mt-2">
+              <Button className="w-full h-full bg-white text-black  border border-[#D6D6D6] hover:text-white mt-2">
                 <div className="flex flex-row gap-3 py-1 items-center ">
                   <div className="flex">
-                    <Image 
+                    <Image
                       src='/google.svg'
                       width={20}
                       height={20}
                       alt="icon"
                     />
                   </div>
-                <div className="flex ">Continue with Google</div>
+                  <div className="flex ">Continue with Google</div>
                 </div>
               </Button>
             </div>
