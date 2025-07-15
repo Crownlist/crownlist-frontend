@@ -13,6 +13,7 @@ const navItems = [
   { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
   { name: "Profile", path: "/buyer/profile", icon: User },
 ]
+// navigation items for the bottom navigation bar
 
 export default function BottomNav() {
   const pathname = usePathname()
