@@ -6,20 +6,29 @@ import { Home, MessageSquare, Bookmark, ShoppingBag, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useRef } from "react"
 
+
 const navItems = [
   { name: "Home", path: "/", icon: Home },
   { name: "Saved", path: "/buyer/saved", icon: Bookmark },
-  { name: "Sell", path: "/", icon: ShoppingBag },
+  { name: "Sell", path: "/seller/dashboard", icon: ShoppingBag },
   { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
   { name: "Profile", path: "/buyer/profile", icon: User },
 ]
-// navigation items for the bottom navigation bar
+const visiblePaths = [
+  "/", 
+  "/buyer/saved", 
+  "/seller/dashboard", 
+  "/buyer/messages", 
+  "/buyer/profile"
+]
 
 export default function BottomNav() {
   const pathname = usePathname()
   const router = useRouter()
   const [isVisible, setIsVisible] = useState(true)
   const lastScrollY = useRef(0)
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,6 +51,9 @@ export default function BottomNav() {
       window.removeEventListener("scroll", handleScroll)
     }
   }, [])
+
+    if (!visiblePaths.includes(pathname)) return null
+
 
   return (
     <nav
