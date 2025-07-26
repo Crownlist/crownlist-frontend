@@ -46,9 +46,9 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         href="/seller/dashboard"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/seller/dashboard") 
-                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
-                               
+                            pathname.includes("/seller/dashboard")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
                         )}
                         onClick={onClose}
                     >
@@ -57,12 +57,26 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     </Link>
 
                     <Link
+                        href="/seller/reuest"
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/request")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
+                        )}
+                        onClick={onClose}
+                    >
+                        <Package className="h-5 w-5" />
+                        <span>Request</span>
+                    </Link>
+                    
+                    <Link
                         href="/seller/product"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/seller/product") 
-                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
-                               
+                            pathname.includes("/seller/product")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
                         )}
                         onClick={onClose}
                     >
@@ -74,9 +88,9 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         href="/seller/messages"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/seller/messages") 
-                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
-                               
+                            pathname.includes("/seller/messages")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
                         )}
                         onClick={onClose}
                     >
@@ -88,9 +102,9 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         href="/seller/analytics"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/seller/analytics") 
-                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
-                               
+                            pathname.includes("/seller/analytics")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
                         )}
                         onClick={onClose}
                     >
@@ -102,9 +116,9 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         href="/seller/settings"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/seller/settings") 
-                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
-                               
+                            pathname.includes("/seller/settings")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
                         )}
                         onClick={onClose}
                     >

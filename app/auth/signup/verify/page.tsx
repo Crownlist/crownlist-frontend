@@ -6,7 +6,6 @@ export default function Verify() {
       <div className="w-full min-h-screen">
         <VerifyForm
           // className="max-md:max-w-md mx-auto"
-          imageUrl="../../../public/assets/images/authbg.jpg"
         />{" "}
       </div>
     </div>

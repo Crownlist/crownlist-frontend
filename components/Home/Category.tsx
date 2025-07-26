@@ -90,6 +90,7 @@ const categories = [
   },
 ]
 
+export { categories };
 export default function CategoryGrid() {
   const pathname = usePathname()
   // const [activeCategory, setActiveCategory] = useState<string | null>(null)

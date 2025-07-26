@@ -24,7 +24,7 @@ const AboutUs = () => {
                         Welcome to CROWNLIST : Where Buying and Selling is Made Simple! 
                         </div>
                         <p className='flex text-center align-middle font-light  text-sm  lg:px-45 px-1'>
-                        Welcome to CROWNLIST, your trusted marketplace connecting buyers and sellers in a secure and intuitive online space. Founded in 2025, we&aposre dedicated to empowering both sides of the transaction – enabling sellers to expand their reach and helping buyers discover a diverse range of products at competitive prices. From our beginnings as a student&aposs solution to finding local housing, we&aposve grown into a platform committed to simplifying commerce for everyone.
+                        Welcome to CROWNLIST, your trusted marketplace connecting buyers and sellers in a secure and intuitive online space. Founded in 2025, we&apos;re dedicated to empowering both sides of the transaction – enabling sellers to expand their reach and helping buyers discover a diverse range of products at competitive prices. From our beginnings as  student&apos;s solution to finding local housing, we&aposve grown into a platform committed to simplifying commerce for everyone.
                         </p>
                     </div>
                 </div>

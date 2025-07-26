@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LogOut, MessageSquare, Package, PieChart, Settings } from "lucide-react"
+import { Home, LogOut, MessageSquare, Package, PieChart, SendHorizontal, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function DashboardSidebar() {
@@ -25,6 +25,26 @@ export default function DashboardSidebar() {
         >
           <Home className="h-5 w-5" />
           <span>Dashboard</span>
+        </Link>
+
+        <Link
+          href="/seller/request"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
+            isActive("/seller/request") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+          )}
+        >
+          <SendHorizontal className="h-5 w-5" />
+          {/* <div className="h-7 w-7">
+          <Image
+           src={'/try.png'}
+           height={15}
+           width={15}
+           alt='leww'
+           className=" h-5 w-5"
+          />
+          </div> */}
+          <span>Request</span>
         </Link>
 
         <Link

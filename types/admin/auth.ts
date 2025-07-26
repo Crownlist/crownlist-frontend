@@ -50,9 +50,10 @@ export interface UserSigninForm {
 }
 
 export interface UserSignupForm {
- fullname:string;
+ fullName:string;
   email: string;
   phoneNumber?: string;
+  accountType: 'Seller' | 'User' | string;
   password: string;
 }
 

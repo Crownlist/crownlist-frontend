@@ -9,6 +9,7 @@ import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { useState } from "react"
 import toast from "react-hot-toast"
+import { categories as categoryList } from "@/components/Home/Category";
 
 export default function SearchPage() {
   // State for form data
@@ -16,12 +17,13 @@ export default function SearchPage() {
     fullName: "",
     contactNumber: "",
     description: "",
+    category: "",
   })
 
   const [files, setFiles] = useState<File[]>([])
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     if (name === "contactNumber") {
       // Allow only numeric input
@@ -78,7 +80,7 @@ export default function SearchPage() {
 
       if (response.ok) {
         toast("Request submitted successfully!")
-        setFormData({ fullName: "", contactNumber: "", description: "" })
+        setFormData({ fullName: "", contactNumber: "", description: "", category: "" })
       } else {
         toast("Error submitting request.")
       }
@@ -199,6 +201,21 @@ export default function SearchPage() {
                           }
                         }}
                       />
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm">Category</label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      >
+                        <option value="">Select a category</option>
+                        {categoryList.map((cat) => (
+                          <option key={cat.name} value={cat.name}>{cat.name}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="block mb-1 text-sm">Image(s)</label>

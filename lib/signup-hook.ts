@@ -14,7 +14,7 @@ export const signup = (credentials: UserSignupForm): Promise<UserSignupRes> => {
 };
 
 export const useUserSignupHook = () => {
-  const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
+  const { handleMessage, snackBarOpen, setSnackBarOpen } =
     useToast();
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -37,7 +37,7 @@ export const useUserSignupHook = () => {
           location.origin + sessionStorage.getItem("returnUserTo")
         );
       } else {
-        location.replace(location.origin + "/buyer/profile");
+        location.replace(location.origin + "/auth/signup/verify");
         // location.replace(location.origin + "/auth/sign-in");
       }
     },
@@ -56,10 +56,10 @@ export const useUserSignupHook = () => {
         "success",
         "check your mail for email verification. Redirecting..."
       );
-      toast('SignUp Sucessful, Redirecting to Homepage')
+      toast.success('check your mail for email verification. Redirecting...')
     } catch (error) {
       handleMessage("error", String(error));
-      toast(`Invalid Credential,  ${error}`)
+      toast.error(`Invalid Credential,  ${error}`)
     }
   };
 
@@ -78,7 +78,6 @@ export const useUserSignupHook = () => {
     }
   };
   return {
-    handleSnack,
     snackBarOpen,
     setSnackBarOpen,
     register,
