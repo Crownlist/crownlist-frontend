@@ -54,7 +54,7 @@ export default function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link href="/about-us" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    About us
+                    About Us
                   </Link>
                 </li>
                 <li>
@@ -80,7 +80,7 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link href="/share-feedback" className="text-sm text-gray-400 hover:text-white transition-colors">
                     Share feedback
                   </Link>
                 </li>
@@ -93,12 +93,12 @@ export default function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link href="/terms-and-conditions" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    Terms
+                    Terms and Conditions
                   </Link>
                 </li>
                 <li>
                   <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">
-                    Privacy
+                    Privacy and Policy
                   </Link>
                 </li>
               </ul>
@@ -106,7 +106,7 @@ export default function Footer() {
 
             {/* Contact and Social */}
             <div>
-              <h3 className="font-medium mb-4">Contact us</h3>
+              <h3 className="font-medium mb-4">Contact Us</h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <MapPin size={16} />

@@ -39,7 +39,7 @@ const popularItems = [
       location: "Ikeja, Lagos",
       distance: "5km away",
       labels: ["Kitchen", "Appliances"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "3",
@@ -51,7 +51,7 @@ const popularItems = [
       location: "VI, Lagos",
       distance: "7km away",
       labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "4",
@@ -102,7 +102,7 @@ const popularItems = [
       location: "Badagry, Lagos",
       distance: "3km away",
       labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "8",
@@ -153,7 +153,7 @@ const popularItems = [
       location: "Badagry, Lagos",
       distance: "3km away",
       labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "12",
@@ -206,7 +206,7 @@ const popularItems = [
       location: "Ikeja, Lagos",
       distance: "5km away",
       labels: ["Gaming", "Electronics"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "16",
@@ -377,7 +377,7 @@ interface Product {
 
       const safetyTips = [
         "Do not send money or personal information until you’ve seen the product.",
-        "Meet the seller in a safe, public location.",
+        "Meet the seller in a safe and public location.",
         "Inspect the product thoroughly before payment.",
         "Avoid deals that seem too good to be true.",
         "Use secure payment methods; avoid cash for high-value items.",

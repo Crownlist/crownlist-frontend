@@ -33,7 +33,7 @@ const popularItems = [
       location: "Ikeja, Lagos",
       distance: "5km away",
       labels: ["Kitchen", "Appliances"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "3",
@@ -72,7 +72,7 @@ const popularItems = [
       location: "Surulere, Lagos",
       distance: "3km away",
       labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+      condition: "Used",
     },
     {
       id: "6",
@@ -317,7 +317,8 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                         </div>
                             {/* Added Posted Date */}
                             <p className="text-[12px] text-gray-600 mt-2 mb-2">
-                                <span className="font-medium">{'time' in products[0] ? products[0].time : "N/A"}</span>{postedDate || "12/1/2024"}
+                                <span className="font-bold">{'time' in products[0] ? products[0].time : "N/A"}</span> 
+                               <span> posted on:{postedDate || "12/1/2024"}</span>
                             </p>
                                         
 
