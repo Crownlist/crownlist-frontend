@@ -7,7 +7,6 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronRight,
-  Grid,
   List,
   Heart,
   MapPin,
@@ -15,6 +14,7 @@ import {
   ArrowRight,
   Search,
   Check,
+  LayoutGrid,
 } from "lucide-react"
 import { Select } from "../ui/select"
 
@@ -205,7 +205,7 @@ export default function PropertyPage() {
               onClick={() => setViewMode("grid")}
               aria-label="Grid view"
             >
-              <Grid size={18} />
+              <LayoutGrid size={18} />
             </button>
             <button
               className={`p-1 rounded ${viewMode === "list" ? "bg-gray-100" : ""}`}

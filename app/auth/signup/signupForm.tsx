@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useUserSignupHook } from "@/lib/signup-hook";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, Target } from "lucide-react";
 
 export default function SignupForm({
   className,
@@ -19,7 +19,7 @@ export default function SignupForm({
   imageUrl?: string;
 }) {
   const [confirmPassword, setConfirmPassword] = useState("");
-
+ const [lastName, setLastName] = useState('')
   const {
     register,
     errors,
@@ -38,8 +38,9 @@ export default function SignupForm({
     }
       // Combine firstname and lastname into fullname
   const requestData = {
-    fullname: `${data.firstname} ${data.lastname}`,
+    fullName: `${data.fullName} ${lastName}`,
     phoneNumber: data.phoneNumber,
+    accountType: data.accountType,
     email: data.email,
     password: data.password
   };
@@ -81,13 +82,13 @@ export default function SignupForm({
                   id="firstname"
                   type="text"
                   placeholder=""
-                  {...register("fullname", {
+                  {...register("fullName", {
                     required: "Firstname is required",
                   })}
                   disabled={isLoading || googleLoading}
                 />
-                {errors.fullname && (
-                  <p className="text-sm text-red-500">{errors.fullname.message}</p>
+                {errors.fullName && (
+                  <p className="text-sm text-red-500">{errors.fullName.message}</p>
                 )}
               </div>
               <div className="grid gap-3">
@@ -96,13 +97,14 @@ export default function SignupForm({
                   id="lastname"
                   type="text"
                   placeholder=""
-                  {...register("fullname", {
-                    required: "Lastname is required",
-                  })}
+                  onChange={e => setLastName(e.target.value)}
+                  // {...register("lastname", {
+                  //   required: "Lastname is required",
+                  // })}
                   disabled={isLoading || googleLoading}
                 />
-                {errors.fullname && (
-                  <p className="text-sm text-red-500">{errors.fullname.message}</p>
+                {errors.fullName && (
+                  <p className="text-sm text-red-500">{errors.fullName.message}</p>
                 )}
               </div>
             </div>
@@ -136,6 +138,24 @@ export default function SignupForm({
               />
               {errors.phoneNumber && (
                 <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>
+              )}
+            </div>
+
+            <div className="grid gap-3">
+              <Label htmlFor="accountType">Account Type</Label>
+              <select
+                id="accountType"
+                {...register("accountType", { required: "Account type is required" })}
+                disabled={isLoading || googleLoading}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue=""
+              >
+                <option value="" disabled>Select account type</option>
+                <option value="User">Buyer</option>
+                <option value="Seller">Seller</option>
+              </select>
+              {errors.accountType && (
+                <p className="text-sm text-red-500">{errors.accountType.message}</p>
               )}
             </div>
 

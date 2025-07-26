@@ -10,7 +10,7 @@ import { obfuscateToken } from "@/constants/encryptData";
 import { useToast } from "./useToastMessage";
 import { toast } from "sonner";
 
-export const signin = (credentials: UserSigninForm): Promise<UserSigninRes> => {
+export const signin: any = (credentials: UserSigninForm): Promise<UserSigninRes> => {
   return apiClientPublic.post(`/auth/user/login`, credentials);
 };
 const resendVerificationEmail = (email: string): Promise<any> => {
@@ -25,6 +25,7 @@ export const useAdminSigninHook = () => {
   const { mutateAsync: submit, isLoading } = useMutation({
     mutationFn: signin,
     onSuccess: (data: any) => {
+      console.log('innnn', data)
       localStorage.setItem("leo", data?.data.user._id);
       localStorage.setItem(
         "leoKey",
@@ -39,6 +40,11 @@ export const useAdminSigninHook = () => {
         location.replace(
           location.origin + sessionStorage.getItem("returnUserTo")
         );
+        if (data?.data.accountType == 'User') {
+          location.origin + sessionStorage.getItem(location.origin + "/buyer/profile")
+        } else if (data?.data.accountType == 'Seller') {
+          location.origin + sessionStorage.getItem(location.origin + "/seller/dashboard")
+        }
       } else {
         location.replace(location.origin + "/buyer/profile");
       }
@@ -163,7 +169,7 @@ export const useFetchData = () => {
     },
   });
 
-  const submit = async ({ token, email } :any) => {
+  const submit = async ({ token, email }: any) => {
     setIsLoading(true);
     try {
       await fetchDataMutation(token, {
