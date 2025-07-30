@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client"
 
 import Link from "next/link"
@@ -6,8 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
+import { useGetAuthUser } from "@/lib/useGetAuthUser"
 
 export default function DashboardHeader() {
+    // const { userData } = useSelector((state: RootState) => state.userData);
+    const {  data } = useGetAuthUser("User");
+    const userData: any = data?.data.loggedInAccount
+      
+    console.log('disp', data)
     return (
         <header className="bg-[#141414] text-white py-3 px-4 md:px-6 w-full sticky inset-0 z-[999]">
             <div className="flex items-center justify-between max-sm:justify-end">
@@ -52,12 +59,12 @@ export default function DashboardHeader() {
 
                     <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8 border border-gray-600">
-                            <AvatarImage src="/profile.png" alt="User" />
+                            <AvatarImage src={ userData?.profilePicture ||"/profile.png"} alt="User" />
                             <AvatarFallback>JA</AvatarFallback>
                         </Avatar>
                         <div className="hidden md:block">
                             <div className="flex items-center">
-                                <span className="text-sm font-medium">Jimoh Adesina</span>
+                                <span className="text-sm font-medium">{userData?.fullName}</span>
                                 <ChevronDown className="h-4 w-4 ml-1" />
                             </div>
                         </div>

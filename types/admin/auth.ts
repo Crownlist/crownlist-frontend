@@ -58,22 +58,20 @@ export interface UserSignupForm {
 }
 
 export interface UserSignin {
-  _id: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-  userCustomId: string;
-  profilePicture: string;
+  fullName: string;
+  token: string; // accessToken from API response
+  id: string;    // _id from account/updatedAccount
+  email: string; // email from account/updatedAccount
+  createdAt: string;
   authMethod: string;
-  accountType: string,
-  phoneNumber? : string;
-  country? : string;
-  city? : string;
-  dateOfBirth? : string;
-  address?:string;
-  finishTourGuide: boolean;
-  isAdmin: boolean;
+  // Add other properties you want to store in Redux for an Admin/Seller
+  isAdmin?: boolean; // From the isAdmin field
+  accountType?: "User" | "Seller"; // From the accountType field
+  userCustomId?: string;
+  profilePicture?: string;
+  isVerified?: boolean;
+  finishTourGuide?: boolean;
+
 }
 
 export interface UserSignup {
@@ -112,15 +110,15 @@ export interface User {
   finishTourGuide: boolean;
   isAdmin: boolean;
   phoneNumber: string;
+  accessToken: string;
+  refreshToken: string;
   createdAt: string; // or Date if you'll convert it
 }
 
 export interface UserSignupRes {
   data: {
-    user: User;
+    account: User;
     message: string;
-    accessToken: string;
-  refreshToken: string;
   };
   status: string;
 }
@@ -137,7 +135,7 @@ export interface UserResetPwdProps {
   newPassword: string;
 }
 
-export type UserPInfoProps = Subset<
-  UserSignin,
-  "firstname" | "lastname" | "phoneNumber"
->;
+// export type UserPInfoProps = Subset<
+//   UserSignin,
+//   "firstname" | "lastname" | "phoneNumber"
+// >;

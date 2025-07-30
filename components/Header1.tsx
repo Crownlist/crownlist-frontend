@@ -26,13 +26,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import CategoryModal from "./Home/CategoryModal"
+import { useGetAuthUser } from "@/lib/useGetAuthUser"
+
 
 
 interface props {
   hidden: boolean
 }
 const Header = ({ hidden }: props) => {
-  const isLoggedIn = true
+   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [search, setSearch] = useState("")
   const [searchCountry, setSearchCountry] = useState("")
   const [value, setValue] = useState("")
@@ -43,6 +45,23 @@ const Header = ({ hidden }: props) => {
   const pathname = usePathname()
   const [openChev, setOpenChev] = useState(false)
   const [openCat, setOpenCat] = useState(false)
+
+
+    // new implementation
+    const { isLoading, data } = useGetAuthUser("User");
+    const userData: any = data?.data.loggedInAccount
+      
+   useEffect(() => {
+    // Check if either userData or adminData exists
+    if ( userData ) {
+      console.log('api', userData, isLoading)
+      setIsLoggedIn(true);
+    } else {
+      // If both are null, the user is logged out
+      setIsLoggedIn(false);
+    }
+  }, [userData]); 
+
 
   const categories = [
     {
@@ -352,14 +371,14 @@ const Header = ({ hidden }: props) => {
                       <div className='flex flex-row gap-3 items-center'>
                         <div className='flex'>
                           <Image
-                            src="/profile.png"
+                            src={typeof userData?.profilePicture === 'string' ? userData.profilePicture : '/profile.png'}
                             width={30}
                             height={30}
                             alt="Profile"
                             className="rounded-full"
                           />
                         </div>
-                        <span className="text-sm font-medium flex">Jimoh Adesina</span>
+                        <span className="text-sm font-medium flex">{userData?.fullName}</span>
                       </div>
                       {/* {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />} */}
                     </AccordionTrigger>
@@ -656,13 +675,13 @@ const Header = ({ hidden }: props) => {
                   <DropdownMenu onOpenChange={setOpenChev}>
                     <DropdownMenuTrigger className="flex  items-center gap-2 focus:outline-none">
                       <Image
-                        src="/profile.png" // Replace with actual image path
+                        src={typeof userData?.profilePicture === 'string' ? userData.profilePicture : '/profile.png'}
                         width={30}
                         height={30}
                         alt="Profile"
                         className="rounded-full"
                       />
-                      <span className="text-sm font-medium">Jimoh Adesina</span>
+                      <span className="text-sm font-medium">{userData?.fullName}</span>
                       {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </DropdownMenuTrigger>
 

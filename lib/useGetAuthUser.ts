@@ -23,8 +23,7 @@ export const getUserAuthDetails = (
 export const useGetAuthUser = (userType: userTypeProps) => {
   const dispatch = useDispatch();
 
-  const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
-    useToast();
+ 
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["auth-me"],
@@ -44,8 +43,6 @@ export const useGetAuthUser = (userType: userTypeProps) => {
     isLoading,
     isError,
     data,
-    handleSnack,
-    snackBarOpen,
-    setSnackBarOpen,
+
   };
 };

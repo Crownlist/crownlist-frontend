@@ -1,10 +1,8 @@
 /* eslint-disable */
 import { useMutation } from "react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { apiClientPublic, apiClientUser } from "@/lib/interceptor";
-// import { useToast } from "@/components/Toast";
+import { apiClientPublic } from "@/lib/interceptor";
 import { UserSigninForm, UserSigninRes } from "@/types/admin/auth";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { obfuscateToken } from "@/constants/encryptData";
 import { useToast } from "./useToastMessage";
@@ -13,11 +11,13 @@ import { toast } from "sonner";
 export const signin: any = (credentials: UserSigninForm): Promise<UserSigninRes> => {
   return apiClientPublic.post(`/auth/user/login`, credentials);
 };
+
 const resendVerificationEmail = (email: string): Promise<any> => {
   return apiClientPublic.post(`auth/user/resend-token?email=${email}`);
 };
+
 export const useAdminSigninHook = () => {
-  const router = useRouter();
+  // const dispatch = useDispatch(); // Get the dispatch function
   const [googleLoading, setGoogleLoading] = useState(false);
   const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
     useToast();
@@ -25,8 +25,11 @@ export const useAdminSigninHook = () => {
   const { mutateAsync: submit, isLoading } = useMutation({
     mutationFn: signin,
     onSuccess: (data: any) => {
-      console.log('innnn', data)
-      localStorage.setItem("leo", data?.data.user._id);
+      console.log('Login successful:', data);
+      const accountData = data?.data.account;
+
+      // 1. Store tokens and ID in localStorage (as you're already doing)
+      localStorage.setItem("leo", data?.data.account._id);
       localStorage.setItem(
         "leoKey",
         obfuscateToken(true, data?.data.accessToken)
@@ -36,27 +39,53 @@ export const useAdminSigninHook = () => {
         obfuscateToken(true, data?.data.refreshToken)
       );
 
+      // 2. Dispatch data to Redux store based on account type
+      // const accountType = data?.data.account.accountType;
+      // if (accountType) {
+      //   const userDataPayload: UserSignin = { // Cast data to your UserSignin type
+      //     token: data?.data?.accessToken,
+      //     id: accountData._id,
+      //     email: accountData.email,
+      //     fullName: accountData.fullName,
+      //     authMethod: accountData.authMethod,
+      //     createdAt: accountData.createdAt,
+      //     userCustomId: accountData.userCustomId,
+      //     profilePicture: accountData.profilePicture,
+      //     isVerified: accountData.isVerified,
+      //     finishTourGuide: accountData.finishTourGuide,
+      //   };
+      //   dispatch(updateUserData(userDataPayload));
+      //   console.log("Dispatched user data to Redux:", userDataPayload);
+      // }  else {
+      //   // Fallback or handle other account types if necessary
+      //   console.warn("Unknown account type or missing account data:", data?.data.account);
+      //   // Optionally dispatch to a generic 'profile' slice or log out
+      // }
+
+
+      // 3. Handle redirection (as you're already doing)
       if (sessionStorage.getItem("returnUserTo")) {
         location.replace(
           location.origin + sessionStorage.getItem("returnUserTo")
         );
-        if (data?.data.accountType == 'User') {
-          location.origin + sessionStorage.getItem(location.origin + "/buyer/profile")
-        } else if (data?.data.accountType == 'Seller') {
-          location.origin + sessionStorage.getItem(location.origin + "/seller/dashboard")
-        }
       } else {
-        location.replace(location.origin + "/buyer/profile");
+        console.log(location.origin);
+        if (data?.data.account.accountType == 'User') {
+          location.replace(location.origin + "/buyer/profile");
+        } else if (data?.data.account.accountType == 'Seller') {
+          location.replace(location.origin + "/seller/dashboard");
+        } else {
+          location.replace(location.origin + "/buyer/profile");
+        }
       }
     },
     onError: async (error: any, variables: { email: any; }) => {
       const email = variables?.email;
-      console.log(email);
-      console.log(error);
-      const condition = String(error);
+      console.error('Login error:', error); // Use console.error for errors
+      const condition = String(error.message || error); // Use error.message for better display
       // console.log(error.response?.data?.message)
       if (
-        condition ===
+        error.response?.data?.message ===
         "Your account is not verified. Kindly request for Email verification link"
       ) {
         console.log("handle resend token init ");
@@ -73,9 +102,8 @@ export const useAdminSigninHook = () => {
           );
           toast("success, Verification email sent. Please check your inbox.")
           console.log("sent");
-        } catch (error) {
-          // handleMessage('error', `Failed to resend verification email: ${resendError}`);
-          handleMessage("error", String(error));
+        } catch (resendError: any) { // Catch resend error specifically
+          handleMessage("error", `Failed to resend verification email: ${resendError.message || resendError}`);
         }
       } else {
         handleMessage("error", `Login failed: ${condition}`);
@@ -96,16 +124,18 @@ export const useAdminSigninHook = () => {
       handleMessage("success", "Login Successfully. Redirecting...");
       toast("success, Login Successfully. Redirecting...")
     } catch (error) {
-      // handleMessage("error", String(error));
+      // The onError of useMutation handles the specific error messages,
+      // this catch block might be for more generic errors not caught by onError.
+      console.error("onSubmit catch error:", error);
     }
   };
+
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     try {
       const res: any = await apiClientPublic.get("/auth/google/getauthurl");
       if (res.status === "success") {
         location.replace(res.data.urlAuth);
-
         setGoogleLoading(false);
       }
     } catch (error: any) {
@@ -128,84 +158,88 @@ export const useAdminSigninHook = () => {
   };
 };
 
-// verification hook
-
+// ... (your useFetchData hook remains the same for now, as it's for email verification,
+// though you *could* update Redux state here if verification leads to a login state
+// or update a 'verified' flag on existing user data)
 export const fetchData = async (params: any) => {
-  return apiClientPublic.post(`auth/user/verify-token?uniqueString=${params}`);
+    return apiClientPublic.post(`auth/user/verify-token?uniqueString=${params}`);
 };
 
 const resendToken = async (email: string) => {
-  return apiClientPublic.post(`auth/user/verify-token?email=${email}`);
+    return apiClientPublic.post(`auth/user/verify-token?email=${email}`);
 };
 
 export const useFetchData = () => {
-  const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
-    useToast();
-  const [isLoading, setIsLoading] = useState(false);
+    const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
+        useToast();
+    const [isLoading, setIsLoading] = useState(false);
 
-  const { mutateAsync: fetchDataMutation } = useMutation({
-    mutationFn: fetchData,
-    onSuccess: () => {
-      handleMessage("success", "Email authentication is succesful");
-      setIsLoading(false);
-    },
-    onError: (error: any, variables: any, context: any) => {
-      console.log(`here is the error : ${error}`);
-      handleMessage("error", `Error posting data: ${error.message}`);
-      setIsLoading(false);
-      if (error.response?.data?.message === "Link expired") {
-        handleLinkExpiration(context.email);
-      }
-    },
-  });
-
-  const { mutateAsync: resendTokenMutation } = useMutation({
-    mutationFn: resendToken,
-    onSuccess: () => {
-      handleMessage("success", "New link has been sent to your email");
-    },
-    onError: (error: any) => {
-      handleMessage("error", `Error resending link: ${error.message}`);
-    },
-  });
-
-  const submit = async ({ token, email }: any) => {
-    setIsLoading(true);
-    try {
-      await fetchDataMutation(token, {
-        onError: async (error: { message: any; response: { status: number; data: { message: string; }; }; }) => {
-          handleMessage("error", `Error posting data: ${error.message}`);
-          setIsLoading(false);
-
-          if (
-            error.response?.status === 401 ||
-            error.response?.data?.message === "Link expired"
-          ) {
-            await handleLinkExpiration(email);
-          }
+    const { mutateAsync: fetchDataMutation } = useMutation({
+        mutationFn: fetchData,
+        onSuccess: () => {
+            handleMessage("success", "Email authentication is succesful");
+            setIsLoading(false);
+            // Optionally, if successful verification means user is logged in
+            // and you have their data, you could dispatch to Redux here.
+            // But usually verification happens before full login.
         },
-      });
-    } catch (error) {
-      handleMessage("error", String(error));
-      setIsLoading(false);
-    }
-  };
+        onError: (error: any, variables: any, context: any) => {
+            console.log(`here is the error : ${error}`);
+            handleMessage("error", `Error posting data: ${error.message}`);
+            setIsLoading(false);
+            if (error.response?.data?.message === "Link expired") {
+                handleLinkExpiration(context.email);
+            }
+        },
+    });
 
-  const handleLinkExpiration = async (email: string) => {
-    setIsLoading(true);
-    try {
-      await resendTokenMutation(email);
-    } catch (error) {
-      handleMessage("error", `Failed to resend link: ${error}`);
-      setIsLoading(false);
-    }
-  };
+    const { mutateAsync: resendTokenMutation } = useMutation({
+        mutationFn: resendToken,
+        onSuccess: () => {
+            handleMessage("success", "New link has been sent to your email");
+        },
+        onError: (error: any) => {
+            handleMessage("error", `Error resending link: ${error.message}`);
+        },
+    });
 
-  return {
-    submit,
-    isLoading,
-    handleSnack,
-    snackBarOpen,
-    setSnackBarOpen,
-  };
+    const submit = async ({ token, email }: any) => {
+        setIsLoading(true);
+        try {
+            await fetchDataMutation(token, {
+                onError: async (error: { message: any; response: { status: number; data: { message: string; }; }; }) => {
+                    handleMessage("error", `Error posting data: ${error.message}`);
+                    setIsLoading(false);
+
+                    if (
+                        error.response?.status === 401 ||
+                        error.response?.data?.message === "Link expired"
+                    ) {
+                        await handleLinkExpiration(email);
+                    }
+                },
+            });
+        } catch (error) {
+            handleMessage("error", String(error));
+            setIsLoading(false);
+        }
+    };
+
+    const handleLinkExpiration = async (email: string) => {
+        setIsLoading(true);
+        try {
+            await resendTokenMutation(email);
+        } catch (error) {
+            handleMessage("error", `Failed to resend link: ${error}`);
+            setIsLoading(false);
+        }
+    };
+
+    return {
+        submit,
+        isLoading,
+        handleSnack,
+        snackBarOpen,
+        setSnackBarOpen,
+    };
 };

@@ -1,22 +1,17 @@
 
 "use client"
-// import Image from "next/image"
-// import Link from "next/link"
-// import { Heart, ChevronDown, Search, Bell, MessageSquare, User } from "lucide-react"
-// import ProductCard from "@/components/Home/Product-card"
+
 import SectionHeader from "@/components/Home/Section-header"
 import Header from "@/components/Header1"
 import Hero from "@/components/Home/Hero"
 import SponsoredPost from "@/components/Home/SponsoredPost"
 import Footer from "@/components/Footer"
 import ProductSection from "@/components/Home/ProductSection"
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import CategoryGrid from "@/components/Home/Category"
 import { useRouter } from "next/navigation"
 import CategoryScroll from "@/components/Home/CategoryScroll"
-import { useGetAuthUser } from "@/lib/useGetAuthUser"
-import { useSelector } from "react-redux"
-import { RootState } from "@/store"
+
 
 
  const popularItems = [
@@ -258,44 +253,20 @@ const propertiesItems = [
     },
   ]
 
-// Sponsored items data
-// const sponsoredItems = [
-//   {
-//     image: "/product1.png",
-//     title: "Men thrift",
-//     description: "Brand new thrift clothes for men. All sizes available.",
-//     buttonText: "Shop now",
-//   },
-// ]
-
 
 export default function Home() {
 
   const heroRef = useRef<HTMLDivElement | null>(null);
-  const [isSticky, setIsSticky] = useState(false);
+  // const [isSticky, setIsSticky] = useState(false);
   const router = useRouter()
-  console.log(isSticky)
+  // console.log(isSticky)
 
-  // new implementation
-  const { userData } = useSelector((state: RootState) => state.userData);
-  const { isLoading } = useGetAuthUser("User");
- console.log('api', userData, isLoading)
+
 
   const handleSeeMore = (url: string) =>{
     router.push(url)
   }
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
-        const heroBottom = heroRef.current.getBoundingClientRect().bottom;
-        // console.log(heroBottom)
-        setIsSticky(heroBottom <= 186); // Stick when the hero is out of view
-      }
-    };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -358,7 +329,31 @@ export default function Home() {
           <div className="relative max-sm:hidden">
             <CategoryScroll />
           </div>
-          {/* Sidebar */}
+          
+        </main>
+      </div>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  )
+}
+
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (heroRef.current) {
+  //       const heroBottom = heroRef.current.getBoundingClientRect().bottom;
+  //       // console.log(heroBottom)
+  //       setIsSticky(heroBottom <= 186); // Stick when the hero is out of view
+  //     }
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
+
+  {/* Sidebar */}
           {/* <div className={`hidden sm:flex w-[290px]  lg:w-[320px] ${isSticky ? "fixed top-25 right-0 lg:right[190px]" : "relative"}`}>
           <div className="">
             <div className={`bg-white rounded-lg  p-5 w-[290px] md:w-[310px] lg:w-[320px] shadow-md ${isSticky ? "" : " absolute top-[-85px] md:top-[-120px]  right-[-38px] md:right-[-15px] "}`}>
@@ -401,19 +396,3 @@ export default function Home() {
             </div>
           </div>
           </div> */}
-        </main>
-      </div>
-      <Footer />
-    </div>
-  )
-}
-
-// import Hero from "@/components/Home/Hero";
-
-// export default function Home() {
-//   return (
-//     <main>
-//       <Hero />
-//     </main>
-//   );
-// }

@@ -22,14 +22,14 @@ export const useUserSignupHook = () => {
     mutationFn: signup,
     onSuccess: (data) => {
       console.log(data)
-      localStorage.setItem("leo", data?.data.user._id);
+      localStorage.setItem("leo", data?.data.account._id);
       localStorage.setItem(
         "leoKey",
-        obfuscateToken(true, data?.data.accessToken)
+        obfuscateToken(true, data?.data.account.accessToken)
       );
       localStorage.setItem(
         "leoLoop",
-        obfuscateToken(true, data?.data.refreshToken)
+        obfuscateToken(true, data?.data.account.refreshToken)
       );
 
       if (sessionStorage.getItem("returnUserTo")) {

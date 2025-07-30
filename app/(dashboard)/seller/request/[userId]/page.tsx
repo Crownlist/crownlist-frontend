@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import {
   AlignJustify,
@@ -12,6 +13,8 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react"
+import CategoryModal from "@/components/Home/CategoryModal"
 
 export default function AnalyticsPage() {
   const products = [
@@ -56,37 +59,57 @@ export default function AnalyticsPage() {
       },
     },
   ]
+  const[openCat, setOpenCat] = useState(false)
+
+  const handleCat = () => {
+      // e.preventDefault();
+      // router.push("/category")
+      setOpenCat(true)
+    }
 
   return (
     <div className="p-4 md:p-6 flex flex-col w-full h-full">
       <div className="w-full mx-auto">
-        <div className="flex flex-row justify-between mx-auto items-center align-middle">
-          <div>
-            <h1 className="text-2xl font-bold mb-1 justify-start flex">Request</h1>
-            <p className="text-gray-600 mb-12">Keep track and manage your product request</p>
-          </div>
-          <div className="flex flex-row gap-7 items-center align-middle pr-5 max-md:hidden">
-            <div className="flex flex-row gap-2 items-center border-r-2 px-5">
-              <LayoutGrid size={18} />
-              <button className="flex">Category</button>
-            </div>
-            <div className="flex flex-row gap-2 items-center border-r-2 px-5">
-              <SlidersHorizontal size={18} />
-              <span>Sort by:</span>
-              <button className="flex">
-                <ChevronDown size={14} />
-              </button>
-            </div>
-            <div className="flex flex-row gap-6 items-center">
-              <button className="flex bg-[#EDE9FF] p-2 rounded">
-                <LayoutGrid size={20} color="#1F058F" />
-              </button>
-              <button className="flex p-2">
-                <AlignJustify size={20} />
-              </button>
-            </div>
-          </div>
-        </div>
+         {/* Header Section - Responsive */}
+         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-8">
+                    {/* Title Section */}
+                    <div className="flex-1">
+                        <h1 className="text-xl md:text-2xl font-bold mb-1">Request</h1>
+                        <p className="text-gray-600 text-sm md:text-base">Keep track and manage your product request</p>
+                    </div>
+                    
+                    {/* Controls Section - Responsive */}
+                    <div className="flex flex-row max-sm:justify-end sm:flex-row gap-3 sm:gap-4 lg:gap-7 items-center sm:items-center">
+                        {/* Category Filter */}
+                        <div className="flex items-center gap-2 border-r-2 pr-3 sm:pr-5 ">
+                            <LayoutGrid size={16} className="md:w-[18px] md:h-[18px]" />
+                            <button className="text-sm md:text-base font-medium"
+                               onClick={handleCat}
+                            >
+                                Category
+                            </button>
+                        </div>
+                        
+                        {/* Sort By */}
+                        <div className="flex items-center gap-2 border-r-2 pr-3 sm:pr-5">
+                            <SlidersHorizontal size={16} className="md:w-[18px] md:h-[18px]"/>
+                            <span className="text-sm md:text-base">Sort by:</span>
+                            <button className="flex">
+                                <ChevronDown size={12} className="md:w-[14px] md:h-[14px]" />
+                            </button>
+                        </div>
+                        
+                        {/* View Toggle */}
+                        <div className="flex items-center gap-2 sm:gap-6 ">
+                            <button className="flex bg-[#EDE9FF] p-1 rounded">
+                                <LayoutGrid size={18} className="md:w-[20px] md:h-[20px]" color="#1F058F" />
+                            </button>
+                            <button className="flex p-1 rounded hover:bg-gray-100">
+                                <AlignJustify size={18} className="md:w-[20px] md:h-[20px]" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -100,7 +123,7 @@ export default function AnalyticsPage() {
                     alt="Product"
                     width={900}
                     height={900}
-                    className="w-full h-70 object-cover rounded-t-lg bg-[#FAFAFA]"
+                    className="w-full h-[350px] object-contain rounded-t-lg bg-[#FAFAFA]"
                   />
                 </div>
 
@@ -189,6 +212,9 @@ export default function AnalyticsPage() {
             <span>of 50</span>
           </div>
         </div>
+        {/* category modal */}
+        <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
+        
       </div>
     </div>
   )
