@@ -16,6 +16,7 @@ import BottomNav from '@/components/BottomNav'
   
   export default function Layout({ children }: { children: React.ReactNode }) {
     // const [openChev, setOpenChev] = useState(false)
+    
     return (
       <SidebarCustomer>
         <AppSidebar />
