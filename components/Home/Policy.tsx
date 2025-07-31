@@ -1,4 +1,10 @@
+
+"use client"
+
+
 import React from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const privacyPolicy = {
   lastUpdated: '20 Jan 2025',
@@ -8,7 +14,7 @@ const privacyPolicy = {
     content: 'By using our platform, you consent to our Privacy Policy and agree to its terms.',
   },
   informationWeCollect: {
-    title: 'Information We Collect',
+    title: 'What information do we collect?',
     content: 'We collect several types of information from and about users of our platform, including:',
     types: [
       {
@@ -37,7 +43,7 @@ const privacyPolicy = {
     ],
   },
   howWeUseYourInformation: {
-    title: 'How We Use Your Information',
+    title: 'How do we use your information?',
     content: 'We may use the information we collect for various purposes, including to:',
     uses: [
       '- Provide, operate, and maintain our platform.',
@@ -48,7 +54,7 @@ const privacyPolicy = {
     ],
   },
   disclosureOfYourInformation: {
-    title: 'Disclosure of Your Information',
+    title: 'How long do we keep your information?',
     content: 'We may share your information with:',
     recipients: [
       '- Service providers and partners who assist in our operations.',
@@ -57,17 +63,17 @@ const privacyPolicy = {
     ],
   },
   cookiesAndTrackingTechnologies: {
-    title: 'Cookies and Tracking Technologies',
+    title: 'Do we use cookies and other tracking technologies?',
     content:
       'CROWNLIST uses cookies and similar tracking technologies to enhance user experience. You can manage cookie preferences through your browser settings.',
   },
   dataSecurity: {
-    title: 'Data Security',
+    title: 'How do we keep your information safe?',
     content:
       'We implement security measures to protect your personal information from unauthorized access, use, alteration, and disclosure. However, no method of transmission over the internet is completely secure.',
   },
   yourRights: {
-    title: 'Your Rights',
+    title: 'What are your privacy rights?',
     content: 'You have the following rights regarding your personal data:',
     rights: [
       { name: 'Access', description: 'Request copies of your personal data.' },
@@ -90,15 +96,54 @@ const privacyPolicy = {
       'We may update this Privacy Policy from time to time. Any changes will be posted on this page, and we encourage you to review it periodically.',
   },
   contactUs: {
-    title: 'Contact Us',
+    title: 'How can you contact us about this policy?',
     content: 'For questions or concerns regarding this Privacy Policy, please contact us at [support@crownlist.com].',
   },
 };
 
 const Policy = () => {
+
+  const pathname = usePathname();
   return (
-    <div className='flex flex-col w-full'>
-      <div className='bg-[#1F058F]'>
+    <div className='flex flex-col w-full mt-10'>
+
+       <div className="flex flex-col items-center text-center mb-10">
+        <div className="bg-[#f2e9ff] text-[#6941c6] px-3 py-1 rounded-full text-sm font-medium mb-4">Legal</div>
+        <h2 className="text-4xl font-bold mb-2">We care about your well-being</h2>
+        <p className="text-gray-600 max-w-xl">
+          Your privacy is important to us at Untitled. We respect your privacy regarding any information we may collect from you across our website.{" "}
+      
+        </p>
+      </div>
+
+      <div className="flex justify-center mb-10">
+        <div className="flex bg-gray-100   rounded-md py-1 px-2 shadow-sm border">
+          <Link
+            href="/privacy"
+            className={`px-6 py-2 border rounded-md text-sm font-medium transition-colors ${
+              pathname === "/privacy-policy"
+                ? "bg-white  text-[#6941c6]"
+                : "text-gray-800 hover:text-gray-900"
+            }`}
+          >
+            Privacy
+          </Link>
+          <Link
+            href="/terms-and-conditions"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              pathname === "/terms-and-conditions"
+                ? "bg-white text-[#6941c6]"
+                : "text-gray-800 hover:text-gray-900"
+            }`}
+          >
+            Terms
+          </Link>
+        </div>
+      </div>
+
+
+
+      {/* <div className='bg-[#1F058F]'>
         <div className='flex items-center justify-center p-4 text-white py-8 text-center'>
           <div className='flex flex-col items-center gap-3'>
             <div className='text-sm max-sm:text-[#52a9ff]'>Current as of {privacyPolicy.lastUpdated}</div>
@@ -106,23 +151,24 @@ const Policy = () => {
             <p className='font-light lg:px-45 px-1 md:max-w-[70vw]'>{privacyPolicy.introduction}</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className='max-w-4xl mx-auto p-6 space-y-8'>
         {/* Consent */}
         <Section index={1} title={privacyPolicy.consent.title} content={<p>{privacyPolicy.consent.content}</p>} />
 
         {/* Information We Collect */}
-        <Section
+        <Section 
           index={2}
           title={privacyPolicy.informationWeCollect.title}
           content={
+           
             <>
-              <p className='ml-6 text-gray-600'>{privacyPolicy.informationWeCollect.content}</p>
+              <p className='ml-6 text-gray-600 '>{privacyPolicy.informationWeCollect.content}</p>
               <ul className='ml-12 space-y-2 text-gray-600 list-disc'>
                 {privacyPolicy.informationWeCollect.types.map((type) => (
                   <li key={type.id}>
-                    <strong>{type.title}</strong>
+                    <strong >{type.title}</strong>
                     <ul className='ml-6 list-disc'>
                       {type.details.map((detail, i) => (
                         <li key={i}>{detail.replace(/^-\s*/, '')}</li>
@@ -187,8 +233,8 @@ const Policy = () => {
               </>
             ),
           },
-          privacyPolicy.childrensInformation,
-          privacyPolicy.changesToThisPrivacyPolicy,
+          // privacyPolicy.childrensInformation,
+          // privacyPolicy.changesToThisPrivacyPolicy,
           privacyPolicy.contactUs,
         ].map((section, idx) => (
           <Section key={idx} index={5 + idx} title={section.title} content={<p>{section.content}</p>} />
@@ -199,7 +245,7 @@ const Policy = () => {
 };
 
 const Section = ({
-  index,
+ 
   title,
   content,
 }: {
@@ -209,8 +255,8 @@ const Section = ({
 }) => (
   <section className='space-y-4'>
     <div className='flex gap-2'>
-      <span className='text-[#52a9ff]'>{index}.</span>
-      <h2 className='font-medium'>{title}</h2>
+      {/* <span className='text-[#52a9ff]'>{index}.</span> */}
+      <h2 className='font-bold text-xl md:3xl'>{title}</h2>
     </div>
     <div>{content}</div>
   </section>
