@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useUserSignupHook } from "@/lib/signup-hook";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Loader2, Target } from "lucide-react";
+import { Eye, EyeOff, Loader2, Target } from "lucide-react";
 
 export default function SignupForm({
   className,
@@ -18,8 +18,11 @@ export default function SignupForm({
 }: React.ComponentProps<"div"> & {
   imageUrl?: string;
 }) {
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
  const [lastName, setLastName] = useState('')
+ const [confirmPassword, setConfirmPassword] = useState("");
+
   const {
     register,
     errors,
@@ -160,36 +163,60 @@ export default function SignupForm({
             </div>
 
             <div className="grid gap-3">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder=""
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters",
-                  },
-                })}
-                disabled={isLoading || googleLoading}
-              />
-              {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
-              )}
-            </div>
+  <Label htmlFor="password">Password</Label>
+  <div className="relative">
+    <Input
+      id="password"
+      type={showPassword ? "text" : "password"}
+      placeholder=""
+      {...register("password", {
+        required: "Password is required",
+        minLength: {
+          value: 8,
+          message: "Password must be at least 8 characters",
+        },
+      })}
+      disabled={isLoading || googleLoading}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword((prev) => !prev)}
+      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+      disabled={isLoading || googleLoading}
+      tabIndex={-1}
+    >
+      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+    </button>
+  </div>
+  {errors.password && (
+    <p className="text-sm text-red-500">{errors.password.message}</p>
+  )}
+</div>
 
-            <div className="grid gap-3">
-              <Label htmlFor="confirm_password">Confirm Password</Label>
-              <Input
-                id="confirm_password"
-                type="password"
-                placeholder=""
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isLoading || googleLoading}
-              />
-            </div>
+<div className="grid gap-3">
+  <Label htmlFor="confirm_password">Confirm Password</Label>
+  <div className="relative">
+    <Input
+      id="confirm_password"
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder=""
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      disabled={isLoading || googleLoading}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword((prev) => !prev)}
+      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+      disabled={isLoading || googleLoading}
+      tabIndex={-1}
+    >
+      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+    </button>
+  </div>
+</div>
 
             <p className="text-[12px] text-center text-balance">
               By clicking &quot;continue&quot;, you agree to Crownlist`&apos;s{" "}

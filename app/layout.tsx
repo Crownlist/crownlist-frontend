@@ -19,11 +19,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <Head>
-        <meta name="theme-color" content="#1F058F" />
-        <meta name="msapplication-navbutton-color" content="#1F058F" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="#1F058F" />
-      </Head> */}
       <body className={inter.className}>
           <Wrapper>{children}</Wrapper>
           {/* <ChatBot /> */}

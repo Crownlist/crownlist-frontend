@@ -30,7 +30,7 @@ export const useGetAuthUser = (userType: userTypeProps) => {
     queryFn: () => getUserAuthDetails(userType),
     onSuccess: (data) => {
       if (userType === "Admin") {
-        dispatch(updateAdminData(data.data.loggedInAccount));
+        dispatch(updateAdminData(data.data.data.loggedInAccount));
       }
       if (userType === "User") {
         dispatch(updateUserData(data.data.loggedInAccount));

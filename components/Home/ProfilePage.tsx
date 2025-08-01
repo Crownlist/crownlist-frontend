@@ -11,6 +11,7 @@ import { uniqueCountries } from "@/constants/countries";
 import { countries } from "@/constants/countries";
 import { nigerianStates } from "../../constants/states";
 import { Eye, EyeOff } from "lucide-react";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
 interface FormData {
   fullName: string;
@@ -26,13 +27,18 @@ interface FormData {
 }
 
 export default function ProfilePage() {
+
+  const {  data } = useGetAuthUser("User");
+    const userData = data?.data.loggedInAccount
+   console.log(userData)
+
   const [formData, setFormData] = useState<FormData>({
-    fullName: "",
-    email: "",
-    phone: "",
-    country: "Nigeria",
-    state: "",
-    address: "",
+    fullName: userData?.fullName ||"",
+    email: userData?.email || "",
+    phone: userData?.phoneNumber || "",
+    country: userData?.country || "Nigeria",
+    state: userData?.state || "",
+    address: userData?.address || "",
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -187,7 +193,7 @@ export default function ProfilePage() {
 
                     }
                   >
-                    <SelectTrigger className="w-full cursor-pointer rounded-l-lg rounded-r-none w-[100px]">
+                    <SelectTrigger className="w-full cursor-pointer rounded-l-lg rounded-r-none ">
                       <SelectValue placeholder="Select code" />
                     </SelectTrigger>
                     <SelectContent className=" max-w-[200px] max-h-[250px]">

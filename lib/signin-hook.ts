@@ -39,29 +39,6 @@ export const useAdminSigninHook = () => {
         obfuscateToken(true, data?.data.refreshToken)
       );
 
-      // 2. Dispatch data to Redux store based on account type
-      // const accountType = data?.data.account.accountType;
-      // if (accountType) {
-      //   const userDataPayload: UserSignin = { // Cast data to your UserSignin type
-      //     token: data?.data?.accessToken,
-      //     id: accountData._id,
-      //     email: accountData.email,
-      //     fullName: accountData.fullName,
-      //     authMethod: accountData.authMethod,
-      //     createdAt: accountData.createdAt,
-      //     userCustomId: accountData.userCustomId,
-      //     profilePicture: accountData.profilePicture,
-      //     isVerified: accountData.isVerified,
-      //     finishTourGuide: accountData.finishTourGuide,
-      //   };
-      //   dispatch(updateUserData(userDataPayload));
-      //   console.log("Dispatched user data to Redux:", userDataPayload);
-      // }  else {
-      //   // Fallback or handle other account types if necessary
-      //   console.warn("Unknown account type or missing account data:", data?.data.account);
-      //   // Optionally dispatch to a generic 'profile' slice or log out
-      // }
-
 
       // 3. Handle redirection (as you're already doing)
       if (sessionStorage.getItem("returnUserTo")) {

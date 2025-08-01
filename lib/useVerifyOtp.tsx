@@ -61,27 +61,7 @@ export const useVerifyOtp = () => {
             obfuscateToken(true, refreshToken)
           );
 
-          // 2. Dispatch data to Redux store based on account type
-          // const accountType = updatedAccount.accountType;
-          // if (accountType) {
-          //   const userDataPayload: UserSignin = { // Cast data to your UserSignin type
-          //     token: data?.data?.accessToken,
-          //     id: accountData._id,
-          //     email: accountData.email,
-          //     fullName: accountData.fullName,
-          //     authMethod: accountData.authMethod,
-          //     createdAt: accountData.createdAt,
-          //     userCustomId: accountData.userCustomId,
-          //     profilePicture: accountData.profilePicture,
-          //     isVerified: accountData.isVerified,
-          //     finishTourGuide: accountData.finishTourGuide,
-          //   };
-          //   dispatch(updateUserData(userDataPayload));
-          //   console.log("Dispatched user data to Redux (OTP):", userDataPayload);
-          // } else {
-          //   console.warn("Unknown account type or missing account data after OTP verification:", updatedAccount);
-          // }
-
+         
           // 3. Handle redirection (as you're already doing)
           if (sessionStorage.getItem("returnUserTo")) {
             location.replace(
