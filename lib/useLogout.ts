@@ -7,7 +7,7 @@ import { apiClientPublic } from "./interceptor";
 import { useMgtKeys } from "./useMgtKeys";
 import { updateAdminData } from "@/store/slices/admin/adminDataSlice";
 import { obfuscateToken } from "@/constants/encryptData";
-import { useToast } from "./useToastMessage";
+import { toast } from "sonner";
 
 type LogoutProps = {
   refreshToken: string;
@@ -19,8 +19,7 @@ export const logout = (logoutData: LogoutProps): Promise<any> => {
 };
 
 export const useLogout = (userType: userTypeProps) => {
-  const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
-    useToast();
+
 
   const dispatch = useDispatch();
 
@@ -29,10 +28,10 @@ export const useLogout = (userType: userTypeProps) => {
   const {
     mutateAsync: mutateLogout,
     isLoading,
-    isError,
     data,
   } = useMutation({
     mutationFn: () => {
+      console.log(data)
       if (userType === "Admin") {
         return logout({
           refreshToken: obfuscateToken(
@@ -52,26 +51,22 @@ export const useLogout = (userType: userTypeProps) => {
       }
     },
     onSuccess: () => {
-      handleMessage("success", "Logout Successfully. Redirecting...");
+      toast.success("Logout Successfully. Redirecting...");
 
       if (userType === "Admin") {
         removeOrionKeys();
         dispatch(updateAdminData(null));
-        location.replace(location.origin + "/admin/signin");
+        location.replace(location.origin + "/auth/admin/sign-in");
       } else {
         // dispatch(updateAdminData(null));
         removeLeoKeys();
-        location.replace(location.origin + "/auth/sign-in");
+        location.replace(location.origin + "/auth/login");
       }
     },
   });
 
   return {
     mutateLogout,
-    isLoading,
-    isError,
-    handleSnack,
-    snackBarOpen,
-    setSnackBarOpen,
+    isLoading
   };
 };
