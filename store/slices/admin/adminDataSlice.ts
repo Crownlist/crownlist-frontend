@@ -1,8 +1,8 @@
-import { AdminSignin } from "@/types/admin/auth";
+import {  AdminSigninNew } from "@/types/admin/auth";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface Props {
-  adminData: AdminSignin | null;
+  adminData: AdminSigninNew | null;
 }
 
 const initialState: Props = {

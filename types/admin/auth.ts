@@ -7,6 +7,10 @@ export interface AdminSigninForm {
 export interface AdminSignin {
   _id: string;
   firstname: string;
+  fullName?: string;
+  country?: string;
+  state?: string;
+  address?: string;
   lastname: string;
   email: string;
   adminCustomId: string;
@@ -15,6 +19,21 @@ export interface AdminSignin {
   adminType: string;
   isAdmin: boolean;
   phoneNumber: string;
+}
+
+export interface AdminSigninNew {
+  data: {
+  _id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  adminCustomId: string;
+  profilePicture: string;
+  accountType: string;
+  adminType: string;
+  isAdmin: boolean;
+  phoneNumber: string;
+  }
 }
 
 export interface AdminSigninData {

@@ -3,6 +3,7 @@ import { AdminSignin } from "./admin/auth";
 export interface GetUserRes {
     status: string;
     data: {
+      data: any;
       loggedInAccount: AdminSignin;
       message: string;
     };

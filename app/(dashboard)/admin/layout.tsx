@@ -1,9 +1,8 @@
 import type React from "react"
-import { Inter } from "next/font/google"
 import ClientLayout from "./client-layout"
 import "../../globals.css"
+import AdminLayout from "../../../client/admin-layount"
 
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
   title: 'Seller | Dashboard'
@@ -16,10 +15,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <AdminLayout>
         <ClientLayout>{children}</ClientLayout>
-      </body>
-    </html>
+    </AdminLayout>
   )
 }
