@@ -23,6 +23,8 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import LogoutModal from './logout-modal'
+import { useState } from 'react'
 
 // Menu items.
 const items = [
@@ -68,7 +70,13 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const [open, setOpen] = useState(false)
   const { toggleSidebar, isMobile } = useSidebar()
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   return (
     <Sidebar collapsible='icon'>
@@ -106,15 +114,17 @@ export function AppSidebar() {
               asChild
               className={`hover:text-primary font-semibold text-black`}
             >
-              <Link href='#'>
+              <button onClick={() => setOpen(true)}>
                 <LogOut size={16} />
                 <span>Logout</span>
-              </Link>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter />
+      <LogoutModal open={open} handleClose={handleClose} />
+
     </Sidebar>
   )
 }

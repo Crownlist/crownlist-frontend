@@ -4,14 +4,22 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, LogOut, MessageSquare, Package, PieChart, SendHorizontal, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
+import LogoutModal from "./logout-modal"
+import { useState } from "react"
 
 export default function DashboardSidebar() {
   const pathname = usePathname()
-
+  const [open, setOpen] = useState(false)
   // Helper function to check if path is active
   const isActive = (path: string) => {
     return pathname.includes(path)
   }
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+ 
 
   return (
     <aside className="w-64 bg-white border-r h-full overflow-y-auto scrollbar-hide">
@@ -93,14 +101,14 @@ export default function DashboardSidebar() {
       </nav>
 
       <div className="absolute bottom-8 w-full px-4">
-        <Link
-          href="/seller/logout"
+        <button onClick={() => setOpen(true)}
           className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
         >
           <LogOut className="h-5 w-5" />
           <span>Logout</span>
-        </Link>
+        </button>
       </div>
+      <LogoutModal open={open} handleClose={handleClose} />
     </aside>
   )
 }

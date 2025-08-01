@@ -21,7 +21,7 @@ const BuyerHeader = () => {
                         <Image
                             src={userData?.profilePicture || "/profile.png"}
                             alt='fixorshublogo'
-                            width={101}
+                            width={36}
                             height={36}
                             className='md:hidden'
                         />

@@ -6,6 +6,8 @@ import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut } from "luc
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import LogoutModal from "./logout-modal"
+import { useState } from "react"
 
 interface MobileSidebarProps {
     isOpen: boolean
@@ -14,6 +16,11 @@ interface MobileSidebarProps {
 
 export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
     const pathname = usePathname()
+    const [open, setOpen] = useState(false)
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <>
@@ -128,17 +135,16 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                 </nav>
 
                 <div className="absolute bottom-8 w-full px-4">
-                    <Link
-                        href="/logout"
+                    <button
                         className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary"
                         onClick={onClose}
                     >
                         <LogOut className="h-5 w-5" />
                         <span>Logout</span>
-                    </Link>
+                    </button>
                 </div>
             </div>
-
+            <LogoutModal open={open} handleClose={handleClose} />
             {/* Overlay */}
             {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose}></div>}
         </>
