@@ -19,7 +19,7 @@ export default function Footer() {
         </div>
       </div> */}
 
-      <div className="mt-5 w-full p-6 container">
+      <div className="mt-0 w-full px-6 pb-6 container">
         <div className="flex flex-col md:flex-row w-full justify-between  bg-white  shadow-xl rounded-md overflow-hidden  ">
           <div className="p-6 md:w-1/2 md:flex md:flex-col md:justify-center">
             <h2 className="text-2xl font-medium ">Got Something to Sell?</h2>

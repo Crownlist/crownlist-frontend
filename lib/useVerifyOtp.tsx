@@ -6,7 +6,6 @@ import { obfuscateToken } from "@/constants/encryptData";
 
 interface UserVerificationResponseStrict {
   status: "success" | "error";
-  data: {
     updatedAccount: {
       _id: string;
       email: string;
@@ -19,11 +18,10 @@ interface UserVerificationResponseStrict {
       finishTourGuide: boolean;
       isAdmin: boolean;
       createdAt: string; // or Date if you want to parse it
-    };
-    accessToken: string;
-    refreshToken: string;
-    message: string;
   };
+  accessToken: string;
+  refreshToken: string;
+  message: string;
 }
 
 export const verifyOtp = async (otp: string): Promise<UserVerificationResponseStrict> => {
@@ -45,9 +43,9 @@ export const useVerifyOtp = () => {
     mutationFn: verifyOtp,
     onSuccess: (data: UserVerificationResponseStrict) => { // Type data for better safety
       console.log('OTP verification successful, data:', data);
-      const accountData = data?.data.updatedAccount
-      if (data && data.data) { // Ensure data and data.data exist before proceeding
-        const { updatedAccount, accessToken, refreshToken } = data.data;
+      const accountData = data?.updatedAccount
+      if (data && data.updatedAccount) { // Ensure data and data.data exist before proceeding
+        const { updatedAccount, accessToken, refreshToken } = data;
 
         // 1. Store tokens and ID in localStorage (as you're already doing)
         if (typeof window !== "undefined") {
