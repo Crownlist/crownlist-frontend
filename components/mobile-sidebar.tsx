@@ -76,7 +76,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         <Package className="h-5 w-5" />
                         <span>Request</span>
                     </Link>
-                    
+
                     <Link
                         href="/seller/product"
                         className={cn(
@@ -137,14 +137,15 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                 <div className="absolute bottom-8 w-full px-4">
                     <button
                         className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary"
-                        onClick={onClose}
+                        onClick={() => setOpen(true)}
                     >
                         <LogOut className="h-5 w-5" />
                         <span>Logout</span>
                     </button>
                 </div>
+
+                <LogoutModal open={open} handleClose={handleClose} />
             </div>
-            <LogoutModal open={open} handleClose={handleClose} />
             {/* Overlay */}
             {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose}></div>}
         </>
