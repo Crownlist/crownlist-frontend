@@ -34,7 +34,8 @@ export const useUserSignupHook = () => {
 
       if (sessionStorage.getItem("returnUserTo")) {
         location.replace(
-          location.origin + sessionStorage.getItem("returnUserTo")
+          location.origin + "/auth/signup/verify"
+          // location.origin + sessionStorage.getItem("returnUserTo")
         );
       } else {
         location.replace(location.origin + "/auth/signup/verify");

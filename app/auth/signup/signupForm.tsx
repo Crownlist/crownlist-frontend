@@ -133,9 +133,20 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
               <Input
                 id="phoneNumber"
                 type="tel"
-                placeholder=""
+                placeholder="Enter a phone number (e.g., 08012345678)"
                 {...register("phoneNumber", {
                   required: "Phone number is required",
+                  pattern: {
+                    value: /^(\+234|0)[789][01]\d{8}$/,
+                    message: "Please enter a valid Nigerian phone number (e.g., 08012345678, +2348012345678)"
+                  },
+                  validate: {
+                    notEmail: (value) => {
+                      if (!value) return true;
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      return !emailRegex.test(value) || "Please enter a phone number, not an email";
+                    }
+                  }
                 })}
                 disabled={isLoading || googleLoading}
               />
