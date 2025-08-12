@@ -1,14 +1,46 @@
+
+"use client"
+
+
+import { useState } from "react"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header1"
 import Image from "next/image"
 import Link from "next/link"
 
+
+// type Category = {
+//   name: string
+//   icon: string
+//   hot: boolean
+//   href: string
+//   subcategories: { name: string; href: string }[]
+// }
+
 export default function CategoryPage() {
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const matchesSearch = (name: string) =>
+  name.toLowerCase().includes(searchQuery.toLowerCase())
+
+
+
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <Header hidden={false} />
       <div className="container mx-auto  py-6 max-md:px-5">
+
+         <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+
         <div className=" bg-white">
           <div className="max-w-[1200px] mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row gap-8">
@@ -30,34 +62,44 @@ export default function CategoryPage() {
                   <div className="space-y-5">
                     <h3 className="text-lg font-medium text-gray-800">Property</h3>
                     <div className="space-y-4">
-                      <Link href="/property?type=student" className="block text-gray-600 hover:text-gray-900">
-                        Student
-                      </Link>
-                      <Link href="/property?type=personal" className="block text-gray-600 hover:text-gray-900">
-                        Personal
-                      </Link>
-                      <Link href="/property?type=office" className="block text-gray-600 hover:text-gray-900">
-                        Office
-                      </Link>
-                    </div>
+                {[
+                  { name: "Student", url: "/property?type=student" },
+                  { name: "Personal", url: "/property?type=personal" },
+                  { name: "Office", url: "/property?type=office" },
+                ]
+                  .filter(item => matchesSearch(item.name))
+                  .map(item => (
+                    <Link
+                      key={item.name}
+                      href={item.url}
+                      className="block text-gray-600 hover:text-gray-900"
+                    >
+                      {item.name}
+                          </Link>
+                        ))}
+                </div>
                   </div>
 
                   {/* Phone and tablets Column */}
                   <div className="space-y-5">
                     <h3 className="text-lg font-medium text-gray-800">Phone and tablets</h3>
                     <div className="space-y-4">
-                      <Link href="/phone-tablets?type=mobile" className="block text-gray-600 hover:text-gray-900">
-                        Mobile phone
-                      </Link>
-                      <Link href="/phone-tablets?type=accessories" className="block text-gray-600 hover:text-gray-900">
-                        Accessories
-                      </Link>
-                      <Link href="/phone-tablets?type=tablets" className="block text-gray-600 hover:text-gray-900">
-                        Tablets
-                      </Link>
-                      <Link href="/phone-tablets?type=watches" className="block text-gray-600 hover:text-gray-900">
-                        Smart watches
-                      </Link>
+                       {[
+                          { name: "Mobile phone", url: "/phone-tablets?type=mobile" },
+                          { name: "Accessories", url: "/phone-tablets?type=accessories" },
+                          { name: "Tablets", url: "/phone-tablets?type=tablets" },
+                          { name: "Smart watches", url: "/phone-tablets?type=watches" },
+                        ]
+                          .filter(item => matchesSearch(item.name))
+                          .map(item => (
+                            <Link
+                              key={item.name}
+                              href={item.url}
+                              className="block text-gray-600 hover:text-gray-900"
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
                     </div>
                   </div>
                   </div>
@@ -68,18 +110,22 @@ export default function CategoryPage() {
                   <div className="space-y-5">
                     <h3 className="text-lg font-medium text-gray-800">Fashion</h3>
                     <div className="space-y-4">
-                      <Link href="/fashion?type=bags" className="block text-gray-600 hover:text-gray-900">
-                        Bags
-                      </Link>
-                      <Link href="/fashion?type=clothes" className="block text-gray-600 hover:text-gray-900">
-                        Clothes
-                      </Link>
-                      <Link href="/fashion?type=jewelry" className="block text-gray-600 hover:text-gray-900">
-                        Jewelry
-                      </Link>
-                      <Link href="/fashion?type=shoes" className="block text-gray-600 hover:text-gray-900">
-                        Shoes
-                      </Link>
+                      {[
+                          { name: "Bags", url: "/fashion?type=bags" },
+                          { name: "Clothes", url: "/fashion?type=clothes" },
+                          { name: "Jewelry", url: "/fashion?type=jewelry" },
+                          { name: "Shoes", url: "/fashion?type=shoes" },
+                        ]
+                          .filter(item => matchesSearch(item.name))
+                          .map(item => (
+                            <Link
+                              key={item.name}
+                              href={item.url}
+                              className="block text-gray-600 hover:text-gray-900"
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
                     </div>
                   </div>
 
@@ -87,24 +133,24 @@ export default function CategoryPage() {
                   <div className="space-y-5">
                     <h3 className="text-lg font-medium text-gray-800">Electronics</h3>
                     <div className="space-y-4">
-                      <Link href="/electronics?type=hardware" className="block text-gray-600 hover:text-gray-900">
-                        Hardware
-                      </Link>
-                      <Link href="/electronics?type=monitors" className="block text-gray-600 hover:text-gray-900">
-                        Monitors
-                      </Link>
-                      <Link href="/electronics?type=laptops" className="block text-gray-600 hover:text-gray-900">
-                        Laptops
-                      </Link>
-                      <Link href="/electronics?type=headphones" className="block text-gray-600 hover:text-gray-900">
-                        Headphones
-                      </Link>
-                      <Link href="/electronics?type=music" className="block text-gray-600 hover:text-gray-900">
-                        Music equipment
-                      </Link>
-                      <Link href="/electronics?type=cameras" className="block text-gray-600 hover:text-gray-900">
-                        Cameras
-                      </Link>
+                     {[
+                          { name: "Hardware", url: "/electronics?type=hardware" },
+                          { name: "Monitors", url: "/electronics?type=monitors" },
+                          { name: "Laptops", url: "/electronics?type=laptops" },
+                          { name: "Headphones", url: "/electronics?type=headphones" },
+                          { name: "Music equipment", url: "/electronics?type=music" },
+                          { name: "Cameras", url: "/electronics?type=cameras" },
+                        ]
+                          .filter(item => matchesSearch(item.name))
+                          .map(item => (
+                            <Link
+                              key={item.name}
+                              href={item.url}
+                              className="block text-gray-600 hover:text-gray-900"
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
                     </div>
                   </div>
                   </div>
