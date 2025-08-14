@@ -87,6 +87,19 @@ const categories = [
 ]
 
 export default function CategoryScroll() {
+
+  // const { data, isLoading } = useQuery({
+  //   queryKey: ["cat"],
+  //   queryFn: async () => {
+  //     const response = await apiClientUser.get(
+  //       `/categories`
+  //     );
+  //     console.log(response)
+       
+  //     return response;
+  //   },
+  // });
+
   const [showModal, setShowModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 

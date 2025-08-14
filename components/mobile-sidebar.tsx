@@ -64,7 +64,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     </Link>
 
                     <Link
-                        href="/seller/reuest"
+                        href="/seller/request"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
                             pathname.includes("/seller/request")
@@ -120,7 +120,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     </Link>
 
                     <Link
-                        href="/seller/settings"
+                        href="/seller/settings/profile"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
                             pathname.includes("/seller/settings")

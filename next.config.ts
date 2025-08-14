@@ -15,8 +15,8 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        port: '', // Leave empty if no specific port
-        pathname: '/duzrrmfci/image/upload/**', // This is the crucial part for Cloudinary
+        // port: '', // Leave empty if no specific port
+        // pathname: '/duzrrmfci/image/upload/**', // This is the crucial part for Cloudinary
       },
     ],
   },
