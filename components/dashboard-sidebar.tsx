@@ -89,7 +89,7 @@ export default function DashboardSidebar() {
         </Link>
 
         <Link
-          href="/seller/settings"
+          href="/seller/settings/profile"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
             isActive("/seller/settings") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",

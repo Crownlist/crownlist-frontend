@@ -11,7 +11,7 @@ export default function AnalyticsPage() {
                         <h1 className="text-2xl font-bold mb-1 justify-start flex ">Product</h1>
                         <p className="text-gray-600 mb-12">Keep track and manage your product</p>
                     </div>
-                    <Link href={'/admin/listing/1/list-product'}>
+                    <Link href={'/admin/listing/list-product'}>
                         <Button className="mt-4 md:mt-0 bg-[#1a0066] hover:bg-[#2e0a94]">Add listing</Button>
                     </Link>
                 </div>

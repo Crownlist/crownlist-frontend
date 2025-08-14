@@ -48,11 +48,6 @@ const NoSearchCat = ({cat, subcat}:any)=> {
     },
   ]
 
-
-
-
-
-
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <div className="container mx-auto  py-6 max-md:px-5">
@@ -120,6 +115,24 @@ const NoSearchCat = ({cat, subcat}:any)=> {
                                             <label className="block mb-1 text-sm">Contact number</label>
                                             <Input className="w-full" />
                                         </div>
+                                        
+                                        {/* New Category Select Field */}
+                                        <div>
+                                            <label className="block mb-1 text-sm">Category</label>
+                                            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                                <option value="">Select a category</option>
+                                                <option value="phones-tablets">Phones & Tablets</option>
+                                                <option value="land">Land</option>
+                                                <option value="property">Property</option>
+                                                <option value="electronics">Electronics</option>
+                                                <option value="home-appliances">Home Appliances</option>
+                                                <option value="automotive">Automotive</option>
+                                                <option value="fashion">Fashion & Accessories</option>
+                                                <option value="services">Services</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        
                                         <div>
                                             <label className="block mb-1 text-sm">Image(s)</label>
                                             <div className="border border-dashed rounded-md p-4 text-center">
@@ -154,9 +167,6 @@ const NoSearchCat = ({cat, subcat}:any)=> {
                             </div>
                         </div>
                     </div>
-
-
-
 
                       {/* You might also like these */}
                           <div className="mt-8 mb-8 px-4 md:px-0 max-w-7xl mx-auto">

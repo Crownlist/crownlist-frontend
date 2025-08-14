@@ -29,6 +29,7 @@ export const useGetAuthUser = (userType: userTypeProps) => {
     queryKey: ["auth-me"],
     queryFn: () => getUserAuthDetails(userType),
     onSuccess: (data) => {
+      
       if (userType === "Admin") {
         dispatch(updateAdminData(data.data.data.loggedInAccount));
       }

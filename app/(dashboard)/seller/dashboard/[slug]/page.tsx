@@ -64,28 +64,30 @@ export default function DashboardPage() {
                     <h2 className="text-lg font-medium">Total product</h2>
                     <p className="text-2xl md:text-3xl font-bold mt-1">{dashboardStats.totalProducts}</p>
                 </div>
-                <Button className="bg-white text-[#1F058F] hover:bg-gray-100">Add product</Button>
+                <Link href={'/seller/product/post-product'}>
+                    <Button className="bg-white text-[#1F058F] hover:bg-gray-100">Add product</Button>
+                </Link>
             </div>
 
             {/* Stats Cards */}
 
-                {/* Desktop - Grid */}
-                <div className="hidden md:grid grid-cols-3 gap-6 md:gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 className="text-gray-600 font-medium">Avg impression</h3>
-                        <p className="text-2xl font-bold mt-1">{dashboardStats.avgImpression}</p>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 className="text-gray-600 font-medium">Free plan</h3>
-                        <p className="text-2xl font-bold mt-1">{dashboardStats.freePlan}</p>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
-                        <h3 className="text-gray-600 font-medium">Promoted product</h3>
-                        <p className="text-2xl font-bold mt-1">{dashboardStats.promotedProduct}</p>
-                    </div>
+            {/* Desktop - Grid */}
+            <div className="hidden md:grid grid-cols-3 gap-6 md:gap-8">
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 className="text-gray-600 font-medium">Avg impression</h3>
+                    <p className="text-2xl font-bold mt-1">{dashboardStats.avgImpression}</p>
                 </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 className="text-gray-600 font-medium">Free plan</h3>
+                    <p className="text-2xl font-bold mt-1">{dashboardStats.freePlan}</p>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 className="text-gray-600 font-medium">Promoted product</h3>
+                    <p className="text-2xl font-bold mt-1">{dashboardStats.promotedProduct}</p>
+                </div>
+            </div>
             {/* Mobile - Horizontal Scroll */}
             <div className="md:hidden flex space-x-4 overflow-x-auto pb-2 -mx-4 px-4">
                 <div className="bg-white p-6 rounded-lg shadow-sm flex-shrink-0" style={{ width: '280px' }}>
@@ -134,10 +136,10 @@ export default function DashboardPage() {
                                         <div>
                                             <span
                                                 className={`inline-block px-3 py-1 text-xs rounded-full ${product.status === "Live"
-                                                        ? "bg-green-100 text-green-800"
-                                                        : product.status === "Reviewing"
-                                                            ? "bg-yellow-100 text-yellow-800"
-                                                            : "bg-red-100 text-red-800"
+                                                    ? "bg-green-100 text-green-800"
+                                                    : product.status === "Reviewing"
+                                                        ? "bg-yellow-100 text-yellow-800"
+                                                        : "bg-red-100 text-red-800"
                                                     }`}
                                             >
                                                 {product.status}

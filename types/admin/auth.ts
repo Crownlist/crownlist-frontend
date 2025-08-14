@@ -5,6 +5,7 @@ export interface AdminSigninForm {
 
 
 export interface AdminSignin {
+  city?: string;
   _id: string;
   firstname: string;
   fullName?: string;

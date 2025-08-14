@@ -20,19 +20,20 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       sessionStorage.setItem("returnTo", pathname);
     }, [pathname]);
 
-    useEffect(() => {
-      // const user:any = data
-      console.log('layout', adminData)
-      // if (user?.data.data.loggedInAccount.accountType !== "Admin"){
-      //   router.push('/')
-      // }
-    }, [adminData]);
+    // useEffect(() => {
+    //   // const user:any = data
+    //   console.log('layout', adminData)
+    //   if (!data){
+        
+    //     location.replace(location.origin + "/auth/admin/sign-in");
+    //   }
+    // }, [data]);
   
     useEffect(() => {
       const checkData: any = setInterval(() => {
         const isKeyPresent = getOrionKeys();
   
-        if (!isKeyPresent) {
+        if (!isKeyPresent ) {
           removeOrionKeys();
           dispatch(updateAdminData(null));
           location.replace(location.origin + "/auth/admin/sign-in");

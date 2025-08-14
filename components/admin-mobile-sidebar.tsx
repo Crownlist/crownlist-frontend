@@ -64,10 +64,10 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     </Link>
 
                     <Link
-                        href="/admin/listing"
+                        href="/admin/listing/list-product"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/admin/product") 
+                            pathname.includes("/admin/listing") 
                                 ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
                                
                         )}
@@ -81,7 +81,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         href="/admin/users"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/admin/product") 
+                            pathname.includes("/admin/users") 
                                 ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
                                
                         )}
