@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer"
 import Header from "@/components/Header1"
 import SearchCategory from "@/components/Home/SearchCategory"
+import { useState } from "react"
 // import { Metadata } from "next"
 
 interface PageProp {

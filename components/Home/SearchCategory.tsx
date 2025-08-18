@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { ChevronRight,  ArrowLeft, ArrowRight, Search, Check, ChevronDown, ChevronUp, Loader2, SlidersHorizontal } from "lucide-react";
-import { Button } from "../ui/button"; // Adjust the path if necessary
+import { Button } from "../ui/button";
 import Link from "next/link";
 import PropertyGrid from "./PropertyGrid";
 import PropertyList from "./PropertyList";
@@ -39,12 +39,14 @@ export default function SearchCategory({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [sortOption, setSortOption] = useState("All");
-  const [expandedFilters, setExpandedFilters] = useState({ property: true, location: true, price: true });
+  const [expandedFilters, setExpandedFilters] = useState({keyword:true, property: true, location: true, price: true });
   const [locationSearch, setLocationSearch] = useState("");
   const [selectedPropertyTypes, setSelectedPropertyTypes] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedPriceOptions, setSelectedPriceOptions] = useState<string[]>([]);
-    const [selectedPeriod, setSelectedPeriod] = useState<string[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<string[]>([]);
+const [searchTerm, setSearchTerm] = useState(""); // Top search bar
+const [keywordFilter, setKeywordFilter] = useState(""); // Panel keyword filter
 
 
   const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>({});
@@ -56,39 +58,96 @@ export default function SearchCategory({
   const itemsPerPage = 9;
 
   const activeSubcategory = propSubcategory || (typeof propSearchParams?.subcategory === 'string' ? propSearchParams.subcategory : undefined);
-
   const filteredResults = useMemo(() => {
-    let results = [...mockData].filter(item => item.category === category);
-    if (activeSubcategory) {
-      results = results.filter(item => item.type?.toLowerCase() === activeSubcategory.toLowerCase());
-    }
-    if (selectedPropertyTypes.length > 0) {
-      results = results.filter(item => item.type?.toLowerCase().includes(selectedPropertyTypes[0].toLowerCase()));
-    }
-    if (selectedLocations.length > 0) {
-      results = results.filter(item =>
-        selectedLocations.some(location => item.location?.toLowerCase().includes(location.toLowerCase()))
+  console.log("mockData:", mockData); 
+  let results = [...mockData].filter((item) => item.category === category);
+  console.log("Results after category filter:", results); 
+
+  
+  if (searchTerm.trim()) {
+    results = results.filter(
+      (item) =>
+        item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    console.log("Results after searchTerm filter:", results); 
+  }
+
+  if (keywordFilter.trim()) {
+    results = results.filter(
+      (item) =>
+        item.title?.toLowerCase().includes(keywordFilter.toLowerCase()) ||
+        item.description?.toLowerCase().includes(keywordFilter.toLowerCase())
+    );
+    console.log("Results after keyword filter:", results); 
+  }
+
+  if (activeSubcategory) {
+    results = results.filter(
+      (item) => item.type?.toLowerCase() === activeSubcategory.toLowerCase()
+    );
+    console.log("Results after subcategory filter:", results); 
+  }
+
+  
+  if (selectedPropertyTypes.length > 0) {
+    results = results.filter((item) =>
+      item.type?.toLowerCase().includes(selectedPropertyTypes[0].toLowerCase())
+    );
+    console.log("Results after property type filter:", results); 
+  }
+
+  if (selectedLocations.length > 0) {
+    results = results.filter((item) =>
+      selectedLocations.some((location) =>
+        item.location?.toLowerCase().includes(location.toLowerCase())
+      )
+    );
+    console.log("Results after location filter:", results); 
+  }
+
+  
+  if (priceRange.min !== undefined || priceRange.max !== undefined) {
+    results = results.filter((item) => {
+      const price = Number(item.price.replace(/[₦,]/g, ""));
+      return (
+        (priceRange.min === undefined || price >= priceRange.min) &&
+        (priceRange.max === undefined || price <= priceRange.max)
       );
-    }
-    if (priceRange.min !== undefined || priceRange.max !== undefined) {
-      results = results.filter(item => {
-        const price = Number(item.price.replace(/[₦,]/g, ""));
-        return (
-          (priceRange.min === undefined || price >= priceRange.min) &&
-          (priceRange.max === undefined || price <= priceRange.max)
-        );
-      });
-    }
-    switch (sortOption) {
-      case "Lowest price":
-        results.sort((a, b) => Number(a.price.replace(/[₦,]/g, "")) - Number(b.price.replace(/[₦,]/g, "")));
-        break;
-      case "Highest price":
-        results.sort((a, b) => Number(b.price.replace(/[₦,]/g, "")) - Number(a.price.replace(/[₦,]/g, "")));
-        break;
-    }
-    return results;
-  }, [category, activeSubcategory, selectedPropertyTypes, selectedLocations, priceRange, sortOption, selectedPriceOptions, selectedPeriod ]);
+    });
+    console.log("Results after price range filter:", results); 
+  }
+
+ 
+  switch (sortOption) {
+    case "Lowest price":
+      results.sort(
+        (a, b) =>
+          Number(a.price.replace(/[₦,]/g, "")) -
+          Number(b.price.replace(/[₦,]/g, ""))
+      );
+      break;
+    case "Highest price":
+      results.sort(
+        (a, b) =>
+          Number(b.price.replace(/[₦,]/g, "")) -
+          Number(a.price.replace(/[₦,]/g, ""))
+      );
+      break;
+  }
+
+  console.log("Final filtered results:", results);
+  return results;
+}, [
+  category,
+  activeSubcategory,
+  selectedPropertyTypes,
+  selectedLocations,
+  priceRange,
+  sortOption,
+  searchTerm, 
+]);
+
 
   const totalPages = Math.max(1, Math.ceil(filteredResults.length / itemsPerPage));
   const paginatedResults = useMemo(() => {
@@ -153,6 +212,9 @@ export default function SearchCategory({
     return <NoSearchCat cat={category} subcat={activeSubcategory} />;
   }
 
+
+ 
+
   return (
     <div className="mx-auto px-4 py-6 ">
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4 ">
@@ -162,6 +224,29 @@ export default function SearchCategory({
         <span className="text-gray-700">{categoryTitle}</span>
         {subcategoryTitle && (<><ChevronRight size={16} /><span className="text-gray-700">{subcategoryTitle}</span></>)}
       </div>
+
+      {/* Search Bar */}
+    <div className="mb-6">
+      <div className="flex rounded-lg overflow-hidden border border-gray-300 max-w-70 ">
+        <div className="flex-1 flex items-center pl-3">
+          <Search size={14} className="text-gray-400 mr-2" />
+          <input
+            type="text"
+            placeholder="Search properties..."
+            className="w-full py-2 text-sm focus:outline-none"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <Button
+          
+          className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-2 px-4 "
+          onClick={() => setCurrentPage(1)} 
+        >
+          Search
+        </Button>
+      </div>
+    </div>
 
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-[13px] sm:text-lg font-medium">
@@ -217,22 +302,30 @@ export default function SearchCategory({
 
 
                 {/* keyword */}
-               <div className=" pb-2">
-                <button onClick={() => toggleFilter("location")} className="flex items-center justify-between w-full text-left mb-4">
+              <div className="pb-2">
+                <button
+                  onClick={() => toggleFilter("keyword")}
+                  className="flex items-center justify-between w-full text-left mb-4"
+                >
                   <span className="font-medium">Keyword</span>
-                  {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  {expandedFilters.keyword ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </button>
-                {expandedFilters.location && (
+                {expandedFilters.keyword && (
                   <div className="space-y-3">
                     <div className="flex rounded-full overflow-hidden border border-gray-300">
                       <div className="flex-1 flex items-center pl-3">
-                       
-                        <input type="text" placeholder="Keyword.." className="w-full py-1.5 text-sm focus:outline-none" value={locationSearch} onChange={(e) => setLocationSearch(e.target.value)} />
+                        <Search size={14} className="text-gray-400 mr-2" />
+                        <input
+                          type="text"
+                          placeholder="Search properties..."
+                          className="w-full py-1.5 text-sm focus:outline-none"
+                          value={keywordFilter}
+                          onChange={(e) => setKeywordFilter(e.target.value)}
+                        />
                       </div>
                     </div>
-                   
                   </div>
-                )}
+                    )}
               </div>
 
            {/* location */}
