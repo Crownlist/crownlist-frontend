@@ -1,10 +1,10 @@
 /* eslint-disable */
 "use client";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import{ useEffect } from "react";
 import { apiClientPublic } from "./interceptor";
 import { obfuscateToken } from "@/constants/encryptData";
-import { UserProfileProps } from "@/types/general";
+//import { UserProfileProps } from "@/types/general";
 import { useToast } from "./useToastMessage";
 
 const useGoogleAuth = () => {
@@ -50,7 +50,6 @@ const useGoogleAuth = () => {
   useEffect(() => {
     const initialCode: any = searchParams.get("code");
     handleGoogleSignup(initialCode);
-    //eslint-disable-next-line
   }, []);
 
   return {

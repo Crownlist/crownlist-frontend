@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { toast } from "sonner"
 import { Trash2, Edit, Plus } from "lucide-react"
+import Image from "next/image"
+
 import {
   Dialog,
   DialogContent,
@@ -235,10 +237,11 @@ export default function CategoryManagementPage() {
                 {/* Image preview */}
                 {imagePreview && (
                   <div className="mt-2">
-                    <img
+                    <Image
                       src={imagePreview}
                       alt="Preview"
                       className="w-20 h-20 object-cover rounded-md border"
+                      
                     />
                   </div>
                 )}
