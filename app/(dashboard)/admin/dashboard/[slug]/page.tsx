@@ -227,7 +227,7 @@ export default function AdminDashboard() {
               <div key={listing.id} className="grid grid-cols-5 gap-4 p-4 border-b items-center relative">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                       src={listing.image || "/placeholder.svg"}
                       alt={listing.name}
                       className="w-full h-full object-cover"
