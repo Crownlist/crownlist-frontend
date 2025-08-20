@@ -28,14 +28,14 @@ export default function DashboardSidebar() {
         </Link>
 
         <Link
-          href="/admin/listing/list-product"
+          href="/admin/categories"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/listing") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/categories") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
           )}
         >
           <Package className="h-5 w-5" />
-          <span>Listings</span>
+          <span>Categories</span>
         </Link>
 
         <Link

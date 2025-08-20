@@ -1,4 +1,3 @@
-
 "use client"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -14,6 +13,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ChevronDown } from "lucide-react"
 import { apiClientAdmin } from "@/lib/interceptor"
 
 interface Category {
@@ -45,6 +51,11 @@ export default function CategoryManagementPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+
+  // Inline errors for create form
+  const [createErrors, setCreateErrors] = useState<{ name?: string; description?: string; image?: string }>({})
+  // Inline errors for edit form
+  const [editErrors, setEditErrors] = useState<{ name?: string; description?: string }>({})
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -87,6 +98,9 @@ export default function CategoryManagementPage() {
     if (file) {
       const previewUrl = URL.createObjectURL(file)
       setImagePreview(previewUrl)
+      // clear image url if file picked and clear error
+      setNewCategory(prev => ({ ...prev, imageUrl: prev.imageUrl }))
+      setCreateErrors(prev => ({ ...prev, image: undefined }))
     } else {
       setImagePreview(null)
       setNewCategory({ ...newCategory, imageUrl: "" })
@@ -97,6 +111,25 @@ export default function CategoryManagementPage() {
   const handleCreateCategory = async () => {
     try {
       setLoading(true)
+
+      // Validate required fields before any upload/API calls
+      const nextErrors: { name?: string; description?: string; image?: string } = {}
+      if (!newCategory.name.trim()) {
+        nextErrors.name = "Category name is required"
+      }
+      if (!newCategory.description.trim()) {
+        nextErrors.description = "Category description is required"
+      }
+      // Image required: either selected file or valid URL
+      if (!selectedFile && !newCategory.imageUrl.trim()) {
+        nextErrors.image = "Category image is required (upload a file or paste a URL)"
+      }
+      setCreateErrors(nextErrors)
+      if (Object.keys(nextErrors).length > 0) {
+        // Also show toast summary
+        toast.error("Please fix the highlighted fields")
+        return
+      }
 
       let imageUrl = newCategory.imageUrl
 
@@ -147,6 +180,16 @@ export default function CategoryManagementPage() {
 
     try {
       setLoading(true)
+
+      // Validate required fields before API call (inline)
+      const nextErrors: { name?: string; description?: string } = {}
+      if (!editingCategory.name.trim()) nextErrors.name = "Category name is required"
+      if (!editingCategory.description.trim()) nextErrors.description = "Category description is required"
+      setEditErrors(nextErrors)
+      if (Object.keys(nextErrors).length > 0) {
+        toast.error("Please fix the highlighted fields")
+        return
+      }
       const response = await apiClientAdmin.patch(
         `/categories/update/${editingCategory._id}`,
         editingCategory
@@ -165,7 +208,7 @@ export default function CategoryManagementPage() {
   }
 
   // Delete category
-  const handleDeleteCategory = async (id: string) => {
+  const handleDeleteCategory = async (id: string | undefined) => {
     try {
       setLoading(true)
       await apiClientAdmin.delete(`/categories/delete/${id}`)
@@ -193,31 +236,54 @@ export default function CategoryManagementPage() {
         <h1 className="text-2xl font-bold">Category Management</h1>
 
         {/* Create Category Dialog */}
-        <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+        <Dialog open={isCreateModalOpen} onOpenChange={(o)=>{ setIsCreateModalOpen(o); if(!o){ setNewCategory({ name: "", description: "", imageUrl: "", status: "active" }); setSelectedFile(null); setImagePreview(null); setCreateErrors({}); } }}>
           <DialogTrigger asChild>
             <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90">
               <Plus className="mr-2 h-4 w-4" />
               Add Category
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[600px] lg:max-w-[700px] xl:max-w-[800px]">
             <DialogHeader>
               <DialogTitle>Create New Category</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <Input
-                placeholder="Category Name"
-                value={newCategory.name}
-                onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-              />
-              <Input
-                placeholder="Description"
-                value={newCategory.description}
-                onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-              />
+              <div>
+                <label className="block text-sm font-medium mb-2">Category Name *</label>
+                <Input
+                  placeholder="Category Name"
+                  value={newCategory.name}
+                  onChange={(e) => {
+                    setNewCategory({ ...newCategory, name: e.target.value })
+                    if (e.target.value.trim()) setCreateErrors(prev => ({ ...prev, name: undefined }))
+                  }}
+                  required
+                />
+              </div>
+              {createErrors.name && (
+                <p className="text-sm text-red-600">{createErrors.name}</p>
+              )}
+              <div>
+                <label className="block text-sm font-medium mb-2">Description *</label>
+                <textarea
+                  placeholder="Description"
+                  value={newCategory.description}
+                  onChange={(e) => {
+                    setNewCategory({ ...newCategory, description: e.target.value })
+                    if (e.target.value.trim()) setCreateErrors(prev => ({ ...prev, description: undefined }))
+                  }}
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                  rows={3}
+                  required
+                />
+              </div>
+              {createErrors.description && (
+                <p className="text-sm text-red-600">{createErrors.description}</p>
+              )}
 
               {/* File upload with preview */}
               <div className="space-y-2">
+                <label className="block text-sm font-medium">Image *</label>
                 <Input
                   type="file"
                   accept="image/*"
@@ -255,18 +321,30 @@ export default function CategoryManagementPage() {
                       setSelectedFile(null)
                       setImagePreview(null)
                     }
+                    setCreateErrors(prev => ({ ...prev, image: undefined }))
                   }}
                 />
+                {createErrors.image && (
+                  <p className="text-sm text-red-600">{createErrors.image}</p>
+                )}
               </div>
 
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={newCategory.status}
-                onChange={(e) => setNewCategory({ ...newCategory, status: e.target.value })}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {newCategory.status === "active" ? "Active" : "Inactive"}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-[--radix-dropdown-menu-trigger-width]">
+                  <DropdownMenuItem onClick={() => setNewCategory({ ...newCategory, status: "active" })}>
+                    Active
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setNewCategory({ ...newCategory, status: "inactive" })}>
+                    Inactive
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className="flex justify-end space-x-2">
               <Button
@@ -277,6 +355,7 @@ export default function CategoryManagementPage() {
                   setNewCategory({ name: "", description: "", imageUrl: "", status: "active" })
                   setSelectedFile(null)
                   setImagePreview(null)
+                  setCreateErrors({})
                 }}
               >
                 Cancel
@@ -323,7 +402,7 @@ export default function CategoryManagementPage() {
               <TableRow key={category?._id}>
                 <TableCell
                   className="font-medium cursor-pointer text-[#1F058F]"
-                  onClick={() => router.push(`/admin/listing/list-product/${category._id}`)}
+                  onClick={() => router.push(`/admin/categories/${category._id}`)}
                 >
                   {category?.name}
                 </TableCell>
@@ -350,55 +429,114 @@ export default function CategoryManagementPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-[900px] lg:max-w-[1100px] xl:max-w-[1200px] max-h-[85vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>Edit Category</DialogTitle>
                       </DialogHeader>
                       {editingCategory && (
-                        <div className="space-y-4 py-4">
-                          <Input
-                            placeholder="Category Name"
-                            value={editingCategory.name}
-                            onChange={(e) => setEditingCategory({
-                              ...editingCategory,
-                              name: e.target.value
-                            })}
-                          />
-                          <Input
-                            placeholder="Description"
-                            value={editingCategory.description}
-                            onChange={(e) => setEditingCategory({
-                              ...editingCategory,
-                              description: e.target.value
-                            })}
-                          />
-                          <Input
-                            placeholder="Image URL"
-                            value={editingCategory.imageUrl}
-                            onChange={(e) => setEditingCategory({
-                              ...editingCategory,
-                              imageUrl: e.target.value
-                            })}
-                          />
-                          <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            value={editingCategory.status}
-                            onChange={(e) => setEditingCategory({
-                              ...editingCategory,
-                              status: e.target.value
-                            })}
-                          >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                          </select>
+                        <div className="space-y-6 py-4">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-2">Category Name *</label>
+                                <Input
+                                  placeholder="Category Name"
+                                  value={editingCategory.name}
+                                  onChange={(e) => {
+                                    setEditingCategory({
+                                      ...editingCategory,
+                                      name: e.target.value
+                                    })
+                                    if (e.target.value.trim()) setEditErrors(prev => ({ ...prev, name: undefined }))
+                                  }}
+                                  required
+                                />
+                                {editErrors.name && (
+                                  <p className="text-sm text-red-600 mt-1">{editErrors.name}</p>
+                                )}
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium mb-2">Status</label>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-between">
+                                      {editingCategory.status === "active" ? "Active" : "Inactive"}
+                                      <ChevronDown className="h-4 w-4 opacity-50" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-[--radix-dropdown-menu-trigger-width]">
+                                    <DropdownMenuItem onClick={() => setEditingCategory({
+                                      ...editingCategory,
+                                      status: "active"
+                                    })}>
+                                      Active
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setEditingCategory({
+                                      ...editingCategory,
+                                      status: "inactive"
+                                    })}>
+                                      Inactive
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium mb-2">Description *</label>
+                                <textarea
+                                  placeholder="Description"
+                                  value={editingCategory.description}
+                                  onChange={(e) => {
+                                    setEditingCategory({
+                                      ...editingCategory,
+                                      description: e.target.value
+                                    })
+                                    if (e.target.value.trim()) setEditErrors(prev => ({ ...prev, description: undefined }))
+                                  }}
+                                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                                  rows={3}
+                                  required
+                                />
+                                {editErrors.description && (
+                                  <p className="text-sm text-red-600 mt-1">{editErrors.description}</p>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="space-y-4">
+                              <div>
+                                <label className="block text-sm font-medium mb-2">Image URL</label>
+                                <Input
+                                  placeholder="Image URL"
+                                  value={editingCategory.imageUrl}
+                                  onChange={(e) => setEditingCategory({
+                                    ...editingCategory,
+                                    imageUrl: e.target.value
+                                  })}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       )}
-                      <div className="flex justify-end space-x-2">
+                      <div className="flex justify-end space-x-3 pt-4 border-t">
                         <Button
                           variant="outline"
-                          onClick={() => setIsEditModalOpen(false)}
+                          onClick={() => { setIsEditModalOpen(false); setEditErrors({}); }}
                         >
                           Cancel
+                        </Button>
+                        <Button
+                          className="bg-[#1F058F] hover:bg-[#1F058F]/90"
+                          onClick={() => {
+                            // Add delete functionality here
+                            // console.log("Delete category:", editingCategory?.id);
+                            handleDeleteCategory(editingCategory?._id)
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
                         </Button>
                         <Button
                           className="bg-[#1F058F] hover:bg-[#1F058F]/90"

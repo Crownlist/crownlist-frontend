@@ -64,17 +64,17 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     </Link>
 
                     <Link
-                        href="/admin/listing/list-product"
+                        href="/admin/categories"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/admin/listing") 
+                            pathname.includes("/admin/categories") 
                                 ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
                                
                         )}
                         onClick={onClose}
                     >
                         <Package className="h-5 w-5" />
-                        <span>Listings</span>
+                        <span>Categories</span>
                     </Link>
 
                     <Link
