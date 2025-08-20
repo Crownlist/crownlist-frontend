@@ -1,13 +1,17 @@
+/* eslint-disable */
 "use client"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { toast } from "react-hot-toast"
 import Image from "next/image"
 import Link from "next/link"
-import { Check, ChevronRight, Layers,  Zap } from "lucide-react"
+import { Check, ChevronRight, Layers, Zap } from "lucide-react"
 import { apiClientUser } from "@/lib/interceptor"
+import CreatableSelect from "react-select/creatable"
 
 
 interface Category {
@@ -32,7 +36,8 @@ interface Facility {
     filterable: boolean
     isActive: boolean
     dataType: "string" | "number" | "boolean" | "array" | "object"
-    dataInputType: "text" | "number" | "boolean" | "array" | "object"
+    // selectType applies when dataType === 'array'
+    selectType?: "single" | "multiple"
     value?: string
 }
 
@@ -42,7 +47,7 @@ export default function ProductPostFlow() {
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
     const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
-    const [facilityValues, setFacilityValues] = useState<Record<string, string>>({})
+    const [facilityValues, setFacilityValues] = useState<Record<string, unknown>>({})
     const [loading, setLoading] = useState({
         categories: true,
         subcategories: false
@@ -60,6 +65,10 @@ export default function ProductPostFlow() {
             phoneNumber: ""
         }
     })
+
+    // Uploaded images with primary flag
+    const [uploadedImages, setUploadedImages] = useState<Array<{ url: string; altText?: string; isPrimary?: boolean }>>([])
+    const [uploadingImage, setUploadingImage] = useState(false)
 
     // Fetch categories on mount
     useEffect(() => {
@@ -83,17 +92,36 @@ export default function ProductPostFlow() {
             const fetchSubcategories = async () => {
                 try {
                     setLoading(prev => ({ ...prev, subcategories: true }))
-                    const response = await apiClientUser.get(`/subcategories/${selectedCategory}`)
-                    setSubcategories(response.data?.data || [])
+                    const response = await apiClientUser.get(`/categories/${selectedCategory}`)
+                    const list: Subcategory[] = response.data?.subCategories || []
+                    setSubcategories(list)
+                    console.log("list", response.data)
+                    // Auto-select first subcategory if none selected or current is not in list
+                    if (!selectedSubcategory || !list.find(s => s._id === selectedSubcategory)) {
+                        setSelectedSubcategory(list[0]?._id || null)
+                    }
                 } catch (error) {
                     console.error("Failed to fetch subcategories", error)
                 } finally {
                     setLoading(prev => ({ ...prev, subcategories: false }))
                 }
             }
+            // Reset dependent state when category changes
+            setSelectedSubcategory(null)
+            setFacilityValues({})
             fetchSubcategories()
+        } else {
+            // Clear when no category selected
+            setSubcategories([])
+            setSelectedSubcategory(null)
+            setFacilityValues({})
         }
     }, [selectedCategory])
+
+    // When subcategory changes, clear previous facility inputs
+    useEffect(() => {
+        setFacilityValues({})
+    }, [selectedSubcategory])
 
     const handleContinue = () => {
         // Validation based on step
@@ -105,12 +133,36 @@ export default function ProductPostFlow() {
             alert("Please select a subcategory")
             return
         }
+        if (step === 3) {
+            // Validate mandatory facilities (simple non-empty check)
+            const current = getCurrentSubcategory()
+            const mandatory = current?.facilities.filter(f => f.mandatory) || []
+            const missing: string[] = []
+            mandatory.forEach(f => {
+                const v = facilityValues[f._id!]
+                if (f.dataType === 'array') {
+                    const arr = Array.isArray(v) ? (v as string[]) : []
+                    if (arr.length === 0 || arr.some(x => !String(x).trim())) missing.push(f.label)
+                } else if (f.dataType === 'number') {
+                    if (v === undefined || v === null || String(v).trim() === '') missing.push(f.label)
+                } else if (f.dataType === 'string') {
+                    if (!String(v ?? '').trim()) missing.push(f.label)
+                } else if (f.dataType === 'boolean') {
+                    // boolean can be true/false; consider provided if value is boolean
+                    if (typeof v !== 'boolean') missing.push(f.label)
+                }
+            })
+            if (missing.length) {
+                toast.error(`Please fill required fields: ${missing.join(', ')}`)
+                return
+            }
+        }
         setStep(step + 1)
     }
 
     const handleBack = () => step > 1 && setStep(step - 1)
 
-    const handleFacilityChange = (facilityId: string, value: string) => {
+    const handleFacilityChange = (facilityId: string, value: unknown) => {
         setFacilityValues(prev => ({
             ...prev,
             [facilityId]: value
@@ -121,6 +173,82 @@ export default function ProductPostFlow() {
         return subcategories.find(sub => sub._id === selectedSubcategory)
     }
 
+    // =============================
+    // Image Upload Helpers
+    // =============================
+    const uploadImage = async (file: File) => {
+        const fd = new FormData()
+        fd.append("file", file)
+        fd.append("fileType", "Profile-pics")
+        const res = await apiClientUser.post("/users/upload", fd, {
+            headers: { "Content-Type": "multipart/form-data" }
+        })
+        return res?.data?.fileUrl || res?.data?.data?.fileUrl
+    }
+
+    const handleFilesSelected = async (files: FileList | null) => {
+        if (!files || files.length === 0) return
+        try {
+            setUploadingImage(true)
+            const newImages: Array<{ url: string; altText?: string; isPrimary?: boolean }> = []
+            for (const file of Array.from(files)) {
+                const url = await uploadImage(file)
+                if (!url) throw new Error("No file url returned")
+                newImages.push({ url })
+            }
+            setUploadedImages((prev) => {
+                const merged = [...prev, ...newImages]
+                // ensure one primary
+                if (!merged.some(i => i.isPrimary) && merged.length > 0) merged[0].isPrimary = true
+                return merged
+            })
+            toast.success("Image(s) uploaded")
+        } catch (e: any) {
+            toast.error(`Upload failed: ${String(e)}`)
+        } finally {
+            setUploadingImage(false)
+        }
+    }
+
+    const setPrimaryImage = (index: number) => {
+        setUploadedImages(prev => prev.map((img, i) => ({ ...img, isPrimary: i === index })))
+    }
+
+    const removeImage = (index: number) => {
+        setUploadedImages(prev => prev.filter((_, i) => i !== index))
+    }
+
+    const updateAltText = (index: number, alt: string) => {
+        setUploadedImages(prev => prev.map((img, i) => i === index ? { ...img, altText: alt } : img))
+    }
+
+    // =============================
+    // Facility Array Helpers
+    // =============================
+    const addFacilityArrayItem = (facilityId: string) => {
+        setFacilityValues(prev => {
+            const current = (prev[facilityId] as string[] | undefined) || [""]
+            return { ...prev, [facilityId]: [...current, ""] }
+        })
+    }
+
+    const removeFacilityArrayItem = (facilityId: string, idx: number) => {
+        setFacilityValues(prev => {
+            const current = (prev[facilityId] as string[] | undefined) || []
+            const next = current.filter((_, i) => i !== idx)
+            return { ...prev, [facilityId]: next }
+        })
+    }
+
+    const updateFacilityArrayItem = (facilityId: string, idx: number, value: string) => {
+        setFacilityValues(prev => {
+            const current = (prev[facilityId] as string[] | undefined) || []
+            const next = [...current]
+            next[idx] = value
+            return { ...prev, [facilityId]: next }
+        })
+    }
+
     // Step 1: Category Selection
     const renderCategoryStep = () => (
         <>
@@ -128,8 +256,8 @@ export default function ProductPostFlow() {
                 <h2 className="text-2xl font-semibold mb-2">Category</h2>
                 <p className="text-gray-500 mb-6">Select post category below</p>
             </div>
-            <div className="flex flex-col md:flex-row  gap-10 flex-1">
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+            <div className="flex flex-col md:flex-row md:justify-between  gap-10 flex-1">
+                <div className="order-2 md:order-1 grid grid-cols-2 md:grid-cols-4 gap-4">
                     {categories.map(cat => (
                         <div
                             key={cat._id}
@@ -159,27 +287,41 @@ export default function ProductPostFlow() {
                 </div>
                 {/* Stepper remains same as your original */}
                 {/* Right side: Stepper */}
-                <div className="w-full md:w-64 flex flex-col">
-                    <div className="flex flex-col items-start">
+                <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
+                    <div className="flex flex-col items-center md:items-start">
                         <div className="text-gray-400 text-sm mb-2">Step 1 of 3</div>
                         {/* Steps */}
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
+                            {/* Step 1 */}
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                <div className="text-[17px] font-medium text-gray-900">Category</div>
+                                <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
                             </div>
-                            <div className="flex justify-start h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                            {/* Connector: horizontal on mobile, vertical on md+ */}
+                            <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                            <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                            {/* Step 2 */}
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-                                <div className="text-[17px] text-gray-500">Post details</div>
+                                <div className="text-sm md:text-[17px] text-gray-500">Post details</div>
                             </div>
-                            <div className="flex justify-start h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                            {/* Connector: horizontal on mobile, vertical on md+ */}
+                            <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                            <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                            {/* Step 3 */}
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-                                <div className="text-[17px] text-gray-500">Other details</div>
+                                <div className="text-sm md:text-[17px] text-gray-500">Other details</div>
                             </div>
                         </div>
                     </div>
+
+                    {/* Stepper */}
+                   
                 </div>
             </div>
         </>
@@ -188,7 +330,7 @@ export default function ProductPostFlow() {
     // Step 2: Subcategory and Basic Details
     const renderDetailsStep = () => {
         const currentSubcategory = getCurrentSubcategory()
-             console.log(currentSubcategory)
+        console.log(currentSubcategory)
         return (
             <>
                 <div className="flex-1">
@@ -197,11 +339,39 @@ export default function ProductPostFlow() {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-10 flex-1 w-full mt-5">
-                    <div className="flex w-full flex-col gap-10">
+                    <div className="order-2 md:order-1 flex w-full flex-col gap-10">
                         {/* Image upload */}
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 flex flex-col items-center justify-center text-center cursor-pointer bg-gray-50">
-                            <p className="text-gray-500 mb-2">Click to upload or drag and drop</p>
-                            <p className="text-gray-400 text-xs">SVG, PNG, JPG or GIF (max. 800×400px)</p>
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700">Product images</label>
+                            <div className="border-2 border-dashed rounded-lg p-6 bg-gray-50">
+                                <div className="flex items-center justify-between gap-4 flex-wrap">
+                                    <div className="text-sm text-gray-600">
+                                        <div className="font-medium">Upload product images</div>
+                                        <div className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB each</div>
+                                    </div>
+                                    <label className="inline-flex items-center px-4 py-2 bg-[#1F058F] text-white rounded-md cursor-pointer hover:bg-[#1F058F]/90">
+                                        <input type="file" className="hidden" accept="image/*" multiple onChange={(e) => handleFilesSelected(e.target.files)} />
+                                        Choose files
+                                    </label>
+                                </div>
+                                {uploadingImage && <p className="text-xs text-gray-500 mt-2">Uploading...</p>}
+                            </div>
+                            {uploadedImages.length > 0 && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {uploadedImages.map((img, idx) => (
+                                        <div key={idx} className="border rounded-md p-2 space-y-2">
+                                            <img src={img.url} alt={img.altText || `Image ${idx + 1}`} className="w-full h-28 object-cover rounded" />
+                                            <div className="flex items-center justify-between gap-2">
+                                                <button type="button" className={`text-xs px-2 py-1 rounded ${img.isPrimary ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`} onClick={() => setPrimaryImage(idx)}>
+                                                    {img.isPrimary ? 'Primary' : 'Set primary'}
+                                                </button>
+                                                <button type="button" className="text-xs text-red-600" onClick={() => removeImage(idx)}>Remove</button>
+                                            </div>
+                                            <Input value={img.altText || ''} onChange={(e) => updateAltText(idx, e.target.value)} placeholder="Alt text (optional)" />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -268,27 +438,37 @@ export default function ProductPostFlow() {
                             />
                         </div>
                     </div>
-                    {/* Stepper remains same as your original */}
-                    {/* Right side: Stepper */}
-                    <div className="w-full md:w-64 flex flex-col">
-                        <div className="flex flex-col items-start">
+                    {/* Stepper */}
+                    <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
+                        <div className="flex flex-col items-center md:items-start">
                             <div className="text-gray-400 text-sm mb-2">Step 2 of 3</div>
 
                             {/* Steps */}
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
+                                {/* Step 1 */}
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                    <div className="text-[17px] font-medium text-gray-900">Category</div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
                                 </div>
-                                <div className="flex justify-start h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                                {/* Connector */}
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                                {/* Step 2 */}
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                    <div className="text-[17px] font-medium text-gray-900">Post details</div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Post details</div>
                                 </div>
-                                <div className="flex justify-start h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                                {/* Connector */}
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                                {/* Step 3 */}
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-                                    <div className="text-[17px] text-gray-500">Other details</div>
+                                    <div className="text-sm md:text-[17px] text-gray-500">Other details</div>
                                 </div>
                             </div>
                         </div>
@@ -311,27 +491,8 @@ export default function ProductPostFlow() {
                     <p className="text-gray-500">Enter other details below</p>
                 </div>
                 <div className="flex flex-col md:flex-row gap-10 flex-1 w-full mt-5">
-                    <div className="flex w-full flex-col gap-10">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                <Textarea
-                                    placeholder="Enter description"
-                                    className="min-h-[150px]"
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Overview (Optional)</label>
-                                <Textarea
-                                    placeholder="Enter overview"
-                                    className="min-h-[150px]"
-                                    value={formData.overview}
-                                    onChange={(e) => setFormData({ ...formData, overview: e.target.value })}
-                                />
-                            </div>
-                        </div>
+                    <div className="order-2 md:order-1 flex w-full flex-col gap-10">
+                        {/* Overview removed as requested */}
 
                         {/* Facilities Section */}
                         <div>
@@ -347,17 +508,49 @@ export default function ProductPostFlow() {
                                     <div className="space-y-4 mb-6">
                                         {mandatoryFacilities.map((facility) => (
                                             <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
-                                                <Input
-                                                    value={facility.label}
-                                                    readOnly
-                                                    className="bg-gray-100"
-                                                />
-                                                <Input
-                                                    placeholder={facility.description}
-                                                    value={facilityValues[facility._id!] || ""}
-                                                    onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
-                                                    required
-                                                />
+                                                <Input value={facility.label} readOnly className="bg-gray-100" />
+                                                <div>
+                                                    {facility.dataType === "boolean" ? (
+                                                        <div className="flex items-center gap-3">
+                                                            <Switch
+                                                                checked={Boolean(facilityValues[facility._id!])}
+                                                                onCheckedChange={(val) => handleFacilityChange(facility._id!, val)}
+                                                            />
+                                                            <span className="text-sm text-gray-600">{facility.description}</span>
+                                                        </div>
+                                                    ) : facility.dataType === "number" ? (
+                                                        <Input
+                                                            type="number"
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[facility._id!] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
+                                                            required
+                                                        />
+                                                    ) : facility.dataType === "array" ? (
+                                                        <CreatableSelect
+                                                            isMulti
+                                                            classNamePrefix="rs"
+                                                            placeholder={facility.description || "Add values"}
+                                                            value={(Array.isArray(facilityValues[facility._id!])
+                                                                ? (facilityValues[facility._id!] as string[])
+                                                                : []
+                                                            ).filter(Boolean).map(v => ({ label: String(v), value: String(v) }))}
+                                                            onChange={(vals) =>
+                                                                handleFacilityChange(
+                                                                    facility._id!,
+                                                                    (Array.isArray(vals) ? vals : []).map((v: any) => String(v.value))
+                                                                )
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <Input
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[facility._id!] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
+                                                            required
+                                                        />
+                                                    )}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -371,16 +564,47 @@ export default function ProductPostFlow() {
                                     <div className="space-y-4">
                                         {optionalFacilities.map((facility) => (
                                             <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
-                                                <Input
-                                                    value={facility.label}
-                                                    readOnly
-                                                    className="bg-gray-100"
-                                                />
-                                                <Input
-                                                    placeholder={facility.description}
-                                                    value={facilityValues[facility._id!] || ""}
-                                                    onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
-                                                />
+                                                <Input value={facility.label} readOnly className="bg-gray-100" />
+                                                <div>
+                                                    {facility.dataType === "boolean" ? (
+                                                        <div className="flex items-center gap-3">
+                                                            <Switch
+                                                                checked={Boolean(facilityValues[facility._id!])}
+                                                                onCheckedChange={(val) => handleFacilityChange(facility._id!, val)}
+                                                            />
+                                                            <span className="text-sm text-gray-600">{facility.description}</span>
+                                                        </div>
+                                                    ) : facility.dataType === "number" ? (
+                                                        <Input
+                                                            type="number"
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[facility._id!] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
+                                                        />
+                                                    ) : facility.dataType === "array" ? (
+                                                        <CreatableSelect
+                                                            isMulti
+                                                            classNamePrefix="rs"
+                                                            placeholder={facility.description || "Add values"}
+                                                            value={(Array.isArray(facilityValues[facility._id!])
+                                                                ? (facilityValues[facility._id!] as string[])
+                                                                : []
+                                                            ).filter(Boolean).map(v => ({ label: String(v), value: String(v) }))}
+                                                            onChange={(vals) =>
+                                                                handleFacilityChange(
+                                                                    facility._id!,
+                                                                    (Array.isArray(vals) ? vals : []).map((v: any) => String(v.value))
+                                                                )
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <Input
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[facility._id!] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
+                                                        />
+                                                    )}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -388,74 +612,52 @@ export default function ProductPostFlow() {
                             )}
                         </div>
 
-                        {/* Contact Information */}
+                        {/* Contact Information commented out for now */}
+                        {/**
                         <div>
                             <h2 className="text-lg font-medium mb-3">Contact information</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <Input
-                                        value={formData.contactInfo.fullName}
-                                        onChange={(e) => setFormData({
-                                            ...formData,
-                                            contactInfo: {
-                                                ...formData.contactInfo,
-                                                fullName: e.target.value
-                                            }
-                                        })}
-                                        placeholder="Full name"
-                                        required
-                                    />
+                                    <Input value={formData.contactInfo.fullName} onChange={(e) => setFormData({ ...formData, contactInfo: { ...formData.contactInfo, fullName: e.target.value } })} placeholder="Full name" required />
                                 </div>
                                 <div>
-                                    <Input
-                                        type="tel"
-                                        value={formData.contactInfo.phoneNumber}
-                                        onChange={(e) => setFormData({
-                                            ...formData,
-                                            contactInfo: {
-                                                ...formData.contactInfo,
-                                                phoneNumber: e.target.value
-                                            }
-                                        })}
-                                        placeholder="Phone number"
-                                        required
-                                    />
+                                    <Input type="tel" value={formData.contactInfo.phoneNumber} onChange={(e) => setFormData({ ...formData, contactInfo: { ...formData.contactInfo, phoneNumber: e.target.value } })} placeholder="Phone number" required />
                                 </div>
                             </div>
                         </div>
+                        */}
                     </div>
-                    {/* Stepper remains same as your original */}
-                    {/* Right side: Stepper */}
-                    <div className="w-full md:w-64 flex flex-col">
-                        <div className="flex flex-col items-start">
+                    {/* Stepper (Step 3) */}
+                    <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
+                        <div className="flex flex-col items-center md:items-start">
                             <div className="text-gray-400 text-sm mb-2">Step 3 of 3</div>
-
-                            {/* Steps */}
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                    <div className="text-[17px] font-medium text-gray-900">Category</div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
                                 </div>
-                                <div className="flex justify-start h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                    <div className="text-[17px] font-medium text-gray-900">Post details</div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Post details</div>
                                 </div>
-                                <div className="flex justify-start h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
                                 <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                    <div className="text-[17px] font-medium text-gray-900">Other details</div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Other details</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
             </>
         )
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen mx-auto container bg-white p-6">
+        <div className="flex flex-col w-full min-h-screen mx-auto  bg-white p-6">
             <div className="flex flex-col h-full mx-auto w-full md:pt-3">
                 {/* Breadcrumb */}
                 <div className="text-sm text-gray-500 mb-6">

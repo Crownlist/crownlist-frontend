@@ -119,7 +119,7 @@ apiClientUser.interceptors.request.use(async (req: any) => {
         "/auth/refresh-token",
         {
           refreshToken: leoLoop,
-          accountType: "user", // Specify this is a user token refresh
+          accountType: "User", // Specify this is a user token refresh
         },
         {
           headers: {
@@ -258,7 +258,7 @@ apiClientAdmin.interceptors.request.use(async (req: any) => {
         "/auth/refresh-token",
         {
           refreshToken: orionLoop,
-          accountType: "admin", // Important: Specify this is an admin token refresh
+          accountType: "Admin", // Important: Specify this is an admin token refresh
         },
         {
           headers: {
