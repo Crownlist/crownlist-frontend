@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LogOut, MessageSquare, Package, PieChart, Settings, User } from "lucide-react"
+import { Home, LogOut, MessageSquare, Package, PieChart, Settings, User, Crown } from "lucide-react"
+
 import { cn } from "@/lib/utils"
 
 export default function DashboardSidebar() {
@@ -58,6 +59,17 @@ export default function DashboardSidebar() {
         >
           <MessageSquare className="h-5 w-5" />
           <span>Messages</span>
+        </Link>
+
+        <Link
+          href="/admin/subscriptions"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
+            isActive("/admin/subscriptions") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+          )}
+        >
+          <Crown className="h-5 w-5" />
+          <span>Subscription Plans</span>
         </Link>
 
         <Link
