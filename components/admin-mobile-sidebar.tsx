@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut } from "lucide-react"
+import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut, Crown } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -103,6 +104,20 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <MessageSquare className="h-5 w-5" />
                         <span>Messages</span>
+                    </Link>
+
+                    <Link
+                        href="/admin/subscriptions"
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/admin/subscriptions") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
+                        )}
+                        onClick={onClose}
+                    >
+                        <Crown className="h-5 w-5" />
+                        <span>Subscription Plans</span>
                     </Link>
 
                     <Link

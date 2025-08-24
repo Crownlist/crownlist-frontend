@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut } from "lucide-react"
+import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut, CreditCard } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -89,6 +90,20 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <Package className="h-5 w-5" />
                         <span>Product</span>
+                    </Link>
+
+                    <Link
+                        href="/seller/subscription"
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/seller/subscription")
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
+
+                        )}
+                        onClick={onClose}
+                    >
+                        <CreditCard className="h-5 w-5" />
+                        <span>Subscription</span>
                     </Link>
 
                     <Link
