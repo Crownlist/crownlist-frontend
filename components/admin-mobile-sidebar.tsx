@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut, Crown } from "lucide-react"
+import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut, Crown, Puzzle, Database } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -118,6 +118,34 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <Crown className="h-5 w-5" />
                         <span>Subscription Plans</span>
+                    </Link>
+
+                    <Link
+                        href="/admin/addon-services"
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/admin/addon-services") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
+                        )}
+                        onClick={onClose}
+                    >
+                        <Puzzle className="h-5 w-5" />
+                        <span>Add-on Services</span>
+                    </Link>
+
+                    <Link
+                        href="/admin/resources"
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/admin/resources") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
+                        )}
+                        onClick={onClose}
+                    >
+                        <Database className="h-5 w-5" />
+                        <span>Resources</span>
                     </Link>
 
                     <Link

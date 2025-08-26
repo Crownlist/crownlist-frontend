@@ -1,6 +1,7 @@
 /* eslint-disable */
 "use client"
 import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -42,6 +43,7 @@ interface Facility {
 }
 
 export default function ProductPostFlow() {
+    const router = useRouter()
     const [step, setStep] = useState(1)
     const [categories, setCategories] = useState<Category[]>([])
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
@@ -69,6 +71,13 @@ export default function ProductPostFlow() {
     // Uploaded images with primary flag (defer actual upload until submit)
     const [uploadedImages, setUploadedImages] = useState<Array<{ url: string; altText?: string; isPrimary?: boolean; file?: File }>>([])
     const [uploadingImage, setUploadingImage] = useState(false)
+
+    // Edit mode support
+    const searchParams = useSearchParams()
+    const editId = searchParams.get('editId')
+    const [editProduct, setEditProduct] = useState<any | null>(null)
+    const [originalCatId, setOriginalCatId] = useState<string | null>(null)
+    const [originalSubId, setOriginalSubId] = useState<string | null>(null)
 
     // Fetch categories on mount
     useEffect(() => {
@@ -118,10 +127,148 @@ export default function ProductPostFlow() {
         }
     }, [selectedCategory])
 
-    // When subcategory changes, clear previous facility inputs
+    // If editId present, fetch product details and prefill form
     useEffect(() => {
+        const prefill = async () => {
+            try {
+                if (!editId) return
+                const res = await apiClientUser.get(`/products/one/${editId}`)
+                const p = res?.data?.product || res
+                // Basic fields
+                setProductName(p?.name || '')
+                setFormData(prev => ({
+                    ...prev,
+                    description: p?.description || '',
+                    price: p?.price?.currentPrice != null ? Number(p.price.currentPrice).toLocaleString() : '',
+                    discountPrice: p?.price?.discountedPrice != null ? Number(p.price.discountedPrice).toLocaleString() : '',
+                    // overview is optional/not used in payload currently
+                }))
+                // Category/Subcategory (handle id or populated object)
+                if (p?.category) {
+                    const catId = typeof p.category === 'string' ? p.category : p.category?._id || p.category?.id
+                    if (catId) {
+                        setOriginalCatId(catId)
+                        setSelectedCategory(catId)
+                    }
+                }
+                if (p?.subCategory) {
+                    const subId = typeof p.subCategory === 'string' ? p.subCategory : p.subCategory?._id || p.subCategory?.id
+                    if (subId) {
+                        setOriginalSubId(subId)
+                        setSelectedSubcategory(subId)
+                    }
+                }
+                // Location
+                if (p?.listingLocation?.country) setSelectedCountry(p.listingLocation.country)
+                if (p?.listingLocation?.city) setSelectedCity(p.listingLocation.city)
+                // Features
+                if (Array.isArray(p?.features)) setSelectedFeatures(p.features.filter(Boolean))
+                // Images
+                if (Array.isArray(p?.images)) {
+                    const imgs = p.images.map((img: any) => ({
+                        url: img?.url || img,
+                        altText: img?.altText || '',
+                        isPrimary: Boolean(img?.isPrimary),
+                    }))
+                    // Ensure one primary
+                    if (!imgs.some((i: any) => i.isPrimary) && imgs.length) imgs[0].isPrimary = true
+                    setUploadedImages(imgs)
+                }
+                // Keep product for later facilities mapping when schema is available
+                setEditProduct(p)
+                toast.success('Loaded product for editing')
+            } catch (e: any) {
+                toast.error(e?.message || 'Failed to load product for editing')
+            }
+        }
+        prefill()
+    }, [editId])
+
+    // If editing, ensure category/subcategory are preselected AFTER categories are fetched
+    useEffect(() => {
+        if (!editProduct || !editId) return
+        const catId = typeof editProduct.category === 'string' ? editProduct.category : editProduct.category?._id || editProduct.category?.id
+        const subId = typeof editProduct.subCategory === 'string' ? editProduct.subCategory : editProduct.subCategory?._id || editProduct.subCategory?.id
+        if (catId && selectedCategory !== catId) setSelectedCategory(catId)
+        if (subId && selectedSubcategory !== subId) setSelectedSubcategory(subId)
+        // Move user past step 1 in edit mode
+        setStep((s) => (s < 2 ? 2 : s))
+    }, [categories, subcategories, editProduct, editId])
+
+    // Enforce lock: if user somehow changes category/subcategory in edit mode, revert to original
+    useEffect(() => {
+        if (!editId || !editProduct) return
+        const catId = typeof editProduct.category === 'string' ? editProduct.category : editProduct.category?._id || editProduct.category?.id
+        if (catId && selectedCategory && selectedCategory !== catId) {
+            setSelectedCategory(catId)
+        }
+        const subId = typeof editProduct.subCategory === 'string' ? editProduct.subCategory : editProduct.subCategory?._id || editProduct.subCategory?.id
+        if (subId && selectedSubcategory && selectedSubcategory !== subId) {
+            setSelectedSubcategory(subId)
+        }
+    }, [selectedCategory, selectedSubcategory, editId, editProduct])
+
+    // Once subcategory schema is ready, map product facilities to facilityValues keyed by facility _id
+    useEffect(() => {
+        if (!editProduct) return
+        // Ensure we're mapping for the original subcategory in edit mode
+        if (editId && originalSubId && selectedSubcategory !== originalSubId) return
+        const currentSub = getCurrentSubcategory()
+        if (!currentSub) return
+        const facilityMap: Record<string, unknown> = {}
+
+        // Normalize product facilities into array of {key,label,id,value}
+        const prodFacilitiesRaw = (editProduct as any).facilities
+        let prodFacilities: Array<any> = []
+        if (Array.isArray(prodFacilitiesRaw)) {
+            prodFacilities = prodFacilitiesRaw
+        } else if (prodFacilitiesRaw && typeof prodFacilitiesRaw === 'object') {
+            // Object map case: { [id|label]: value }
+            prodFacilities = Object.keys(prodFacilitiesRaw).map((k) => ({ key: k, value: (prodFacilitiesRaw as any)[k] }))
+        }
+
+        const coerceValue = (v: any, type: string, selectType?: string) => {
+            if (v == null) return v
+            if (type === 'boolean') return Boolean(v === true || v === 'true' || v === 1 || v === '1' || v === 'yes')
+            if (type === 'number') {
+                const n = typeof v === 'number' ? v : Number(String(v).replace(/,/g, ''))
+                return Number.isNaN(n) ? undefined : n
+            }
+            if (type === 'array') {
+                if (Array.isArray(v)) return v
+                if (typeof v === 'string') {
+                    const s = v.trim()
+                    if (s.startsWith('[') && s.endsWith(']')) {
+                        try {
+                            const jsonish = s.replace(/'/g, '"')
+                            const arr = JSON.parse(jsonish)
+                            if (Array.isArray(arr)) return arr
+                        } catch {}
+                    }
+                    // For single selectType, keep string as-is; for multiple, wrap in array
+                    return selectType === 'multiple' ? [v] : v
+                }
+            }
+            return v
+        }
+
+        for (const f of currentSub.facilities || []) {
+            // Find by label, id, or key
+            const found = prodFacilities.find((pf) => pf.label === f.label || pf._id === f._id || pf.id === f._id || pf.key === f._id || pf.key === f.label)
+            if (!found) continue
+            let v: any = found.value ?? found.val ?? found.data
+            v = coerceValue(v, f.dataType, f.selectType)
+            const k = getFacilityKey(f)
+            facilityMap[k] = v
+        }
+        setFacilityValues(facilityMap)
+    }, [editProduct, selectedSubcategory, subcategories, editId, originalSubId])
+
+    // When subcategory changes, clear previous facility inputs (skip in edit mode to preserve prefill)
+    useEffect(() => {
+        if (editId) return
         setFacilityValues({})
-    }, [selectedSubcategory])
+    }, [selectedSubcategory, editId])
 
     const handleContinue = () => {
         // Validation based on step
@@ -139,7 +286,7 @@ export default function ProductPostFlow() {
             const mandatory = current?.facilities.filter(f => f.mandatory) || []
             const missing: string[] = []
             mandatory.forEach(f => {
-                const v = facilityValues[f._id!]
+                const v = facilityValues[getFacilityKey(f)]
                 if (f.dataType === 'array') {
                     const arr = Array.isArray(v) ? (v as string[]) : []
                     if (arr.length === 0 || arr.some(x => !String(x).trim())) missing.push(f.label)
@@ -192,6 +339,18 @@ export default function ProductPostFlow() {
             // }
             if (!formData.description || !formData.description.trim()) {
                 toast.error('Description is required')
+                return
+            }
+            if (!productName || !productName.trim()) {
+                toast.error('Product name is required')
+                return
+            }
+            if (!selectedCountry) {
+                toast.error('Country is required')
+                return
+            }
+            if (!selectedCity) {
+                toast.error('City is required')
                 return
             }
             if (!formData.price) {
@@ -251,7 +410,7 @@ export default function ProductPostFlow() {
             const facilitiesArr: Array<{ label: string; value: any }> = []
             if (currentSub) {
                 for (const f of currentSub.facilities || []) {
-                    const raw = (facilityValues as any)[f._id!]
+                    const raw = (facilityValues as any)[getFacilityKey(f)]
                     if (raw === undefined) continue
                     let value: any = raw
                     if (f.dataType === 'number') value = Number(raw)
@@ -277,30 +436,44 @@ export default function ProductPostFlow() {
             }
 
             const payload = {
-                name: formData.overview || 'Untitled Post',
+                name: productName.trim(),
                 description: formData.description,
                 images: finalImages,
                 category: selectedCategory,
                 subCategory: selectedSubcategory,
-                facilities: facilitiesArr,
+                facilities: facilitiesArr.map(f => ({ label: f.label, value: formatFacilityValueForApi(f.value) })),
                 price: priceObj,
-                features: [],
+                listingLocation: { country: selectedCountry, city: selectedCity },
+                features: selectedFeatures,
                 status: 'reviewing'
             }
 
-            const loadingId = toast.loading('Submitting your product...')
+            // Create vs Update
             console.log('Submitting product payload:', payload)
-            await apiClientUser.post('/products/create', payload)
-            toast.dismiss(loadingId)
-            toast.success('Product submitted successfully')
-            setStep(5)
+            if (editId) {
+                await apiClientUser.patch(`/products/update/${editId}`, payload)
+                toast.success('Product updated successfully')
+            } else {
+                await apiClientUser.post('/products/create', payload)
+                toast.success('Product submitted successfully')
+            }
+            // Redirect to products list after success
+            router.replace('/seller/product')
         } catch (e: any) {
             const msg = e?.response?.data?.message || e?.message || String(e)
             toast.error(`Submission failed: ${msg}`)
         }
     }
 
-    const handleBack = () => step > 1 && setStep(step - 1)
+    const handleBack = () => {
+        if (editId) {
+            // In edit mode, do not allow going back to step 1
+            if (step <= 2) return
+            setStep(step - 1)
+            return
+        }
+        step > 1 && setStep(step - 1)
+    }
 
     const handleFacilityChange = (facilityId: string, value: unknown) => {
         setFacilityValues(prev => ({
@@ -377,6 +550,12 @@ export default function ProductPostFlow() {
             .filter(Boolean)
     }
 
+    // Stable key for facilities: prefer _id, fallback to label
+    const getFacilityKey = (f: Facility): string => {
+        const id = (f._id || '').toString().trim()
+        return id || f.label
+    }
+
     const getFacilityArrayValue = (facilityId: string): string[] => {
         const v = facilityValues[facilityId]
         return Array.isArray(v) ? (v as string[]) : []
@@ -391,6 +570,39 @@ export default function ProductPostFlow() {
             if (!checked && has) next = current.filter((x) => x !== option)
             return { ...prev, [facilityId]: next }
         })
+    }
+
+    // Helper: format facility value to string as per API sample
+    const formatFacilityValueForApi = (val: any): string => {
+        if (Array.isArray(val)) {
+            // Render like ['a', 'b'] using single quotes to match sample
+            const inner = val.map((v) => `'${String(v)}'`).join(', ')
+            return `[${inner}]`
+        }
+        if (typeof val === 'object' && val !== null) {
+            return JSON.stringify(val)
+        }
+        return String(val)
+    }
+
+    // Product name state (separate from overview/description)
+    const [productName, setProductName] = useState('')
+
+    // Listing location state (mock data for now)
+    const [selectedCountry, setSelectedCountry] = useState('')
+    const [selectedCity, setSelectedCity] = useState('')
+    const countryOptions = ['Nigeria', 'Ghana', 'USA']
+    const cityOptionsMap: Record<string, string[]> = {
+        Nigeria: ['Lagos', 'Abuja', 'Port Harcourt'],
+        Ghana: ['Accra', 'Kumasi', 'Tamale'],
+        USA: ['New York', 'San Francisco', 'Cupertino']
+    }
+
+    // Features mock options and state (optional field)
+    const featureOptions = ['Face ID', 'ProMotion Display', 'Triple Camera', 'Wireless Charging', 'Water Resistant']
+    const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
+    const toggleFeature = (feature: string, checked: boolean) => {
+        setSelectedFeatures(prev => checked ? Array.from(new Set([...prev, feature])) : prev.filter(f => f !== feature))
     }
 
     // =============================
@@ -567,398 +779,453 @@ export default function ProductPostFlow() {
         )
     }
 
-        // Step 2: Subcategory and Basic Details
-        const renderDetailsStep = () => {
-            const currentSubcategory = getCurrentSubcategory()
-            console.log(currentSubcategory)
-            return (
-                <>
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-semibold">Post details</h1>
-                        <p className="text-gray-500">Enter post details below</p>
-                    </div>
+    // Step 2: Subcategory and Basic Details
+    const renderDetailsStep = () => {
+        const currentSubcategory = getCurrentSubcategory()
+        console.log(currentSubcategory)
+        return (
+            <>
+                <div className="flex-1">
+                    <h1 className="text-2xl font-semibold">Post details</h1>
+                    <p className="text-gray-500">Enter post details below</p>
+                </div>
 
-                    <div className="flex flex-col md:flex-row gap-10 flex-1 w-full mt-5">
-                        <div className="order-2 md:order-1 flex w-full flex-col gap-10">
-                            {/* Image upload */}
-                            <div className="space-y-3">
-                                <label className="block text-sm font-medium text-gray-700">Product images</label>
-                                <div className="border-2 border-dashed rounded-lg p-6 bg-gray-50">
-                                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                                        <div className="text-sm text-gray-600">
-                                            <div className="font-medium">Upload product images</div>
-                                            <div className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB each</div>
-                                        </div>
-                                        <label className="inline-flex items-center px-4 py-2 bg-[#1F058F] text-white rounded-md cursor-pointer hover:bg-[#1F058F]/90">
-                                            <input type="file" className="hidden" accept="image/*" multiple onChange={(e) => handleFilesSelected(e.target.files)} />
-                                            Choose files
-                                        </label>
+                <div className="flex flex-col md:flex-row gap-10 flex-1 w-full mt-5">
+                    <div className="order-2 md:order-1 flex w-full flex-col gap-10">
+                        {/* Image upload */}
+                        <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700">Product images</label>
+                            <div className="border-2 border-dashed rounded-lg p-6 bg-gray-50">
+                                <div className="flex items-center justify-between gap-4 flex-wrap">
+                                    <div className="text-sm text-gray-600">
+                                        <div className="font-medium">Upload product images</div>
+                                        <div className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB each</div>
                                     </div>
-                                    {uploadingImage && <p className="text-xs text-gray-500 mt-2">Uploading...</p>}
+                                    <label className="inline-flex items-center px-4 py-2 bg-[#1F058F] text-white rounded-md cursor-pointer hover:bg-[#1F058F]/90">
+                                        <input type="file" className="hidden" accept="image/*" multiple onChange={(e) => handleFilesSelected(e.target.files)} />
+                                        Choose files
+                                    </label>
                                 </div>
-                                {uploadedImages.length > 0 && (
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        {uploadedImages.map((img, idx) => (
-                                            <div key={idx} className="border rounded-md p-2 space-y-2">
-                                                <img src={img.url} alt={img.altText || `Image ${idx + 1}`} className="w-full h-28 object-cover rounded" />
-                                                <div className="flex items-center justify-between gap-2">
-                                                    <button type="button" className={`text-xs px-2 py-1 rounded ${img.isPrimary ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`} onClick={() => setPrimaryImage(idx)}>
-                                                        {img.isPrimary ? 'Primary' : 'Set primary'}
-                                                    </button>
-                                                    <button type="button" className="text-xs text-red-600" onClick={() => removeImage(idx)}>Remove</button>
-                                                </div>
-                                                <Input value={img.altText || ''} onChange={(e) => updateAltText(idx, e.target.value)} placeholder="Alt text (optional)" />
+                                {uploadingImage && <p className="text-xs text-gray-500 mt-2">Uploading...</p>}
+                            </div>
+                            {uploadedImages.length > 0 && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {uploadedImages.map((img, idx) => (
+                                        <div key={idx} className="border rounded-md p-2 space-y-2">
+                                            <img src={img.url} alt={img.altText || `Image ${idx + 1}`} className="w-full h-28 object-cover rounded" />
+                                            <div className="flex items-center justify-between gap-2">
+                                                <button type="button" className={`text-xs px-2 py-1 rounded ${img.isPrimary ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`} onClick={() => setPrimaryImage(idx)}>
+                                                    {img.isPrimary ? 'Primary' : 'Set primary'}
+                                                </button>
+                                                <button type="button" className="text-xs text-red-600" onClick={() => removeImage(idx)}>Remove</button>
                                             </div>
+                                            <Input value={img.altText || ''} onChange={(e) => updateAltText(idx, e.target.value)} placeholder="Alt text (optional)" />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Product name</label>
+                                <Input
+                                    placeholder="Enter product name"
+                                    type="text"
+                                    value={productName}
+                                    onChange={(e) => setProductName(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                                <Select value={selectedCountry} onValueChange={(v) => { setSelectedCountry(v); setSelectedCity('') }}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select country" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {countryOptions.map(ct => (
+                                            <SelectItem key={ct} value={ct}>{ct}</SelectItem>
                                         ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                <Select disabled={!selectedCountry} value={selectedCity} onValueChange={setSelectedCity}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={selectedCountry ? 'Select city' : 'Select country first'} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {(cityOptionsMap[selectedCountry] || []).map(city => (
+                                            <SelectItem key={city} value={city}>{city}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <div className="relative">
+                                    <Input
+                                        value={categories.find(c => c._id === selectedCategory)?.name || ""}
+                                        className="bg-gray-100"
+                                        readOnly
+                                    />
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <Check className="h-5 w-5 text-green-500" />
                                     </div>
-                                )}
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                    <div className="relative">
-                                        <Input
-                                            value={categories.find(c => c._id === selectedCategory)?.name || ""}
-                                            className="bg-gray-100"
-                                            readOnly
-                                        />
-                                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                            <Check className="h-5 w-5 text-green-500" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="w-full">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Sub-category</label>
-                                    <Select
-                                        value={selectedSubcategory || ""}
-                                        onValueChange={setSelectedSubcategory}
-                                        disabled={loading.subcategories}
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder={loading.subcategories ? "Loading..." : "Select sub-category"} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {subcategories.map(sub => (
-                                                <SelectItem key={sub._id} value={sub._id}>{sub.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Regular price</label>
-                                    <Input
-                                        placeholder="Enter price"
-                                        type="text"
-                                        inputMode="numeric"
-                                        value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: formatNumberInput(e.target.value) })}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Discount Price <span className="pl-1 font-extralight text-gray-400">(optional)</span></label>
-                                    <Input
-                                        placeholder="NGN ₦"
-                                        type="text"
-                                        inputMode="numeric"
-                                        value={formData.discountPrice}
-                                        onChange={(e) => setFormData({ ...formData, discountPrice: formatNumberInput(e.target.value) })}
-                                        onBlur={() => {
-                                            const priceVal = parseFormattedNumber(formData.price)
-                                            const discVal = parseFormattedNumber(formData.discountPrice)
-                                            if (discVal && priceVal && discVal >= priceVal) {
-                                                toast.error('Discount price must be less than the price')
-                                                setFormData(prev => ({ ...prev, discountPrice: '' }))
-                                            }
-                                        }}
-                                    />
-                                </div>
+                            <div className="w-full">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Sub-category</label>
+                                <Select
+                                    value={selectedSubcategory || ""}
+                                    onValueChange={setSelectedSubcategory}
+                                    disabled={loading.subcategories}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder={loading.subcategories ? "Loading..." : "Select sub-category"} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {subcategories.map(sub => (
+                                            <SelectItem key={sub._id} value={sub._id}>{sub.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                <Textarea
-                                    placeholder="Enter description"
-                                    className="min-h-[120px]"
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Regular price</label>
+                                <Input
+                                    placeholder="Enter price"
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: formatNumberInput(e.target.value) })}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Discount Price <span className="pl-1 font-extralight text-gray-400">(optional)</span></label>
+                                <Input
+                                    placeholder="NGN ₦"
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={formData.discountPrice}
+                                    onChange={(e) => setFormData({ ...formData, discountPrice: formatNumberInput(e.target.value) })}
+                                    onBlur={() => {
+                                        const priceVal = parseFormattedNumber(formData.price)
+                                        const discVal = parseFormattedNumber(formData.discountPrice)
+                                        if (discVal && priceVal && discVal >= priceVal) {
+                                            toast.error('Discount price must be less than the price')
+                                            setFormData(prev => ({ ...prev, discountPrice: '' }))
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
-                        {/* Stepper */}
-                        <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
-                            <div className="flex flex-col items-center md:items-start">
-                                <div className="text-gray-400 text-sm mb-2">Step 2 of 3</div>
 
-                                {/* Steps */}
-                                <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
-                                    {/* Step 1 */}
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                        <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
-                                    </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <Textarea
+                                placeholder="Enter description"
+                                className="min-h-[120px]"
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            />
+                        </div>
 
-                                    {/* Connector */}
-                                    <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
-                                    <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
-
-                                    {/* Step 2 */}
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                        <div className="text-sm md:text-[17px] font-medium text-gray-900">Post details</div>
-                                    </div>
-
-                                    {/* Connector */}
-                                    <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
-                                    <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
-
-                                    {/* Step 3 */}
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-                                        <div className="text-sm md:text-[17px] text-gray-500">Other details</div>
-                                    </div>
-                                </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Features (optional)</label>
+                            <div className="flex flex-wrap gap-4">
+                                {featureOptions.map(opt => {
+                                    const checked = selectedFeatures.includes(opt)
+                                    return (
+                                        <label key={opt} className="flex items-center gap-2 text-sm">
+                                            <Checkbox checked={checked} onCheckedChange={(v) => toggleFeature(opt, Boolean(v))} />
+                                            <span>{opt}</span>
+                                        </label>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>
-                </>
-            )
-        }
+                    {/* Stepper */}
+                    <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
+                        <div className="flex flex-col items-center md:items-start">
+                            <div className="text-gray-400 text-sm mb-2">Step 2 of 3</div>
 
-        // Step 3: Facilities and Other Details
-        const renderFacilitiesStep = () => {
-            const currentSubcategory = getCurrentSubcategory()
-            const mandatoryFacilities = currentSubcategory?.facilities.filter(f => f.mandatory) || []
-            const optionalFacilities = currentSubcategory?.facilities.filter(f => !f.mandatory) || []
+                            {/* Steps */}
+                            <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
+                                {/* Step 1 */}
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
+                                </div>
 
-            return (
-                <>
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-semibold">Other details</h1>
-                        <p className="text-gray-500">Enter other details below</p>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-10 flex-1 w-full mt-5">
-                        <div className="order-2 md:order-1 flex w-full flex-col gap-10">
-                            <div>
-                                {mandatoryFacilities.length > 0 && (
-                                    <>
-                                        <h3 className="text-sm font-medium mb-2 text-gray-700">Mandatory Fields</h3>
-                                        <div className="space-y-4">
-                                            {mandatoryFacilities.map((facility) => (
-                                                <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
-                                                    <Input value={facility.label} readOnly className="bg-gray-100" />
-                                                    <div>
-                                                        {facility.dataType === "boolean" ? (
-                                                            <div className="flex items-center gap-3">
-                                                                <Switch
-                                                                    checked={Boolean(facilityValues[facility._id!])}
-                                                                    onCheckedChange={(val) => handleFacilityChange(facility._id!, val)}
-                                                                />
-                                                                <span className="text-sm text-gray-600">{facility.description}</span>
-                                                            </div>
-                                                        ) : facility.dataType === "number" ? (
-                                                            <Input
-                                                                type="number"
-                                                                placeholder={facility.description}
-                                                                value={(facilityValues[facility._id!] as string) || ""}
-                                                                onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
-                                                            />
-                                                        ) : facility.dataType === "array" ? (
-                                                            <div className="space-y-2">
-                                                                {facility.selectType === 'single' ? (
-                                                                    <Select
-                                                                        value={getFacilityArrayValue(facility._id!)[0] || ""}
-                                                                        onValueChange={(val) => handleFacilityChange(facility._id!, val ? [val] : [])}
-                                                                    >
-                                                                        <SelectTrigger className="w-full">
-                                                                            <SelectValue placeholder={facility.description || "Select option"} />
-                                                                        </SelectTrigger>
-                                                                        <SelectContent>
-                                                                            {getArrayOptions(facility).map(opt => (
-                                                                                <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                                                            ))}
-                                                                        </SelectContent>
-                                                                    </Select>
-                                                                ) : (
-                                                                    <div className="flex flex-wrap gap-3">
-                                                                        {getArrayOptions(facility).map(opt => {
-                                                                            const checked = getFacilityArrayValue(facility._id!).includes(opt)
-                                                                            return (
-                                                                                <label key={opt} className="flex items-center gap-2 text-sm">
-                                                                                    <Checkbox
-                                                                                        checked={checked}
-                                                                                        onCheckedChange={(v) => toggleMultiOption(facility._id!, opt, Boolean(v))}
-                                                                                    />
-                                                                                    <span>{opt}</span>
-                                                                                </label>
-                                                                            )
-                                                                        })}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            <Input
-                                                                placeholder={facility.description}
-                                                                value={(facilityValues[facility._id!] as string) || ""}
-                                                                onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
+                                {/* Connector */}
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
 
-                                {optionalFacilities.length > 0 && (
-                                    <>
-                                        <h3 className="text-sm font-medium mb-2 text-gray-700">Optional Fields</h3>
-                                        <div className="space-y-4">
-                                            {optionalFacilities.map((facility) => (
-                                                <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
-                                                    <Input value={facility.label} readOnly className="bg-gray-100" />
-                                                    <div>
-                                                        {facility.dataType === "boolean" ? (
-                                                            <div className="flex items-center gap-3">
-                                                                <Switch
-                                                                    checked={Boolean(facilityValues[facility._id!])}
-                                                                    onCheckedChange={(val) => handleFacilityChange(facility._id!, val)}
-                                                                />
-                                                                <span className="text-sm text-gray-600">{facility.description}</span>
-                                                            </div>
-                                                        ) : facility.dataType === "number" ? (
-                                                            <Input
-                                                                type="number"
-                                                                placeholder={facility.description}
-                                                                value={(facilityValues[facility._id!] as string) || ""}
-                                                                onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
-                                                            />
-                                                        ) : facility.dataType === "array" ? (
-                                                            <div className="space-y-2">
-                                                                {facility.selectType === 'single' ? (
-                                                                    <Select
-                                                                        value={getFacilityArrayValue(facility._id!)[0] || ""}
-                                                                        onValueChange={(val) => handleFacilityChange(facility._id!, val ? [val] : [])}
-                                                                    >
-                                                                        <SelectTrigger className="w-full">
-                                                                            <SelectValue placeholder={facility.description || "Select option"} />
-                                                                        </SelectTrigger>
-                                                                        <SelectContent>
-                                                                            {getArrayOptions(facility).map(opt => (
-                                                                                <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                                                            ))}
-                                                                        </SelectContent>
-                                                                    </Select>
-                                                                ) : (
-                                                                    <div className="flex flex-wrap gap-3">
-                                                                        {getArrayOptions(facility).map(opt => {
-                                                                            const checked = getFacilityArrayValue(facility._id!).includes(opt)
-                                                                            return (
-                                                                                <label key={opt} className="flex items-center gap-2 text-sm">
-                                                                                    <Checkbox
-                                                                                        checked={checked}
-                                                                                        onCheckedChange={(v) => toggleMultiOption(facility._id!, opt, Boolean(v))}
-                                                                                    />
-                                                                                    <span>{opt}</span>
-                                                                                </label>
-                                                                            )
-                                                                        })}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            <Input
-                                                                placeholder={facility.description}
-                                                                value={(facilityValues[facility._id!] as string) || ""}
-                                                                onChange={(e) => handleFacilityChange(facility._id!, e.target.value)}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                        <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
-                            <div className="flex flex-col items-center md:items-start">
-                                <div className="text-gray-400 text-sm mb-2">Step 3 of 3</div>
-                                <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                        <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
-                                    </div>
-                                    <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
-                                    <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                        <div className="text-sm md:text-[17px] font-medium text-gray-900">Post details</div>
-                                    </div>
-                                    <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
-                                    <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-green-400"></div>
-                                        <div className="text-sm md:text-[17px] font-medium text-gray-900">Other details</div>
-                                    </div>
+                                {/* Step 2 */}
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Post details</div>
+                                </div>
+
+                                {/* Connector */}
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+
+                                {/* Step 3 */}
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                    <div className="text-sm md:text-[17px] text-gray-500">Other details</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </>
-            )
-        }
-
-        // Main return for the flow
-        return (
-            <div className="flex-1">
-                <div className="flex flex-col w-full min-h-screen mx-auto bg-white p-6">
-                    <div className="flex flex-col h-full mx-auto w-full md:pt-3">
-                        {step === 1 && renderCategoryStep()}
-                        {step === 2 && renderDetailsStep()}
-                        {step === 3 && renderFacilitiesStep()}
-
-                        {step === 5 && (
-                            <div className=" flex flex-col min-h-[80dvh] w-full h-full justify-center items-center align-middle ">
-                                <div className="mb-4 flex justify-center">
-                                    <Image src={'/hourglass.png'} width={80} height={80} alt="box" />
-                                </div>
-                                <h2 className="text-xl font-semibold mb-2">Post is under review</h2>
-                                <p className="text-gray-500 mb-8">Your post is under review will be live upon approval is there’s any issue we will communicate it with you</p>
-                                <div className="flex flex-row gap-10">
-                                    <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full">See Post</Button>
-                                    <Button className="border border-[#1F058F] hover:bg-[#2e0a94] hover:text-white text-black px-8 py-2 bg-white rounded-full">Go Back Home </Button>
-                                </div>
-                                <div className="mt-16 text-center text-gray-600 text-sm">
-                                    <p>For further assistance reach out via our 24/7</p>
-                                    <p>
-                                        via email at{" "}
-                                        <a href="mailto:support@crownlist.com" className="text-[#1F058F]">support@crownlist.com</a>
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        <div className={`flex gap-4 mt-10 ${step === 5 ? 'hidden' : ''}`}>
-                            {step > 1 && (
-                                <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8" onClick={handleBack}>
-                                    Back
-                                </Button>
-                            )}
-                            <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={handleContinue}>
-                                {step === 3 ? 'Submit' : 'Continue'}
-                            </Button>
-                            <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setStep(1)}>
-                                Cancel
-                            </Button>
                         </div>
                     </div>
                 </div>
-            </div>
+            </>
         )
     }
- 
+
+    // Step 3: Facilities and Other Details
+    const renderFacilitiesStep = () => {
+        const currentSubcategory = getCurrentSubcategory()
+        const mandatoryFacilities = currentSubcategory?.facilities.filter(f => f.mandatory) || []
+        const optionalFacilities = currentSubcategory?.facilities.filter(f => !f.mandatory) || []
+        console.log("fac", mandatoryFacilities, optionalFacilities)
+        return (
+            <>
+                <div className="flex-1">
+                    <h1 className="text-2xl font-semibold">Other details</h1>
+                    <p className="text-gray-500">Enter other details below</p>
+                </div>
+                <div className="flex flex-col md:flex-row gap-10 flex-1 w-full mt-5">
+                    <div className="order-2 md:order-1 flex w-full flex-col gap-10">
+                        <div>
+                            {mandatoryFacilities.length > 0 && (
+                                <>
+                                    <h3 className="text-sm font-medium mb-2 text-gray-700">Mandatory Fields</h3>
+                                    <div className="space-y-4">
+                                        {mandatoryFacilities.map((facility) => (
+                                            <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
+                                                <Input value={facility.label} readOnly className="bg-gray-100" />
+                                                <div>
+                                                    {facility.dataType === "boolean" ? (
+                                                        <div className="flex items-center gap-3">
+                                                            <Switch
+                                                                checked={Boolean(facilityValues[getFacilityKey(facility)])}
+                                                                onCheckedChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
+                                                            />
+                                                            <span className="text-sm text-gray-600">{facility.description}</span>
+                                                        </div>
+                                                    ) : facility.dataType === "number" ? (
+                                                        <Input
+                                                            type="number"
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(getFacilityKey(facility), e.target.value)}
+                                                        />
+                                                    ) : facility.dataType === "array" ? (
+                                                        <div className="space-y-2">
+                                                            {facility.selectType === 'single' ? (
+                                                                <Select
+                                                                    value={getFacilityArrayValue(getFacilityKey(facility))[0] || ""}
+                                                                    onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val ? [val] : [])}
+                                                                >
+                                                                    <SelectTrigger className="w-full">
+                                                                        <SelectValue placeholder={facility.description || "Select option"} />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {getArrayOptions(facility).map(opt => (
+                                                                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            ) : (
+                                                                <div className="flex flex-wrap gap-3">
+                                                                    {getArrayOptions(facility).map(opt => {
+                                                                        const checked = getFacilityArrayValue(getFacilityKey(facility)).includes(opt)
+                                                                        console.log("checked", checked)
+                                                                        return (
+                                                                            <label key={opt} className="flex items-center gap-2 text-sm">
+                                                                                <Checkbox
+                                                                                    checked={checked}
+                                                                                    onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                />
+                                                                                <span>{opt}</span>
+                                                                            </label>
+                                                                        )
+                                                                    })}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <Input
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(getFacilityKey(facility), e.target.value)}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {optionalFacilities.length > 0 && (
+                                <>
+                                    <h3 className="text-sm font-medium mb-2 text-gray-700">Optional Fields</h3>
+                                    <div className="space-y-4">
+                                        {optionalFacilities.map((facility) => (
+                                            <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
+                                                <Input value={facility.label} readOnly className="bg-gray-100" />
+                                                <div>
+                                                    {facility.dataType === "boolean" ? (
+                                                        <div className="flex items-center gap-3">
+                                                            <Switch
+                                                                checked={Boolean(facilityValues[getFacilityKey(facility)])}
+                                                                onCheckedChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
+                                                            />
+                                                            <span className="text-sm text-gray-600">{facility.description}</span>
+                                                        </div>
+                                                    ) : facility.dataType === "number" ? (
+                                                        <Input
+                                                            type="number"
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(getFacilityKey(facility), e.target.value)}
+                                                        />
+                                                    ) : facility.dataType === "array" ? (
+                                                        <div className="space-y-2">
+                                                            {facility.selectType === 'single' ? (
+                                                                <Select
+                                                                    value={getFacilityArrayValue(getFacilityKey(facility))[0] || ""}
+                                                                    onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val ? [val] : [])}
+                                                                >
+                                                                    <SelectTrigger className="w-full">
+                                                                        <SelectValue placeholder={facility.description || "Select option"} />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {getArrayOptions(facility).map(opt => (
+                                                                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            ) : (
+                                                                <div className="flex flex-wrap gap-3">
+                                                                    {getArrayOptions(facility).map((opt, index) => {
+                                                                        const checked = getFacilityArrayValue(getFacilityKey(facility)).includes(opt)
+                                                                        return (
+                                                                            <label key={index} className="flex items-center gap-2 text-sm">
+                                                                                <Checkbox
+                                                                                    checked={checked}
+                                                                                    onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                />
+                                                                                <span>{opt}</span>
+                                                                            </label>
+                                                                        )
+                                                                    })}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <Input
+                                                            placeholder={facility.description}
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
+                                                            onChange={(e) => handleFacilityChange(getFacilityKey(facility), e.target.value)}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    <div className="w-full md:w-64 flex flex-col order-1 md:order-2 mx-auto md:mx-0 max-w-sm">
+                        <div className="flex flex-col items-center md:items-start">
+                            <div className="text-gray-400 text-sm mb-2">Step 3 of 3</div>
+                            <div className="flex flex-row md:flex-col items-center md:items-start justify-center md:justify-start gap-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Category</div>
+                                </div>
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Post details</div>
+                                </div>
+                                <div className="block md:hidden h-0.5 w-10 bg-[#F5F5F5]" />
+                                <div className="hidden md:block h-10 w-0.5 bg-[#F5F5F5] ml-2" />
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                                    <div className="text-sm md:text-[17px] font-medium text-gray-900">Other details</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
+    // Main return for the flow
+    return (
+        <div className="flex-1">
+            <div className="flex flex-col w-full min-h-screen mx-auto bg-white p-6">
+                <div className="flex flex-col h-full mx-auto w-full md:pt-3">
+                    {step === 1 && renderCategoryStep()}
+                    {step === 2 && renderDetailsStep()}
+                    {step === 3 && renderFacilitiesStep()}
+
+                    {step === 5 && (
+                        <div className=" flex flex-col min-h-[80dvh] w-full h-full justify-center items-center align-middle ">
+                            <div className="mb-4 flex justify-center">
+                                <Image src={'/hourglass.png'} width={80} height={80} alt="box" />
+                            </div>
+                            <h2 className="text-xl font-semibold mb-2">Post is under review</h2>
+                            <p className="text-gray-500 mb-8">Your post is under review will be live upon approval is there’s any issue we will communicate it with you</p>
+                            <div className="flex flex-row gap-10">
+                                <Link href="/seller/product">
+                                    <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full">See Post</Button>
+                                </Link>
+                                <Link href='/seller/dashboard'>
+                                    <Button className="border border-[#1F058F] hover:bg-[#2e0a94] hover:text-white text-black px-8 py-2 bg-white rounded-full">Go Back Home </Button>
+                                </Link>
+                            </div>
+                            <div className="mt-16 text-center text-gray-600 text-sm">
+                                <p>For further assistance reach out via our 24/7</p>
+                                <p>
+                                    via email at{" "}
+                                    <a href="mailto:support@crownlist.com" className="text-[#1F058F]">support@crownlist.com</a>
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className={`flex gap-4 mt-10 ${step === 5 ? 'hidden' : ''}`}>
+                        {step > 1 && (
+                            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8" onClick={handleBack}>
+                                Back
+                            </Button>
+                        )}
+                        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={handleContinue}>
+                            {step === 3 ? 'Submit' : 'Continue'}
+                        </Button>
+                        <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setStep(1)}>
+                            Cancel
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
