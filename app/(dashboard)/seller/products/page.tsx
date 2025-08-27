@@ -10,7 +10,7 @@ import { apiClientUser } from "@/lib/interceptor";
 import { toast } from "sonner";
 import DeleteModal from "@/components/Home/DeleteModal";
 
-export default function ProductDashboard() {
+export default function ProductsDashboard() {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState("product");
@@ -35,7 +35,8 @@ export default function ProductDashboard() {
       const res: any = await apiClientUser.get(`/products`, {
         params: { page: pageNo, limit },
       });
-      const payload = res?.data || res;
+      // Expecting shape: { status, data: { products, totalProducts, totalPages, currentPage, limit } }
+      const payload = res?.data || res; // interceptor returns res.data; keep fallback
       const list = payload?.products || [];
       setProducts(list);
       setTotalProducts(payload?.totalProducts || list.length || 0);
@@ -69,7 +70,7 @@ export default function ProductDashboard() {
   return (
     <div className="p-6 bg-white min-h-screen">
       {/* Header Tabs */}
-      <h1 className="text-2xl font-bold mb-5 justify-start flex ">Product</h1>
+      <h1 className="text-2xl font-bold mb-5 justify-start flex ">Products</h1>
       <div className="flex justify-between items-center mb-4 w-full ">
         <Tabs value={activeTab} onValueChange={setActiveTab} className=" p-1 shadow-sm w-full  rounded-md">
           <TabsList className="bg-white   flex justify-start ">
@@ -205,12 +206,7 @@ export default function ProductDashboard() {
               <p className="text-gray-600 mb-12">Manage your post feedback</p>
               <div className=" flex flex-col h-full  justify-center items-center">
                 <div className="mb-4 flex justify-center">
-                  <Image
-                    src={'/feed.svg'}
-                    width={80}
-                    height={80}
-                    alt="box"
-                  />
+                  <Image src={'/feed.svg'} width={80} height={80} alt="box" />
                 </div>
 
                 <h2 className="text-xl font-semibold mb-2">No feedback</h2>

@@ -14,6 +14,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'example.com',
+        pathname: "/images/**", // allow images under /images/
+      },
+      {
+        protocol: 'https',
         hostname: 'res.cloudinary.com',
         // port: '', // Leave empty if no specific port
         // pathname: '/duzrrmfci/image/upload/**', // This is the crucial part for Cloudinary

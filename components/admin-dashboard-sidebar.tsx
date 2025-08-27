@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LogOut, MessageSquare, Package, PieChart, Settings, User, Crown } from "lucide-react"
+import { Home, LogOut, MessageSquare, Package, PieChart, Settings, User, Crown, Puzzle, Database } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -70,6 +70,28 @@ export default function DashboardSidebar() {
         >
           <Crown className="h-5 w-5" />
           <span>Subscription Plans</span>
+        </Link>
+
+        <Link
+          href="/admin/addon-services"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
+            isActive("/admin/addon-services") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+          )}
+        >
+          <Puzzle className="h-5 w-5" />
+          <span>Add-on Services</span>
+        </Link>
+
+        <Link
+          href="/admin/resources"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
+            isActive("/admin/resources") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+          )}
+        >
+          <Database className="h-5 w-5" />
+          <span>Resources</span>
         </Link>
 
         <Link

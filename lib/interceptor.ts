@@ -151,6 +151,14 @@ apiClientUser.interceptors.request.use(async (req: any) => {
     return handleUserError(req);
   }
 
+  // Ensure JSON body is serialized as a single object
+  try {
+    const ct = req?.headers?.["Content-Type"] || req?.headers?.["content-type"]
+    if (ct && String(ct).includes("application/json") && req?.data && typeof req.data !== "string") {
+      req.data = JSON.stringify(req.data)
+    }
+  } catch {}
+
   // Continue with the request using the refreshed token
   return req;
 });

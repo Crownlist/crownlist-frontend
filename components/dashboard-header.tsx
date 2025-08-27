@@ -12,6 +12,7 @@ import { useGetAuthUser } from "@/lib/useGetAuthUser"
 
 export default function DashboardHeader() {
     // const { userData } = useSelector((state: RootState) => state.userData);
+
     const {  data } = useGetAuthUser("User");
     const userData = data?.data.loggedInAccount
       
