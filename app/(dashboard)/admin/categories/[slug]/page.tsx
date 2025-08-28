@@ -544,7 +544,7 @@ export default function SubcategoryManagementPage() {
                 <Button
                     variant="outline"
                     className="mr-4"
-                    onClick={() => router.push('/admin/listing/list-product')}
+                    onClick={() => router.push('/admin/categories')}
                 >
                     <ArrowLeft className="h-4 w-4" />
                 </Button>
