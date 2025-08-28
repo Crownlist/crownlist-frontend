@@ -32,7 +32,7 @@ export default function ProductDashboard() {
     try {
       setLoading(true);
       setError(null);
-      const res: any = await apiClientUser.get(`/products`, {
+      const res: any = await apiClientUser.get(`/products/me`, {
         params: { page: pageNo, limit },
       });
       const payload = res?.data || res;

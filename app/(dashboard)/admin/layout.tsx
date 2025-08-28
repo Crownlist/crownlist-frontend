@@ -5,7 +5,7 @@ import AdminLayout from "../../../client/admin-layount"
 
 
 export const metadata = {
-  title: 'Seller | Dashboard'
+  title: 'Admin | Dashboard'
 }
 
 

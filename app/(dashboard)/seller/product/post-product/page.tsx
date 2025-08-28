@@ -54,6 +54,7 @@ export default function ProductPostFlow() {
         categories: true,
         subcategories: false
     })
+    const [submitting, setIsSubmitting] = useState(false)
 
     // Form data
     const [formData, setFormData] = useState({
@@ -312,6 +313,7 @@ export default function ProductPostFlow() {
 
     const handleSubmit = async () => {
         try {
+            setIsSubmitting(true)
             // Prevent submit while uploading images
             if (uploadingImage) {
                 toast.error('Please wait for images to finish uploading')
@@ -462,6 +464,8 @@ export default function ProductPostFlow() {
         } catch (e: any) {
             const msg = e?.response?.data?.message || e?.message || String(e)
             toast.error(`Submission failed: ${msg}`)
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -598,11 +602,22 @@ export default function ProductPostFlow() {
         USA: ['New York', 'San Francisco', 'Cupertino']
     }
 
-    // Features mock options and state (optional field)
-    const featureOptions = ['Face ID', 'ProMotion Display', 'Triple Camera', 'Wireless Charging', 'Water Resistant']
+    // Features (seller-defined tags)
     const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
-    const toggleFeature = (feature: string, checked: boolean) => {
-        setSelectedFeatures(prev => checked ? Array.from(new Set([...prev, feature])) : prev.filter(f => f !== feature))
+    const [featureInput, setFeatureInput] = useState('')
+    const addFeatures = (raw: string) => {
+        if (!raw) return
+        const tokens = raw.split(',').map(s => s.trim()).filter(Boolean)
+        if (!tokens.length) return
+        setSelectedFeatures(prev => {
+            const set = new Set(prev)
+            tokens.forEach(t => set.add(t))
+            return Array.from(set)
+        })
+        setFeatureInput('')
+    }
+    const removeFeature = (feature: string) => {
+        setSelectedFeatures(prev => prev.filter(f => f !== feature))
     }
 
     // =============================
@@ -937,17 +952,37 @@ export default function ProductPostFlow() {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Features (optional)</label>
-                            <div className="flex flex-wrap gap-4">
-                                {featureOptions.map(opt => {
-                                    const checked = selectedFeatures.includes(opt)
-                                    return (
-                                        <label key={opt} className="flex items-center gap-2 text-sm">
-                                            <Checkbox checked={checked} onCheckedChange={(v) => toggleFeature(opt, Boolean(v))} />
-                                            <span>{opt}</span>
-                                        </label>
-                                    )
-                                })}
+                            <div className="flex flex-wrap items-center gap-2 border rounded-md p-2">
+                                {selectedFeatures.map((f) => (
+                                    <span key={f} className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                                        <span className="text-xs">{f}</span>
+                                        <button
+                                            type="button"
+                                            className="text-gray-500 hover:text-red-600 leading-none"
+                                            onClick={() => removeFeature(f)}
+                                            aria-label={`Remove ${f}`}
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
+                                ))}
+                                <input
+                                    className="flex-1 min-w-[150px] outline-none border-none bg-transparent text-sm px-1 py-1"
+                                    placeholder={selectedFeatures.length ? "Type and press Enter" : "Type a feature and press Enter"}
+                                    value={featureInput}
+                                    onChange={(e) => setFeatureInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ',') {
+                                            e.preventDefault()
+                                            addFeatures(featureInput)
+                                        } else if (e.key === 'Backspace' && !featureInput && selectedFeatures.length) {
+                                            removeFeature(selectedFeatures[selectedFeatures.length - 1])
+                                        }
+                                    }}
+                                    onBlur={() => addFeatures(featureInput)}
+                                />
                             </div>
+                            <p className="text-xs text-gray-500 mt-1">Press Enter or comma to add. Features will be sent as an array.</p>
                         </div>
                     </div>
                     {/* Stepper */}
@@ -1212,14 +1247,14 @@ export default function ProductPostFlow() {
                     {/* Action Buttons */}
                     <div className={`flex gap-4 mt-10 ${step === 5 ? 'hidden' : ''}`}>
                         {step > 1 && (
-                            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8" onClick={handleBack}>
+                            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8" onClick={handleBack} disabled={submitting}>
                                 Back
                             </Button>
                         )}
-                        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={handleContinue}>
+                        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={handleContinue} disabled={submitting}>
                             {step === 3 ? 'Submit' : 'Continue'}
                         </Button>
-                        <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setStep(1)}>
+                        <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setStep(1)} disabled={submitting}>
                             Cancel
                         </Button>
                     </div>
