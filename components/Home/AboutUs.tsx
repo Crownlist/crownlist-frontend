@@ -44,7 +44,7 @@ const AboutUs = () => {
                             Welcome to CROWNLIST : Where Buying and Selling is Made Simple!
                         </div>
                         <p className='flex text-center align-middle font-light  text-sm  lg:px-45 px-1'>
-                            Welcome to CROWNLIST, your trusted marketplace connecting buyers and sellers in a secure and intuitive online space. Founded in 2025, we&apos;re dedicated to empowering both sides of the transaction – enabling sellers to expand their reach and helping buyers discover a diverse range of products at competitive prices. From our beginnings as  student&apos;s solution to finding local housing, we&aposve grown into a platform committed to simplifying commerce for everyone.
+                            Welcome to CROWNLIST, your trusted marketplace connecting buyers and sellers in a secure and intuitive online space. Founded in 2025, we are dedicated to empowering both sides of the transaction – enabling sellers to expand their reach and helping buyers discover a diverse range of products at competitive prices. From our beginnings as  student&apos;s solution to finding local housing, we&apos;ve grown into a platform committed to simplifying commerce for everyone.
                         </p>
                     </div>
                 </div>
@@ -103,7 +103,8 @@ const AboutUs = () => {
                                 Our Story
                             </div>
                             <div className='flex font-light  p-2 '>
-                                CROWNLIST began with a simple yet powerful idea in 2025, students desire to easily locate nearby hostels. What started as a focused solution quickly blossomed into a broader vision after a week of dedicated research. Recognizing the need for a user-friendly platform to buy and sell a variety of goods, organized by category, CROWNLIST was born. Starting with essentials like real estate and home appliances, our journey is one of continuous growth, with plans to expand our offerings to meet the diverse needs of our community.
+                                Founded in 2025, crownlist originated from a student&apos;s vision to assist fellow students in finding nearby hostels effortlessly
+                                from home. After a week of research, this idea evolved into a  platform that helps individuals find and purchase a wide range of products with ease, organized by categories
                             </div>
                         </div>
                     </div>

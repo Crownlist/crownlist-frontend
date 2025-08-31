@@ -130,10 +130,10 @@ export default function SearchCategory({
 
     
 
-    <div className="mx-auto px-4 py-6">
+    <div className=" px-4 py-6 relative" >
 
        {/* Search Bar */}
-      <div className="mb-2">
+       <div className="sticky top-20 z-30 md:static bg-white pt-2 pb-2">
         <div className="flex rounded-lg overflow-hidden border border-gray-300 max-w-80">
           <div className="flex-1 flex items-center pl-3">
             <Search size={14} className="text-gray-400 mr-2" />
