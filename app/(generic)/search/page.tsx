@@ -9,7 +9,7 @@ import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { useState } from "react"
 import toast from "react-hot-toast"
-import { categories as categoryList } from "@/components/Home/Category";
+import { useCategories } from "@/hooks/useCategories"
 
 export default function SearchPage() {
   // State for form data
@@ -19,6 +19,8 @@ export default function SearchPage() {
     description: "",
     category: "",
   })
+
+  const { categories } = useCategories()
 
   const [files, setFiles] = useState<File[]>([])
 
@@ -36,7 +38,7 @@ export default function SearchPage() {
 
 
 
-   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : []
     // Filter for valid image types (SVG, PNG, JPG, GIF)
     const validFiles = selectedFiles.filter((file) =>
@@ -212,8 +214,8 @@ export default function SearchPage() {
                         required
                       >
                         <option value="">Select a category</option>
-                        {categoryList.map((cat) => (
-                          <option key={cat.name} value={cat.name}>{cat.name}</option>
+                        {categories.map((cat) => (
+                          <option key={cat._id} value={cat.name}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
