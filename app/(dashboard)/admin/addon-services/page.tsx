@@ -17,7 +17,7 @@ interface AddOnService {
   name: string
   category: string
   description: string
-  amount: number
+  amount: string
   billing_cycle: "daily" | "weekly" | "monthly" | "annually"
   billing_type: "one-time" | "recurring"
   status: "active" | "inactive"
@@ -36,7 +36,7 @@ export default function AdminAddOnServicesPage() {
     name: "",
     category: "",
     description: "",
-    amount: 0,
+    amount: '',
     billing_cycle: "monthly",
     billing_type: "one-time",
     status: "active",
@@ -59,20 +59,27 @@ export default function AdminAddOnServicesPage() {
     }
   }
 
-  const fetchCategories = async () => {
-    try {
-      const res = await apiClientAdmin.get("/categories")
-      const data = (res as any)?.data?.data || (res as any)?.data
-      // Normalize to array of { name, _id, slug }
-      const list = Array.isArray(data?.items ?? data?.total ?? data) ? (data.items ?? data.total ?? data) : []
-      setCategories(list.map((c: any)=> ({ _id: c?._id ?? c?.id, name: c?.name, slug: c?.slug })))
-    } catch (e: any) {
-      // Non-blocking; fallback to manual input if fetch fails
-      console.warn("Failed to load categories for add-on select:", e)
-    }
-  }
+  // const fetchCategories = async () => {
+  //   try {
+  //     const res = await apiClientAdmin.get("/categories")
+  //     const data = (res as any)?.data?.data || (res as any)?.data
+  //     // Normalize to array of { name, _id, slug }
+  //     const list = Array.isArray(data?.items ?? data?.total ?? data) ? (data.items ?? data.total ?? data) : []
+  //     setCategories(list.map((c: any) => ({ _id: c?._id ?? c?.id, name: c?.name, slug: c?.slug })))
+  //   } catch (e: any) {
+  //     // Non-blocking; fallback to manual input if fetch fails
+  //     console.warn("Failed to load categories for add-on select:", e)
+  //   }
+  // }
 
-  useEffect(() => { fetchServices(); fetchCategories() }, [])
+  useEffect(() => { 
+    fetchServices(); 
+    setCategories([
+      { _id: "1", name: "Listing Visibility", slug: "listing-visibility" },
+      { _id: "2", name: "Listing Boost", slug: "listing-boost" },
+      { _id: "3", name: "Listing Featured", slug: "listing-featured" },
+    ])
+  }, [])
 
   const validate = () => {
     const next: typeof errors = {}
@@ -114,7 +121,7 @@ export default function AdminAddOnServicesPage() {
       const newId = created?._id || created?.id || null
       toast.success((res as any)?.data?.message ?? "Add-on created")
       setIsCreateOpen(false)
-      setForm({ name: "", category: "", description: "", amount: 0, billing_cycle: "monthly", billing_type: "one-time", status: "active", included_add_ons: [] })
+      setForm({ name: "", category: "", description: "", amount: '', billing_cycle: "monthly", billing_type: "one-time", status: "active", included_add_ons: [] })
       setLastCreatedId(newId)
       fetchServices()
     } catch (e: any) {
@@ -124,26 +131,26 @@ export default function AdminAddOnServicesPage() {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!lastCreatedId) return
     // After list refresh, scroll and highlight
-    const t = setTimeout(()=>{
+    const t = setTimeout(() => {
       const row = document.getElementById(`addon-row-${lastCreatedId}`)
       if (row) {
         row.scrollIntoView({ behavior: "smooth", block: "center" })
         setHighlightId(lastCreatedId)
-        setTimeout(()=> setHighlightId(null), 2500)
+        setTimeout(() => setHighlightId(null), 2500)
       }
       setLastCreatedId(null)
     }, 300)
-    return ()=> clearTimeout(t)
+    return () => clearTimeout(t)
   }, [services, lastCreatedId])
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Add-on Services</h1>
-        <Dialog open={isCreateOpen} onOpenChange={(o)=>{ setIsCreateOpen(o); if(!o){ setErrors({}); setForm({ name: "", category: "", description: "", amount: 0, billing_cycle: "monthly", billing_type: "one-time", status: "active", included_add_ons: [] }) } }}>
+        <Dialog open={isCreateOpen} onOpenChange={(o) => { setIsCreateOpen(o); if (!o) { setErrors({}); setForm({ name: "", category: "", description: "", amount: '', billing_cycle: "monthly", billing_type: "one-time", status: "active", included_add_ons: [] }) } }}>
           <DialogTrigger asChild>
             <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90">
               <Plus className="mr-2 h-4 w-4" />
@@ -157,18 +164,18 @@ export default function AdminAddOnServicesPage() {
             <div className="space-y-4 py-2">
               <div>
                 <label className="block text-sm font-medium mb-2">Name *</label>
-                <Input value={form.name} onChange={(e)=>{ setForm({ ...form, name: e.target.value }); if(e.target.value.trim()) setErrors(prev=>({ ...prev, name: undefined })) }} placeholder="e.g., Visibility Booster" />
+                <Input value={form.name} onChange={(e) => { setForm({ ...form, name: e.target.value }); if (e.target.value.trim()) setErrors(prev => ({ ...prev, name: undefined })) }} placeholder="e.g., Visibility Booster" />
                 {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Category *</label>
                 <Select
                   value={form.category}
-                  onValueChange={(v)=> { setForm({ ...form, category: v }); if(v?.trim()) setErrors(prev=>({ ...prev, category: undefined })) }}
+                  onValueChange={(v) => { setForm({ ...form, category: v }); if (v?.trim()) setErrors(prev => ({ ...prev, category: undefined })) }}
                 >
                   <SelectTrigger><SelectValue placeholder={categories.length ? "Select category" : "Loading categories..."} /></SelectTrigger>
                   <SelectContent>
-                    {categories.map((c)=> (
+                    {categories.map((c) => (
                       <SelectItem key={c._id ?? c.name} value={c.name}>{c.name}</SelectItem>
                     ))}
                   </SelectContent>
@@ -179,7 +186,7 @@ export default function AdminAddOnServicesPage() {
                 <label className="block text-sm font-medium mb-2">Description *</label>
                 <textarea
                   value={form.description}
-                  onChange={(e)=>{ setForm({ ...form, description: e.target.value }); if(e.target.value.trim()) setErrors(prev=>({ ...prev, description: undefined })) }}
+                  onChange={(e) => { setForm({ ...form, description: e.target.value }); if (e.target.value.trim()) setErrors(prev => ({ ...prev, description: undefined })) }}
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
                   rows={3}
                   placeholder="Short summary"
@@ -189,12 +196,13 @@ export default function AdminAddOnServicesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Amount (NGN) *</label>
-                  <Input type="number" value={form.amount} onChange={(e)=>{ const v = Number(e.target.value); setForm({ ...form, amount: v }); if(!isNaN(v) && v >= 0) setErrors(prev=>({ ...prev, amount: undefined })) }} placeholder="e.g., 1500" />
+                  <Input inputMode="numeric"
+                    pattern="[0-9]*" value={form.amount} onChange={(e) => { const v = e.target.value; setForm({ ...form, amount: v }); if (!isNaN(Number(v)) && Number(v) >= 0) setErrors(prev => ({ ...prev, amount: undefined })) }} placeholder="e.g., 1500" />
                   {errors.amount && <p className="text-sm text-red-600 mt-1">{errors.amount}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Billing Cycle *</label>
-                  <Select value={form.billing_cycle} onValueChange={(v: "daily"|"weekly"|"monthly"|"annually")=> setForm({ ...form, billing_cycle: v })}>
+                  <Select value={form.billing_cycle} onValueChange={(v: "daily" | "weekly" | "monthly" | "annually") => setForm({ ...form, billing_cycle: v })}>
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="daily">Daily</SelectItem>
@@ -209,7 +217,7 @@ export default function AdminAddOnServicesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Billing Type *</label>
-                  <Select value={form.billing_type} onValueChange={(v: "one-time"|"recurring")=> setForm({ ...form, billing_type: v })}>
+                  <Select value={form.billing_type} onValueChange={(v: "one-time" | "recurring") => setForm({ ...form, billing_type: v })}>
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="one-time">One-time</SelectItem>
@@ -220,7 +228,7 @@ export default function AdminAddOnServicesPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Status *</label>
-                  <Select value={form.status} onValueChange={(v: "active"|"inactive")=> setForm({ ...form, status: v })}>
+                  <Select value={form.status} onValueChange={(v: "active" | "inactive") => setForm({ ...form, status: v })}>
                     <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">Active</SelectItem>
@@ -231,7 +239,7 @@ export default function AdminAddOnServicesPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={()=> setIsCreateOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
                 <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90" onClick={handleCreate} disabled={loading}>
                   {loading ? "Creating..." : "Create"}
                 </Button>
@@ -246,7 +254,7 @@ export default function AdminAddOnServicesPage() {
       ) : services.length === 0 ? (
         <div className="border rounded-lg p-8 text-center">
           <p className="text-gray-500">No add-on services found</p>
-          <Button className="mt-4 bg-[#1F058F] hover:bg-[#1F058F]/90" onClick={()=> setIsCreateOpen(true)}>Create First Add-on</Button>
+          <Button className="mt-4 bg-[#1F058F] hover:bg-[#1F058F]/90" onClick={() => setIsCreateOpen(true)}>Create First Add-on</Button>
         </div>
       ) : (
         <Table className="border rounded-lg">
@@ -262,11 +270,11 @@ export default function AdminAddOnServicesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {services.map((s)=> (
+            {services.map((s) => (
               <TableRow key={s._id ?? s.name} id={s._id ? `addon-row-${s._id}` : undefined} className={highlightId && s._id === highlightId ? "bg-yellow-50" : undefined}>
                 <TableCell
                   className="font-medium cursor-pointer text-[#1F058F]"
-                  onClick={()=> s._id && router.push(`/admin/addon-services/${s._id}`)}
+                  onClick={() => s._id && router.push(`/admin/addon-services/${s._id}`)}
                 >
                   {s.name}
                 </TableCell>

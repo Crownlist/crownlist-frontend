@@ -24,7 +24,7 @@ interface SubscriptionPlan {
   description: string
   features: string[]
   listingLimit: ListingLimitItem[]
-  amount: number
+  amount: string
   billing_cycle: "daily" | "weekly" | "monthly" | "annually"
   status: "active" | "inactive"
   createdAt?: string
@@ -52,7 +52,7 @@ export default function AdminSubscriptionsPage() {
     description: "",
     features: [],
     listingLimit: [],
-    amount: 0,
+    amount: "",
     billing_cycle: "monthly",
     status: "active",
   })
@@ -97,7 +97,7 @@ export default function AdminSubscriptionsPage() {
           res?.data?.data?.total || []
         setCategories(Array.isArray(cats) ? cats : [])
       } catch (error) {
-         console.log(error)
+        console.log(error)
         // keep non-blocking
       } finally {
         setLoadingCats(false)
@@ -120,13 +120,46 @@ export default function AdminSubscriptionsPage() {
     }
   }
 
+  const fetchSubcategory = async (subId: string) => {
+    if (!subId) return null;
+    try {
+      const res = await apiClientAdmin.get(`/subcategories/${subId}`);
+      return res?.data?.data || null;
+    } catch (e) {
+      console.error("Error fetching subcategory:", e);
+      return null;
+    }
+  };
+
+  const [subcategoryNames, setSubcategoryNames] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const loadSubcategoryNames = async () => {
+      const names: Record<string, string> = {};
+      for (const item of createForm.listingLimit) {
+        const subId = typeof item.subCategory === 'string' ? item.subCategory : item.subCategory?._id;
+        if (subId && !subcategoryNames[subId]) {
+          const sub = await fetchSubcategory(subId);
+          if (sub?.name) {
+            names[subId] = sub.name;
+          }
+        }
+      }
+      if (Object.keys(names).length > 0) {
+        setSubcategoryNames(prev => ({ ...prev, ...names }));
+      }
+    };
+
+    loadSubcategoryNames();
+  }, [createForm.listingLimit]);
+
   const validateCreate = () => {
     const next: typeof errors = {}
     if (!createForm.name.trim()) next.name = "Name is required"
     if (!createForm.description.trim()) next.description = "Description is required"
     if (!featuresInput.trim()) next.featuresInput = "Enter at least one feature"
     // listingLimit is optional for now; can be managed in a dedicated edit view
-    if (!createForm.amount || createForm.amount < 0) next.amount = "Amount is required"
+    if (!createForm.amount) next.amount = "Amount is required"
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -153,7 +186,7 @@ export default function AdminSubscriptionsPage() {
       const res = await apiClientAdmin.post("/subscriptionplans", payload)
       toast.success(res?.data?.message ?? "Plan created")
       // reset
-      setCreateForm({ name: "", description: "", features: [], listingLimit: [], amount: 0, billing_cycle: "monthly", status: "active" })
+      setCreateForm({ name: "", description: "", features: [], listingLimit: [], amount: '', billing_cycle: "monthly", status: "active" })
       setFeaturesInput("")
       setSelectedCatForLimit("")
       setSelectedSubForLimit("")
@@ -187,6 +220,8 @@ export default function AdminSubscriptionsPage() {
       return { ...prev, listingLimit: next }
     })
     setLimitValue("")
+    setSelectedCatForLimit("")
+    setSelectedSubForLimit("")
   }
 
   const removeListingLimitItem = (subId: string) => {
@@ -200,7 +235,7 @@ export default function AdminSubscriptionsPage() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Subscription Plans</h1>
-        <Dialog open={isCreateOpen} onOpenChange={(o)=>{ setIsCreateOpen(o); if(!o){ setCreateForm({ name: "", description: "", features: [], listingLimit: [], amount: 0, billing_cycle: "monthly", status: "active" }); setFeaturesInput(""); setErrors({}); } }}>
+        <Dialog open={isCreateOpen} onOpenChange={(o) => { setIsCreateOpen(o); if (!o) { setCreateForm({ name: "", description: "", features: [], listingLimit: [], amount: "", billing_cycle: "monthly", status: "active" }); setFeaturesInput(""); setErrors({}); } }}>
           <DialogTrigger asChild>
             <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90">
               <Plus className="mr-2 h-4 w-4" />
@@ -216,7 +251,7 @@ export default function AdminSubscriptionsPage() {
                 <label className="block text-sm font-medium mb-2">Name *</label>
                 <Input
                   value={createForm.name}
-                  onChange={(e)=>{ setCreateForm({ ...createForm, name: e.target.value }); if(e.target.value.trim()) setErrors(prev=>({ ...prev, name: undefined })) }}
+                  onChange={(e) => { setCreateForm({ ...createForm, name: e.target.value }); if (e.target.value.trim()) setErrors(prev => ({ ...prev, name: undefined })) }}
                   placeholder="e.g., Basic"
                 />
                 {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
@@ -226,7 +261,7 @@ export default function AdminSubscriptionsPage() {
                 <label className="block text-sm font-medium mb-2">Description *</label>
                 <textarea
                   value={createForm.description}
-                  onChange={(e)=>{ setCreateForm({ ...createForm, description: e.target.value }); if(e.target.value.trim()) setErrors(prev=>({ ...prev, description: undefined })) }}
+                  onChange={(e) => { setCreateForm({ ...createForm, description: e.target.value }); if (e.target.value.trim()) setErrors(prev => ({ ...prev, description: undefined })) }}
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
                   rows={3}
                   placeholder="Short summary of this plan"
@@ -238,7 +273,7 @@ export default function AdminSubscriptionsPage() {
                 <label className="block text-sm font-medium mb-2">Features (comma-separated) *</label>
                 <Input
                   value={featuresInput}
-                  onChange={(e)=>{ setFeaturesInput(e.target.value); if(e.target.value.trim()) setErrors(prev=>({ ...prev, featuresInput: undefined })) }}
+                  onChange={(e) => { setFeaturesInput(e.target.value); if (e.target.value.trim()) setErrors(prev => ({ ...prev, featuresInput: undefined })) }}
                   placeholder="e.g., 10 listings, Featured badge, Email support"
                 />
                 {errors.featuresInput && <p className="text-sm text-red-600 mt-1">{errors.featuresInput}</p>}
@@ -248,9 +283,10 @@ export default function AdminSubscriptionsPage() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Amount (NGN) *</label>
                   <Input
-                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={createForm.amount}
-                    onChange={(e)=>{ const v = Number(e.target.value); setCreateForm({ ...createForm, amount: v }); if(v >= 0) setErrors(prev=>({ ...prev, amount: undefined })) }}
+                    onChange={(e) => { const v = e.target.value; setCreateForm({ ...createForm, amount: v }); if (v === '') setErrors(prev => ({ ...prev, amount: undefined })) }}
                     placeholder="e.g., 2000"
                   />
                   {errors.amount && <p className="text-sm text-red-600 mt-1">{errors.amount}</p>}
@@ -261,7 +297,7 @@ export default function AdminSubscriptionsPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <Select
                         value={selectedCatForLimit}
-                        onValueChange={(v)=>{ setSelectedCatForLimit(v); setSelectedSubForLimit(""); if (!subcategoriesByCat[v]) fetchSubcategories(v) }}
+                        onValueChange={(v) => { setSelectedCatForLimit(v); setSelectedSubForLimit(""); if (!subcategoriesByCat[v]) fetchSubcategories(v) }}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder={loadingCats ? "Loading categories..." : "Select category"} />
@@ -290,7 +326,7 @@ export default function AdminSubscriptionsPage() {
                         <Input
                           type="number"
                           value={limitValue as any}
-                          onChange={(e)=> setLimitValue(e.target.value === '' ? '' : Number(e.target.value))}
+                          onChange={(e) => setLimitValue(e.target.value === '' ? '' : Number(e.target.value))}
                           placeholder="Limit"
                         />
                         <Button size="sm" className="bg-[#1F058F] hover:bg-[#1F058F]/90" type="button" onClick={addListingLimitItem}>Add</Button>
@@ -299,20 +335,18 @@ export default function AdminSubscriptionsPage() {
                     {createForm.listingLimit.length > 0 ? (
                       <div className="border rounded-md divide-y">
                         {createForm.listingLimit.map(it => {
-                          const subId = typeof it.subCategory === 'string' ? it.subCategory : it.subCategory?._id
-                          const name = (() => {
-                            if (typeof it.subCategory !== 'string' && it.subCategory?.name) return it.subCategory.name
-                            // fallback: find in loaded options
-                            const allSubs = selectedCatForLimit ? (subcategoriesByCat[selectedCatForLimit] || []) : []
-                            return allSubs.find(s => s._id === subId)?.name || subId
-                          })()
+                          const subId = typeof it.subCategory === 'string' ? it.subCategory : it.subCategory?._id;
+                          const name = typeof it.subCategory !== 'string' && it.subCategory?.name
+                            ? it.subCategory.name
+                            : subcategoryNames[subId] || 'Loading...';
+
                           return (
                             <div key={`${subId}-${it.limit}`} className="flex items-center justify-between px-3 py-2 text-sm">
                               <div>
-                                <span className="font-medium">{name}</span>
+                                <span className="font-medium">{name ? name : 'N/A'}</span>
                                 <span className="text-gray-500"> • Limit: {it.limit}</span>
                               </div>
-                              <Button variant="outline" size="sm" onClick={()=> removeListingLimitItem(subId!)}>Remove</Button>
+                              <Button variant="outline" size="sm" onClick={() => removeListingLimitItem(subId!)}>Remove</Button>
                             </div>
                           )
                         })}
@@ -327,7 +361,7 @@ export default function AdminSubscriptionsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Billing Cycle *</label>
-                  <Select value={createForm.billing_cycle} onValueChange={(v: "daily"|"weekly"|"monthly"|"annually")=>setCreateForm({ ...createForm, billing_cycle: v })}>
+                  <Select value={createForm.billing_cycle} onValueChange={(v: "daily" | "weekly" | "monthly" | "annually") => setCreateForm({ ...createForm, billing_cycle: v })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select cycle" />
                     </SelectTrigger>
@@ -341,7 +375,7 @@ export default function AdminSubscriptionsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Status *</label>
-                  <Select value={createForm.status} onValueChange={(v: "active"|"inactive")=>setCreateForm({ ...createForm, status: v })}>
+                  <Select value={createForm.status} onValueChange={(v: "active" | "inactive") => setCreateForm({ ...createForm, status: v })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -354,7 +388,7 @@ export default function AdminSubscriptionsPage() {
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={()=>{ setIsCreateOpen(false) }}>Cancel</Button>
+                <Button variant="outline" onClick={() => { setIsCreateOpen(false) }}>Cancel</Button>
                 <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90" onClick={handleCreate} disabled={loading}>
                   {loading ? "Creating..." : "Create"}
                 </Button>
@@ -369,7 +403,7 @@ export default function AdminSubscriptionsPage() {
       ) : plans.length === 0 ? (
         <div className="border rounded-lg p-8 text-center">
           <p className="text-gray-500">No subscription plans found</p>
-          <Button className="mt-4 bg-[#1F058F] hover:bg-[#1F058F]/90" onClick={()=>setIsCreateOpen(true)}>
+          <Button className="mt-4 bg-[#1F058F] hover:bg-[#1F058F]/90" onClick={() => setIsCreateOpen(true)}>
             Create First Plan
           </Button>
         </div>
@@ -386,9 +420,9 @@ export default function AdminSubscriptionsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {plans.map((p)=> (
+            {plans.map((p) => (
               <TableRow key={p._id}>
-                <TableCell className="font-medium cursor-pointer text-[#1F058F]" onClick={()=> p._id && router.push(`/admin/subscriptions/${p._id}`)}>
+                <TableCell className="font-medium cursor-pointer text-[#1F058F]" onClick={() => p._id && router.push(`/admin/subscriptions/${p._id}`)}>
                   {p.name}
                 </TableCell>
                 <TableCell>₦{Number(p.amount).toLocaleString()}</TableCell>
@@ -396,7 +430,7 @@ export default function AdminSubscriptionsPage() {
                 <TableCell>
                   {Array.isArray(p.listingLimit) && p.listingLimit.length > 0 ? (
                     <div className="space-y-1">
-                      {p.listingLimit.map((it)=> (
+                      {p.listingLimit.map((it) => (
                         <div key={it._id ?? `${typeof it.subCategory === 'string' ? it.subCategory : it.subCategory?._id}-${it.limit}`} className="text-sm">
                           <span className="font-medium">{typeof it.subCategory === 'string' ? it.subCategory : it.subCategory?.name}</span>: {it.limit}
                         </div>

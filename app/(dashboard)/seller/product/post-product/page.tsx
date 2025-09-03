@@ -13,6 +13,7 @@ import Link from "next/link"
 import { Check, ChevronRight, Layers, Zap } from "lucide-react"
 import { apiClientUser } from "@/lib/interceptor"
 import { toast } from "sonner"
+import { ConfirmationModal } from "@/components/ui/confirmation-modal"
 
 
 interface Category {
@@ -80,6 +81,19 @@ export default function ProductPostFlow() {
     const [originalCatId, setOriginalCatId] = useState<string | null>(null)
     const [originalSubId, setOriginalSubId] = useState<string | null>(null)
 
+    // Confirmation modals state
+    const [submitConfirm, setSubmitConfirm] = useState(false)
+    const [submitCancel, setSubmitCancel] = useState(false)
+
+
+    const handleModal = () => {
+        setSubmitConfirm(true)
+    }
+
+    const handleCancel = () => {
+        router.push('/seller/product')
+    }
+
     // Fetch categories on mount
     useEffect(() => {
         const fetchCategories = async () => {
@@ -134,6 +148,7 @@ export default function ProductPostFlow() {
             try {
                 if (!editId) return
                 const res = await apiClientUser.get(`/products/one/${editId}`)
+                console.log('edited', res)
                 const p = res?.data?.product || res
                 // Basic fields
                 setProductName(p?.name || '')
@@ -244,7 +259,7 @@ export default function ProductPostFlow() {
                             const jsonish = s.replace(/'/g, '"')
                             const arr = JSON.parse(jsonish)
                             if (Array.isArray(arr)) return arr
-                        } catch {}
+                        } catch { }
                     }
                     // For single selectType, keep string as-is; for multiple, wrap in array
                     return selectType === 'multiple' ? [v] : v
@@ -913,8 +928,8 @@ export default function ProductPostFlow() {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Regular price</label>
                                 <Input
                                     placeholder="Enter price"
-                                    type="text"
                                     inputMode="numeric"
+                                    pattern="[0-9]*"
                                     value={formData.price}
                                     onChange={(e) => setFormData({ ...formData, price: formatNumberInput(e.target.value) })}
                                 />
@@ -1049,7 +1064,7 @@ export default function ProductPostFlow() {
                                                 <Input value={facility.label} readOnly className="bg-gray-100" />
                                                 <div>
                                                     {facility.dataType === "boolean" ? (
-                                                        <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-3 align-middle ">
                                                             <Switch
                                                                 checked={Boolean(facilityValues[getFacilityKey(facility)])}
                                                                 onCheckedChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
@@ -1064,7 +1079,7 @@ export default function ProductPostFlow() {
                                                             onChange={(e) => handleFacilityChange(getFacilityKey(facility), e.target.value)}
                                                         />
                                                     ) : facility.dataType === "array" ? (
-                                                        <div className="space-y-2">
+                                                        <div className="space-y-2  items-center">
                                                             {facility.selectType === 'single' ? (
                                                                 <Select
                                                                     value={getFacilityArrayValue(getFacilityKey(facility))[0] || ""}
@@ -1080,7 +1095,7 @@ export default function ProductPostFlow() {
                                                                     </SelectContent>
                                                                 </Select>
                                                             ) : (
-                                                                <div className="flex flex-wrap gap-3">
+                                                                <div className="flex flex-wrap gap-3 items-center">
                                                                     {getArrayOptions(facility).map(opt => {
                                                                         const checked = getFacilityArrayValue(getFacilityKey(facility)).includes(opt)
                                                                         console.log("checked", checked)
@@ -1113,7 +1128,7 @@ export default function ProductPostFlow() {
 
                             {optionalFacilities.length > 0 && (
                                 <>
-                                    <h3 className="text-sm font-medium mb-2 text-gray-700">Optional Fields</h3>
+                                    <h3 className="text-sm font-medium my-2 mt-3 sm:mt-5 text-gray-700">Optional Fields</h3>
                                     <div className="space-y-4">
                                         {optionalFacilities.map((facility) => (
                                             <div key={facility._id} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
@@ -1135,7 +1150,7 @@ export default function ProductPostFlow() {
                                                             onChange={(e) => handleFacilityChange(getFacilityKey(facility), e.target.value)}
                                                         />
                                                     ) : facility.dataType === "array" ? (
-                                                        <div className="space-y-2">
+                                                        <div className="space-y-2  items-center">
                                                             {facility.selectType === 'single' ? (
                                                                 <Select
                                                                     value={getFacilityArrayValue(getFacilityKey(facility))[0] || ""}
@@ -1151,7 +1166,7 @@ export default function ProductPostFlow() {
                                                                     </SelectContent>
                                                                 </Select>
                                                             ) : (
-                                                                <div className="flex flex-wrap gap-3">
+                                                                <div className="flex flex-wrap gap-3  items-center">
                                                                     {getArrayOptions(facility).map((opt, index) => {
                                                                         const checked = getFacilityArrayValue(getFacilityKey(facility)).includes(opt)
                                                                         return (
@@ -1251,15 +1266,37 @@ export default function ProductPostFlow() {
                                 Back
                             </Button>
                         )}
-                        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={handleContinue} disabled={submitting}>
+                        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={step === 3 ? handleModal : handleContinue} disabled={submitting}>
                             {step === 3 ? 'Submit' : 'Continue'}
                         </Button>
-                        <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setStep(1)} disabled={submitting}>
+                        <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setSubmitCancel(true)} disabled={submitting}>
                             Cancel
                         </Button>
                     </div>
                 </div>
             </div>
+
+            {/* Confirmation Modals */}
+            <ConfirmationModal
+                isOpen={submitConfirm}
+                onClose={() => setSubmitConfirm(false)}
+                onConfirm={handleContinue}
+                title="Submit Product"
+                description="Are you sure you want to create this product?"
+                confirmText={submitting ? "Submitting..." : "Submit"}
+                isPending={submitting}
+            />
+
+            <ConfirmationModal
+                isOpen={submitCancel}
+                onClose={() => setSubmitCancel(false)}
+                onConfirm={handleCancel}
+                title="Cancel Product"
+                description="Are you sure you want to cancel this product?"
+                confirmText={submitting ? "Submitting..." : "Cancel"}
+                isPending={submitting}
+                colour
+            />
         </div>
     )
 }
