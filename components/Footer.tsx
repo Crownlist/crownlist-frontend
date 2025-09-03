@@ -1,10 +1,17 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { Twitter, Linkedin, Instagram, Facebook, MapPin, Mail } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import {
+  Twitter,
+  Linkedin,
+  Instagram,
+  Facebook,
+  MapPin,
+  Mail,
+} from "lucide-react";
 
-export default function Footer({ hidePromoImageMobile = false }) {
+export default function Footer() {
   return (
     <footer className="w-full z-10">
       {/* Newsletter Section */}
@@ -25,7 +32,8 @@ export default function Footer({ hidePromoImageMobile = false }) {
             <h2 className="text-2xl font-medium ">Got Something to Sell?</h2>
             <h2 className="text-2xl font-medium mb-2">Post It Here!</h2>
             <p className="text-gray-500 mb-6 max-w-lg">
-              Reach thousands of potential buyers in your area and get your item seen today! posting an ad takes just a few seconds
+              Reach thousands of potential buyers in your area and get your item
+              seen today! posting an ad takes just a few seconds
             </p>
             <div className="flex w-full max-sm:justify-center align-middle">
               <Button className="flex justify-center bg-[#1F058F] rounded-full items-center px-12">
@@ -33,45 +41,61 @@ export default function Footer({ hidePromoImageMobile = false }) {
               </Button>
             </div>
           </div>
-         <div className={`w-full h-auto relative md:w-1/2 ${hidePromoImageMobile ? 'hidden sm:block' : ''}`}>
-        <Image
-          src="/hanger.png"
-          alt="Clothing on hangers"
-          width={600}
-          height={600}
-          className="object-contain h-full w-full rounded-r-md"
-        />
-        </div>
+          <div className="w-full h-auto relative md:w-1/2 hidden sm:block">
+            <Image
+              src="/hanger.png"
+              alt="Clothing on hangers"
+              width={600}
+              height={600}
+              className="object-contain h-full w-full rounded-r-md"
+            />
+          </div>
         </div>
       </div>
 
       {/* Main Footer */}
       <div className="bg-black text-white py-8 max-sm:px-2">
         <div className="container mx-auto max-md:px-3 ">
-          <div className='flex flex-col justify-between gap-2 border-b border-[#FFFFFF40] pb-4 md:flex-row'>
+          <div className="flex flex-col justify-between gap-2 border-b border-[#FFFFFF40] pb-4 md:flex-row">
             <div>
-              <h6 className='mb-0 font-semibold text-white'>
+              <h6 className="mb-0 font-semibold text-white">
                 Join our newsletter
               </h6>
-              <span className='text-sm text-white'>
+              <span className="text-sm text-white">
                 We’ll send you a nice letter once per week. No spam.
               </span>
             </div>
-            <div className='flex items-center gap-3'>
+            <div className="flex items-center gap-3">
               <Input
-                placeholder='Enter your email'
+                placeholder="Enter your email"
                 type="email"
-                className=' bg-gray-800 border-gray-700 text-white sm:min-w-[300px]'
+                className=" bg-gray-800 border-gray-700 text-white sm:min-w-[300px]"
               />
-              <Button className="rounded-r-full rounded-l-full  bg-[#1F058F] hover:bg-[#2a0bc0] text-white border-0">Subscribe</Button>
+              <Button className="rounded-r-full rounded-l-full  bg-[#1F058F] hover:bg-[#2a0bc0] text-white border-0">
+                Subscribe
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-6 gap-8 pb-8 mt-3 ">
             {/* Logo and Tagline */}
             <div className="md:col-span-1">
-              <Image src="/logofooter.jpg" width={120} height={120} alt="crownlist Logo" className="max-sm:hidden" />
-              <Image src="/logofooter.jpg" width={100} height={100} alt="crownlist Logo" className="sm:hidden" />
-              <p className="mt-4 text-sm text-gray-400">Crownlist your free trusted marketplace</p>
+              <Image
+                src="/logofooter.jpg"
+                width={120}
+                height={120}
+                alt="crownlist Logo"
+                className="max-sm:hidden"
+              />
+              <Image
+                src="/logofooter.jpg"
+                width={100}
+                height={100}
+                alt="crownlist Logo"
+                className="sm:hidden"
+              />
+              <p className="mt-4 text-sm text-gray-400">
+                Crownlist your free trusted marketplace
+              </p>
             </div>
 
             {/* Company Links */}
@@ -79,12 +103,18 @@ export default function Footer({ hidePromoImageMobile = false }) {
               <h3 className="font-medium mb-4">Company</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/about-us" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/about-us"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/contact"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     Contact Us
                   </Link>
                 </li>
@@ -96,17 +126,26 @@ export default function Footer({ hidePromoImageMobile = false }) {
               <h3 className="font-medium mb-4">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/faq"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     FAQs
                   </Link>
                 </li>
                 <li>
-                  <Link href="/safety" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/safety"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     Safety
                   </Link>
                 </li>
                 <li>
-                  <Link href="/share-feedback" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/share-feedback"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     Share feedback
                   </Link>
                 </li>
@@ -118,12 +157,18 @@ export default function Footer({ hidePromoImageMobile = false }) {
               <h3 className="font-medium mb-4">Legal</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/terms-and-conditions" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/terms-and-conditions"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     Terms and Conditions
                   </Link>
                 </li>
                 <li>
-                  <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  <Link
+                    href="/privacy-policy"
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
                     Privacy and Policy
                   </Link>
                 </li>
@@ -143,24 +188,33 @@ export default function Footer({ hidePromoImageMobile = false }) {
                   <span>info@joelist.com.ng</span>
                 </div>
               </div>
-
-
             </div>
-
 
             <div>
               <h3 className="font-medium  mb-4">Socials</h3>
               <div className="flex space-x-4">
-                <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <Twitter size={20} />
                 </Link>
-                <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <Linkedin size={20} />
                 </Link>
-                <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <Instagram size={20} />
                 </Link>
-                <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="#"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <Facebook size={20} />
                 </Link>
               </div>
@@ -173,21 +227,27 @@ export default function Footer({ hidePromoImageMobile = false }) {
               <span className="text-[120px] md:text-[180px] font-bold tracking-tighter">Crownlist</span>
             </div> */}
           <div className="bg-black text-white py-8 md:py-12 md:m-3  border-t border-gray-800 relative h-full w-full">
-            <Image src={"/fottertext.png"} alt={'footer'} fill className="object-fill" />
+            <Image
+              src={"/fottertext.png"}
+              alt={"footer"}
+              fill
+              className="object-fill"
+            />
           </div>
-
 
           {/* Copyright and Payment Methods */}
           <div className=" items-center pt-6 border-t border-gray-800">
-            <p className="text-sm text-center text-gray-500 mb-4 md:mb-0">©2025 Crownlist. All rights reserved.</p>
-
+            <p className="text-sm text-center text-gray-500 mb-4 md:mb-0">
+              ©2025 Crownlist. All rights reserved.
+            </p>
           </div>
         </div>
       </div>
-    </footer >
-  )
+    </footer>
+  );
 }
-{/* <div className="mt-5 bg-white shadow rounded-lg overflow-hidden w-full">
+{
+  /* <div className="mt-5 bg-white shadow rounded-lg overflow-hidden w-full">
               <div className="flex flex-col md:flex-row w-full justify-between">
                 <div className="p-6 md:w-1/2">
                   <h2 className="text-xl font-medium mb-2">Request product/services</h2>
@@ -302,4 +362,5 @@ export default function Footer({ hidePromoImageMobile = false }) {
                   />
                 </div>
               </div>
-            </div> */}
+            </div> */
+}

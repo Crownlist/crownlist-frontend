@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 const data = [
     {
-        img: '/ostory.svg', title: 'Our Story', content: "CROWNLIST began with a simple yet powerful idea in 2025: a student's desire to easily locate nearby hostels. What started as a focused solution quickly blossomed into a broader vision after a week of dedicated research. Recognizing the need for a user-friendly platform to buy and sell a variety of goods, organized by category, CROWNLIST was born. Starting with essentials like real estate and home appliances, our journey is one of continuous growth, with plans to expand our offerings to meet the diverse needs of our community."
+        img: '/ostory.svg', title: 'Our Story', content: "  Founded in 2025, crownlist originated from a student's vision to assist fellow students in finding nearby hostels effortlessly from home. After a week of research, this idea evolved into a  platform that helps individuals find and purchase a wide range of products with ease, organized by categories"
     },
     { img: '/omission.svg', title: 'Our Mission', content: "Our mission at CROWNLIST is to connect buyers and sellers in a safe and user-friendly environment. We empower sellers by providing a platform to reach a wider audience and increase their sales. Simultaneously, we strive to help buyers effortlessly discover diverse sellers and find the products they desire at various price points, fostering a thriving and accessible marketplace for all." },
     {
