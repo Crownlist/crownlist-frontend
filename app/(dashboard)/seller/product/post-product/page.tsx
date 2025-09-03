@@ -148,6 +148,7 @@ export default function ProductPostFlow() {
             try {
                 if (!editId) return
                 const res = await apiClientUser.get(`/products/one/${editId}`)
+                console.log('edited', res)
                 const p = res?.data?.product || res
                 // Basic fields
                 setProductName(p?.name || '')
