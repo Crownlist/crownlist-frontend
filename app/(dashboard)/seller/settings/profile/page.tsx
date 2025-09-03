@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { apiClientUser } from "@/lib/interceptor"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { ConfirmationModal } from "@/components/ui/confirmation-modal"
 
 interface UserProfile {
   fullName: string
@@ -54,6 +55,10 @@ export default function ProfileSettingsPage() {
     newPassword: "",
     confirmPassword: ""
   })
+
+  // Confirmation modals state
+  const [showProfileConfirm, setShowProfileConfirm] = useState(false)
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
 
   const { data } = useGetAuthUser("User");
   const user = data?.data?.loggedInAccount
@@ -176,9 +181,15 @@ export default function ProfileSettingsPage() {
     fileInputRef.current?.click()
   }
 
-  // Profile form submission with improved error handling
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Handle profile form submission confirmation
+  const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setShowProfileConfirm(true)
+  }
+
+  // Handle confirmed profile submission
+  const handleConfirmedProfileSubmit = async () => {
+    setShowProfileConfirm(false)
     setIsSubmitting(true)
 
     try {
@@ -227,19 +238,28 @@ export default function ProfileSettingsPage() {
     }
   }
 
-  // Password form submission
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
+  // Handle password submission confirmation
+  const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("New password and confirm password do not match")
-      return
-    }
-
+    // Basic validation
     if (passwordData.newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters long")
+      toast.error("Password must be at least 8 characters long")
       return
     }
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("New passwords do not match")
+      return
+    }
+    
+    setShowPasswordConfirm(true)
+  }
+
+  // Handle confirmed password submission
+  const handleConfirmedPasswordSubmit = async () => {
+    setShowPasswordConfirm(false)
+    setIsSubmitting(true)
 
     try {
       await apiClientUser.patch("/users/password", {
@@ -254,7 +274,9 @@ export default function ProfileSettingsPage() {
       })
     } catch (error: any) {
       console.error('Password change error:', error)
-      toast.error(error.response?.data?.message || "Failed to change password")
+      toast.error("Failed to update password. Please try again.")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -293,7 +315,7 @@ export default function ProfileSettingsPage() {
       </div>
 
       {/* Profile Details Section */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleProfileSubmit} className="space-y-8">
         <div className="mb-10">
           <h2 className="text-lg font-medium mb-1">Profile details</h2>
           <p className="text-gray-600 mb-6">Update and manage your profile</p>
@@ -656,6 +678,27 @@ export default function ProfileSettingsPage() {
           </Button>
         </div>
       </form>
+
+      {/* Confirmation Modals */}
+      <ConfirmationModal
+        isOpen={showProfileConfirm}
+        onClose={() => setShowProfileConfirm(false)}
+        onConfirm={handleConfirmedProfileSubmit}
+        title="Update Profile"
+        description="Are you sure you want to update your profile information?"
+        confirmText={isSubmitting ? "Updating..." : "Update Profile"}
+        isPending={isSubmitting}
+      />
+
+      <ConfirmationModal
+        isOpen={showPasswordConfirm}
+        onClose={() => setShowPasswordConfirm(false)}
+        onConfirm={handleConfirmedPasswordSubmit}
+        title="Change Password"
+        description="Are you sure you want to change your password?"
+        confirmText={isSubmitting ? "Updating..." : "Change Password"}
+        isPending={isSubmitting}
+      />
     </div>
   )
 }
