@@ -4,7 +4,7 @@ import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { Twitter, Linkedin, Instagram, Facebook, MapPin, Mail } from "lucide-react"
 
-export default function Footer() {
+export default function Footer({ hidePromoImageMobile = false }) {
   return (
     <footer className="w-full z-10">
       {/* Newsletter Section */}
@@ -33,15 +33,15 @@ export default function Footer() {
               </Button>
             </div>
           </div>
-          <div className="w-full h-auto relative md:w-1/2 ">
-            <Image
-              src="/hanger.png"
-              alt="Clothing on hangers"
-              width={600}
-              height={600}
-              className="object-contain h-full w-full rounded-r-md"
-            />
-          </div>
+         <div className={`w-full h-auto relative md:w-1/2 ${hidePromoImageMobile ? 'hidden sm:block' : ''}`}>
+        <Image
+          src="/hanger.png"
+          alt="Clothing on hangers"
+          width={600}
+          height={600}
+          className="object-contain h-full w-full rounded-r-md"
+        />
+        </div>
         </div>
       </div>
 
