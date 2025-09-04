@@ -64,11 +64,11 @@ export default function ContactPage() {
 
             <div className="text-sm text-gray-600">
               By clicking &quot;Submit&quot; you agree to Crownlist&apos;s{" "}
-              <Link href="#" className="text-indigo-600 hover:underline">
+              <Link href="/terms-and-conditions" className="text-indigo-600 hover:underline">
                 Terms of use
               </Link>{" "}
               and{" "}
-              <Link href="#" className="text-indigo-600 hover:underline">
+              <Link href="/privacy-policy" className="text-indigo-600 hover:underline">
                 Privacy policy
               </Link>
             </div>

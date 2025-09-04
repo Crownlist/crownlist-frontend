@@ -2,15 +2,38 @@
 // /* eslint-disable */
 import Image from 'next/image'
 
+// const data = [
+//     {
+//         img: '/ostory.svg', title: 'Our Story', content: "  Founded in 2025, crownlist originated from a student's vision to assist fellow students in finding nearby hostels effortlessly from home. After a week of research, this idea evolved into a  platform that helps individuals find and purchase a wide range of products with ease, organized by categories"
+//     },
+//     { img: '/omission.svg', title: 'Our Mission', content: "Our mission at CROWNLIST is to connect buyers and sellers in a safe and user-friendly environment. We empower sellers by providing a platform to reach a wider audience and increase their sales. Simultaneously, we strive to help buyers effortlessly discover diverse sellers and find the products they desire at various price points, fostering a thriving and accessible marketplace for all." },
+//     {
+//         img: '/ovision.svg', title: 'Our Vision', content: "Our vision for CROWNLIST is to become the leading online marketplace known for its safety, user-friendliness, and comprehensive range of products. We aim to continuously expand our categories and innovative features, like our product request system, ensuring there's something for everyone. Ultimately, we aspire to create a seamless and empowering e-commerce experience that benefits both buyers and sellers alike."
+//     }
+// ]
+
+
 const data = [
-    {
-        img: '/ostory.svg', title: 'Our Story', content: "  Founded in 2025, crownlist originated from a student's vision to assist fellow students in finding nearby hostels effortlessly from home. After a week of research, this idea evolved into a  platform that helps individuals find and purchase a wide range of products with ease, organized by categories"
-    },
-    { img: '/omission.svg', title: 'Our Mission', content: "Our mission at CROWNLIST is to connect buyers and sellers in a safe and user-friendly environment. We empower sellers by providing a platform to reach a wider audience and increase their sales. Simultaneously, we strive to help buyers effortlessly discover diverse sellers and find the products they desire at various price points, fostering a thriving and accessible marketplace for all." },
-    {
-        img: '/ovision.svg', title: 'Our Vision', content: "Our vision for CROWNLIST is to become the leading online marketplace known for its safety, user-friendliness, and comprehensive range of products. We aim to continuously expand our categories and innovative features, like our product request system, ensuring there's something for everyone. Ultimately, we aspire to create a seamless and empowering e-commerce experience that benefits both buyers and sellers alike."
-    }
-]
+  {
+    img: "/ostory.svg",
+    title: "Our Story",
+    content:
+      "CROWNLIST began in 2025 as a simple idea from a student who wanted to help others find nearby hostels without leaving home. After just a week of research, that idea grew into something bigger—a platform where anyone can easily discover and buy all kinds of products, neatly organized by category.",
+  },
+
+  {
+    img: "/omission.svg",
+    title: "Our Mission",
+    content:
+      "We’re here to make buying and selling easy, safe, and enjoyable for everyone. Our platform helps sellers reach more people and grow their business, while giving buyers a smooth way to find what they need—from everyday items to hidden gems—at prices that work for them. We’re building a trusted, vibrant marketplace where anyone can post, browse, and connect with confidence.",
+  },
+  {
+    img: "/ovision.svg",
+    title: "Our Vision",
+    content:
+      "Our vision for CROWNLIST is to become the leading online marketplace known for its safety, user-friendliness, and comprehensive range of products. We aim to continuously expand our categories and innovative features, like our product request system, ensuring there's something for everyone. Ultimately, we aspire to create a seamless and empowering e-commerce experience that benefits both buyers and sellers alike.",
+  },
+];
 
 // const coreValues = [
 //     {
@@ -103,8 +126,7 @@ const AboutUs = () => {
                                 Our Story
                             </div>
                             <div className='flex font-light  p-2 '>
-                                Founded in 2025, crownlist originated from a student&apos;s vision to assist fellow students in finding nearby hostels effortlessly
-                                from home. After a week of research, this idea evolved into a  platform that helps individuals find and purchase a wide range of products with ease, organized by categories
+                                 {data[0].content}
                             </div>
                         </div>
                     </div>
@@ -127,7 +149,7 @@ const AboutUs = () => {
                                 Our Mission
                             </div>
                             <div className='flex font-light  p-2 w-full'>
-                                At CROWNLIST, our fundamental mission is to cultivate a thriving and trustworthy online ecosystem that seamlessly connects buyers and sellers within a safe and exceptionally user-friendly environment. We are deeply committed to empowering sellers by providing them with a robust platform to significantly expand their reach, effectively market their diverse offerings, and ultimately achieve increased sales and business growth. Simultaneously, we dedicate ourselves to enriching the buying experience by enabling individuals to effortlessly discover a wide array of sellers, each presenting unique products and varied pricing options.
+                                {data[1].content}
                             </div>
                         </div>
                     </div>
@@ -150,7 +172,7 @@ const AboutUs = () => {
                                 Our Vision
                             </div>
                             <div className='flex font-light  p-2 '>
-                                Our overarching vision for CROWNLIST is to evolve into the preeminent online marketplace, widely recognized and trusted for its unwavering commitment to safety, its intuitive and enjoyable user experience, and its comprehensive and ever-expanding catalog of products and services. We aspire to continuously innovate and integrate cutting-edge features, such as our unique product request system, to anticipate and exceed the evolving needs of our user base. We envision a future where CROWNLIST is the first destination for individuals seeking to buy or sell anything, fostering a global community of engaged participants.
+                               {data[2].content}
                             </div>
                         </div>
                     </div>
