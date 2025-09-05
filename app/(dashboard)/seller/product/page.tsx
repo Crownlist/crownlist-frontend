@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { apiClientUser } from "@/lib/interceptor";
 import { toast } from "sonner";
 import DeleteModal from "@/components/Home/DeleteModal";
+import { PromoteProductModal } from "@/components/promote-product-modal";
 
 export default function ProductDashboard() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function ProductDashboard() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [promotingProductId, setPromotingProductId] = useState<string | null>(null);
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -163,7 +165,12 @@ export default function ProductDashboard() {
                             <div className="text-[#525252] text-sm underline hover:text-[#1F058F] ">Delete</div>
                           </Button>
                         </div>
-                        <Button className="text-[#1F058F] border border-[#1F058F] hover:bg-[#2e0a94] bg-transparent  hover:text-white px-1 lg:px-4 py-1  rounded-full text-[12px]">Promote</Button>
+                        <Button 
+                          className="text-[#1F058F] border border-[#1F058F] hover:bg-[#2e0a94] bg-transparent hover:text-white px-1 lg:px-4 py-1 rounded-full text-[12px]"
+                          onClick={() => setPromotingProductId(product?._id)}
+                        >
+                          Promote
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -196,6 +203,13 @@ export default function ProductDashboard() {
           )}
         </>
       )}
+
+      {/* Promote Product Modal */}
+      <PromoteProductModal
+        isOpen={!!promotingProductId}
+        onClose={() => setPromotingProductId(null)}
+        productId={promotingProductId || ''}
+      />
 
       {activeTab == 'feedback' && (
         <>
