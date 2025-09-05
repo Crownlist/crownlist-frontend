@@ -71,7 +71,7 @@ export default async function CategoryPage(props: PageProp) {
           searchParams={searchParams}
         />
       </main>
-     <Footer hidePromoImageMobile={true} /> </div>
+     <Footer /> </div>
   )
 }
 
