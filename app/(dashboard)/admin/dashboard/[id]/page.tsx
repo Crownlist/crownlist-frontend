@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { apiClientUser } from "@/lib/interceptor";
+import { apiClientPublic, apiClientAdmin } from "@/lib/interceptor";
 import { PromoteProductModal } from "@/components/promote-product-modal";
+import { toast } from "sonner";
 
 type Product = {
   _id: string;
@@ -38,15 +39,20 @@ export default function SellerProductDetailsDynamic() {
   const [error, setError] = useState<string | null>(null);
   const [imgIndex, setImgIndex] = useState<number>(0);
   const [showPromoteModal, setShowPromoteModal] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [status, setStatus] = useState<string>('');
+  const [reasonForDecline, setReasonForDecline] = useState('');
 
   useEffect(() => {
     const fetchById = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await apiClientUser.get(`/products/one/${id}`);
+        const res = await apiClientPublic.get(`/products/one/${id}`);
         const p: Product = (res as any)?.data?.product ?? (res as any)?.data ?? (res as any);
         setData(p || null);
+        setStatus(p?.status || '');
       } catch (e: any) {
         setError(e?.message || "Failed to load product");
       } finally {
@@ -59,6 +65,94 @@ export default function SellerProductDetailsDynamic() {
   if (loading) return <div className="p-6">Loading...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
   if (!data) return <div className="p-6">Product not found.</div>;
+
+  const handleStatusUpdate = async () => {
+    if (!status) return;
+    
+    try {
+      setIsUpdatingStatus(true);
+      
+      const payload = status === 'declined' 
+        ? { status, reasonForDecline }
+        : { status };
+      
+      await apiClientAdmin.patch(`/products/status/${data._id}`, payload);
+      
+      // Update local data
+      setData(prev => prev ? { ...prev, status } : null);
+      setShowStatusModal(false);
+      toast.success('Status updated successfully');
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status');
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+  
+  const StatusUpdateModal = () => (
+    <div className="fixed inset-0 bg-black/85 bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg w-full max-w-2xl min-h-[100px] relative">
+        {isUpdatingStatus && (
+          <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg z-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1a0066]"></div>
+          </div>
+        )}
+        <h3 className="text-lg font-semibold mb-4">Update Listing Status</h3>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Status</label>
+            <select 
+              className="w-full p-2 border rounded"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="">Select status</option>
+              <option value="live">Live</option>
+              <option value="declined">Declined</option>
+              <option value="draft">Draft</option>
+              {/* <option value="draft">Draft</option> */}
+            </select>
+          </div>
+
+          {status === 'declined' && (
+            <div>
+              <label className="block text-sm font-medium mb-1">Reason for Decline</label>
+              <textarea
+                className="w-full p-2 border rounded"
+                rows={3}
+                placeholder="Please provide a reason for declining this listing"
+                value={reasonForDecline}
+                onChange={(e) => setReasonForDecline(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="flex justify-end space-x-3 mt-6">
+            <button
+              onClick={() => setShowStatusModal(false)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              disabled={isUpdatingStatus}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleStatusUpdate}
+              disabled={!status || (status === 'declined' && !reasonForDecline.trim()) || isUpdatingStatus}
+              className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
+                !status || (status === 'declined' && !reasonForDecline.trim()) || isUpdatingStatus
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-[#1a0066] hover:bg-[#160052]'
+              }`}
+            >
+              {isUpdatingStatus ? 'Updating...' : 'Update Status'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   const imgs = Array.isArray(data.images)
     ? (data.images as any[]).map((i) => (typeof i === "string" ? { url: i } : i))
@@ -82,7 +176,7 @@ export default function SellerProductDetailsDynamic() {
         const jsonish = s.replace(/'/g, '"');
         const arr = JSON.parse(jsonish);
         if (Array.isArray(arr)) return arr.join(", ");
-      } catch {}
+      } catch { }
     }
     return s;
   };
@@ -91,7 +185,7 @@ export default function SellerProductDetailsDynamic() {
     <div className="mx-auto px-6 py-6">
       {/* Basic breadcrumb */}
       <nav className="text-sm text-muted-foreground mb-4">
-        <Link href="/seller/product" className="hover:underline text-[#1F058F]">Products</Link> &gt; <span className="text-[#1F058F]">Details</span>
+        <Link href="/admin/dashboard" className="hover:underline text-[#1F058F]">Dashboard</Link> &gt; <span className="text-[#1F058F]">Details</span>
       </nav>
 
       {/* Hero image with carousel controls when multiple images exist */}
@@ -144,23 +238,27 @@ export default function SellerProductDetailsDynamic() {
       <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h1 className="text-2xl font-semibold">{data.name}</h1>
         <div className="flex gap-4 mt-6">
-          <Button asChild>
-            <Link href={`/seller/product/edit/${data._id}`}>Edit Product</Link>
-          </Button>
           <Button 
             variant="outline"
             className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10"
-            onClick={() => setShowPromoteModal(true)}
+            onClick={() => {
+              setStatus(data.status || '');
+              setReasonForDecline('');
+              setShowStatusModal(true);
+            }}
           >
-            Promote
+            Update Status
           </Button>
         </div>
       </div>
-      <PromoteProductModal 
+      <PromoteProductModal
         isOpen={showPromoteModal}
         onClose={() => setShowPromoteModal(false)}
         productId={data._id}
       />
+      
+      {/* Status Update Modal */}
+      {showStatusModal && <StatusUpdateModal />}
       <div className="flex items-center gap-4 mt-2">
         {price != null && (
           <span className="text-xl font-bold text-[#1F058F]">{ngn(discount)}</span>
@@ -201,18 +299,6 @@ export default function SellerProductDetailsDynamic() {
           <div className="text-gray-500 text-xs mb-1">Featured</div>
           <div className="font-medium">{data.isFeatured ? "Yes" : "No"}</div>
         </div>
-        {/* <div className="border rounded-md p-3 text-sm">
-          <div className="text-gray-500 text-xs mb-1">Seller ID</div>
-          <div className="font-mono break-all">{data.seller || "-"}</div>
-        </div>
-        <div className="border rounded-md p-3 text-sm">
-          <div className="text-gray-500 text-xs mb-1">Category ID</div>
-          <div className="font-mono break-all">{data.category || "-"}</div>
-        </div>
-        <div className="border rounded-md p-3 text-sm">
-          <div className="text-gray-500 text-xs mb-1">Subcategory ID</div>
-          <div className="font-mono break-all">{data.subCategory || "-"}</div>
-        </div> */}
       </div>
 
       {/* Likes & Ratings */}
@@ -247,7 +333,7 @@ export default function SellerProductDetailsDynamic() {
         </div>
       </div>
 
-      
+
 
       {/* Features */}
       {Array.isArray(data.features) && data.features.length > 0 && (

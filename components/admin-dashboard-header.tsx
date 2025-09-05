@@ -50,17 +50,7 @@ export default function DashboardHeader() {
                             <Bell className="h-5 w-5" />
                         </Button>
 
-                        <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-gray-600 rounded-full">
-                            <div className="rounded-full">
-                                <Image
-                                    src={'/dash.png'}
-                                    width={25}
-                                    height={25}
-                                    alt="dash"
-                                />
-                            </div>
-                            <span className="text-sm">Basic plan</span>
-                        </div>
+                       
 
                         <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8 border border-gray-600">
@@ -109,7 +99,7 @@ export default function DashboardHeader() {
                         <Bell className="h-5 w-5" />
                     </Button>
 
-                    <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-gray-600 rounded-full">
+                    {/* <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-gray-600 rounded-full">
                         <div className="rounded-full">
                             <Image
                                 src={'/dash.png'}
@@ -119,7 +109,7 @@ export default function DashboardHeader() {
                             />
                         </div>
                         <span className="text-sm">Basic plan</span>
-                    </div>
+                    </div> */}
 
                     <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8 border border-gray-600">

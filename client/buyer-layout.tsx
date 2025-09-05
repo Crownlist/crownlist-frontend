@@ -44,7 +44,7 @@ export default function BuyerLayout({ children }: { children: ReactNode }) {
   // console.log(userData)
   return (
     <>
-      {userData ? children : <CustomLoader text="Loading Buyer data..." />}
+      {userData ? children : <CustomLoader text="Loading data..." />}
        
     
     </>
