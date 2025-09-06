@@ -1,15 +1,15 @@
-"use client"
-import Image from "next/image"
-import Link from "next/link"
-import { ChevronRight, Upload, Heart } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import Header from "@/components/Header1"
-import Footer from "@/components/Footer"
-import { useState } from "react"
-import toast from "react-hot-toast"
-import { useCategories } from "@/hooks/useCategories"
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { ChevronRight, Upload, Heart } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import Header from "@/components/Header1";
+import Footer from "@/components/Footer";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useCategories } from "@/hooks/useCategories";
 
 export default function SearchPage() {
   // State for form data
@@ -18,86 +18,94 @@ export default function SearchPage() {
     contactNumber: "",
     description: "",
     category: "",
-  })
+  });
 
-  const { categories } = useCategories()
+  const { categories } = useCategories();
 
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<File[]>([]);
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
     if (name === "contactNumber") {
       // Allow only numeric input
-      const numericValue = value.replace(/[^0-9]/g, "")
-      setFormData((prev) => ({ ...prev, [name]: numericValue }))
+      const numericValue = value.replace(/[^0-9]/g, "");
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }))
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  }
-
-
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files ? Array.from(e.target.files) : []
+    const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
     // Filter for valid image types (SVG, PNG, JPG, GIF)
     const validFiles = selectedFiles.filter((file) =>
-      ["image/svg+xml", "image/png", "image/jpeg", "image/gif"].includes(file.type)
-    )
-    setFiles(validFiles)
-  }
+      ["image/svg+xml", "image/png", "image/jpeg", "image/gif"].includes(
+        file.type
+      )
+    );
+    setFiles(validFiles);
+  };
 
   // Handle drag-and-drop
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    const droppedFiles = Array.from(e.dataTransfer.files)
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files);
     // Filter for valid image types
     const validFiles = droppedFiles.filter((file) =>
-      ["image/svg+xml", "image/png", "image/jpeg", "image/gif"].includes(file.type)
-    )
-    setFiles((prev) => [...prev, ...validFiles])
-  }
-
+      ["image/svg+xml", "image/png", "image/jpeg", "image/gif"].includes(
+        file.type
+      )
+    );
+    setFiles((prev) => [...prev, ...validFiles]);
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-  }
-
+    e.preventDefault();
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-   
+    e.preventDefault();
+
     if (!/^[0-9]+$/.test(formData.contactNumber)) {
-      toast("Contact number must be numeric.")
-      return
+      toast("Contact number must be numeric.");
+      return;
     }
 
     try {
-     
       const response = await fetch("/api/request-product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
-        toast("Request submitted successfully!")
-        setFormData({ fullName: "", contactNumber: "", description: "", category: "" })
+        toast("Request submitted successfully!");
+        setFormData({
+          fullName: "",
+          contactNumber: "",
+          description: "",
+          category: "",
+        });
       } else {
-        toast("Error submitting request.")
+        toast("Error submitting request.");
       }
     } catch (error) {
-      console.error("Submission error:", error)
-      toast("An error occurred.")
+      console.error("Submission error:", error);
+      toast("An error occurred.");
     }
-  }
+  };
 
- 
   const similarProducts = [
     {
       id: 1,
       title: "The Green hostel",
-      description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
+      description:
+        "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
       location: "Eleko",
       features: ["One room", "Gate"],
       price: "₦95,232",
@@ -106,7 +114,8 @@ export default function SearchPage() {
     {
       id: 2,
       title: "St Andrews Glasgow Green",
-      description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+      description:
+        "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
       location: "Poly gate",
       features: ["Room & parlor", "24hrs solar"],
       price: "₦595,232",
@@ -115,7 +124,8 @@ export default function SearchPage() {
     {
       id: 3,
       title: "St Andrews Glasgow Green",
-      description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+      description:
+        "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
       location: "Poly gate",
       features: ["Room & parlor", "24hrs solar"],
       price: "₦595,232",
@@ -124,20 +134,20 @@ export default function SearchPage() {
     {
       id: 4,
       title: "St Andrews Glasgow Green",
-      description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+      description:
+        "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
       location: "Poly gate",
       features: ["Room & parlor", "24hrs solar"],
       price: "₦595,232",
       image: "/product2.png",
     },
-  ]
+  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <Header hidden={false} />
       <div className="container mx-auto py-6 max-md:px-5">
-  
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
             <Link href="/" className="hover:text-gray-700">
@@ -153,14 +163,19 @@ export default function SearchPage() {
         </div>
 
         <div className="flex flex-col">
-          
           <div className="flex flex-col relative w-full">
-          
             <div className="flex flex-col items-center justify-center text-center py-1">
               <div className="mb-2 text-purple-600">
-                <Image src={"/binocular.png"} width={45} height={45} alt="binocular" />
+                <Image
+                  src={"/binocular.png"}
+                  width={45}
+                  height={45}
+                  alt="binocular"
+                />
               </div>
-              <h2 className="text-xl font-medium mb-2">No search results for “Property“</h2>
+              <h2 className="text-xl font-medium mb-2">
+                No search results for “Property“
+              </h2>
               <div className="text-gray-500 max-w-md space-y-2">
                 <p>Ensure all words are spelled correctly</p>
                 <p>Try using different or more general keywords</p>
@@ -172,9 +187,12 @@ export default function SearchPage() {
             <div className="mt-5 bg-white shadow rounded-lg overflow-hidden w-full">
               <div className="flex flex-col md:flex-row w-full justify-between">
                 <div className="p-6 md:w-1/2">
-                  <h2 className="text-xl font-medium mb-2">Request product/services</h2>
+                  <h2 className="text-xl font-medium mb-2">
+                    Request product/services
+                  </h2>
                   <p className="text-gray-500 mb-6">
-                    If you can‘t find the product you‘re looking for, please enter the product or service details below.
+                    If you can‘t find the product you‘re looking for, please
+                    enter the product or service details below.
                   </p>
 
                   <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -183,12 +201,31 @@ export default function SearchPage() {
                       <Input
                         name="fullName"
                         value={formData.fullName}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          // Remove any numbers from input
+                          const value = e.target.value.replace(/[0-9]/g, "");
+                          handleChange({
+                            ...e,
+                            target: {
+                              ...e.target,
+                              value,
+                            },
+                          });
+                        }}
                         className="w-full"
+                        pattern="[A-Za-z\s]+"
+                        title="Only letters and spaces are allowed"
+                        onKeyPress={(e) => {
+                          if (!/[A-Za-z\s]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                       />
                     </div>
                     <div>
-                      <label className="block mb-1 text-sm">Contact number</label>
+                      <label className="block mb-1 text-sm">
+                        Contact number
+                      </label>
                       <Input
                         type="tel"
                         name="contactNumber"
@@ -199,7 +236,7 @@ export default function SearchPage() {
                         className="w-full"
                         onKeyPress={(e) => {
                           if (!/[0-9]/.test(e.key)) {
-                            e.preventDefault()
+                            e.preventDefault();
                           }
                         }}
                       />
@@ -215,7 +252,9 @@ export default function SearchPage() {
                       >
                         <option value="">Select a category</option>
                         {categories.map((cat) => (
-                          <option key={cat._id} value={cat.name}>{cat.name}</option>
+                          <option key={cat._id} value={cat.name}>
+                            {cat.name}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -238,9 +277,14 @@ export default function SearchPage() {
                           <div className="flex flex-col items-center justify-center gap-2">
                             <Upload size={20} className="text-gray-400" />
                             <div className="text-sm">
-                              <span className="text-blue-600 font-medium">Click to upload</span> or drag and drop
+                              <span className="text-blue-600 font-medium">
+                                Click to upload
+                              </span>{" "}
+                              or drag and drop
                             </div>
-                            <div className="text-xs text-gray-400">SVG, PNG, JPG or GIF (max. 800×400px)</div>
+                            <div className="text-xs text-gray-400">
+                              SVG, PNG, JPG or GIF (max. 800×400px)
+                            </div>
                           </div>
                         </label>
                         {files.length > 0 && (
@@ -308,11 +352,18 @@ export default function SearchPage() {
               </div>
               <div className="p-3 shadow-sm hover:shadow-xl transition duration-200 cursor-pointer">
                 <h4 className="font-medium text-sm">{product.title}</h4>
-                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                  {product.description}
+                </p>
                 <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center">
-                  <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">{product.location}</div>
+                  <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">
+                    {product.location}
+                  </div>
                   {product.features.map((feature, index) => (
-                    <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
+                    <div
+                      key={index}
+                      className="text-xs bg-gray-100 px-2 py-1 rounded"
+                    >
                       {feature}
                     </div>
                   ))}
@@ -325,5 +376,5 @@ export default function SearchPage() {
       </div>
       <Footer />
     </div>
-  )
+  );
 }
