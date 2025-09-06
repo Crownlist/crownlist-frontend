@@ -17,7 +17,6 @@ const navItems = [
 const visiblePaths = [
   "/", 
   "/buyer/saved", 
-  "/seller/dashboard", 
   "/buyer/messages", 
   "/buyer/profile"
 ]
@@ -52,7 +51,10 @@ export default function BottomNav() {
     }
   }, [])
 
-    if (!visiblePaths.includes(pathname)) return null
+    // Hide bottom nav on seller dashboard pages and specific buyer pages
+    if (pathname.startsWith('/seller/') || !visiblePaths.includes(pathname)) {
+      return null
+    }
 
 
   return (

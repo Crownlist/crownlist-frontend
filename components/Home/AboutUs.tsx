@@ -18,14 +18,14 @@ const data = [
     img: "/ostory.svg",
     title: "Our Story",
     content:
-      "CROWNLIST began in 2025 as a simple idea from a student who wanted to help others find nearby hostels without leaving home. After just a week of research, that idea grew into something bigger—a platform where anyone can easily discover and buy all kinds of products, neatly organized by category.",
+      "CROWNLIST began in 2025 as a simple idea from a student who wanted to help others find nearby hostels without leaving home. After just a week of research, that idea grew into something bigger, a platform where anyone can easily discover and buy all kinds of products, neatly organized by category.",
   },
 
   {
     img: "/omission.svg",
     title: "Our Mission",
     content:
-      "We’re here to make buying and selling easy, safe, and enjoyable for everyone. Our platform helps sellers reach more people and grow their business, while giving buyers a smooth way to find what they need—from everyday items to hidden gems—at prices that work for them. We’re building a trusted, vibrant marketplace where anyone can post, browse, and connect with confidence.",
+      "We’re here to make buying and selling easy, safe, and enjoyable for everyone. Our platform helps sellers reach more people and grow their business, while giving buyers a smooth way to find what they need from everyday items to hidden gems at prices that work for them. We’re building a trusted, vibrant marketplace where anyone can post, browse, and connect with confidence.",
   },
   {
     img: "/ovision.svg",
