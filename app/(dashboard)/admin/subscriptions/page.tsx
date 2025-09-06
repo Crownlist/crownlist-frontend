@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { Plus } from "lucide-react"
+import { Plus, Pencil, Trash2 } from "lucide-react"
 import { apiClientAdmin } from "@/lib/interceptor"
 
 interface ListingLimitItem {
@@ -45,6 +45,10 @@ export default function AdminSubscriptionsPage() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [planToDelete, setPlanToDelete] = useState<SubscriptionPlan | null>(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null)
 
   // Create form state
   const [createForm, setCreateForm] = useState<SubscriptionPlan>({
@@ -178,11 +182,15 @@ export default function AdminSubscriptionsPage() {
           .split(",")
           .map(f => f.trim())
           .filter(Boolean),
-        listingLimit: createForm.listingLimit,
+        listingLimit: createForm.listingLimit.map(item => ({
+          subCategory: typeof item.subCategory === 'object' ? item.subCategory._id : item.subCategory,
+          limit: item.limit
+        })),
         amount: Number(createForm.amount),
         billing_cycle: createForm.billing_cycle,
         status: createForm.status,
       }
+      console.log("payload", payload)
       const res = await apiClientAdmin.post("/subscriptionplans", payload)
       toast.success(res?.data?.message ?? "Plan created")
       // reset
@@ -231,11 +239,100 @@ export default function AdminSubscriptionsPage() {
     }))
   }
 
+  const handleDeletePlan = async () => {
+    if (!planToDelete?._id) return;
+    
+    try {
+      await apiClientAdmin.delete(`/subscriptionplans/${planToDelete._id}`);
+      toast.success('Plan deleted successfully');
+      setPlans(plans.filter(p => p._id !== planToDelete._id));
+    } catch (error: any) {
+      console.error('Error deleting plan:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete plan');
+    } finally {
+      setPlanToDelete(null);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const handleEditPlan = (plan: SubscriptionPlan) => {
+    setEditingPlan(plan);
+    setCreateForm({
+      name: plan.name,
+      description: plan.description,
+      features: [...plan.features],
+      listingLimit: [...plan.listingLimit],
+      amount: plan.amount,
+      billing_cycle: plan.billing_cycle,
+      status: plan.status,
+    });
+    setFeaturesInput(plan.features.join(', '));
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdatePlan = async () => {
+    if (!editingPlan?._id) return;
+    if (!validateCreate()) {
+      toast.error("Please fix the highlighted fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        name: createForm.name.trim(),
+        description: createForm.description.trim(),
+        features: featuresInput
+          .split(",")
+          .map(f => f.trim())
+          .filter(Boolean),
+        listingLimit: createForm.listingLimit.map(item => ({
+          subCategory: typeof item.subCategory === 'object' ? item.subCategory._id : item.subCategory,
+          limit: item.limit
+        })),
+        amount: Number(createForm.amount),
+        billing_cycle: createForm.billing_cycle,
+        status: createForm.status,
+      };
+
+      const res = await apiClientAdmin.put(`/subscriptionplans/${editingPlan._id}`, payload);
+      toast.success(res?.data?.message ?? "Plan updated successfully");
+      setIsEditDialogOpen(false);
+      fetchPlans();
+    } catch (e: any) {
+      console.error('Error updating plan:', e);
+      toast.error(`Failed to update plan: ${String(e?.message || e)}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Subscription Plans</h1>
-        <Dialog open={isCreateOpen} onOpenChange={(o) => { setIsCreateOpen(o); if (!o) { setCreateForm({ name: "", description: "", features: [], listingLimit: [], amount: "", billing_cycle: "monthly", status: "active" }); setFeaturesInput(""); setErrors({}); } }}>
+        <Dialog 
+          open={isCreateOpen} 
+          onOpenChange={(o) => { 
+            setIsCreateOpen(o); 
+            if (!o) { 
+              setCreateForm({ 
+                name: "", 
+                description: "", 
+                features: [], 
+                listingLimit: [], 
+                amount: "", 
+                billing_cycle: "monthly", 
+                status: "active" 
+              }); 
+              setFeaturesInput(""); 
+              setErrors({}); 
+              setSelectedCatForLimit("");
+              setSelectedSubForLimit("");
+              setLimitValue("");
+            } 
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90">
               <Plus className="mr-2 h-4 w-4" />
@@ -417,6 +514,7 @@ export default function AdminSubscriptionsPage() {
               <TableHead>Listing Limit</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
+              <TableHead className="w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -446,11 +544,243 @@ export default function AdminSubscriptionsPage() {
                   </span>
                 </TableCell>
                 <TableCell>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "-"}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditPlan(p);
+                      }}
+                    >
+                      <Pencil className="h-4 w-4 text-[#1F058F]" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPlanToDelete(p);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Subscription Plan</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>Are you sure you want to delete the plan "{planToDelete?.name}"? This action cannot be undone.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+            <Button 
+              variant="destructive" 
+              className='text-white'
+              onClick={handleDeletePlan}
+              disabled={loading}
+            >
+              {loading ? 'Deleting...' : 'Delete Plan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Plan Dialog */}
+      <Dialog 
+        open={isEditDialogOpen} 
+        onOpenChange={(o) => { 
+          setIsEditDialogOpen(o); 
+          if (!o) { 
+            setCreateForm({ 
+              name: "", 
+              description: "", 
+              features: [], 
+              listingLimit: [], 
+              amount: "", 
+              billing_cycle: "monthly", 
+              status: "active" 
+            }); 
+            setFeaturesInput(""); 
+            setErrors({}); 
+            setSelectedCatForLimit("");
+            setSelectedSubForLimit("");
+            setLimitValue("");
+            setEditingPlan(null);
+          } 
+        }}
+      >
+        <DialogContent className="sm:max-w-[1190px]">
+          <DialogHeader>
+            <DialogTitle>Edit Subscription Plan</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            {/* Reuse the create form fields */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Name *</label>
+              <Input
+                value={createForm.name}
+                onChange={(e) => { setCreateForm({ ...createForm, name: e.target.value }); if (e.target.value.trim()) setErrors(prev => ({ ...prev, name: undefined })) }}
+                placeholder="e.g., Basic"
+              />
+              {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Description *</label>
+              <textarea
+                value={createForm.description}
+                onChange={(e) => { setCreateForm({ ...createForm, description: e.target.value }); if (e.target.value.trim()) setErrors(prev => ({ ...prev, description: undefined })) }}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                rows={3}
+                placeholder="Short summary of this plan"
+              />
+              {errors.description && <p className="text-sm text-red-600 mt-1">{errors.description}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Features (comma-separated) *</label>
+              <Input
+                value={featuresInput}
+                onChange={(e) => { setFeaturesInput(e.target.value); if (e.target.value.trim()) setErrors(prev => ({ ...prev, featuresInput: undefined })) }}
+                placeholder="e.g., 10 listings, Featured badge, Email support"
+              />
+              {errors.featuresInput && <p className="text-sm text-red-600 mt-1">{errors.featuresInput}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Amount (NGN) *</label>
+                <Input
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={createForm.amount}
+                  onChange={(e) => { const v = e.target.value; setCreateForm({ ...createForm, amount: v }); if (v === '') setErrors(prev => ({ ...prev, amount: undefined })) }}
+                  placeholder="e.g., 2000"
+                />
+                {errors.amount && <p className="text-sm text-red-600 mt-1">{errors.amount}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Listing Limits</label>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <Select
+                      value={selectedCatForLimit}
+                      onValueChange={(v) => { setSelectedCatForLimit(v); setSelectedSubForLimit(""); if (!subcategoriesByCat[v]) fetchSubcategories(v) }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={loadingCats ? "Loading categories..." : "Select category"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(c => (
+                          <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={selectedSubForLimit}
+                      onValueChange={setSelectedSubForLimit}
+                      disabled={!selectedCatForLimit || loadingSubs}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={!selectedCatForLimit ? "Select category first" : (loadingSubs ? "Loading..." : "Select subcategory")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subOptions.map(s => (
+                          <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        value={limitValue as any}
+                        onChange={(e) => setLimitValue(e.target.value === '' ? '' : Number(e.target.value))}
+                        placeholder="Limit"
+                      />
+                      <Button size="sm" className="bg-[#1F058F] hover:bg-[#1F058F]/90" type="button" onClick={addListingLimitItem}>Add</Button>
+                    </div>
+                  </div>
+                  {createForm.listingLimit.length > 0 ? (
+                    <div className="border rounded-md divide-y">
+                      {createForm.listingLimit.map((it, index) => {
+                        const subId = typeof it.subCategory === 'string' ? it.subCategory : it.subCategory?._id;
+                        const name = typeof it.subCategory !== 'string' && it.subCategory?.name
+                          ? it.subCategory.name
+                          : subcategoryNames[subId] || 'Loading...';
+
+                        return (
+                          <div key={`${subId}-${it.limit}-${index}`} className="flex items-center justify-between px-3 py-2 text-sm">
+                            <div>
+                              <span className="font-medium">{name ? name : 'N/A'}</span>
+                              <span className="text-gray-500"> • Limit: {it.limit}</span>
+                            </div>
+                            <Button variant="outline" size="sm" onClick={() => removeListingLimitItem(subId!)}>Remove</Button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-500">No listing limits added.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Billing Cycle *</label>
+                <Select value={createForm.billing_cycle} onValueChange={(v: "daily" | "weekly" | "monthly" | "annually") => setCreateForm({ ...createForm, billing_cycle: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select cycle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="annually">Annually</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Status *</label>
+                <Select value={createForm.status} onValueChange={(v: "active" | "inactive") => setCreateForm({ ...createForm, status: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+              <Button 
+                className="bg-[#1F058F] hover:bg-[#1F058F]/90" 
+                onClick={handleUpdatePlan} 
+                disabled={loading}
+              >
+                {loading ? "Updating..." : "Update Plan"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

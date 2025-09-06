@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   
     return (
       <>
-        {data ? children : <CustomLoader text="Loading admin data..." />}
+        {data ? children : <CustomLoader text="Loading data..." />}
       </>
     );
   }

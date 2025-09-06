@@ -39,7 +39,7 @@ export default function AdminResourceDetailPage() {
   // delete modal
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const fetchResource = async () => {
     if (!slug) return
     try {
