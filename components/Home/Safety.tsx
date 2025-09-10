@@ -1,4 +1,5 @@
 import React from "react";
+import { ShieldCheck, UserCheck, BadgeCheck, UserMinus, FileQuestionIcon } from "lucide-react";
 
 import {
   Accordion,
@@ -6,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-// import { PlusCircle, MinusCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -75,8 +75,11 @@ const Safety = () => {
     {
       id: 1,
       question: "General Safety Tips",
+      icon: (
+        <ShieldCheck className="text-[#6941c6] mr-2 inline-block" size={20} />
+      ),
       answer: `
-      <ul>
+      <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Trust Your Instincts:</strong> If you are uncomfortable with the terms of a transaction, do not proceed.</li>
         <li><strong>Protect Your Personal Information:</strong> Never share sensitive details such as bank account numbers, ATM card details, or copies of your ID.</li>
         <li><strong>Choose Safe Meeting Locations:</strong> Always meet in open, public places. Avoid secluded or risky areas.</li>
@@ -85,10 +88,13 @@ const Safety = () => {
     `,
     },
     {
-       id: 2,
+      id: 2,
       question: "Buyers’ Safety Tips",
+      icon: (
+        <UserCheck className="text-[#00982B] mr-2 inline-block" size={20} />
+      ),
       answer: `
-      <ul>
+      <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Be Cautious of Unrealistic Offers:</strong> Watch out for deals that seem too good to be true or items priced significantly lower than market value.</li>
         <li><strong>Avoid Pre-Payments:</strong> Do not send any payments until you have met the seller and signed a purchase agreement.</li>
         <li><strong>Inspect Before Paying:</strong> Meet in a safe, public location and check the item thoroughly before making payment.</li>
@@ -97,10 +103,14 @@ const Safety = () => {
     `,
     },
     {
-       id: 3,
+      id: 3,
       question: "Sellers to Avoid",
+      icon: (
+        <UserMinus className="text-[#F59E42] mr-2 inline-block" size={20} />
+      ),
       answer: `
-      <ul>
+      <div style="font-weight:600;margin-bottom:4px;">Avoid seller who:</div>
+      <ul style="list-style-type:disc; padding-left:1.5em;">
         <li>Request advance payment or a deposit before delivering the item.</li>
         <li>Insist on meeting in a non-public location for delivery.</li>
         <li>Ask for personal information such as your ID, bank details, or debit/credit card numbers.</li>
@@ -108,10 +118,13 @@ const Safety = () => {
     `,
     },
     {
-       id: 4,
+      id: 4,
       question: "Sellers’ Safety Tips",
+      icon: (
+        <BadgeCheck className="text-[#1F058F] mr-2 inline-block" size={20} />
+      ),
       answer: `
-      <ul>
+      <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Collect Full Payment:</strong> Ensure you receive full payment before delivering any goods.</li>
         <li><strong>Deliver What You Advertised:</strong> Make sure the item you deliver matches the description in your ad.</li>
         <li><strong>Limit Financial Information Sharing:</strong> Only provide the necessary financial information required for payment.</li>
@@ -119,10 +132,14 @@ const Safety = () => {
     `,
     },
     {
-       id: 5,
+      id: 5,
       question: "Buyers to Avoid",
+      icon: (
+        <UserMinus className="text-[#E11D48] mr-2 inline-block" size={20} />
+      ),
       answer: `
-      <ul>
+      <div style="font-weight:600;margin-bottom:4px;">Avoid buyer who:</div>
+      <ul style="list-style-type:disc; padding-left:1.5em;">
         <li>Insist on using a cheque.</li>
         <li>Demand that you send the item before payment is made.</li>
         <li>Request personal information such as your ID, bank details, or debit/credit card numbers.</li>
@@ -131,8 +148,11 @@ const Safety = () => {
     `,
     },
     {
-       id: 6,
+      id: 6,
       question: "Need Further Assistance?",
+       icon: (
+        <FileQuestionIcon className="text-[#1F058F] mr-2 inline-block" size={20} />
+      ),
       answer: `
       <p>If you have any questions or need further assistance, please contact us at <a href="mailto:support@crownlist.com">support@crownlist.com</a>.</p>
     `,
@@ -149,9 +169,10 @@ const Safety = () => {
           We care about your well-being
         </h2>
         <p className="text-gray-600 max-w-xl">
-        At CROWNLIST, your safety is our priority. While we facilitate connections between buyers and
-        sellers, we do not handle payments, shipping, or guarantee transactions. Please follow these
-        safety tips to ensure a secure experience. Need help?{" "}
+          At CROWNLIST, your safety is our priority. While we facilitate
+          connections between buyers and sellers, we do not handle payments,
+          shipping, or guarantee transactions. Please follow these safety tips
+          to ensure a secure experience. Need help?{" "}
           <Link
             href="/contact"
             className="text-[#6941c6] font-medium hover:underline"
@@ -179,7 +200,12 @@ const Safety = () => {
       >
         {faqs.map((faq) => (
           <AccordionItem value={`item-${faq.id}`} key={faq.id}>
-            <AccordionTrigger>{faq.question}</AccordionTrigger>
+            <AccordionTrigger className="cursor-pointer">
+              <span className="flex items-center cursor-pointer">
+                {faq.icon}
+                <span>{faq.question}</span>
+              </span>
+            </AccordionTrigger>
             <AccordionContent className="text-gray-500 break-words max-w-full">
               <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
             </AccordionContent>

@@ -125,7 +125,7 @@ const CategoryModal = ({ isOpen, onClose }: Props) => {
                                       <button 
                                         key={subcategory._id}
                                         onClick={() => handleLinkClick(generateCategoryUrl(category, subcategory))}
-                                        className="block text-left text-gray-600 hover:text-gray-900 w-full"
+                                        className="block text-left text-gray-600 hover:text-gray-900 w-full cursor-pointer"
                                       >
                                         {subcategory.name}
                                       </button>
