@@ -2,6 +2,7 @@ export interface Subcategory {
   _id: string
   name: string
   description?: string
+   imageUrl?: string
   status: string
   category: string
 }

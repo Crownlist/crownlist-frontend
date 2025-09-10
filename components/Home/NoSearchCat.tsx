@@ -1,13 +1,33 @@
 /* eslint-disable */
-import React from "react";
+import {useState } from "react";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { ChevronRight, Upload, Heart } from "lucide-react";
+import { useCategories } from "@/hooks/useCategories"
+import { Category, Subcategory } from "@/types/category/category"
 
 const NoSearchCat = ({ cat, subcat }: any) => {
+
+const { categories, loading } = useCategories()
+
+  // Find the current category based on the cat prop
+  const currentCategory = categories.find(category => category.slug === cat || category.name.toLowerCase() === cat?.toLowerCase())
+
+
+ const generateCategoryUrl = (category: Category, subcategory?: Subcategory) => {
+    if (subcategory) {
+      return `/category/${category.slug}?subcategory=${subcategory.name.toLowerCase().replace(/\s+/g, '-')}`
+    }
+    return `/category/${category.slug}`
+  }
+
+
+
+
+
   const similarProducts = [
     {
       id: 1,
@@ -66,10 +86,11 @@ const NoSearchCat = ({ cat, subcat }: any) => {
             <span className="text-gray-700">{cat}</span>
           </div>
           <div className="flex flex-row gap-0">
-            <p className="font-semibold">Search results - {subcat} </p>
-            <p className="font-light">(0 result found)</p>
+            <p className="font-semibold">Search results -  {subcat} </p>
+            <p className="font-light">({subcat > 0 ? subcat : 0 } results found)</p>
           </div>
         </div>
+        {/* {subcat > 0 ? subcat : 0 } */}
 
         <div className="flex flex-col ">
           {/* Left Sidebar */}
@@ -85,19 +106,51 @@ const NoSearchCat = ({ cat, subcat }: any) => {
             <div className="flex flex-col items-center justify-center text-center py-1">
               <div className="mb-2 text-purple-600">
                 <Image
-                  src={"/binocular.png"}
+                  src={cat.image || "/binocular.png"}
                   width={45}
                   height={45}
                   alt="binocular"
                 />
               </div>
               <h2 className="text-xl font-medium mb-2">
-                No search results for &ldquo;Property&ldquo;
+                {subcat = subcat.length > 0 ? `Results found for ${subcat}` : `No search results for &ldquo; ${subcat}&ldquo;` }
+                                
               </h2>
               <div className="text-gray-500 max-w-md space-y-2">
-                <p>Ensure all words are spelled correctly</p>
-                <p>Try using different or more general keywords</p>
-                <p>Remove filters or search for a broader category</p>
+                {currentCategory?.subCategories && currentCategory.subCategories.length > 0 ? (
+                  <div className="space-y-2">
+                    
+                    {/* <div>
+                      {currentCategory.subCategories.map((subcategory) => (
+                        <div key={subcategory._id} className="">
+                          {subcategory.imageUrl ? (
+                            <Image 
+                              src={subcategory.imageUrl} 
+                              alt={subcategory.name} 
+                              width={500} 
+                              height={56}
+                              className="object-cover "
+                            />
+                          ) : (
+                            <div className="w-4 h-4 bg-gray-300 rounded-full flex items-center justify-center">
+                              <span className="text-xs text-gray-600">
+                                {subcategory.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+                          <span className="text-xs text-gray-600">{subcategory.name}</span>
+                        </div>
+                      ))}
+                    </div> */}
+                    </div>
+                 
+                ) : (
+                  <>
+                    <p>Ensure all words are spelled correctly</p>
+                    <p>Try using different or more general keywords</p>
+                    <p>Remove filters or search for a broader category</p>
+                  </>
+                )}
               </div>
             </div>
 
