@@ -11,10 +11,12 @@ import { useRef } from "react"
 import CategoryGrid from "@/components/Home/Category"
 import { useRouter } from "next/navigation"
 import CategoryScroll from "@/components/Home/CategoryScroll"
+import { useProducts, ApiProduct } from "@/hooks/useProducts"
+import { useCategories } from "@/hooks/useCategories"
 
 
 
- const popularItems = [
+/* const popularItems = [
   {
     id: "1",
     image: "/product1.png",
@@ -251,11 +253,12 @@ const propertiesItems = [
       price: "₦22,800",
       image: "/product3.png",
     },
-  ]
+  ] */
 
 
 export default function Home() {
-
+  const { products: apiProducts, loading: loadingProducts } = useProducts()
+  useCategories() // ensure categories remains loaded elsewhere without lint noise
   const heroRef = useRef<HTMLDivElement | null>(null);
   // const [isSticky, setIsSticky] = useState(false);
   const router = useRouter()
@@ -266,6 +269,8 @@ export default function Home() {
   const handleSeeMore = (url: string) =>{
     router.push(url)
   }
+
+  // Removed dummy merge helper since sections now display only fetched items
 
 
   return (
@@ -283,44 +288,188 @@ export default function Home() {
         {/* Main Content */}
         <main className="flex flex-col-reverse gap-3 md:gap-12  justify-between py-6  mx-auto w-full container max-md:px-4">
           <div className=" py-4 flex flex-col  md:w-full">
-            {/* Popular Items */}
-            <ProductSection
-              title="Trending Now"
-              products={popularItems}
-              initialView="grid"
-              showSeeMore
-              onSeeMoreClick={() => handleSeeMore("/sponsored")}
-            />
+            {/* Trending Now - only fetched items */}
+            {loadingProducts ? (
+              <div className="mb-8">
+                <SectionHeader title="Trending Now" showViewToggle={false} />
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-4">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
+                      <div className="aspect-square w-full bg-gray-200 animate-pulse" />
+                      <div className="p-3">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                        <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />
+                        <div className="h-4 bg-gray-200 rounded w-1/3 mt-3 animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <ProductSection
+                title="Trending Now"
+                products={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                  id: p._id,
+                  image: p.images?.[0]?.url || "/placeholder.svg",
+                  title: p.name,
+                  description: p.description || "",
+                  price: p.price?.currentPrice ? `₦${p.price.currentPrice.toLocaleString()}` : "",
+                  time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "",
+                  location: p.listingLocation ? `${p.listingLocation.city || ''}${p.listingLocation.city ? ', ' : ''}${p.listingLocation.country || ''}` : "",
+                  distance: "",
+                  labels: [],
+                  condition: "New",
+                  breadcrumbCat: "Category",
+                  breadcrumbSub: "Subcategory",
+                  breadcrumbLabel: p.name,
+                }))}
+                initialView="grid"
+                showSeeMore
+                onSeeMoreClick={() => handleSeeMore("/sponsored")}
+              />
+            )}
 
-            {/* Sponsored Post */}
+            {/* Sponsored Post - only fetched items */}
             <div className="mb-8">
               <SectionHeader title="Sponsored post" showViewToggle={false} />
-              <SponsoredPost items={sponsoredItems} />
+              {loadingProducts ? (
+                <div className="grid grid-cols-2 gap-4">
+                  {[1,2].map((i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
+                      <div className="aspect-[4/3] w-full bg-gray-200 animate-pulse" />
+                      <div className="p-3">
+                        <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+                        <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <SponsoredPost items={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                  id: p._id,
+                  image: p.images?.[0]?.url || "/placeholder.svg",
+                  title: p.name,
+                  description: p.description || "",
+                  location: p.listingLocation ? `${p.listingLocation.city || ''}${p.listingLocation.city ? ', ' : ''}${p.listingLocation.country || ''}` : "",
+                  category: 'Featured',
+                  price: p.price?.currentPrice ? `₦${p.price.currentPrice.toLocaleString()}` : "",
+                }))} />
+              )}
             </div>
 
-            {/* Services you might need */}
-            <ProductSection title="Featured Electronics" products={servicesItems} initialView="grid" 
-            showSeeMore
-            onSeeMoreClick={() => handleSeeMore("/category/electronics")}
-            />
-
-            {/* Phones & tablets */}
-            <ProductSection
-              title="Featured Phones & tablets"
-              products={phonesItems}
-              initialView="grid"
+            {/* Featured Electronics - only fetched items */}
+            {loadingProducts ? (
+              <div className="mb-2">
+                <SectionHeader title="Featured Electronics" showViewToggle={false} />
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-4">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
+                      <div className="aspect-square w-full bg-gray-200 animate-pulse" />
+                      <div className="p-3">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                        <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <ProductSection title="Featured Electronics" products={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                id: p._id,
+                image: p.images?.[0]?.url || "/placeholder.svg",
+                title: p.name,
+                description: p.description || "",
+                price: p.price?.currentPrice ? `₦${p.price.currentPrice.toLocaleString()}` : "",
+                time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "",
+                location: p.listingLocation ? `${p.listingLocation.city || ''}${p.listingLocation.city ? ', ' : ''}${p.listingLocation.country || ''}` : "",
+                distance: "",
+                condition: "New",
+                breadcrumbCat: "Category",
+                breadcrumbSub: "Subcategory",
+                breadcrumbLabel: p.name,
+              }))} initialView="grid" 
               showSeeMore
-              onSeeMoreClick={() => handleSeeMore("/category/phone-tablets")}
-            />
+              onSeeMoreClick={() => handleSeeMore("/category/electronics")}
+              />
+            )}
 
-            {/* Properties */}
-            <ProductSection
-              title="Featured Properties"
-              products={propertiesItems}
-              initialView="grid"
-              showSeeMore
-              onSeeMoreClick={() => handleSeeMore("/category/property")}
-            />
+            {/* Phones & tablets - only fetched items */}
+            {loadingProducts ? (
+              <div className="mb-2">
+                <SectionHeader title="Featured Phones & tablets" showViewToggle={false} />
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-4">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
+                      <div className="aspect-square w-full bg-gray-200 animate-pulse" />
+                      <div className="p-3">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                        <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <ProductSection
+                title="Featured Phones & tablets"
+                products={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                  id: p._id,
+                  image: p.images?.[0]?.url || "/placeholder.svg",
+                  title: p.name,
+                  description: p.description || "",
+                  price: p.price?.currentPrice ? `₦${p.price.currentPrice.toLocaleString()}` : "",
+                  time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "",
+                  location: p.listingLocation ? `${p.listingLocation.city || ''}${p.listingLocation.city ? ', ' : ''}${p.listingLocation.country || ''}` : "",
+                  distance: "",
+                  condition: "New",
+                  breadcrumbCat: "Category",
+                  breadcrumbSub: "Subcategory",
+                  breadcrumbLabel: p.name,
+                }))}
+                initialView="grid"
+                showSeeMore
+                onSeeMoreClick={() => handleSeeMore("/category/phone-tablets")}
+              />
+            )}
+
+            {/* Properties - only fetched items */}
+            {loadingProducts ? (
+              <div className="mb-2">
+                <SectionHeader title="Featured Properties" showViewToggle={false} />
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-4">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
+                      <div className="aspect-square w-full bg-gray-200 animate-pulse" />
+                      <div className="p-3">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
+                        <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <ProductSection
+                title="Featured Properties"
+                products={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                  id: p._id,
+                  image: p.images?.[0]?.url || "/placeholder.svg",
+                  title: p.name,
+                  description: p.description || "",
+                  price: p.price?.currentPrice ? `₦${p.price.currentPrice.toLocaleString()}` : "",
+                  time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "",
+                  location: p.listingLocation ? `${p.listingLocation.city || ''}${p.listingLocation.city ? ', ' : ''}${p.listingLocation.country || ''}` : "",
+                  distance: "",
+                  condition: "New",
+                  breadcrumbCat: "Category",
+                  breadcrumbSub: "Subcategory",
+                  breadcrumbLabel: p.name,
+                }))}
+                initialView="grid"
+                showSeeMore
+                onSeeMoreClick={() => handleSeeMore("/category/property")}
+              />
+            )}
           </div>
           {/* <div>Categories Dropdown</div> */}
           <div className="relative sm:hidden">
