@@ -11,7 +11,7 @@ import { Category, Subcategory } from "@/types/category/category"
 
 const NoSearchCat = ({ cat, subcat }: any) => {
 
-const { categories, loading } = useCategories()
+const { categories } = useCategories()
 
   // Find the current category based on the cat prop
   const currentCategory = categories.find(category => category.slug === cat || category.name.toLowerCase() === cat?.toLowerCase())

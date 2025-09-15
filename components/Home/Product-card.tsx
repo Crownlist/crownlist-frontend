@@ -20,6 +20,9 @@ interface ProductCardProps {
   condition?: string
   viewMode?: "grid" | "list"
   labels?: string[]
+  breadcrumbCat?: string
+  breadcrumbSub?: string
+  breadcrumbLabel?: string
 }
 
 export default function ProductCard({
@@ -35,13 +38,21 @@ export default function ProductCard({
   condition,
   viewMode = "grid",
   labels = [],
+  breadcrumbCat,
+  breadcrumbSub,
+  breadcrumbLabel,
 }: ProductCardProps) {
   const [liked, setLiked] = useState(false)
   const router = useRouter();
 
   
   const handleClick = () => {
-    router.push(`/product/${id}`)
+    const params = new URLSearchParams()
+    if (breadcrumbCat) params.set('cat', breadcrumbCat)
+    if (breadcrumbSub) params.set('sub', breadcrumbSub)
+    if (breadcrumbLabel) params.set('label', breadcrumbLabel)
+    const qs = params.toString()
+    router.push(qs ? `/product/${id}?${qs}` : `/product/${id}`)
   }
   
 

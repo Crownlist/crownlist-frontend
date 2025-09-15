@@ -18,6 +18,9 @@ interface Product {
   condition: string
   isSponsored?: boolean
   labels?: string[]
+  breadcrumbCat?: string
+  breadcrumbSub?: string
+  breadcrumbLabel?: string
 }
 
 interface ProductSectionProps {
@@ -65,6 +68,9 @@ export default function ProductSection({
             condition={product.condition}
             viewMode={viewMode}
             labels={product.labels}
+            breadcrumbCat={product.breadcrumbCat}
+            breadcrumbSub={product.breadcrumbSub}
+            breadcrumbLabel={product.breadcrumbLabel}
           />
         ))}
       </div>
