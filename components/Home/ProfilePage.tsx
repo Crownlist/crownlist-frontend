@@ -15,6 +15,14 @@ import { Eye, EyeOff, Loader2, X, Check } from "lucide-react";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { apiClientUser } from "@/lib/interceptor";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ProfileFormData {
   fullName: string;
@@ -191,8 +199,17 @@ export default function ProfilePage() {
   // Profile form submission
   const handleProfileSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsProfileSubmitting(true);
+    setShowConfirmation(true);
+  };
 
+  // Confirmation modal state
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingSubmission, setPendingSubmission] = useState<(() => Promise<void>) | null>(null);
+
+  // Handle profile update after confirmation
+  const executeProfileUpdate = async () => {
+    setIsProfileSubmitting(true);
     try {
       let profilePictureUrl = currentImage
 
@@ -241,6 +258,17 @@ export default function ProfilePage() {
     } finally {
       setIsProfileSubmitting(false)
     }
+  };
+
+  const handleConfirm = async () => {
+    setIsSubmitting(true);
+    await executeProfileUpdate();
+    setIsSubmitting(false);
+    setShowConfirmation(false);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
   };
 
   // Password form submission
@@ -329,6 +357,41 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      {/* Confirmation Modal */}
+      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Changes</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to update your profile? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleCancel}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleConfirm}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update Profile'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold mb-6">Profile</h1>
 

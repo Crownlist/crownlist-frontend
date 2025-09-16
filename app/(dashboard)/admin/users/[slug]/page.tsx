@@ -1,22 +1,17 @@
-import UserSlug from "@/components/Home/UserSlug"
+import UserDetailsClient from "./seller-products/user-details-client";
 
 interface PageProps {
-  params: Promise<{ slug: string }>
+  params: {
+    slug: string;
+  };
 }
 
-export default async  function UserDetailsPage(props: PageProps) {
+export default function UserDetailsPage({ params }: PageProps) {
+  const userId = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   
-  const { slug } = await props.params
-  console.log(slug)
-
- 
-  return (
-   <>
-   <UserSlug/>
-   </>
-  )
+  return <UserDetailsClient userId={userId} />;
 }
 
 export function generateStaticParams() {
-  return [{ slug: '0' }, { slug: '1' }, { slug: '2' }, { slug: '3' }]
+  return [];
 }
