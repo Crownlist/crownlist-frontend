@@ -5,10 +5,21 @@ import { ChevronRight, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCategories } from "@/hooks/useCategories"
-import { Category } from "@/types/category/category"
+import { Subcategory } from "@/types/category/category"
+
+// Display category type for both real and dummy categories
+interface DisplayCategory {
+  _id: string
+  name: string
+  slug: string
+  imageUrl?: string
+  status: string
+  description?: string
+  subCategories?: Subcategory[] | never[]
+}
 
 // Dummy categories to fill up remaining space
-const dummyCategories = [
+const dummyCategories: DisplayCategory[] = [
   {
     _id: "dummy-cars",
     name: "Cars",
@@ -19,7 +30,7 @@ const dummyCategories = [
     subCategories: []
   },
   {
-    _id: "dummy-jobs", 
+    _id: "dummy-jobs",
     name: "Jobs",
     slug: "jobs",
     imageUrl: "/assets/images/jobs.png",
@@ -29,8 +40,8 @@ const dummyCategories = [
   },
   {
     _id: "dummy-services",
-    name: "Services", 
-    slug: "services",
+    name: "Services",
+     slug: "Services",
     imageUrl: "/assets/images/services.png",
     status: "undefined",
     description: "",
@@ -50,12 +61,12 @@ const dummyCategories = [
 export default function CategoryScroll() {
   const { categories, loading } = useCategories()
   const [showModal, setShowModal] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<DisplayCategory | null>(null)
 
   // Combine API categories with dummy categories
-  const allCategories = [...categories, ...dummyCategories]
+  const allCategories: DisplayCategory[] = [...categories, ...dummyCategories]
 
-  const handleCategoryClick = (category: Category) => {
+  const handleCategoryClick = (category: DisplayCategory) => {
     // Check if it's a dummy category
     if (category.status === 'undefined') {
       return // Don't do anything for dummy categories
