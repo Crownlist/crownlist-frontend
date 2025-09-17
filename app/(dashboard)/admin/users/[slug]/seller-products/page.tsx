@@ -1,11 +1,14 @@
 import { SellerProducts } from "./seller-products";
 
-export default function SellerProductsPage({
+export default async function SellerProductsPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  console.log("params", params)
+  // Await the params since they're now async in Next.js 15
+  const resolvedParams = await params;
+  console.log("params", resolvedParams);
+  
   return (
     <div className="container mx-auto p-4 md:p-8">
       <div className="mb-6">

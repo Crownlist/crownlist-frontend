@@ -1,20 +1,17 @@
 import ProductDetailsClient from './product-details-client';
-// import { Metadata } from 'next';
 
-interface PageProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
 
-export default function ProductDetailsPage({ params }: PageProps) {
-  const { id } = params;
+
+
+
+export default async function ProductDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+  const productId = Array.isArray(resolvedParams.id) ? resolvedParams.id[0] : resolvedParams.id;
   
-  return <ProductDetailsClient productId={id} />;
+  return <ProductDetailsClient productId={productId} />;
 }
 
-export async function generateStaticParams() {
-  // Pre-render the most popular products at build time
-  return [];
-}
-
-export const dynamicParams = true;

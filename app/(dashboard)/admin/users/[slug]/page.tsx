@@ -1,17 +1,15 @@
 import UserDetailsClient from "./seller-products/user-details-client";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function UserDetailsPage({ params }: PageProps) {
-  const userId = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+export default async function UserDetailsPage({ params }: PageProps) {
+  // Await the params since they're now async in Next.js 15
+  const resolvedParams = await params;
+  const userId = Array.isArray(resolvedParams.slug) ? resolvedParams.slug[0] : resolvedParams.slug;
   
   return <UserDetailsClient userId={userId} />;
-}
-
-export function generateStaticParams() {
-  return [];
 }
