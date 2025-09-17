@@ -6,6 +6,8 @@ import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { Button } from "../ui/button";
 import { Copy } from "lucide-react";
+//import { useProducts, ApiProduct } from "@/hooks/useProducts"
+
 
 
 // import { popularItems, servicesItems, phonesItems, propertiesItems,sponsoredItems } from "@/app/(generic)/page";
@@ -261,6 +263,9 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
         "default"
     );
 
+
+   //const { products: apiProducts } = useProducts()
+
     // Handles submission with toast notification
     const handleSubmit = (type: string) => {
         toast.success(`${type} successful`, {
@@ -294,8 +299,17 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                 {/* Toggle between Product Details and Request Call UI */}
                 {view === "default" && (
                     // ============= Product Details Card =============
+
+                    // {products.map((product: ApiProduct, idx: number) => (
+
+
+                    // ))}
+
+
+
                     <div className="bg-white p-6 rounded-lg border w-full shadow-md md:shadow-lg">
                         <h1 className="text-xl font-medium mb-4">{products[0]?.title || "Default Title"}</h1>
+                       
 
                         {/* Seller Information */}
                         <div className="flex items-center gap-3 mb-4">
@@ -469,6 +483,8 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                             <Image 
                                src="/profile.png"
                                 alt="Seller Avatar"
+                                width={40}
+                                height={40}
                                 className="w-10 h-10 rounded-full">
 
                             </Image>

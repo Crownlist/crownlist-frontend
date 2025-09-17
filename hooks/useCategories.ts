@@ -1,13 +1,14 @@
 import { useEffect, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
-import { 
-  setCategories, 
+import {
+  setCategories,
   setLoading,
-  selectCategories, 
+  selectCategories,
   selectCategoriesLoading
 } from '@/store/slices/general/categoriesSlice'
 import { apiClientPublic } from '@/lib/interceptor'
+import { Subcategory } from '@/types/category/category'
 
 export const useCategories = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -19,9 +20,27 @@ export const useCategories = () => {
   const fetchCategories = useCallback(async () => {
     try {
       dispatch(setLoading(true))
+      console.log('Fetching categories...')
       const response = await apiClientPublic.get('/categories')
-      const categoriesData = response.data?.total || response.data?.data?.total || response.data?.data || response.data || []
+      console.log('Categories response:', response.data)
+      const categoriesData = response.data?.data?.total || response.data?.total || response.data?.data || response.data || []
+      console.log('Categories data to store:', categoriesData)
+
+      // Log subcategories for each category
+      if (Array.isArray(categoriesData)) {
+        categoriesData.forEach((category, index) => {
+          console.log(`Category ${index + 1}: ${category.name}`)
+          console.log(`  Subcategories:`, category.subCategories || 'No subcategories')
+          if (category.subCategories) {
+            category.subCategories.forEach((sub: Subcategory, subIndex: number) => {
+              console.log(`    ${subIndex + 1}. ${sub.name} (ID: ${sub._id})`)
+            })
+          }
+        })
+      }
+
       dispatch(setCategories(Array.isArray(categoriesData) ? categoriesData : []))
+      console.log('Categories stored in Redux')
     } catch (error) {
       console.log('Error fetching categories:', error)
       dispatch(setCategories([]))

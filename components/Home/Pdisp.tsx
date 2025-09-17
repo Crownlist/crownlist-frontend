@@ -21,7 +21,7 @@ const Pdisp = () => {
     {
       id: "2", // Added ID
       image: "/assets/images/glasgow-stove.jpg",
-      title: "Dr Andrews Glasgow Stove",
+      title: "Dr Andre Glasgow Stove",
       description:
         "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
       price: "₦65,000",

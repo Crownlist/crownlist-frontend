@@ -14,13 +14,7 @@ const navItems = [
   { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
   { name: "Profile", path: "/buyer/profile", icon: User },
 ]
-const visiblePaths = [
-  "/", 
-  "/buyer/saved", 
-  "/seller/dashboard", 
-  "/buyer/messages", 
-  "/buyer/profile"
-]
+// Bottom nav is hidden on any /buyer/* or /seller/* route
 
 export default function BottomNav() {
   const pathname = usePathname()
@@ -52,7 +46,10 @@ export default function BottomNav() {
     }
   }, [])
 
-    if (!visiblePaths.includes(pathname)) return null
+    // Hide bottom nav on ALL seller and buyer routes
+    if (pathname.startsWith('/seller/') || pathname.startsWith('/buyer/')) {
+      return null
+    }
 
 
   return (

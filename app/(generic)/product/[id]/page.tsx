@@ -11,7 +11,7 @@ import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
 import ProductDetails from "@/components/Home/ProductDetails"
 // import { number } from "zod"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 
 
 // this is the original proudct detail page
@@ -412,7 +412,9 @@ export default function ProductDetailPage() {
     const [product, setProduct] = useState<Product | null>(null)
 
     const {id}= useParams()
-    console.log("this is the id", id)
+    const search = useSearchParams()
+    const bcCat = search.get('cat') || 'Category'
+    const bcSub = search.get('sub') || 'Property'
 
 
     const tSection = (section: string) => {
@@ -448,8 +450,8 @@ export default function ProductDetailPage() {
 
     useEffect(() => { 
         const productItem = products.find((item) => item.id === id) as Product | undefined;
-
-        setProduct(productItem || null);
+        // Graceful fallback: if not found, default to first popular item
+        setProduct(productItem || (popularItems[0] as unknown as Product));
     }, [id]);
 
 
@@ -471,11 +473,11 @@ export default function ProductDetailPage() {
                     </Link>
                     <ChevronRight size={14} />
                     <Link href="/property" className="hover:text-gray-700">
-                       Category
+                       {bcCat}
                     </Link>
                     <ChevronRight size={14} />
                     <Link href="/property?type=student" className="hover:text-gray-700">
-                        Property
+                        {bcSub}
                     </Link>
                     <ChevronRight size={14} />
 
