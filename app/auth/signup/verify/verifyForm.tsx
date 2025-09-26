@@ -25,6 +25,7 @@ import { useVerifyOtp } from "@/lib/useVerifyOtp";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -127,9 +128,9 @@ export function VerifyForm({
           </Button>
           <p className="text-center text-sm mt-1">
             Do you have an account?{" "}
-            <a href="/auth/login" className="underline underline-offset-3">
+            <Link href="/auth/login" className="underline underline-offset-3">
               Login
-            </a>
+            </Link>
           </p>
         </form>
       </Form>

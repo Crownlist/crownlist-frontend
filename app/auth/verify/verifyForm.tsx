@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSendForgetPwdLink, useSendForgetPwdOtp } from "@/lib/useForgetPassword";
 import { toast } from "sonner";
+import Link from "next/link";
 
 
 const FormSchema = z.object({
@@ -164,12 +165,12 @@ export function VerifyForm({
                 </Button>{" "}
                 <p className="text-center text-sm mt-4">
                   Do you have an account?{" "}
-                  <a
+                  <Link
                     href="/auth/login"
                     className="underline underline-offset-3"
                   >
                     Login
-                  </a>
+                  </Link>
                 </p>
               </form>
             </Form>
