@@ -4,6 +4,7 @@ import "./globals.css"
 import { Inter } from "next/font/google"
 import Wrapper from "@/client/wrapper"
 import BottomNav from "@/components/BottomNav"
+import ReactQueryProvider from "@/providers/ReactQueryProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,9 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-          <Wrapper>{children}</Wrapper>
-          {/* <ChatBot /> */}
-          <BottomNav/>
+          <ReactQueryProvider>
+            <Wrapper>{children}</Wrapper>
+            {/* <ChatBot /> */}
+            <BottomNav/>
+          </ReactQueryProvider>
       </body>
     </html>
   )
