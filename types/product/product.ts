@@ -25,6 +25,15 @@ export interface ProductLocation {
   city: string
 }
 
+export interface ProductFacility {
+  _id: string
+  facilities: {
+    label: string
+    value: string
+    _id: string
+  }[]
+}
+
 export interface Product {
   _id: string
   name: string
@@ -34,6 +43,7 @@ export interface Product {
   seller: string
   category: string
   subCategory: string
+  keywords: string[]
   features: string[]
   price: ProductPrice
   likes: ProductLikes
@@ -41,6 +51,7 @@ export interface Product {
   listingLocation: ProductLocation
   isFeatured: boolean
   status: string
+  facility: ProductFacility
   createdAt: string
   updatedAt: string
   __v: number

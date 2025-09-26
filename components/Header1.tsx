@@ -277,7 +277,7 @@ const Header = ({ hidden }: props) => {
                                   </AccordionTrigger>
                                   <AccordionContent className="text-sm text-gray-500 px-2 py-2">
                                     <Link
-                                      href={`/category/${cat.slug}?subcategory=${sub.name.toLowerCase().replace(/\s+/g, '-')}`}
+                                      href={`/${cat.slug}/${sub.slug}`}
                                       className="hover:underline text-blue-600"
                                     >
                                       View all posts in {sub.name}
@@ -674,5 +674,3 @@ const Header = ({ hidden }: props) => {
 }
 
 export default Header
-
-

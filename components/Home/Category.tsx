@@ -96,13 +96,13 @@ export default function CategoryGrid() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {(selectedCategory?.subCategories || []).map((subcat) => (
-              <Link 
-                key={subcat._id} 
-                href={`/category/${selectedCategory!.slug}?subcategory=${subcat.name.toLowerCase().replace(/\s+/g, '-')}`}
+              <Link
+                key={subcat._id}
+                href={`/${selectedCategory!.slug}/${subcat.slug}`}
                 onClick={closeDialog}
               >
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start text-left"
                 >
                   {subcat.name}
