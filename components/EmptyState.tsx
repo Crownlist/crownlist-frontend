@@ -13,7 +13,8 @@ interface EmptyStateProps {
   subcategorySlug?: string;
 }
 
-export function EmptyState({ categorySlug, subcategorySlug }: EmptyStateProps) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subcategorySlug }: EmptyStateProps) {
   // State for form data
   const [formData, setFormData] = useState({
     fullName: "",

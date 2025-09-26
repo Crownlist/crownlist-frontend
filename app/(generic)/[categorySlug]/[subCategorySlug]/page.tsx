@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -21,7 +21,7 @@ import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
 import { apiClientPublic } from "@/lib/interceptor";
 import { Product } from "@/types/product/product";
-import { ProductCardSkeleton, ProductListSkeleton } from "@/components/ProductCardSkeleton";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
 
@@ -60,13 +60,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     fetchParams();
   }, [params]);
 
-  useEffect(() => {
-    if (subCategorySlug) {
-      fetchProducts();
-    }
-  }, [subCategorySlug, isFeatured]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -84,7 +78,13 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [subCategorySlug, isFeatured]);
+
+  useEffect(() => {
+    if (subCategorySlug) {
+      fetchProducts();
+    }
+  }, [subCategorySlug, isFeatured, fetchProducts]);
 
   const retryFetch = () => {
     fetchProducts();
