@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useAdminSigninHook, useFetchData } from "@/lib/signin-hook";
 import { EyeOff, Eye, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 
 export function LoginForm({
@@ -112,12 +113,12 @@ export function LoginForm({
               )}
 
               <p className="">
-                <a
+                <Link
                   href="/auth/forgot-password"
                   className="mr-auto text-sm text-crown-black underline-offset-3 underline"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </p>
             </div>
             <Button type="submit" className="w-full h-full mt-3"
@@ -154,9 +155,9 @@ export function LoginForm({
 
             <p className="text-center text-sm mt-3 text-crown-black">
               Don&apos;t have an account?{" "}
-              <a href="/auth/signup" className="underline underline-offset-4">
+              <Link href="/auth/signup" className="underline underline-offset-4">
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </form>

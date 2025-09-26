@@ -31,9 +31,9 @@ export function ForgotForm({
 
               <p className="text-center text-sm mt-10">
                 Remember password?{" "}
-                <a href="/auth/sign-in" className="underline underline-offset-4">
+                <Link href="/auth/sign-in" className="underline underline-offset-4">
                   Login
-                </a>
+                </Link>
               </p>
             </div>
           </form>

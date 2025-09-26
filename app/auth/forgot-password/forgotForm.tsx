@@ -9,6 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useSendForgetPwdLink } from "@/lib/useForgetPassword";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 
 export interface Input {
@@ -87,9 +88,9 @@ export function ForgotForm({
 
             <p className="text-center text-sm mt-10">
               Remember password?{" "}
-              <a href="/auth/login" className="underline underline-offset-4">
+              <Link href="/auth/login" className="underline underline-offset-4">
                 Login
-              </a>
+              </Link>
             </p>
           </div>
         </form>

@@ -8,6 +8,7 @@ import { useAdminSigninHook } from "../signin-hook";
 import { Loader2 } from "lucide-react";
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
+import Link from "next/link";
 
 
 export function LoginForm({
@@ -83,12 +84,12 @@ export function LoginForm({
               )}
 
               <p className="">
-                <a
+                <Link
                   href="/auth/forgot-password"
                   className="mr-auto text-sm text-crown-black underline-offset-3 underline"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </p>
             </div>
             <Button type="submit" className="w-full h-full mt-3"

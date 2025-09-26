@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 export interface newPass {
   otp: string;
@@ -143,9 +144,9 @@ export function ResetForm({
 
               <p className="text-center text-sm mt-10">
                 Remember password?{" "}
-                <a href="/auth/login" className="underline underline-offset-4">
+                <Link href="/auth/login" className="underline underline-offset-4">
                   Login
-                </a>
+                </Link>
               </p>
             </div>
           </form>
