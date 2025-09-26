@@ -25,7 +25,7 @@ const CategoryModal = ({ isOpen, onClose }: Props) => {
   // Helper function to generate category URL
   const generateCategoryUrl = (category: Category, subcategory?: Subcategory) => {
     if (subcategory) {
-      return `/category/${category.slug}?subcategory=${subcategory.name.toLowerCase().replace(/\s+/g, '-')}`
+      return `/${category.slug}/${subcategory.slug}`
     }
     return `/category/${category.slug}`
   }
@@ -46,8 +46,34 @@ const CategoryModal = ({ isOpen, onClose }: Props) => {
                     <X className="h-5 w-5" />
                   </button>
                 </div>
-                <div className="flex items-center justify-center h-64">
-                  <div className="text-gray-500">Loading categories...</div>
+                <div className="flex flex-col items-center justify-center h-64 space-y-4">
+                  {/* Loading Animation */}
+                  <div className="relative">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#1F058F] border-t-transparent"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#2a0bc0] animate-spin animation-delay-75"></div>
+                  </div>
+
+                  {/* Loading Text */}
+                  <div className="text-center space-y-2">
+                    <h3 className="text-lg font-medium text-gray-900">Finding your perfect categories</h3>
+                    <p className="text-sm text-gray-600">Please wait while we load the latest options for you...</p>
+                  </div>
+
+                  {/* Skeleton Preview */}
+                  <div className="w-full max-w-md space-y-3">
+                    <div className="flex space-x-4">
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-3 bg-gray-100 rounded animate-pulse w-3/4"></div>
+                        <div className="h-3 bg-gray-100 rounded animate-pulse w-1/2"></div>
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-3 bg-gray-100 rounded animate-pulse w-2/3"></div>
+                        <div className="h-3 bg-gray-100 rounded animate-pulse w-1/3"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
