@@ -96,12 +96,12 @@ export function VerifyForm({
                         Didn&apos;t get the code?{" "}
                         <span>
                           {" "}
-                          <a
+                          <Link
                             href="#"
                             className="underline underline-offset-3 font-medium"
                           >
                             Resend{" "}
-                          </a>
+                          </Link>
                         </span>
                       </FormDescription>
                       <FormMessage className="text-xs" />
@@ -115,12 +115,12 @@ export function VerifyForm({
                 </Link>{" "}
                 <p className="text-center text-sm mt-4">
                   Do you have an account?{" "}
-                  <a
+                  <Link
                     href="/auth/check/sign-in"
                     className="underline underline-offset-3"
                   >
                     Login
-                  </a>
+                  </Link>
                 </p>
               </form>
             </Form>
