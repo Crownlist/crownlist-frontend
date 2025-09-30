@@ -5,11 +5,13 @@ import Image from "next/image"
 interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
+  description?: string;
   onDelete: () => void;
   loading?: boolean;
 }
 
-export default function DeleteModal({ isOpen, onClose, onDelete, loading }: DeleteModalProps) {
+export default function DeleteModal({ isOpen, onClose, onDelete, loading, description }: DeleteModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
@@ -37,7 +39,7 @@ export default function DeleteModal({ isOpen, onClose, onDelete, loading }: Dele
         <Image src="/del.svg" alt="Delete icon" width={20} height={20} className="mx-auto mb-4 w-8 h-8" />
         <h2 className="text-lg font-semibold mb-2">Are you sure you want to delete post?</h2>
         <p className="text-sm text-gray-600 mb-6">
-          This action will delete post data temporarily. If you&apos;re not ready to delete post, you can cancel for now instead.
+          {description ? description : 'This action will delete post data temporarily. If you&apos;re not ready to delete post, you can cancel for now instead.'}
         </p>
         <div className="flex justify-center gap-4">
           <button

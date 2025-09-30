@@ -35,7 +35,7 @@ import {
               Are you sure you want to delete list?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              This action will delete list data temporarily. If you&aposre not ready to delete post, you can cancel for now instead.
+              This action will delete list data temporarily. If you're not ready to delete post, you can cancel for now instead.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="justify-center">

@@ -56,6 +56,8 @@ export default function ProductPostFlow() {
         subcategories: false
     })
     const [submitting, setIsSubmitting] = useState(false)
+    const [objectFieldOptions, setObjectFieldOptions] = useState<Record<string, string[]>>({})
+    const [loadingObjectFields, setLoadingObjectFields] = useState<Record<string, boolean>>({})
 
     // Form data
     const [formData, setFormData] = useState({
@@ -286,6 +288,33 @@ export default function ProductPostFlow() {
         setFacilityValues({})
     }, [selectedSubcategory, editId])
 
+    // Fetch options for object-type facilities
+    useEffect(() => {
+        const currentSub = getCurrentSubcategory()
+        if (!currentSub) return
+
+        const objectFacilities = currentSub.facilities.filter(f => f.dataType === 'object' && f.value)
+        
+        objectFacilities.forEach(async (facility) => {
+            const facilityKey = getFacilityKey(facility)
+            if (objectFieldOptions[facilityKey]) return // Already loaded
+
+            try {
+                setLoadingObjectFields(prev => ({ ...prev, [facilityKey]: true }))
+                const endpoint = facility.value as string
+                const res = await apiClientUser.get(endpoint)
+                const data = res?.data?.data || res?.data
+                const options = Array.isArray(data?.value) ? data.value : []
+                setObjectFieldOptions(prev => ({ ...prev, [facilityKey]: options }))
+            } catch (e: any) {
+                console.error(`Failed to load options for ${facility.label}:`, e)
+                toast.error(`Failed to load options for ${facility.label}`)
+            } finally {
+                setLoadingObjectFields(prev => ({ ...prev, [facilityKey]: false }))
+            }
+        })
+    }, [selectedSubcategory, subcategories])
+
     const handleContinue = () => {
         // Validation based on step
         if (step === 1 && !selectedCategory) {
@@ -313,6 +342,8 @@ export default function ProductPostFlow() {
                 } else if (f.dataType === 'boolean') {
                     // boolean can be true/false; consider provided if value is boolean
                     if (typeof v !== 'boolean') missing.push(f.label)
+                } else if (f.dataType === 'object') {
+                    if (!String(v ?? '').trim()) missing.push(f.label)
                 }
             })
             if (missing.length) {
@@ -434,6 +465,7 @@ export default function ProductPostFlow() {
                     if (f.dataType === 'array') value = Array.isArray(raw) ? raw : (raw ? [raw] : [])
                     if (f.dataType === 'boolean') value = Boolean(raw)
                     if (f.dataType === 'string') value = String(raw)
+                    if (f.dataType === 'object') value = String(raw)
                     facilitiesArr.push({ label: f.label, value })
                 }
             }
@@ -1096,11 +1128,10 @@ export default function ProductPostFlow() {
                                                                 </Select>
                                                             ) : (
                                                                 <div className="flex flex-wrap gap-3 items-center">
-                                                                    {getArrayOptions(facility).map(opt => {
+                                                                    {getArrayOptions(facility).map((opt, index) => {
                                                                         const checked = getFacilityArrayValue(getFacilityKey(facility)).includes(opt)
-                                                                        console.log("checked", checked)
                                                                         return (
-                                                                            <label key={opt} className="flex items-center gap-2 text-sm">
+                                                                            <label key={index} className="flex items-center gap-2 text-sm">
                                                                                 <Checkbox
                                                                                     checked={checked}
                                                                                     onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
@@ -1112,6 +1143,21 @@ export default function ProductPostFlow() {
                                                                 </div>
                                                             )}
                                                         </div>
+                                                    ) : facility.dataType === "object" ? (
+                                                        <Select
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
+                                                            onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
+                                                            disabled={loadingObjectFields[getFacilityKey(facility)]}
+                                                        >
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder={loadingObjectFields[getFacilityKey(facility)] ? "Loading..." : facility.description || "Select option"} />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {(objectFieldOptions[getFacilityKey(facility)] || []).map(opt => (
+                                                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
                                                     ) : (
                                                         <Input
                                                             placeholder={facility.description}
@@ -1182,6 +1228,21 @@ export default function ProductPostFlow() {
                                                                 </div>
                                                             )}
                                                         </div>
+                                                    ) : facility.dataType === "object" ? (
+                                                        <Select
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
+                                                            onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
+                                                            disabled={loadingObjectFields[getFacilityKey(facility)]}
+                                                        >
+                                                            <SelectTrigger className="w-full">
+                                                                <SelectValue placeholder={loadingObjectFields[getFacilityKey(facility)] ? "Loading..." : facility.description || "Select option"} />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {(objectFieldOptions[getFacilityKey(facility)] || []).map(opt => (
+                                                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
                                                     ) : (
                                                         <Input
                                                             placeholder={facility.description}
