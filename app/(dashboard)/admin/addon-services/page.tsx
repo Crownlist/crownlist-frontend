@@ -54,7 +54,8 @@ export default function AdminAddOnServicesPage() {
     try {
       setLoading(true)
       const res = await apiClientAdmin.get("/addonservices")
-      const data = (res as any)?.data?.data || (res as any)?.data
+      console.log("adds-on", res.data.data)
+      const data = (res as any)?.data?.data?.addOnService 
       setServices(Array.isArray(data) ? data : [])
     } catch (e: any) {
       toast.error(`Failed to load add-on services: ${String(e?.message || e)}`)
