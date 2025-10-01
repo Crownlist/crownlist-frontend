@@ -308,9 +308,9 @@ export default function ProfileSettingsPage() {
           <Link href="/seller/settings/billings" className="px-6 py-4 text-gray-700 hover:bg-gray-50">
             Billings
           </Link>
-          <Link href="/seller/settings/pricing" className="px-6 py-4 text-gray-700 hover:bg-gray-50">
+          {/* <Link href="/seller/settings/pricing" className="px-6 py-4 text-gray-700 hover:bg-gray-50">
             Pricing
-          </Link>
+          </Link> */}
         </div>
       </div>
 

@@ -24,9 +24,9 @@ export default function BillingsSettingsPage() {
           <Link href="/seller/settings/billings" className="px-6 py-4 text-white bg-[#1F058F] rounded-l-lg font-medium">
             Billings
           </Link>
-          <Link href="/seller/settings/pricing" className="px-6 py-4  text-gray-700  hover:bg-gray-50 rounded-l-lg font-medium">
+          {/* <Link href="/seller/settings/pricing" className="px-6 py-4  text-gray-700  hover:bg-gray-50 rounded-l-lg font-medium">
             Pricing
-          </Link>
+          </Link> */}
         </div>
       </div>
 
