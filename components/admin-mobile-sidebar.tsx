@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut, Crown, Puzzle, Database } from "lucide-react"
+import { X, Home, Package, MessageSquare, Settings, LogOut, Crown, Puzzle, Database } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -148,7 +148,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         <span>Resources</span>
                     </Link>
 
-                    <Link
+                    {/* <Link
                         href="/admin/analytics"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
@@ -160,7 +160,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <PieChart className="h-5 w-5" />
                         <span>Analytics</span>
-                    </Link>
+                    </Link> */}
 
                     <Link
                         href="/admin/settings"

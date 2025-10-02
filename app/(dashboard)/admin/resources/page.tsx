@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "sonner"
-import { Plus } from "lucide-react"
+import { Plus, Copy, Check } from "lucide-react"
 import { apiClientAdmin } from "@/lib/interceptor"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -40,6 +40,7 @@ export default function AdminResourcesPage() {
   })
   const [errors, setErrors] = useState<{ name?: string; description?: string; valueText?: string }>({})
   const [csvLoading, setCsvLoading] = useState(false)
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null)
 
   const fetchResources = async () => {
     try {
@@ -86,6 +87,19 @@ export default function AdminResourcesPage() {
   }
 
   useEffect(()=>{ fetchResources() }, [])
+
+  const copyApiEndpoint = (slug: string) => {
+    const endpoint = `/resources/one/${slug}`
+    navigator.clipboard.writeText(endpoint)
+      .then(() => {
+        setCopiedSlug(slug)
+        toast.success('API endpoint copied to clipboard!')
+        setTimeout(() => setCopiedSlug(null), 2000)
+      })
+      .catch(() => {
+        toast.error('Failed to copy to clipboard')
+      })
+  }
 
   // Derived filtered & paginated data
   const filtered = useMemo(()=>{
@@ -220,6 +234,7 @@ export default function AdminResourcesPage() {
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Items</TableHead>
+              <TableHead>API Endpoint</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -231,6 +246,21 @@ export default function AdminResourcesPage() {
                 </TableCell>
                 <TableCell className="max-w-[500px] truncate">{r.description}</TableCell>
                 <TableCell>{Array.isArray(r.value)? r.value.length : 0}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyApiEndpoint(r.slug ?? r.name)}
+                    className="flex items-center gap-2"
+                  >
+                    {copiedSlug === (r.slug ?? r.name) ? (
+                      <Check className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                    <span className="text-xs text-muted-foreground">/resources/one/{r.slug ?? r.name}</span>
+                  </Button>
+                </TableCell>
                 <TableCell>
                   <Button variant="outline" onClick={()=> router.push(`/admin/resources/${r.slug ?? r.name}`)}>View</Button>
                 </TableCell>
