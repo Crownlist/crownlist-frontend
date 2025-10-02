@@ -13,6 +13,7 @@ import { useProducts, ApiProduct } from "@/hooks/useProducts"
 import { useCategories } from "@/hooks/useCategories"
 import { useState, useEffect, useRef } from "react"
 import { Product } from "@/types/product/product"
+import { Subcategory } from "@/types/category/category"
 import { apiClientPublic } from "@/lib/interceptor"
 
 export default function Home() {
@@ -160,13 +161,13 @@ export default function Home() {
               console.log('All featured products:', allFeaturedProducts)
 
               // Group featured products by subcategory
-              const subcategoryMap = new Map<string, { subcategory: any; products: Product[] }>()
+              const subcategoryMap = new Map<string, { subcategory: Subcategory | null; products: Product[] }>()
 
               allFeaturedProducts.forEach(product => {
                 if (product.subCategory) {
-                  const subId = typeof product.subCategory === 'string' ? product.subCategory : (product.subCategory as any)._id
+                  const subId = typeof product.subCategory === 'string' ? product.subCategory : (product.subCategory as Subcategory)._id
                   if (!subcategoryMap.has(subId)) {
-                    const subcategory = typeof product.subCategory === 'object' ? (product.subCategory as any) : null
+                    const subcategory = typeof product.subCategory === 'object' ? (product.subCategory as Subcategory) : null
                     subcategoryMap.set(subId, { subcategory, products: [] })
                   }
                   subcategoryMap.get(subId)!.products.push(product)
@@ -185,14 +186,16 @@ export default function Home() {
                 .map((group, index) => {
                   if (group.products.length === 0 || !group.subcategory) return null
 
+                  const subcategory = group.subcategory as Subcategory
+
                   return (
                     <ProductSection
-                      key={`featured-${group.subcategory.slug || group.subcategory._id}-${index}`}
-                      title={`Featured ${group.subcategory.name}`}
+                      key={`featured-${subcategory.slug || subcategory._id}-${index}`}
+                      title={`Featured ${subcategory.name}`}
                       products={group.products.slice(0, 4).map(convertApiProductToSectionProduct)}
                       initialView="grid"
                       showSeeMore
-                      onSeeMoreClick={() => handleSeeMore(`/category/${group.subcategory.slug || group.subcategory._id}`)}
+                      onSeeMoreClick={() => handleSeeMore(`/category/${subcategory.slug || subcategory._id}`)}
                     />
                   )
                 })
