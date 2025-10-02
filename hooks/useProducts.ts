@@ -8,11 +8,20 @@ export interface ApiProduct {
   description?: string
   images?: { url: string; altText?: string; isPrimary?: boolean; _id: string }[]
   price?: { currentPrice?: number; discountedPrice?: number }
+  likes?: { totalLikes?: number; likedBy?: string[] }
+  ratings?: { averageRating?: number; totalRatings?: number }
   listingLocation?: { country?: string; city?: string }
   category?: string
   subCategory?: string
+  keywords?: string[]
+  features?: string[]
   isFeatured?: boolean
+  status?: string
+  facility?: { _id?: string; facilities?: { label?: string; value?: string; _id?: string }[] }
+  seller?: string
   createdAt?: string
+  updatedAt?: string
+  __v?: number
 }
 
 export const useProducts = () => {
@@ -38,5 +47,3 @@ export const useProducts = () => {
 
   return { products, loading, fetchProducts }
 }
-
-
