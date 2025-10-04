@@ -11,53 +11,46 @@ import { useRouter } from "next/navigation"
 import CategoryScroll from "@/components/Home/CategoryScroll"
 import { useProducts, ApiProduct } from "@/hooks/useProducts"
 import { useCategories } from "@/hooks/useCategories"
-import { useFeaturedSubcategories } from "@/hooks/useFeaturedSubcategories"
-import { useSubcategoryProducts } from "@/hooks/useSubcategoryProducts"
 import { useState, useEffect, useRef } from "react"
 import { Product } from "@/types/product/product"
+import { Subcategory } from "@/types/category/category"
+import { apiClientPublic } from "@/lib/interceptor"
 
 export default function Home() {
   const { products: apiProducts, loading: loadingProducts } = useProducts()
   const { categories, loading: loadingCategories } = useCategories()
-  const { featuredSubcategories, loading: loadingSubcategories } = useFeaturedSubcategories()
 
-  // Debug categories
+  // Debug categories and trending products
   console.log('Categories in Home component:', categories)
   console.log('Categories loading:', loadingCategories)
-  const { fetchProductsBySubcategory } = useSubcategoryProducts()
-  const [subcategoryProducts, setSubcategoryProducts] = useState<{ [subcategoryId: string]: Product[] }>({})
+  console.log('Trending Now products (apiProducts):', apiProducts)
+  console.log('Trending Now loading state:', loadingProducts)
+  const [allFeaturedProducts, setAllFeaturedProducts] = useState<Product[]>([])
   const heroRef = useRef<HTMLDivElement | null>(null);
   const hasFetchedProductsRef = useRef(false)
   const router = useRouter()
 
-  // Fetch products for featured subcategories
+  // Fetch ALL featured products and group by subcategory
   useEffect(() => {
-    const fetchAllSubcategoryProducts = async () => {
-      if (featuredSubcategories.length > 0 && !hasFetchedProductsRef.current) {
+    const fetchAllFeaturedProducts = async () => {
+      if (!hasFetchedProductsRef.current) {
         hasFetchedProductsRef.current = true
-        const productsMap: { [subcategoryId: string]: Product[] } = {}
 
-        // Fetch products for each featured subcategory (limit to first 6 for performance)
-        const subcategoriesToFetch = featuredSubcategories.slice(0, 6)
-
-        for (const featuredSubcat of subcategoriesToFetch) {
-          // Try featured products first
-          let products = await fetchProductsBySubcategory(featuredSubcat.subcategory._id, true)
-          if (products.length === 0) {
-            // If no featured products, get regular products
-            products = await fetchProductsBySubcategory(featuredSubcat.subcategory._id, false)
-          }
-          if (products.length > 0) {
-            productsMap[featuredSubcat.subcategory._id] = products
-          }
+        try {
+          console.log('Fetching all featured products...')
+        const response = await apiClientPublic.get('/products?isFeatured=true&limit=100')
+        const data = response.data
+        const featuredProducts = data.data?.products || []
+        console.log('Fetched all featured products:', featuredProducts.length, featuredProducts)
+        setAllFeaturedProducts(featuredProducts)
+        } catch (error) {
+          console.log('Error fetching featured products:', error)
         }
-
-        setSubcategoryProducts(productsMap)
       }
     }
 
-    fetchAllSubcategoryProducts()
-  }, [featuredSubcategories, fetchProductsBySubcategory])
+    fetchAllFeaturedProducts()
+  }, [])
 
   const handleSeeMore = (url: string) => {
     router.push(url)
@@ -114,7 +107,7 @@ export default function Home() {
             ) : (
               <ProductSection
                 title="Trending Now"
-                products={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                products={apiProducts.slice(0, 4).map((p: ApiProduct) => ({
                   id: p._id,
                   image: p.images?.[0]?.url || "/placeholder.svg",
                   title: p.name,
@@ -151,7 +144,7 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <SponsoredPost items={apiProducts.slice(0, 2).map((p: ApiProduct) => ({
+                <SponsoredPost items={apiProducts.slice(0, 4).map((p: ApiProduct) => ({
                   id: p._id,
                   image: p.images?.[0]?.url || "/placeholder.svg",
                   title: p.name,
@@ -163,73 +156,52 @@ export default function Home() {
               )}
             </div>
 
-            {/* Dynamic Featured Subcategories */}
+            {/* Featured Products by Subcategory */}
             {(() => {
-              console.log('Featured subcategories:', featuredSubcategories)
-              console.log('Subcategory products:', subcategoryProducts)
-              console.log('Loading subcategories:', loadingSubcategories)
+              console.log('All featured products:', allFeaturedProducts)
 
-              if (loadingSubcategories) {
-                return (
-                  <div className="mb-8">
-                    <SectionHeader title="Loading Featured Categories..." showViewToggle={false} />
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-4">
-                      {[1,2,3,4].map((i) => (
-                        <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
-                          <div className="aspect-square w-full bg-gray-200 animate-pulse" />
-                          <div className="p-3">
-                            <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-                            <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />
-                            <div className="h-4 bg-gray-200 rounded w-1/3 mt-3 animate-pulse" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )
-              }
+              // Group featured products by subcategory
+              const subcategoryMap = new Map<string, { subcategory: Subcategory | null; products: Product[] }>()
 
-              if (featuredSubcategories.length === 0) {
-                return null
-              }
-
-              const renderedSections = featuredSubcategories
-                .slice(0, 4)
-                .map((featuredSubcat) => {
-                  const products = subcategoryProducts[featuredSubcat.subcategory._id] || []
-
-                  console.log(`Subcategory ${featuredSubcat.subcategory.name}:`, products.length, 'products')
-
-                  // Only show subcategories that have products
-                  if (products.length === 0) {
-                    return null
+              allFeaturedProducts.forEach(product => {
+                if (product.subCategory) {
+                  const subId = typeof product.subCategory === 'string' ? product.subCategory : (product.subCategory as Subcategory)._id
+                  if (!subcategoryMap.has(subId)) {
+                    const subcategory = typeof product.subCategory === 'object' ? (product.subCategory as Subcategory) : null
+                    subcategoryMap.set(subId, { subcategory, products: [] })
                   }
+                  subcategoryMap.get(subId)!.products.push(product)
+                }
+              })
+
+              console.log('Grouped featured products by subcategory:', Array.from(subcategoryMap.entries()))
+
+              if (allFeaturedProducts.length === 0) {
+                return null // Don't display anything if no featured products
+              }
+
+              const renderedSections = Array.from(subcategoryMap.values())
+                .sort((a, b) => b.products.length - a.products.length) // Sort by most products first
+                .slice(0, 6) // Show up to 6 sections
+                .map((group, index) => {
+                  if (group.products.length === 0 || !group.subcategory) return null
+
+                  const subcategory = group.subcategory as Subcategory
 
                   return (
                     <ProductSection
-                      key={featuredSubcat.subcategory._id}
-                      title={`Featured ${featuredSubcat.subcategory.name}`}
-                      products={products.slice(0, 4).map(convertApiProductToSectionProduct)}
+                      key={`featured-${subcategory.slug || subcategory._id}-${index}`}
+                      title={`Featured ${subcategory.name}`}
+                      products={group.products.slice(0, 4).map(convertApiProductToSectionProduct)}
                       initialView="grid"
                       showSeeMore
-                      onSeeMoreClick={() => handleSeeMore(`/category/${featuredSubcat.subcategory.slug}`)}
+                      onSeeMoreClick={() => handleSeeMore(`/category/${subcategory.slug || subcategory._id}`)}
                     />
                   )
                 })
                 .filter(Boolean)
 
-              if (renderedSections.length === 0) {
-                return null
-                
-                // (
-                //   <div className="mb-8">
-                //     <SectionHeader title="No Products Available" showViewToggle={false} />
-                //     <p className="text-gray-500 text-center py-8">Featured categories found but no products available.</p>
-                //   </div>
-                // )
-              }
-
-              return renderedSections
+              return renderedSections.length > 0 ? renderedSections : null
             })()}
           </div>
           

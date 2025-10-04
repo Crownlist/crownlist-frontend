@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,11 +19,10 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
-import { apiClientPublic } from "@/lib/interceptor";
-import { Product } from "@/types/product/product";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
+import { useSubcategoryProductsQuery } from "@/hooks/useSubcategoryProducts";
 
 interface SubcategoryPageProps {
   params: Promise<{ categorySlug: string; subCategorySlug: string }>;
@@ -32,25 +31,100 @@ interface SubcategoryPageProps {
 export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   const [categorySlug, setCategorySlug] = useState<string>("");
   const [subCategorySlug, setSubCategorySlug] = useState<string>("");
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [sortOption, setSortOption] = useState("All");
+  const [sortOption, setSortOption] = useState("newest");
+
+  // Filters state
   const [isFeatured, setIsFeatured] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedFilters, setExpandedFilters] = useState<{ [key: string]: boolean }>({
+  const [expandedFilters, setExpandedFilters] = useState<{
+    [key: string]: boolean;
+  }>({
     location: false,
     price: false,
   });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
-  const itemsPerPage = 12;
+  // Helper function to parse facility values that might be array strings
+  const parseFacilityValue = (value: string) => {
+    try {
+      // Check if it's a string representation of an array like "['Red']"
+      if (value.startsWith("[") && value.endsWith("]")) {
+        const parsed = JSON.parse(value);
+        if (Array.isArray(parsed)) {
+          return parsed.join(", ");
+        }
+      }
+      return value;
+    } catch {
+      return value;
+    }
+  };
 
+  // Helper function to render facilities with special handling for colors
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const renderFacilities = (facilities: any[]) => {
+    return facilities.map((facility, index) => {
+      if (facility.label.toLowerCase().includes("color")) {
+        try {
+          // Parse the color values if it's an array string
+          let colors: string[] = [];
+          if (facility.value.startsWith("[") && facility.value.endsWith("]")) {
+            const parsedValue = facility.value.replace(/'/g, '"');
+            colors = JSON.parse(parsedValue);
+            if (!Array.isArray(colors)) colors = [facility.value];
+          } else {
+            colors = facility.value.split(",").map((c: string) => c.trim());
+          }
+
+          const displayColors = colors.slice(0, 2);
+          const remaining = colors.length - 2;
+
+          return (
+            <div key={index} className="flex gap-1 mb-2">
+              {displayColors.map((color: string, colorIndex: number) => (
+                <span
+                  key={colorIndex}
+                  className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+                >
+                  {color}
+                </span>
+              ))}
+              {remaining > 0 && (
+                <span className="text-xs text-gray-500 px-2 py-1">
+                  +{remaining} more
+                </span>
+              )}
+            </div>
+          );
+        } catch {
+          // Fallback if parsing fails
+          return (
+            <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
+              {facility.label}: {parseFacilityValue(facility.value)}
+            </div>
+          );
+        }
+      } else {
+        return (
+          <div
+            key={index}
+            className={`text-xs bg-gray-100 px-2 py-1 rounded ${
+              facility.label.toLowerCase().includes("size") ? "w-fit" : ""
+            }`}
+          >
+            {facility.label}: {parseFacilityValue(facility.value)}
+          </div>
+        );
+      }
+    });
+  };
+
+  // Initialize params
   useEffect(() => {
     const fetchParams = async () => {
       const resolvedParams = await params;
@@ -60,36 +134,34 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     fetchParams();
   }, [params]);
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const queryParams = isFeatured
-        ? `?slug=${subCategorySlug}&isFeatured=true`
-        : `?slug=${subCategorySlug}`;
-
-      const response = await apiClientPublic.get(`/products${queryParams}`);
-      const data = response.data?.data?.products || [];
-      setProducts(data);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-      setError("Failed to load products. Please try again.");
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [subCategorySlug, isFeatured]);
-
+  // Reset current page when filters change
   useEffect(() => {
-    if (subCategorySlug) {
-      fetchProducts();
-    }
-  }, [subCategorySlug, isFeatured, fetchProducts]);
+    setCurrentPage(1);
+  }, [
+    isFeatured,
+    sortOption,
+    selectedLocation,
+    priceRange.min,
+    priceRange.max,
+  ]);
 
-  const retryFetch = () => {
-    fetchProducts();
-  };
+  // Use the React Query hook for data fetching
+  const {
+    data: productsData,
+    isLoading: loading,
+    isError,
+    error,
+    refetch: refetchProducts,
+  } = useSubcategoryProductsQuery(subCategorySlug, {
+    page: currentPage,
+    sort: sortOption,
+    isFeatured,
+    minPrice: priceRange.min ? parseInt(priceRange.min) : undefined,
+    maxPrice: priceRange.max ? parseInt(priceRange.max) : undefined,
+    location: selectedLocation || undefined,
+  });
 
+  // Helper functions
   const toggleFilter = (filter: string) => {
     setExpandedFilters((prev) => ({
       ...prev,
@@ -97,67 +169,60 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     }));
   };
 
-  const toggleLocation = (location: string) => {
-    if (selectedLocations.includes(location)) {
-      setSelectedLocations((prev) => prev.filter((l) => l !== location));
-    } else {
-      setSelectedLocations((prev) => [...prev, location]);
-    }
-  };
-
   const handleSortOptionSelect = (option: string) => {
-    setSortOption(option);
+    // Map display options to API sort parameters
+    const sortMapping: { [key: string]: string } = {
+      All: "",
+      "Newest first": "newest",
+      "Lowest price": "price_asc",
+      "Highest price": "price_desc",
+    };
+    setSortOption(sortMapping[option] || "");
     setSortDropdownOpen(false);
   };
 
-  const filteredProducts = products.filter((product) => {
-    // Location filter
-    if (selectedLocations.length > 0) {
-      const productLocation = `${product.listingLocation?.city}, ${product.listingLocation?.country}`;
-      if (!selectedLocations.some(loc => productLocation.toLowerCase().includes(loc.toLowerCase()))) {
-        return false;
-      }
-    }
+  const toggleLocation = (location: string) => {
+    setSelectedLocation(selectedLocation === location ? "" : location);
+  };
 
-    // Price filter
-    if (priceRange.min && product.price?.currentPrice < parseInt(priceRange.min)) {
-      return false;
-    }
-    if (priceRange.max && product.price?.currentPrice > parseInt(priceRange.max)) {
-      return false;
-    }
+  const retryFetch = () => {
+    refetchProducts();
+  };
 
-    return true;
-  });
+  const products = productsData?.products || [];
+  const totalProducts = productsData?.totalProducts || 0;
+  const totalPages = productsData?.totalPages || 1;
+  const sortOptionsDisplay = [
+    "All",
+    "Newest first",
+    "Lowest price",
+    "Highest price",
+  ];
 
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortOption) {
-      case "Lowest price":
-        return (a.price?.currentPrice || 0) - (b.price?.currentPrice || 0);
-      case "Highest price":
-        return (b.price?.currentPrice || 0) - (a.price?.currentPrice || 0);
-      case "Newest first":
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      default:
-        return 0;
-    }
-  });
-
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  const paginatedProducts = sortedProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // Helper to get display text from sort value
+  const getSortDisplayText = (sortValue: string) => {
+    const displayMapping: { [key: string]: string } = {
+      "": "All",
+      newest: "Newest first",
+      price_asc: "Lowest price",
+      price_desc: "Highest price",
+    };
+    return displayMapping[sortValue] || "All";
+  };
 
   const formatTitle = (slug: string) =>
     slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   const categoryTitle = formatTitle(categorySlug);
   const subcategoryTitle = formatTitle(subCategorySlug);
-
-  const sortOptions = ["All", "Newest first", "Lowest price", "Highest price"];
-  const locations = ["Lagos", "Abuja", "Port Harcourt", "Kano", "Ibadan", "Enugu"];
+  const locations = [
+    "Lagos",
+    "Abuja",
+    "Port Harcourt",
+    "Kano",
+    "Ibadan",
+    "Enugu",
+  ];
 
   const filteredLocations = locations.filter((location) =>
     location.toLowerCase().includes(locationSearch.toLowerCase())
@@ -168,7 +233,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
         <Header hidden={false} />
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
           {/* Breadcrumb skeleton */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
             <div className="h-4 w-12 bg-gray-200 rounded animate-pulse"></div>
@@ -220,7 +285,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   }
 
   // Error state
-  if (error) {
+  if (isError) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
         <Header hidden={false} />
@@ -245,7 +310,11 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 Something went wrong
               </h2>
-              <p className="text-gray-600 mb-6">{error}</p>
+              <p className="text-gray-600 mb-6">
+                {error instanceof Error
+                  ? error.message
+                  : error || "Unknown error"}
+              </p>
               <Button
                 onClick={retryFetch}
                 className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white"
@@ -282,7 +351,10 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h1 className="text-[13px] sm:text-lg font-medium">
             {subcategoryTitle}
-            <span className="text-gray-500"> ({sortedProducts.length} results found)</span>
+            <span className="text-gray-500">
+              {" "}
+              ({totalProducts} results found)
+            </span>
           </h1>
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             {/* Mobile Filter Toggle */}
@@ -315,13 +387,13 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                 className="font-medium flex items-center gap-1"
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
               >
-                {sortOption}
+                {getSortDisplayText(sortOption)}
                 <ChevronDown size={14} className="ml-1" />
               </button>
 
               {sortDropdownOpen && (
                 <div className="absolute top-full right-0 mt-1 bg-white shadow-md rounded-md z-10 w-36 py-1">
-                  {sortOptions.map((option) => (
+                  {sortOptionsDisplay.map((option) => (
                     <button
                       key={option}
                       className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
@@ -339,14 +411,18 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             {/* View Toggle */}
             <div className="flex items-center gap-1">
               <button
-                className={`p-1 rounded ${viewMode === "grid" ? "bg-gray-100" : ""}`}
+                className={`p-1 rounded ${
+                  viewMode === "grid" ? "bg-gray-100" : ""
+                }`}
                 onClick={() => setViewMode("grid")}
                 aria-label="Grid view"
               >
                 <LayoutGrid size={18} />
               </button>
               <button
-                className={`p-1 rounded ${viewMode === "list" ? "bg-gray-100" : ""}`}
+                className={`p-1 rounded ${
+                  viewMode === "list" ? "bg-gray-100" : ""
+                }`}
                 onClick={() => setViewMode("list")}
                 aria-label="List view"
               >
@@ -376,7 +452,11 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                   onClick={() => toggleFilter("location")}
                 >
                   <span className="font-medium">Location</span>
-                  {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  {expandedFilters.location ? (
+                    <ChevronUp size={18} />
+                  ) : (
+                    <ChevronDown size={18} />
+                  )}
                 </button>
 
                 {expandedFilters.location && (
@@ -399,11 +479,15 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                         <div key={location} className="flex items-center gap-2">
                           <div
                             className={`h-4 w-4 rounded flex items-center justify-center ${
-                              selectedLocations.includes(location) ? "bg-green-500 text-white" : "border border-gray-300"
+                              selectedLocation === location
+                                ? "bg-green-500 text-white"
+                                : "border border-gray-300"
                             }`}
                             onClick={() => toggleLocation(location)}
                           >
-                            {selectedLocations.includes(location) && <Check size={12} />}
+                            {selectedLocation === location && (
+                              <Check size={12} />
+                            )}
                           </div>
                           <label
                             className="text-sm cursor-pointer"
@@ -425,29 +509,47 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                   onClick={() => toggleFilter("price")}
                 >
                   <span className="font-medium">Price</span>
-                  {expandedFilters.price ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  {expandedFilters.price ? (
+                    <ChevronUp size={18} />
+                  ) : (
+                    <ChevronDown size={18} />
+                  )}
                 </button>
 
                 {expandedFilters.price && (
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">Min</label>
+                        <label className="text-sm text-gray-500 mb-1 block">
+                          Min
+                        </label>
                         <input
                           type="number"
                           className="w-full border border-gray-300 rounded p-2 text-sm"
                           value={priceRange.min}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                          onChange={(e) =>
+                            setPriceRange((prev) => ({
+                              ...prev,
+                              min: e.target.value,
+                            }))
+                          }
                         />
                       </div>
                       <div className="pt-6">→</div>
                       <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">Max</label>
+                        <label className="text-sm text-gray-500 mb-1 block">
+                          Max
+                        </label>
                         <input
                           type="number"
                           className="w-full border border-gray-300 rounded p-2 text-sm"
                           value={priceRange.max}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                          onChange={(e) =>
+                            setPriceRange((prev) => ({
+                              ...prev,
+                              max: e.target.value,
+                            }))
+                          }
                         />
                       </div>
                     </div>
@@ -469,7 +571,11 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                   onClick={() => toggleFilter("location")}
                 >
                   <span className="font-medium">Location</span>
-                  {expandedFilters.location ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  {expandedFilters.location ? (
+                    <ChevronUp size={18} />
+                  ) : (
+                    <ChevronDown size={18} />
+                  )}
                 </button>
 
                 {expandedFilters.location && (
@@ -492,11 +598,15 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                         <div key={location} className="flex items-center gap-2">
                           <div
                             className={`h-4 w-4 rounded flex items-center justify-center ${
-                              selectedLocations.includes(location) ? "bg-green-500 text-white" : "border border-gray-300"
+                              selectedLocation === location
+                                ? "bg-green-500 text-white"
+                                : "border border-gray-300"
                             }`}
                             onClick={() => toggleLocation(location)}
                           >
-                            {selectedLocations.includes(location) && <Check size={12} />}
+                            {selectedLocation === location && (
+                              <Check size={12} />
+                            )}
                           </div>
                           <label
                             className="text-sm cursor-pointer"
@@ -518,29 +628,47 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                   onClick={() => toggleFilter("price")}
                 >
                   <span className="font-medium">Price</span>
-                  {expandedFilters.price ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  {expandedFilters.price ? (
+                    <ChevronUp size={18} />
+                  ) : (
+                    <ChevronDown size={18} />
+                  )}
                 </button>
 
                 {expandedFilters.price && (
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
                       <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">Min</label>
+                        <label className="text-sm text-gray-500 mb-1 block">
+                          Min
+                        </label>
                         <input
                           type="number"
                           className="w-full border border-gray-300 rounded p-2 text-sm"
                           value={priceRange.min}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                          onChange={(e) =>
+                            setPriceRange((prev) => ({
+                              ...prev,
+                              min: e.target.value,
+                            }))
+                          }
                         />
                       </div>
                       <div className="pt-6">→</div>
                       <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">Max</label>
+                        <label className="text-sm text-gray-500 mb-1 block">
+                          Max
+                        </label>
                         <input
                           type="number"
                           className="w-full border border-gray-300 rounded p-2 text-sm"
                           value={priceRange.max}
-                          onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                          onChange={(e) =>
+                            setPriceRange((prev) => ({
+                              ...prev,
+                              max: e.target.value,
+                            }))
+                          }
                         />
                       </div>
                     </div>
@@ -552,18 +680,26 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
           {/* Products Grid/List */}
           <div className="flex-1">
-            {paginatedProducts.length === 0 ? (
-              <EmptyState categorySlug={categorySlug} subcategorySlug={subCategorySlug} />
+            {products.length === 0 ? (
+              <EmptyState
+                categorySlug={categorySlug}
+                subcategorySlug={subCategorySlug}
+              />
             ) : (
               <>
                 {viewMode === "grid" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {paginatedProducts.map((product) => (
-                      <div key={product._id} className="border rounded-lg overflow-hidden">
+                    {products.map((product) => (
+                      <div
+                        key={product._id}
+                        className="border rounded-lg overflow-hidden"
+                      >
                         <Link href={`/product/${product.slug}`}>
                           <div className="relative h-[200px]">
                             <Image
-                              src={product.images?.[0]?.url || "/placeholder.svg"}
+                              src={
+                                product.images?.[0]?.url || "/placeholder.svg"
+                              }
                               alt={product.name}
                               fill
                               className="object-cover"
@@ -579,7 +715,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                           </div>
 
                           <div className="p-4">
-                            <h3 className="font-medium text-lg mb-1">{product.name}</h3>
+                            <h3 className="font-medium text-lg mb-1">
+                              {product.name}
+                            </h3>
                             <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                               {product.description}
                             </p>
@@ -588,24 +726,38 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                               <div className="flex items-center gap-1 text-gray-500 text-sm">
                                 <MapPin size={14} />
                                 <span>
-                                  {product.listingLocation?.city}, {product.listingLocation?.country}
+                                  {product.listingLocation?.city},{" "}
+                                  {product.listingLocation?.country}
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex gap-2 mb-3">
-                              {product.facility?.facilities?.slice(0, 2).map((facility, index) => (
-                                <div
-                                  key={index}
-                                  className="text-xs bg-gray-100 px-2 py-1 rounded"
-                                >
-                                  {facility.label}: {facility.value}
-                                </div>
-                              ))}
+                            <div className="mb-3">
+                              {renderFacilities(
+                                product.facility?.facilities?.slice(0, 2) || []
+                              )}
                             </div>
 
                             <div className="font-medium">
-                              ₦{product.price?.currentPrice?.toLocaleString()}
+                              {product.price?.discountedPrice &&
+                              product.price?.discountedPrice !==
+                                product.price?.currentPrice ? (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-green-600">
+                                    ₦
+                                    {product.price.discountedPrice.toLocaleString()}
+                                  </span>
+                                  <span className="text-gray-500 text-sm line-through">
+                                    ₦
+                                    {product.price.currentPrice.toLocaleString()}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span>
+                                  ₦
+                                  {product.price?.currentPrice?.toLocaleString()}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </Link>
@@ -614,9 +766,12 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {paginatedProducts.map((product) => (
-                      <div key={product._id} className="border rounded-lg overflow-hidden flex flex-col md:flex-row">
-                        <div className="relative h-[200px] md:h-auto md:w-[300px] flex-shrink-0">
+                    {products.map((product) => (
+                      <div
+                        key={product._id}
+                        className="border rounded-lg overflow-hidden flex flex-col md:flex-row w-full"
+                      >
+                        <div className="relative h-[200px] md:h-auto md:w-[350px]  flex-shrink-0">
                           <Image
                             src={product.images?.[0]?.url || "/placeholder.svg"}
                             alt={product.name}
@@ -634,31 +789,47 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                         </div>
 
                         <div className="p-4 flex-1">
-                          <h3 className="font-medium text-lg mb-1">{product.name}</h3>
-                          <p className="text-gray-600 text-sm mb-3">{product.description}</p>
+                          <h3 className="font-medium text-lg mb-1">
+                            {product.name}
+                          </h3>
+                          <p className="text-gray-600 text-sm mb-3">
+                            {product.description}
+                          </p>
 
                           <div className="flex items-center gap-4 mb-3">
                             <div className="flex items-center gap-1 text-gray-500 text-sm">
                               <MapPin size={14} />
                               <span>
-                                {product.listingLocation?.city}, {product.listingLocation?.country}
+                                {product.listingLocation?.city},{" "}
+                                {product.listingLocation?.country}
                               </span>
                             </div>
                           </div>
 
-                          <div className="flex gap-2 mb-3">
-                            {product.facility?.facilities?.map((facility, index) => (
-                              <div
-                                key={index}
-                                className="text-xs bg-gray-100 px-2 py-1 rounded"
-                              >
-                                {facility.label}: {facility.value}
-                              </div>
-                            ))}
+                          <div className="mb-3">
+                            {renderFacilities(
+                              product.facility?.facilities || []
+                            )}
                           </div>
 
                           <div className="font-medium">
-                            ₦{product.price?.currentPrice?.toLocaleString()}
+                            {product.price?.discountedPrice &&
+                            product.price?.discountedPrice !==
+                              product.price?.currentPrice ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-green-600">
+                                  ₦
+                                  {product.price.discountedPrice.toLocaleString()}
+                                </span>
+                                <span className="text-gray-500 text-sm line-through">
+                                  ₦{product.price.currentPrice.toLocaleString()}
+                                </span>
+                              </div>
+                            ) : (
+                              <span>
+                                ₦{product.price?.currentPrice?.toLocaleString()}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -683,7 +854,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                           key={i}
                           onClick={() => setCurrentPage(i + 1)}
                           className={`w-8 h-8 rounded-md text-sm ${
-                            currentPage === i + 1 ? "bg-gray-100 font-medium" : "hover:bg-gray-50"
+                            currentPage === i + 1
+                              ? "bg-gray-100 font-medium"
+                              : "hover:bg-gray-50"
                           }`}
                         >
                           {i + 1}
@@ -692,7 +865,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                     </div>
 
                     <button
-                      onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                      onClick={() =>
+                        setCurrentPage((p) => Math.min(p + 1, totalPages))
+                      }
                       disabled={currentPage === totalPages}
                       className="flex items-center gap-1 text-sm disabled:opacity-50"
                     >
@@ -703,7 +878,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
                 {/* Results Count */}
                 <div className="flex justify-end items-center mt-4 text-sm text-gray-500">
-                  <span>Showing {paginatedProducts.length} of {sortedProducts.length}</span>
+                  <span>
+                    Showing {products.length} of {totalProducts}
+                  </span>
                 </div>
               </>
             )}
