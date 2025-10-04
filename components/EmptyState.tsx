@@ -4,6 +4,7 @@ import { Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useCategories } from "@/hooks/useCategories";
@@ -185,20 +186,22 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-start">Category</label>
-                  <select
-                    name="category"
+                  <Select
                     value={formData.category}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent"
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
                     required
                   >
-                    <option value="">Select a category</option>
-                    {categories.map((cat) => (
-                      <option key={cat._id} value={cat.name}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat._id} value={cat.name}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-start">Image(s)</label>

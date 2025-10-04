@@ -998,7 +998,7 @@ export default function ProductPostFlow() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Features (optional)</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Tags (optional)</label>
                             <div className="flex flex-wrap items-center gap-2 border rounded-md p-2">
                                 {selectedFeatures.map((f) => (
                                     <span key={f} className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 px-2 py-1 rounded">

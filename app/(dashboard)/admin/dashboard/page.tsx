@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import Image from "next/image"
 import { apiClientAdmin } from "@/lib/interceptor"
@@ -157,16 +158,19 @@ export default function AdminDashboard() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Status</label>
-            <select 
-              className="w-full p-2 border rounded"
+            <Select 
               value={statusModal.status}
-              onChange={(e) => setStatusModal(prev => ({ ...prev, status: e.target.value as 'live' | 'declined' }))}
+              onValueChange={(value) => setStatusModal(prev => ({ ...prev, status: value as 'live' | 'declined' }))}
             >
-              <option value="">Select status</option>
-              <option value="live">Live</option>
-              <option value="draft">Draft</option>
-              <option value="declined">Declined</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="live">Live</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="declined">Declined</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {statusModal.status === 'declined' && (
@@ -211,7 +215,7 @@ export default function AdminDashboard() {
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                 <div className="bg-white p-6 rounded-lg max-w-md w-full">
                   <h3 className="text-lg font-semibold mb-4">Confirm Status Update</h3>
-                  <p className="mb-6">Are you sure you want to update this listing &apos; s status to <span className="font-medium">{pendingStatus}</span>?</p>
+                  <p className="mb-6">Are you sure you want to update this listing&apos;s status to <span className="font-medium">{pendingStatus}</span>?</p>
                   <div className="flex justify-end space-x-3">
                     <button
                       onClick={() => setShowConfirmation(false)}
@@ -548,7 +552,7 @@ export default function AdminDashboard() {
                                 Edit
                               </button> */}
                               <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                               onClick={()=>{router.push(`/admin/dasboard/${listing.id}`)}}
+                               onClick={()=>{router.push(`/admin/dashboard/${listing.id}`)}}
                               >
                                 See details
                               </button>

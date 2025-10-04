@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import {
   Twitter,
   Linkedin,
@@ -284,18 +285,20 @@ export default function Footer() {
                     </div>
                     <div>
                       <label className="block mb-1 text-sm">Category</label>
-                      <select
-                        name="category"
+                      <Select
                         value={formData.category}
-                        onChange={handleChange}
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
                         required
                       >
-                        <option value="">Select a category</option>
-                        {categoryList.map((cat) => (
-                          <option key={cat.name} value={cat.name}>{cat.name}</option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categoryList.map((cat) => (
+                            <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <label className="block mb-1 text-sm">Image(s)</label>

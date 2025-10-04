@@ -4,6 +4,7 @@ import { HeartIcon, MapPinIcon } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 const savedItems = [
@@ -104,11 +105,16 @@ export default function Saved() {
 
           <div className="flex items-center gap-1">
             Showing
-            <select className="border rounded px-2 py-1">
-              <option>8</option>
-              <option>16</option>
-              <option>32</option>
-            </select>
+            <Select defaultValue="8">
+              <SelectTrigger className="w-[70px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="8">8</SelectItem>
+                <SelectItem value="16">16</SelectItem>
+                <SelectItem value="32">32</SelectItem>
+              </SelectContent>
+            </Select>
             of 50
           </div>
         </div>
