@@ -411,7 +411,7 @@ export default function ProductDetailPage() {
     const [openSection, setOpenSection] = useState<string | null>(null);
     const [product, setProduct] = useState<Product | null>(null)
 
-    const {id}= useParams()
+    const {slug : id}= useParams()
     const search = useSearchParams()
     const bcCat = search.get('cat') || 'Category'
     const bcSub = search.get('sub') || 'Property'

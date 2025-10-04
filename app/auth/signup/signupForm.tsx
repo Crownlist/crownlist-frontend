@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUserSignupHook } from "@/lib/signup-hook";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -157,17 +158,18 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
             <div className="grid gap-3">
               <Label htmlFor="accountType">Account Type</Label>
-              <select
-                id="accountType"
+              <Select
                 {...register("accountType", { required: "Account type is required" })}
                 disabled={isLoading || googleLoading}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue=""
               >
-                <option value="" disabled>Select account type</option>
-                <option value="User">Buyer</option>
-                <option value="Seller">Seller</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select account type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="User">Buyer</SelectItem>
+                  <SelectItem value="Seller">Seller</SelectItem>
+                </SelectContent>
+              </Select>
               {errors.accountType && (
                 <p className="text-sm text-red-500">{errors.accountType.message}</p>
               )}

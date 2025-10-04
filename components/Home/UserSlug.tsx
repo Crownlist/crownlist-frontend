@@ -6,6 +6,7 @@ import Image from "next/image"
 import { ChevronRight, Flag, MessageSquare, Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const UserSlug = () => {
     const [activeTab, setActiveTab] = useState("details")
@@ -34,26 +35,26 @@ const UserSlug = () => {
           <div className="flex flex-row gap-3">
             <div className="flex items-center">
               <div className="w-5 h-5 mr-2 text-green-500">
-              <Image
-                src='/what.png'
-                alt='map'
-                width={30}
-                height={30}
-                className="w-full h-full object-cover"
-              />
+                <Image
+                  src='/what.png'
+                  alt='map'
+                  width={30}
+                  height={30}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span>081 0000 0000</span>
             </div>
             <div className="flex items-center">
               <div className="w-5 h-5 mr-2 ">
-              <Image
-                src='/gmail.png'
-                alt='map'
-                width={30}
-                height={30}
-                className="w-full h-full object-cover"
-              />
-            </div>
+                <Image
+                  src='/gmail.png'
+                  alt='map'
+                  width={30}
+                  height={30}
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <span>Oyekings@joelist.com.ng</span>
             </div>
           </div>
@@ -72,7 +73,7 @@ const UserSlug = () => {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button variant="outline" className="flex items-center gap-2 rounded-full shadow-none hover:shadow ">
+          <Button variant="outline" className="flex items-center gap-2 rounded-full shadow-none hover:shadow">
             <MessageSquare className="h-4 w-4" />
             Message user
           </Button>
@@ -91,23 +92,20 @@ const UserSlug = () => {
     {/* Tabs */}
     <div className="bg-[#f0eeff] rounded-full p-1 inline-flex mb-8 w-full ">
       <Link
-        href={`/admin/users`}
-        className={`px-6 py-2 rounded-full ${activeTab === "details" ? "bg-white text-[#1a0066] font-medium shadow-sm" : "text-gray-700 font-medium"
-          }`}
+        href="/admin/users"
+        className={`px-6 py-2 rounded-full ${activeTab === "details" ? "bg-white text-[#1a0066] font-medium shadow-sm" : "text-gray-700 font-medium"}`}
       >
         Details
       </Link>
       <Link
-        href={`/admin/users/products`}
-        className={`px-6 py-2 rounded-full ${activeTab === "products" ? "bg-white text-[#1a0066] font-medium shadow-sm" : "text-gray-700 font-medium"
-          }`}
+        href="/admin/users/products"
+        className={`px-6 py-2 rounded-full ${activeTab === "products" ? "bg-white text-[#1a0066] font-medium shadow-sm" : "text-gray-700 font-medium"}`}
       >
         Products
       </Link>
       <Link
-        href={`/admin/users/rating`}
-        className={`px-6 py-2 rounded-full ${activeTab === "rating" ? "bg-white text-[#1a0066] font-medium shadow-sm" : "text-gray-700 font-medium"
-          }`}
+        href="/admin/users/rating"
+        className={`px-6 py-2 rounded-full ${activeTab === "rating" ? "bg-white text-[#1a0066] font-medium shadow-sm" : "text-gray-700 font-medium"}`}
       >
         Rating
       </Link>
@@ -142,25 +140,29 @@ const UserSlug = () => {
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Country</label>
-          <div className="relative">
-            <select className="w-full h-10 px-3 py-2 bg-white border border-input rounded-md appearance-none">
-              <option>Nigeria</option>
-              <option>Ghana</option>
-              <option>Kenya</option>
-            </select>
-            <ChevronRight className="absolute right-3 top-3 h-4 w-4 rotate-90 text-gray-500" />
-          </div>
+          <Select defaultValue="Nigeria">
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Nigeria">Nigeria</SelectItem>
+              <SelectItem value="Ghana">Ghana</SelectItem>
+              <SelectItem value="Kenya">Kenya</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">State</label>
-          <div className="relative">
-            <select className="w-full h-10 px-3 py-2 bg-white border border-input rounded-md appearance-none">
-              <option>Kwara</option>
-              <option>Lagos</option>
-              <option>Abuja</option>
-            </select>
-            <ChevronRight className="absolute right-3 top-3 h-4 w-4 rotate-90 text-gray-500" />
-          </div>
+          <Select defaultValue="Kwara">
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Kwara">Kwara</SelectItem>
+              <SelectItem value="Lagos">Lagos</SelectItem>
+              <SelectItem value="Abuja">Abuja</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Address</label>

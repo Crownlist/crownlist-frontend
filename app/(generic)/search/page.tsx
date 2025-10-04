@@ -5,6 +5,7 @@ import { ChevronRight, Upload, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
 import { useState } from "react";
@@ -243,20 +244,22 @@ export default function SearchPage() {
                     </div>
                     <div>
                       <label className="block mb-1 text-sm">Category</label>
-                      <select
-                        name="category"
+                      <Select
                         value={formData.category}
-                        onChange={handleChange}
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
                         required
                       >
-                        <option value="">Select a category</option>
-                        {categories.map((cat) => (
-                          <option key={cat._id} value={cat.name}>
-                            {cat.name}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((cat) => (
+                            <SelectItem key={cat._id} value={cat.name}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <label className="block mb-1 text-sm">Image(s)</label>

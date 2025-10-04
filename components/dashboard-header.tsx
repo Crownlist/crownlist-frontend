@@ -3,20 +3,37 @@
 "use client"
 
 import Link from "next/link"
-import { Bell, ChevronDown, Search } from "lucide-react"
+import { Bell, ChevronDown, Search, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import LogoutModal from "./logout-modal"
+import { useState } from "react"
 
 export default function DashboardHeader() {
     // const { userData } = useSelector((state: RootState) => state.userData);
+    const [logoutModalOpen, setLogoutModalOpen] = useState(false)
 
     const {  data } = useGetAuthUser("User");
     const userData = data?.data.loggedInAccount
       
     console.log('disp', data)
+
+    const handleLogoutClick = () => {
+        setLogoutModalOpen(true)
+    }
+
+    const handleCloseLogoutModal = () => {
+        setLogoutModalOpen(false)
+    }
     return (
         <header className="bg-[#141414] text-white py-3 px-4 md:px-6 w-full sticky inset-0 z-[999]">
             <div className="flex items-center justify-between max-sm:justify-end">
@@ -59,20 +76,29 @@ export default function DashboardHeader() {
                         <span className="text-sm">Basic plan</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8 border border-gray-600">
-                            <AvatarImage src={ userData?.profilePicture ||"/profile.png"} alt="User" />
-                            <AvatarFallback>JA</AvatarFallback>
-                        </Avatar>
-                        <div className="hidden md:block">
-                            <div className="flex items-center">
-                                <span className="text-sm font-medium">{userData?.fullName}</span>
-                                <ChevronDown className="h-4 w-4 ml-1" />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
+                            <Avatar className="h-8 w-8 border border-gray-600">
+                                <AvatarImage src={ userData?.profilePicture ||"/profile.png"} alt="User" />
+                                <AvatarFallback>JA</AvatarFallback>
+                            </Avatar>
+                            <div className="hidden md:block">
+                                <div className="flex items-center">
+                                    <span className="text-sm font-medium">{userData?.fullName}</span>
+                                    <ChevronDown className="h-4 w-4 ml-1" />
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-48 mt-2">
+                            <DropdownMenuItem onClick={handleLogoutClick} className="cursor-pointer">
+                                <LogOut className="h-4 w-4 mr-2" />
+                                Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
+            <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
         </header>
     )
 }
