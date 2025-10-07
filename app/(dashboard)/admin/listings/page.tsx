@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -228,7 +228,7 @@ export default function AdminListings() {
   )
 
   // Fetch listings data
-  const fetchListings = async () => {
+  const fetchListings = useCallback(async () => {
     try {
       setIsLoading(true)
       const response = await apiClientAdmin.get(`/products/all?page=${currentPage}&limit=${limit}`)
@@ -239,11 +239,11 @@ export default function AdminListings() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [currentPage, limit])
 
   useEffect(() => {
     fetchListings()
-  }, [currentPage, limit])
+  }, [fetchListings])
 
   const toggleDropdown = (id: string) => {
     setActiveDropdown(activeDropdown === id ? null : id)

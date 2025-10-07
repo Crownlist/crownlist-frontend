@@ -76,7 +76,7 @@ export default function CategoryScroll() {
     const subcategories = category.subCategories || []
     if (subcategories.length === 0) {
       // If no subcategories, navigate directly to category
-      window.location.href = `/category/${category.slug}`
+      window.location.href = `/${category.slug}`
       return
     }
     
@@ -170,7 +170,7 @@ export default function CategoryScroll() {
               {(selectedCategory.subCategories || []).map((subcategory) => (
                 <li key={subcategory._id}>
                   <Link
-                    href={`/category/${selectedCategory.slug}?subcategory=${subcategory.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    href={`/${selectedCategory.slug}/${subcategory.slug}`}
                     className="block py-2 px-2 rounded hover:bg-gray-100 transition"
                     onClick={closeModal}
                   >

@@ -23,6 +23,7 @@ interface ProductCardProps {
   breadcrumbCat?: string
   breadcrumbSub?: string
   breadcrumbLabel?: string
+  useBreadcrumbRouting?: boolean
 }
 
 export default function ProductCard({
@@ -41,12 +42,17 @@ export default function ProductCard({
   breadcrumbCat,
   breadcrumbSub,
   breadcrumbLabel,
+  useBreadcrumbRouting = false,
 }: ProductCardProps) {
   const [liked, setLiked] = useState(false)
   const router = useRouter();
 
   
   const handleClick = () => {
+    if (useBreadcrumbRouting && breadcrumbCat && breadcrumbSub) {
+      router.push(`/${breadcrumbCat}/${breadcrumbSub}`)
+      return
+    }
     const params = new URLSearchParams()
     if (breadcrumbCat) params.set('cat', breadcrumbCat)
     if (breadcrumbSub) params.set('sub', breadcrumbSub)
@@ -131,4 +137,3 @@ export default function ProductCard({
     </div>
   )
 }
-
