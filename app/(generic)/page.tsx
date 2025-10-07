@@ -57,7 +57,7 @@ export default function Home() {
   }
 
   // Helper function to safely extract breadcrumb values
-  const getBreadcrumbValue = (value: any): string => {
+  const getBreadcrumbValue = (value: string | { slug?: string } | null | undefined): string => {
     if (typeof value === 'object' && value?.slug) return value.slug;
     if (typeof value === 'string' && value) return value;
     return "";
