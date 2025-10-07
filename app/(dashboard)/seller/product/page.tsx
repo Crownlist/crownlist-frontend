@@ -2,14 +2,15 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { apiClientUser } from "@/lib/interceptor";
-import { toast } from "sonner";
 import DeleteModal from "@/components/Home/DeleteModal";
 import { PromoteProductModal } from "@/components/promote-product-modal";
+import { apiClientUser } from "@/lib/interceptor";
+import { toast } from "sonner";
 
 export default function ProductDashboard() {
   const router = useRouter();
@@ -19,6 +20,9 @@ export default function ProductDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [promotingProductId, setPromotingProductId] = useState<string | null>(null);
+  const [declineModalOpen, setDeclineModalOpen] = useState(false);
+  const [declineMessage, setDeclineMessage] = useState<string | null>(null);
+  const [declineProductId, setDeclineProductId] = useState<string | null>(null);
 
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,6 +56,14 @@ export default function ProductDashboard() {
     }
   };
 
+
+  const handleDeclineMessageClick = async (reasonForDecline: string, productId: string) => {
+    setDeclineProductId(productId);
+    const message = reasonForDecline
+    setDeclineMessage(message);
+    setDeclineModalOpen(true);
+  };
+
   useEffect(() => {
     fetchProducts(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,7 +77,7 @@ export default function ProductDashboard() {
   const statusColor = {
     live: "bg-green-100 text-green-700",
     reviewing: "bg-yellow-100 text-yellow-800",
-    decline: "bg-red-100 text-red-700",
+    declined: "bg-red-100 text-red-700",
   } as const;
 
   return (
@@ -93,7 +105,7 @@ export default function ProductDashboard() {
 
           {/* Status Filters */}
           <div className="flex gap-1 sm:gap-2 mb-6 border-[1.5px] border-[#1F058F] p-2 rounded-md">
-            {["all", "live", "reviewing", "decline"].map((status) => (
+            {["all", "live", "reviewing", "declined"].map((status) => (
               <Button
                 key={status}
                 className={`px-4 sm:px-5 rounded-md ${activeFilter === status ? "bg-[#1F058F] hover:bg-[#2f0a94dc]" : ' text-black shadow-none bg-transparent hover:bg-transparent hover:text-[#1F058F]'} `}
@@ -126,6 +138,7 @@ export default function ProductDashboard() {
                 const primaryImg = Array.isArray(product?.images)
                   ? (product.images.find((img: any) => img?.isPrimary)?.url || product.images[0]?.url)
                   : undefined;
+                  // console.log("stattus", product)
                 const status = String(product?.status || '').toLowerCase() as keyof typeof statusColor;
                 return (
                   <div key={product?._id} className="flex max-md:flex-col flex-row bg-white rounded-xl shadow p-4 gap-5 md:gap-7  md:items-center  overflow-hidden">
@@ -164,6 +177,14 @@ export default function ProductDashboard() {
                             </div>
                             <div className="text-[#525252] text-sm underline hover:text-[#1F058F] ">Delete</div>
                           </Button>
+                          {status === 'declined' && (
+                            <Button className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]" onClick={() => handleDeclineMessageClick(product?.reasonForDecline, product?._id)}>
+                              <div className="flex">
+                                <Image src={'/post.svg'} width={15} height={15} alt='info' />
+                              </div>
+                              <div className="text-[#525252] hover:text-[#1F058F] text-sm underline">Decline Message</div>
+                            </Button>
+                          )}
                         </div>
                         <Button 
                           className="text-[#1F058F] border border-[#1F058F] hover:bg-[#2e0a94] bg-transparent hover:text-white px-1 lg:px-4 py-1 rounded-full text-[12px]"
@@ -210,6 +231,33 @@ export default function ProductDashboard() {
         onClose={() => setPromotingProductId(null)}
         productId={promotingProductId || ''}
       />
+
+      {/* Decline Message Modal */}
+      <Dialog open={declineModalOpen} onOpenChange={setDeclineModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Decline Message</DialogTitle>
+            <DialogDescription>
+              Product ID: {declineProductId}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-800">
+                {declineMessage || 'Loading decline message...'}
+              </p>
+            </div>
+            <div className="flex justify-end">
+              <Button
+                onClick={() => setDeclineModalOpen(false)}
+                className="bg-[#1F058F] hover:bg-[#2e0a94] text-white"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {activeTab == 'feedback' && (
         <>

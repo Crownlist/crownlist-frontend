@@ -12,6 +12,7 @@ import { uniqueCountries } from "@/constants/countries";
 import { countries } from "@/constants/countries";
 import { nigerianStates } from "../../constants/states";
 import { Eye, EyeOff, Loader2, X, Check } from "lucide-react";
+import ReactSelect from "react-select";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { apiClientUser } from "@/lib/interceptor";
 import { toast } from "sonner";
@@ -29,7 +30,7 @@ interface ProfileFormData {
   email: string;
   phone: string;
   country: string;
-  state: string;
+  city: string;
   address: string;
   countryCode: string;
 }
@@ -50,7 +51,7 @@ export default function ProfilePage() {
     phoneNumber: '',
     email: '',
     country: '',
-    state: '',
+    city: '',
     address: '',
     profilePicture: ''
   })
@@ -82,8 +83,8 @@ export default function ProfilePage() {
     fullName: "",
     email: "",
     phone: "",
-    country: "Nigeria",
-    state: "",
+    country: "",
+    city: "",
     address: "",
     countryCode: "+234",
   });
@@ -97,12 +98,13 @@ export default function ProfilePage() {
   // Update form data when userData changes
   useEffect(() => {
     if (userData) {
+      console.log('cityy', userData)
       setProfileFormData({
         fullName: userData?.fullName || "",
         email: userData?.email || "",
         phone: userData?.phoneNumber || "",
-        country: userData?.country || "Nigeria",
-        state: userData?.state || "",
+        country: userData?.country || "",
+        city: userData?.city || "",
         address: userData?.address || "",
         countryCode: "+234",
       });
@@ -241,7 +243,7 @@ export default function ProfilePage() {
         fullName: profileFormData.fullName,
         phoneNumber: profileFormData.phone,
         country: profileFormData.country,
-        city: profileFormData.state, // assuming city maps to state
+        city: profileFormData.city, // assuming city maps to state
         address: profileFormData.address,
         profilePicture: profilePictureUrl,
         accountType: "User" // or whatever account type is appropriate
@@ -322,7 +324,7 @@ export default function ProfilePage() {
         email: userData?.email || "",
         phone: userData?.phoneNumber || "",
         country: userData?.country || "Nigeria",
-        state: userData?.state || "",
+        city: userData?.city || "",
         address: userData?.address || "",
         countryCode: "+234",
       });
@@ -562,53 +564,66 @@ export default function ProfilePage() {
 
               <div className="space-y-2">
                 <Label htmlFor="country">Country</Label>
-                <Select
-                  value={profileFormData.country}
-                  onValueChange={(value) => {
+                <ReactSelect
+                  id="country"
+                  value={countries.find(c => c.name === profileFormData.country) ? { value: profileFormData.country, label: profileFormData.country } : null}
+                  onChange={(option) => {
                     setProfileFormData((prev) => ({
                       ...prev,
-                      country: value,
-                      state: "",
+                      country: option?.value || "",
+                      city: "",
                     }));
                   }}
-                  disabled={isProfileSubmitting}
-                >
-                  <SelectTrigger className="w-full cursor-pointer">
-                    <SelectValue placeholder="Nigeria" />
-                  </SelectTrigger>
-                  <SelectContent className="max-w-[200px] max-h-[250px]">
-                    {countries.map((country, index) => (
-                      <SelectItem
-                        key={`${country.code}-${country.name}-${index}`}
-                        value={country.name}
-                      >
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  options={countries.map(country => ({ value: country.name, label: country.name }))}
+                  isDisabled={isProfileSubmitting}
+                  placeholder="Select country"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: '40px',
+                      borderColor: '#d1d5db',
+                      '&:hover': {
+                        borderColor: '#9ca3af'
+                      }
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      maxHeight: '250px'
+                    })
+                  }}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <Select
-                  value={profileFormData.state}
-                  onValueChange={(value) =>
-                    setProfileFormData((prev) => ({ ...prev, state: value }))
-                  }
-                  disabled={isProfileSubmitting}
-                >
-                  <SelectTrigger className="w-full cursor-pointer">
-                    <SelectValue placeholder="Select a state" />
-                  </SelectTrigger>
-                  <SelectContent className="max-w-[200px] max-h-[250px]">
-                    {nigerianStates.map((state) => (
-                      <SelectItem key={state.value} value={state.value}>
-                        {state.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="city">State</Label>
+                <ReactSelect
+                  id="city"
+                  value={nigerianStates.find(s => s.value === profileFormData.city) ? { value: profileFormData.city, label: nigerianStates.find(s => s.value === profileFormData.city)!.label } : null}
+                  onChange={(option) => {
+                    setProfileFormData((prev) => ({ ...prev, city: option?.value || "" }));
+                  }}
+                  options={nigerianStates.filter(state => state.value !== "Select a state").map(state => ({ value: state.value, label: state.label }))}
+                  isDisabled={isProfileSubmitting}
+                  placeholder="Select a state"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: '40px',
+                      borderColor: '#d1d5db',
+                      '&:hover': {
+                        borderColor: '#9ca3af'
+                      }
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      maxHeight: '250px'
+                    })
+                  }}
+                />
               </div>
 
               <div className="space-y-2">
