@@ -13,7 +13,7 @@ import { useProducts, ApiProduct } from "@/hooks/useProducts"
 import { useCategories } from "@/hooks/useCategories"
 import { useState, useEffect, useRef } from "react"
 import { Product } from "@/types/product/product"
-import { Subcategory } from "@/types/category/category"
+import { Subcategory, Category } from "@/types/category/category"
 import { apiClientPublic } from "@/lib/interceptor"
 
 export default function Home() {
@@ -56,6 +56,13 @@ export default function Home() {
     router.push(url)
   }
 
+  // Helper function to safely extract breadcrumb values
+  const getBreadcrumbValue = (value: string | { slug?: string } | null | undefined): string => {
+    if (typeof value === 'object' && value?.slug) return value.slug;
+    if (typeof value === 'string' && value) return value;
+    return "";
+  }
+
   // Helper function to convert API Product to ProductSection Product
   const convertApiProductToSectionProduct = (p: Product) => ({
     id: p._id,
@@ -67,8 +74,8 @@ export default function Home() {
     location: p.listingLocation ? `${p.listingLocation.city || ''}${p.listingLocation.city ? ', ' : ''}${p.listingLocation.country || ''}` : "",
     distance: "",
     condition: "New",
-    breadcrumbCat: "Category",
-    breadcrumbSub: "Subcategory",
+    breadcrumbCat: typeof p.category === 'object' ? (p.category as Category).slug : (p.category as string),
+    breadcrumbSub: typeof p.subCategory === 'object' ? (p.subCategory as Subcategory).slug : (p.subCategory as string),
     breadcrumbLabel: p.name,
   })
 
@@ -118,13 +125,14 @@ export default function Home() {
                   distance: "",
                   labels: [],
                   condition: "New",
-                  breadcrumbCat: "Category",
-                  breadcrumbSub: "Subcategory",
+                  breadcrumbCat: getBreadcrumbValue(p.category) || "category",
+                  breadcrumbSub: getBreadcrumbValue(p.subCategory) || "subcategory",
                   breadcrumbLabel: p.name,
                 }))}
                 initialView="grid"
                 showSeeMore
-                onSeeMoreClick={() => handleSeeMore("/sponsored")}
+                onSeeMoreClick={() => handleSeeMore("/search")}
+                useBreadcrumbRouting={true}
               />
             )}
 

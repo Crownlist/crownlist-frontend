@@ -30,6 +30,7 @@ interface ProductSectionProps {
   initialView?: "grid" | "list"
   showSeeMore?: boolean
   onSeeMoreClick?: () => void
+  useBreadcrumbRouting?: boolean
 }
 
 export default function ProductSection({
@@ -39,6 +40,7 @@ export default function ProductSection({
   initialView = "grid",
   showSeeMore = false,
   onSeeMoreClick,
+  useBreadcrumbRouting = false,
 }: ProductSectionProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">(initialView)
 
@@ -71,6 +73,7 @@ export default function ProductSection({
             breadcrumbCat={product.breadcrumbCat}
             breadcrumbSub={product.breadcrumbSub}
             breadcrumbLabel={product.breadcrumbLabel}
+            useBreadcrumbRouting={useBreadcrumbRouting}
           />
         ))}
       </div>
@@ -99,4 +102,3 @@ export default function ProductSection({
     </div>
   )
 }
-
