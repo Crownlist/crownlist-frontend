@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiClientAdmin } from "@/lib/interceptor";
 import { PromoteProductModal } from "@/components/promote-product-modal";
 import { toast } from "sonner";
@@ -107,17 +108,19 @@ export default function SellerProductDetailsDynamic() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Status</label>
-            <select
-              className="w-full p-2 border rounded"
+            <Select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onValueChange={(value) => setStatus(value)}
             >
-              <option value="">Select status</option>
-              <option value="live">Live</option>
-              <option value="declined">Declined</option>
-              <option value="draft">Draft</option>
-              {/* <option value="draft">Draft</option> */}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="live">Live</SelectItem>
+                <SelectItem value="declined">Declined</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {status === 'declined' && (
@@ -193,7 +196,7 @@ export default function SellerProductDetailsDynamic() {
 
       {/* Hero image with carousel controls when multiple images exist */}
       <div className="relative w-full h-[220px] md:h-[420px] rounded-md overflow-hidden bg-gray-100">
-        <Image src={primary} alt={data.name} fill className="object-cover" />
+        <Image src={primary} alt={data.name} fill className="object-contain" />
         {imgs.length > 1 && (
           <>
             <button

@@ -76,12 +76,12 @@ export default function UsersPage() {
   }, [data, searchTerm, accountType, data?.data?.users])
 
   // Calculate stats
-  const totalUsers = data?.data?.totalUsers || 0
-  const activeUsers = data?.data?.users?.filter(user => user.subscriptionStatus === 'active').length || 0
-  const inactiveUsers = data?.data?.users?.filter(user => user.subscriptionStatus === 'inactive').length || 0
-  const sellerUsers = data?.data?.users?.filter(user => user.accountType === 'Seller').length || 0
-  const regularUsers = data?.data?.users?.filter(user => user.accountType === 'User').length || 0
-
+  const totalUsers = data?.data?.stats?.totalUsers || 0
+  const activeUsers = data?.data?.stats?.activeUsers || 0
+  const inactiveUsers = data?.data?.stats?.inactiveUsers || 0
+  const sellerUsers = data?.data?.stats?.sellers || 0
+  const regularUsers = data?.data?.stats?.regularUsers || 0
+  
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">

@@ -23,6 +23,13 @@ export interface UsersResponse {
   status: string;
   data: {
     users: User[];
+    stats: {
+      totalUsers: number,
+      activeUsers: number,
+      inactiveUsers: number,
+      sellers: number,
+      regularUsers: number
+  },
     totalUsers: number;
     totalPages: number;
     currentPage: number;

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import Link from "next/link";
 import { ChevronRight, Upload, Heart } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories"
@@ -211,18 +212,22 @@ const { categories } = useCategories()
                     {/* New Category Select Field */}
                     <div>
                       <label className="block mb-1 text-sm">Category</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
-                        <option value="">Select a category</option>
-                        <option value="phones-tablets">Phones & Tablets</option>
-                        <option value="land">Land</option>
-                        <option value="property">Property</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="home-appliances">Home Appliances</option>
-                        <option value="automotive">Automotive</option>
-                        <option value="fashion">Fashion & Accessories</option>
-                        <option value="services">Services</option>
-                        <option value="other">Other</option>
-                      </select>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="phones-tablets">Phones & Tablets</SelectItem>
+                          <SelectItem value="land">Land</SelectItem>
+                          <SelectItem value="property">Property</SelectItem>
+                          <SelectItem value="electronics">Electronics</SelectItem>
+                          <SelectItem value="home-appliances">Home Appliances</SelectItem>
+                          <SelectItem value="automotive">Automotive</SelectItem>
+                          <SelectItem value="fashion">Fashion & Accessories</SelectItem>
+                          <SelectItem value="services">Services</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>

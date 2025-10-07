@@ -1,16 +1,27 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import { CustomSidebarTrigger, SidebarTrigger } from './ui/cu-sidebar'
 import Link from 'next/link'
 import Image from 'next/image'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { useGetAuthUser } from '@/lib/useGetAuthUser'
+import { LogOut } from 'lucide-react'
+import LogoutModal from './logout-modal'
 
 const BuyerHeader = () => {
-    // const [openChev, setOpenChev] = useState(false)
+    const [logoutModalOpen, setLogoutModalOpen] = useState(false)
     const {  data } = useGetAuthUser("User");
     const userData = data?.data.loggedInAccount
+
+    const handleLogoutClick = () => {
+        setLogoutModalOpen(true)
+    }
+
+    const handleCloseLogoutModal = () => {
+        setLogoutModalOpen(false)
+    }
+
     return (
         <>
             <header className=' flex items-center justify-between border-b px-3 py-2 bg-white sticky inset-0 z-[999]'>
@@ -54,12 +65,17 @@ const BuyerHeader = () => {
                           </Link>
                         </DropdownMenuItem>
                       ))} */}
+                                <DropdownMenuItem onClick={handleLogoutClick} className="cursor-pointer">
+                                    <LogOut className="h-4 w-4 mr-2" />
+                                    Logout
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                 </div>
                 <CustomSidebarTrigger />
             </header>
+            <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
         </>
     )
 }

@@ -28,6 +28,7 @@ import {
 import CategoryModal from "./Home/CategoryModal"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
 import { useCategories } from "@/hooks/useCategories"
+import LogoutModal from "./logout-modal"
 
 
 
@@ -46,6 +47,7 @@ const Header = ({ hidden }: props) => {
   const pathname = usePathname()
   const [openChev, setOpenChev] = useState(false)
   const [openCat, setOpenCat] = useState(false)
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false)
 
   // Fetch categories data
   const { categories, loading: categoriesLoading } = useCategories()
@@ -77,8 +79,15 @@ const Header = ({ hidden }: props) => {
     { title: "Saved", link: '/buyer/saved' },
     { title: "Sellers hub", link: '/seller/dashboard' },
     { title: "User hub", link: '/buyer/profile' },
-    { title: "Logout", link: "/" },
   ]
+
+  const handleLogoutClick = () => {
+    setLogoutModalOpen(true)
+  }
+
+  const handleCloseLogoutModal = () => {
+    setLogoutModalOpen(false)
+  }
 
   const handleSearch = () => {
     if (search == '' || searchCountry == "") {
@@ -642,6 +651,9 @@ const Header = ({ hidden }: props) => {
                           </Link>
                         </DropdownMenuItem>
                       ))}
+                      <DropdownMenuItem onClick={handleLogoutClick}>
+                        Logout
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
@@ -668,6 +680,7 @@ const Header = ({ hidden }: props) => {
         </div>
         {/* category modal */}
         <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
+        <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
       </div>
     </nav>
   )
