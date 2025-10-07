@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import ReactSelect from "react-select";
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -900,29 +900,54 @@ export default function ProductPostFlow() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                                <Select value={selectedCountry} onValueChange={(v) => { setSelectedCountry(v); setSelectedCity('') }}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select country" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {countryOptions.map(ct => (
-                                            <SelectItem key={ct} value={ct}>{ct}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <ReactSelect
+                                    value={countryOptions.find(ct => ct === selectedCountry) ? { value: selectedCountry, label: selectedCountry } : null}
+                                    onChange={(option) => { setSelectedCountry(option?.value || ''); setSelectedCity('') }}
+                                    options={countryOptions.map(ct => ({ value: ct, label: ct }))}
+                                    placeholder="Select country"
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    styles={{
+                                        control: (base) => ({
+                                            ...base,
+                                            minHeight: '40px',
+                                            borderColor: '#d1d5db',
+                                            '&:hover': {
+                                                borderColor: '#9ca3af'
+                                            }
+                                        }),
+                                        menu: (base) => ({
+                                            ...base,
+                                            maxHeight: '250px'
+                                        })
+                                    }}
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                <Select disabled={!selectedCountry} value={selectedCity} onValueChange={setSelectedCity}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={selectedCountry ? 'Select city' : 'Select country first'} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {(cityOptionsMap[selectedCountry] || []).map(city => (
-                                            <SelectItem key={city} value={city}>{city}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <ReactSelect
+                                    isDisabled={!selectedCountry}
+                                    value={(cityOptionsMap[selectedCountry] || []).find(city => city === selectedCity) ? { value: selectedCity, label: selectedCity } : null}
+                                    onChange={(option) => setSelectedCity(option?.value || '')}
+                                    options={(cityOptionsMap[selectedCountry] || []).map(city => ({ value: city, label: city }))}
+                                    placeholder={selectedCountry ? 'Select city' : 'Select country first'}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    styles={{
+                                        control: (base) => ({
+                                            ...base,
+                                            minHeight: '40px',
+                                            borderColor: '#d1d5db',
+                                            '&:hover': {
+                                                borderColor: '#9ca3af'
+                                            }
+                                        }),
+                                        menu: (base) => ({
+                                            ...base,
+                                            maxHeight: '250px'
+                                        })
+                                    }}
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
@@ -940,20 +965,29 @@ export default function ProductPostFlow() {
 
                             <div className="w-full">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Sub-category</label>
-                                <Select
-                                    value={selectedSubcategory || ""}
-                                    onValueChange={setSelectedSubcategory}
-                                    disabled={loading.subcategories}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder={loading.subcategories ? "Loading..." : "Select sub-category"} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {subcategories.map(sub => (
-                                            <SelectItem key={sub._id} value={sub._id}>{sub.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <ReactSelect
+                                    value={subcategories.find(sub => sub._id === selectedSubcategory) ? { value: selectedSubcategory, label: subcategories.find(sub => sub._id === selectedSubcategory)!.name } : null}
+                                    onChange={(option) => setSelectedSubcategory(option?.value || null)}
+                                    options={subcategories.map(sub => ({ value: sub._id, label: sub.name }))}
+                                    isDisabled={loading.subcategories}
+                                    placeholder={loading.subcategories ? "Loading..." : "Select sub-category"}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    styles={{
+                                        control: (base) => ({
+                                            ...base,
+                                            minHeight: '40px',
+                                            borderColor: '#d1d5db',
+                                            '&:hover': {
+                                                borderColor: '#9ca3af'
+                                            }
+                                        }),
+                                        menu: (base) => ({
+                                            ...base,
+                                            maxHeight: '250px'
+                                        })
+                                    }}
+                                />
                             </div>
 
                             <div>
@@ -1113,19 +1147,28 @@ export default function ProductPostFlow() {
                                                     ) : facility.dataType === "array" ? (
                                                         <div className="space-y-2  items-center">
                                                             {facility.selectType === 'single' ? (
-                                                                <Select
-                                                                    value={getFacilityArrayValue(getFacilityKey(facility))[0] || ""}
-                                                                    onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val ? [val] : [])}
-                                                                >
-                                                                    <SelectTrigger className="w-full">
-                                                                        <SelectValue placeholder={facility.description || "Select option"} />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        {getArrayOptions(facility).map(opt => (
-                                                                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                                                        ))}
-                                                                    </SelectContent>
-                                                                </Select>
+                                                                <ReactSelect
+                                                                    value={getFacilityArrayValue(getFacilityKey(facility))[0] ? { value: getFacilityArrayValue(getFacilityKey(facility))[0], label: getFacilityArrayValue(getFacilityKey(facility))[0] } : null}
+                                                                    onChange={(option) => handleFacilityChange(getFacilityKey(facility), option?.value ? [option.value] : [])}
+                                                                    options={getArrayOptions(facility).map(opt => ({ value: opt, label: opt }))}
+                                                                    placeholder={facility.description || "Select option"}
+                                                                    className="react-select-container"
+                                                                    classNamePrefix="react-select"
+                                                                    styles={{
+                                                                        control: (base) => ({
+                                                                            ...base,
+                                                                            minHeight: '40px',
+                                                                            borderColor: '#d1d5db',
+                                                                            '&:hover': {
+                                                                                borderColor: '#9ca3af'
+                                                                            }
+                                                                        }),
+                                                                        menu: (base) => ({
+                                                                            ...base,
+                                                                            maxHeight: '250px'
+                                                                        })
+                                                                    }}
+                                                                />
                                                             ) : (
                                                                 <div className="flex flex-wrap gap-3 items-center">
                                                                     {getArrayOptions(facility).map((opt, index) => {
@@ -1144,20 +1187,29 @@ export default function ProductPostFlow() {
                                                             )}
                                                         </div>
                                                     ) : facility.dataType === "object" ? (
-                                                        <Select
-                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
-                                                            onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
-                                                            disabled={loadingObjectFields[getFacilityKey(facility)]}
-                                                        >
-                                                            <SelectTrigger className="w-full">
-                                                                <SelectValue placeholder={loadingObjectFields[getFacilityKey(facility)] ? "Loading..." : facility.description || "Select option"} />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {(objectFieldOptions[getFacilityKey(facility)] || []).map(opt => (
-                                                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
+                                                        <ReactSelect
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) ? { value: facilityValues[getFacilityKey(facility)] as string, label: facilityValues[getFacilityKey(facility)] as string } : null}
+                                                            onChange={(option) => handleFacilityChange(getFacilityKey(facility), option?.value || '')}
+                                                            options={(objectFieldOptions[getFacilityKey(facility)] || []).map(opt => ({ value: opt, label: opt }))}
+                                                            isDisabled={loadingObjectFields[getFacilityKey(facility)]}
+                                                            placeholder={loadingObjectFields[getFacilityKey(facility)] ? "Loading..." : facility.description || "Select option"}
+                                                            className="react-select-container"
+                                                            classNamePrefix="react-select"
+                                                            styles={{
+                                                                control: (base) => ({
+                                                                    ...base,
+                                                                    minHeight: '40px',
+                                                                    borderColor: '#d1d5db',
+                                                                    '&:hover': {
+                                                                        borderColor: '#9ca3af'
+                                                                    }
+                                                                }),
+                                                                menu: (base) => ({
+                                                                    ...base,
+                                                                    maxHeight: '250px'
+                                                                })
+                                                            }}
+                                                        />
                                                     ) : (
                                                         <Input
                                                             placeholder={facility.description}
@@ -1198,19 +1250,28 @@ export default function ProductPostFlow() {
                                                     ) : facility.dataType === "array" ? (
                                                         <div className="space-y-2  items-center">
                                                             {facility.selectType === 'single' ? (
-                                                                <Select
-                                                                    value={getFacilityArrayValue(getFacilityKey(facility))[0] || ""}
-                                                                    onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val ? [val] : [])}
-                                                                >
-                                                                    <SelectTrigger className="w-full">
-                                                                        <SelectValue placeholder={facility.description || "Select option"} />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent>
-                                                                        {getArrayOptions(facility).map(opt => (
-                                                                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                                                        ))}
-                                                                    </SelectContent>
-                                                                </Select>
+                                                                <ReactSelect
+                                                                    value={getFacilityArrayValue(getFacilityKey(facility))[0] ? { value: getFacilityArrayValue(getFacilityKey(facility))[0], label: getFacilityArrayValue(getFacilityKey(facility))[0] } : null}
+                                                                    onChange={(option) => handleFacilityChange(getFacilityKey(facility), option?.value ? [option.value] : [])}
+                                                                    options={getArrayOptions(facility).map(opt => ({ value: opt, label: opt }))}
+                                                                    placeholder={facility.description || "Select option"}
+                                                                    className="react-select-container"
+                                                                    classNamePrefix="react-select"
+                                                                    styles={{
+                                                                        control: (base) => ({
+                                                                            ...base,
+                                                                            minHeight: '40px',
+                                                                            borderColor: '#d1d5db',
+                                                                            '&:hover': {
+                                                                                borderColor: '#9ca3af'
+                                                                            }
+                                                                        }),
+                                                                        menu: (base) => ({
+                                                                            ...base,
+                                                                            maxHeight: '250px'
+                                                                        })
+                                                                    }}
+                                                                />
                                                             ) : (
                                                                 <div className="flex flex-wrap gap-3  items-center">
                                                                     {getArrayOptions(facility).map((opt, index) => {
@@ -1229,20 +1290,29 @@ export default function ProductPostFlow() {
                                                             )}
                                                         </div>
                                                     ) : facility.dataType === "object" ? (
-                                                        <Select
-                                                            value={(facilityValues[getFacilityKey(facility)] as string) || ""}
-                                                            onValueChange={(val) => handleFacilityChange(getFacilityKey(facility), val)}
-                                                            disabled={loadingObjectFields[getFacilityKey(facility)]}
-                                                        >
-                                                            <SelectTrigger className="w-full">
-                                                                <SelectValue placeholder={loadingObjectFields[getFacilityKey(facility)] ? "Loading..." : facility.description || "Select option"} />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {(objectFieldOptions[getFacilityKey(facility)] || []).map(opt => (
-                                                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
+                                                        <ReactSelect
+                                                            value={(facilityValues[getFacilityKey(facility)] as string) ? { value: facilityValues[getFacilityKey(facility)] as string, label: facilityValues[getFacilityKey(facility)] as string } : null}
+                                                            onChange={(option) => handleFacilityChange(getFacilityKey(facility), option?.value || '')}
+                                                            options={(objectFieldOptions[getFacilityKey(facility)] || []).map(opt => ({ value: opt, label: opt }))}
+                                                            isDisabled={loadingObjectFields[getFacilityKey(facility)]}
+                                                            placeholder={loadingObjectFields[getFacilityKey(facility)] ? "Loading..." : facility.description || "Select option"}
+                                                            className="react-select-container"
+                                                            classNamePrefix="react-select"
+                                                            styles={{
+                                                                control: (base) => ({
+                                                                    ...base,
+                                                                    minHeight: '40px',
+                                                                    borderColor: '#d1d5db',
+                                                                    '&:hover': {
+                                                                        borderColor: '#9ca3af'
+                                                                    }
+                                                                }),
+                                                                menu: (base) => ({
+                                                                    ...base,
+                                                                    maxHeight: '250px'
+                                                                })
+                                                            }}
+                                                        />
                                                     ) : (
                                                         <Input
                                                             placeholder={facility.description}

@@ -192,7 +192,7 @@ export default function UsersPage() {
                     <TableHead>Email</TableHead>
                     {/* <TableHead>User ID</TableHead> */}
                     <TableHead>Account Type</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Subscription Status</TableHead>
                     <TableHead>Joined Date</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>

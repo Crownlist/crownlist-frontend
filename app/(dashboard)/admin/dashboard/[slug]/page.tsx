@@ -127,6 +127,7 @@ export default function SellerProductDetailsDynamic() {
             <div>
               <label className="block text-sm font-medium mb-1">Reason for Decline</label>
               <textarea
+                key="reason-textarea"
                 className="w-full p-2 border rounded"
                 rows={3}
                 placeholder="Please provide a reason for declining this listing"
