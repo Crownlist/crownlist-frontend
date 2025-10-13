@@ -12,315 +12,44 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import ProductDetails from "@/components/Home/ProductDetails"
 // import { number } from "zod"
 import { useParams, useSearchParams } from "next/navigation"
-
-
-// this is the original proudct detail page
-const popularItems = [
-    {
-      id: "1",
-      image: "/product1.png",
-      title: "The Green Sofa",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦85,000",
-      time: "2 hours ago",
-      location: "Lekki, Lagos",
-      distance: "3km away",
-      labels: ["Furniture", "Home"],
-      condition: "New",
-    },
-    {
-      id: "2",
-      image: "/product2.png",
-      title: "Dr Andrews Glasgow Stove",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Kitchen", "Appliances"],
-      condition: "Used",
-    },
-    {
-      id: "3",
-      image: "/product3.png",
-      title: "AMOLED Touch Screen Laptop",
-      description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
-      price: "₦625,000",
-      time: "1 day ago",
-      location: "VI, Lagos",
-      distance: "7km away",
-      labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "Used",
-    },
-    {
-      id: "4",
-      image: "/product4.png",
-      title: "SamsungGalaxy Note20 5G",
-      description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
-      price: "₦350,000",
-      time: "5 hours ago",
-      location: "Ajah, Lagos",
-      distance: "12km away",
-      labels: ["Phone", "Samsung", "Gadget"],
-      condition: "New",
-    },
-  ]
-  
-   const servicesItems = [
-    {
-      id: "5",
-      image: "/product1.png",
-      title: "Men thrift",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦25,000",
-      time: "2 hours ago",
-      location: "Surulere, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-    {
-      id: "6",
-      image: "/product2.png",
-      title: "Table and 2 folding chairs",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦35,000",
-      time: "3 hours ago",
-      location: "Yaba, Lagos",
-      distance: "5km away",
-      labels: ["Furniture", "Outdoor"],
-      condition: "New",
-    },
-    {
-      id: "7",
-      image: "/product3.png",
-      title: "Women thrift",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "Used",
-    },
-    {
-      id: "8",
-      image: "/product4.png",
-      title: "Men shirts",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-  ]
-  
-   const phonesItems = [
-    {
-      id: "9",
-      image: "/product1.png",
-      title: "SamsungGalaxy Note20 5G",
-      description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
-      price: "₦350,000",
-      time: "5 hours ago",
-      location: "Ajah, Lagos",
-      distance: "12km away",
-      labels: ["Phone", "Samsung", "Gadget"],
-      condition: "New",
-    },
-    {
-      id: "10",
-      image: "/product2.png",
-      title: "AMOLED Touch Screen Laptop",
-      description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
-      price: "₦625,000",
-      time: "1 day ago",
-      location: "VI, Lagos",
-      distance: "7km away",
-      labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
-    },
-    {
-      id: "11",
-      image: "/product4.png",
-      title: "Men shirts",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "Used",
-    },
-    {
-      id: "12",
-      image: "/product2.png",
-      title: "Lenovo PC",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-  ]
-  
-  const propertiesItems = [
-    {
-      id: "13",
-      image: "/product1.png",
-      title: "Table and 2 folding chairs",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦35,000",
-      time: "3 hours ago",
-      location: "Yaba, Lagos",
-      distance: "5km away",
-      labels: ["Furniture", "Outdoor"],
-      condition: "New",
-    },
-    {
-      id: "14",
-      image: "/product2.png",
-      title: "Small space PC gaming",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
-    },
-    {
-      id: "15",
-      image: "/product3.png",
-      title: "Samsung s25 Ultra",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "Used",
-    },
-    {
-      id: "16",
-      image: "/product2.png",
-      title: "Small space PC gaming",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
-    },
-  ]
-  
-     const sponsoredItems = [
-      {
-        id: "17",
-        title: "Men tops",
-        description: "Brand new 2018 Mercedes benz viano/sprinter ...",
-        location: "Lagos, Amuwo-Odofin",
-        category: "Hand craft",
-        price: "₦32,695,000",
-        image:
-          "/product1.png",
-      },
-      {
-        id: "18",
-        title: "Women's Dresses",
-        description: "Premium quality summer collection 2023",
-        location: "Lagos, Ikeja",
-        category: "Fashion",
-        price: "₦15,500",
-        image: "/product2.png",
-      },
-      {
-        id: "19",
-        title: "Casual Shoes",
-        description: "Comfortable leather shoes for everyday wear",
-        location: "Abuja, Central",
-        category: "Footwear",
-        price: "₦22,800",
-        image: "/product3.png",
-      },
-    ]
-
-
-interface Product {
-    id: string;
-    title: string;
-    postedDate: string;
-    condition: "Brand New" | "Used";
-    description?: string;
-    location?: string;
-    features?: string[];
-    price?: string;
-    image?: string;
-  }
+import { apiClientPublic, apiClientUser } from "@/lib/interceptor"
 
 
 
- const similarProducts: Product[] = [
-        {
-            id: "1",
-            title: "The Green hostel",
-            description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
-            location: "Eleko",
-            features: ["One room", "Gate"],
-            price: "₦95,232",
-            image: "/product1.png",
-            condition: "Used",
-            postedDate: "12/1/2024",
-        },
-        {
-            id: "2",
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product2.png",
-            postedDate: "12/2/2024",
-            condition: "Brand New",
-        },
-        {
-            id: '3',
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product4.png",
-            postedDate: "12/3/2024",
-            condition: "Used",
+export default function ProductDetailPage() {
+    const [currentImage, setCurrentImage] = useState(0)
+    const [expandedSections, setExpandedSections] = useState({
+        description: false,
+        overview: false,
+        delivery: true,
+        reviews: false,
+    })
+    const [openSection, setOpenSection] = useState<string | null>(null);
+    const [product, setProduct] = useState<any | null>(null)
+    const [images, setImages] = useState<string[]>([
+        "/product1.png",
+        "/product2.png",
+        "/product3.png",
+        "/product4.png",
+    ])
 
-        },
-        {
-            id: '4',
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product2.png",
-            postedDate: "12/4/2024",
-            condition: "Brand New",
+    const [currentProduct, setCurrentProduct] = useState<any>({
+        id: "1",
+        title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
+        postedDate: new Date("2024-01-12").toLocaleDateString(),
+        condition: "Brand New"
+    });
 
-        },
-    ]
+    const [apiProduct, setApiProduct] = useState<any | null>(null);
 
+    const safetyTips = [
+        "Do not send money or personal information until you’ve seen the product.",
+        "Meet the seller in a safe and public location.",
+        "Inspect the product thoroughly before payment.",
+        "Avoid deals that seem too good to be true.",
+        "Use secure payment methods; avoid cash for high-value items.",
+    ];
 
-    
-    //Reviews
     const reviews = [
         {
             id: 1,
@@ -353,63 +82,30 @@ interface Product {
         },
     ];
 
-
-    // Product images
-    const images = [
-        "/product1.png",
-        "/product2.png",
-        "/product3.png",
-        "/product4.png",
-    ]
-
-
-
-      const currentProduct: Product = {
-        // id: productId || "1",
-        id: "1",
-        title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
-        postedDate: "12/1/2024", 
-        condition: "Brand New"
-      };
-    
-
-   
-
-      const safetyTips = [
-        "Do not send money or personal information until you’ve seen the product.",
-        "Meet the seller in a safe and public location.",
-        "Inspect the product thoroughly before payment.",
-        "Avoid deals that seem too good to be true.",
-        "Use secure payment methods; avoid cash for high-value items.",
+    const similarProducts: any[] = [
+        {
+            id: "1",
+            title: "The Green hostel",
+            description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
+            location: "Eleko",
+            features: ["One room", "Gate"],
+            price: "₦95,232",
+            image: "/product1.png",
+            condition: "Used",
+            postedDate: "12/1/2024",
+        },
+        {
+            id: "2",
+            title: "St Andrews Glasgow Green",
+            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
+            location: "Poly gate",
+            features: ["Room & parlor", "24hrs solar"],
+            price: "₦595,232",
+            image: "/product2.png",
+            postedDate: "12/2/2024",
+            condition: "Brand New",
+        },
     ];
-
-
-
-
-    const products =[
-        ...propertiesItems,
-        ...phonesItems,
-        ...sponsoredItems,
-        ...popularItems,
-        ...servicesItems,
-    ];
-
-
-
-
-
-
-
-export default function ProductDetailPage() {
-    const [currentImage, setCurrentImage] = useState(0)
-    const [expandedSections, setExpandedSections] = useState({
-        description: false,
-        overview: false,
-        delivery: true,
-        reviews: false,
-    })
-    const [openSection, setOpenSection] = useState<string | null>(null);
-    const [product, setProduct] = useState<Product | null>(null)
 
     const {slug : id}= useParams()
     const search = useSearchParams()
@@ -430,6 +126,7 @@ export default function ProductDetailPage() {
     ];
 
 
+
    
     // Toggle section expansion
     const toggleSection = (section: string) => {
@@ -447,18 +144,41 @@ export default function ProductDetailPage() {
     const prevImage = () => {
         setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))
     }
-
-    useEffect(() => { 
-        const productItem = products.find((item) => item.id === id) as Product | undefined;
-        // Graceful fallback: if not found, default to first popular item
-        setProduct(productItem || (popularItems[0] as unknown as Product));
+    useEffect(() => {
+        if (id) {
+            fetchServices()
+        }
     }, [id]);
 
+  const fetchServices = async () => {
+    try {
+      const res = await apiClientPublic.get(`/products?product_slug=${id}`)
+      const responseData = res.data as any;
+      console.log("productaa", responseData)
 
-    console.log("this is the product", product);
+      if (responseData.data.products.length > 0) {
+        const product = responseData.data.products[0]; // Get first product
+        setApiProduct(product);
 
+        // Update images from API
+        const apiImages = product.images.map((img: any) => img.url);
+        setImages(apiImages.length > 0 ? apiImages : ["/product1.png"]);
 
-  
+        // Update current product for ProductDetails component
+        setCurrentProduct({
+          id: product._id,
+          title: product.name,
+          postedDate: new Date(product.createdAt).toLocaleDateString(),
+          condition: product.status === "live" ? "Brand New" : "Used"
+        });
+
+        // Update product state for accordion sections
+        setProduct(product);
+      }
+    } catch (e: any) {
+      console.log(`Failed to load product: ${String(e?.message || e)}`)
+    }
+  }
       
 
     return (
@@ -472,16 +192,16 @@ export default function ProductDetailPage() {
                         Home
                     </Link>
                     <ChevronRight size={14} />
-                    <Link href="/property" className="hover:text-gray-700">
+                    {/* <Link href="/property" className="hover:text-gray-700">
                        {bcCat}
                     </Link>
-                    <ChevronRight size={14} />
-                    <Link href="/property?type=student" className="hover:text-gray-700">
-                        {bcSub}
+                    <ChevronRight size={14} /> */}
+                    <Link href="/product" className="hover:text-gray-700">
+                        Property
                     </Link>
                     <ChevronRight size={14} />
 
-                    <span className="text-gray-700 truncate">{product?.title}</span>
+                    <span className="text-gray-700 truncate">{String(id || '').toUpperCase()}</span>
                 </div>
 
 
@@ -550,7 +270,7 @@ export default function ProductDetailPage() {
                                         </span>
                                     </AccordionTrigger>
                                     <AccordionContent className="mt-2 text-gray-600">
-                                        <p>{product?.title}</p>
+                                        <p>{product?.description || product?.name}</p>
                                     </AccordionContent>
                                 </AccordionItem>
 
@@ -569,10 +289,10 @@ export default function ProductDetailPage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {overviewData.map((item, index) => (
+                                                    {(product?.facility?.facilities || overviewData).map((item: any, index: number) => (
                                                         <tr key={index} className="bg-white text-[#525252]">
-                                                            <td className="border border-[#F5F5F5] px-4 py-2">{item.facility}</td>
-                                                            <td className="border border-[#F5F5F5] px-4 py-2">{item.detail}</td>
+                                                            <td className="border border-[#F5F5F5] px-4 py-2">{item.label || item.facility}</td>
+                                                            <td className="border border-[#F5F5F5] px-4 py-2">{item.value || item.detail}</td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -619,7 +339,7 @@ export default function ProductDetailPage() {
 
                                         {/* Reviews List */}
                                         <div>
-                                            {reviews.map((review) => (
+                                            {reviews.map((review: any) => (
                                                 <div key={review.id} className="space-y-4">
                                                     {/* Main Review */}
                                                     <div className="flex gap-4">
@@ -639,7 +359,7 @@ export default function ProductDetailPage() {
                                                     {/* Replies */}
                                                     {review.replies.length > 0 && (
                                                         <div className="ml-12 space-y-4">
-                                                            {review.replies.map((reply) => (
+                                                            {review.replies.map((reply: any) => (
                                                                 <div key={reply.id} className="flex gap-4">
                                                                     <Image src={reply.avatar} alt={reply.name} width={55} height={55} className="rounded-full h-[46px] w-[64px]" />
                                                                     <div>
@@ -699,34 +419,34 @@ export default function ProductDetailPage() {
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {similarProducts.map((product) => (
                                     <Link href={`/product/${product.id}`} className="w-full" key={product.id}>
-                                    <div className="border rounded-lg overflow-hidden">
-                                        <div className="relative h-[160px]">
-                                            <Image
-                                                src={product.image || "/placeholder.svg"}
-                                                alt={product.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                            <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center shadow-sm">
-                                                <Heart size={14} className="text-gray-500" />
-                                            </button>
-                                        </div>
-                                        <div className="p-3">
-                                            <h4 className="font-medium text-sm">{product.title}</h4>
-                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
-                                            <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center ">
-                                                <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">{product.location}</div>
-                                                {(product.features ?? []).map((feature, index) => (
-                                                    <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                                        {feature}
-                                                    </div>
-                                                ))}
+                                        <div className="border rounded-lg overflow-hidden">
+                                            <div className="relative h-[160px]">
+                                                <Image
+                                                    src={product.image || "/placeholder.svg"}
+                                                    alt={product.title}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                                <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                                    <Heart size={14} className="text-gray-500" />
+                                                </button>
                                             </div>
-                                            <div className="font-medium text-sm mt-2">{product.price}</div>
+                                            <div className="p-3">
+                                                <h4 className="font-medium text-sm">{product.title}</h4>
+                                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
+                                                <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center ">
+                                                    <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">{product.location}</div>
+                                                    {(product.features ?? []).map((feature: any, index: number) => (
+                                                        <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
+                                                            {feature}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="font-medium text-sm mt-2">{product.price}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    </Link>
+                                        
+                                        </Link>
                                 ))}
                             </div>
                         </div>
