@@ -296,9 +296,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
               Home
             </Link>
             <ChevronRight size={16} />
-            <Link href={`/${categorySlug}`} className="hover:text-gray-700">
+            <span className="hover:text-gray-700">
               {categoryTitle}
-            </Link>
+            </span>
             <ChevronRight size={16} />
             <span className="text-gray-700">{subcategoryTitle}</span>
           </div>
@@ -340,9 +340,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             Home
           </Link>
           <ChevronRight size={16} />
-          <Link href={`/${categorySlug}`} className="hover:text-gray-700">
+          <span className="hover:text-gray-700">
             {categoryTitle}
-          </Link>
+          </span>
           <ChevronRight size={16} />
           <span className="text-gray-700">{subcategoryTitle}</span>
         </div>

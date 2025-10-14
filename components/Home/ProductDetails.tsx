@@ -348,8 +348,8 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                         {/* Price */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2">
-                                <span className="text-xl font-bold">₦{product?.price?.discountedPrice?.toLocaleString() || "N/A"}</span>
-                                <span className="text-sm text-gray-500 line-through">₦{product?.price?.currentPrice?.toLocaleString() || "N/A"}</span>
+                               {product?.price?.discountedPrice && <span className="text-xl font-bold">₦{product?.price?.discountedPrice?.toLocaleString() || ""}</span>}
+                                <span className={`${product?.price?.discountedPrice ? "line-through text-gray-500 text-sm" : "text-xl font-bold"}`}>₦{product?.price?.currentPrice?.toLocaleString() || "N/A"}</span>
                             </div>
                         </div>
                         {/* Added Posted Date */}
