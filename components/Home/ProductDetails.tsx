@@ -1,3 +1,4 @@
+/*eslint-disable*/
 "use client"
 
 
@@ -301,13 +302,13 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
         setView("default")
     }
 
-    const products = [
-        ...propertiesItems,
-        ...phonesItems,
-        ...sponsoredItems,
-        ...popularItems,
-        ...servicesItems,
-    ];
+    // const products = [
+    //     ...propertiesItems,
+    //     ...phonesItems,
+    //     ...sponsoredItems,
+    //     ...popularItems,
+    //     ...servicesItems,
+    // ];
     // const product = products; 
     // const { id, image, title, price, description, location, time, distance, isSponsored } = product;
 
