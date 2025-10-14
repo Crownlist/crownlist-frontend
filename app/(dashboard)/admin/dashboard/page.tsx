@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { MoreHorizontal } from "lucide-react"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -199,7 +198,6 @@ const StatusUpdateModal = ({
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("listing");
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   
   
@@ -397,7 +395,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs
       <Tabs defaultValue="listing" className="mb-8 max-w-md" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-[#f0eeff] p-1 rounded-full w-auto h-auto">
           <TabsTrigger
@@ -413,7 +411,7 @@ export default function AdminDashboard() {
             Paid plan
           </TabsTrigger>
         </TabsList>
-      </Tabs>
+      </Tabs> */}
 
       {/* Chart Section */}
       {dashboardData?.analytics?.monthlyListings?.some(item => item.count > 0) ? (

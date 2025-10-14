@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Controller } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUserSignupHook } from "@/lib/signup-hook";
 import { toast } from "sonner";
@@ -32,6 +33,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     handleSubmit,
     onSubmit,
     handleGoogleSignup,
+    control,
   } = useUserSignupHook();
 
   const handleFormSubmit = (data: any) => {
@@ -158,18 +160,26 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
             <div className="grid gap-3">
               <Label htmlFor="accountType">Account Type</Label>
-              <Select
-                {...register("accountType", { required: "Account type is required" })}
-                disabled={isLoading || googleLoading}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select account type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="User">Buyer</SelectItem>
-                  <SelectItem value="Seller">Seller</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="accountType"
+                control={control}
+                rules={{ required: "Account type is required" }}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={isLoading || googleLoading}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select account type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="User">Buyer</SelectItem>
+                      <SelectItem value="Seller">Seller</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.accountType && (
                 <p className="text-sm text-red-500">{errors.accountType.message}</p>
               )}

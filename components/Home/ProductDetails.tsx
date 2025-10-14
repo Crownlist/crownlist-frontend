@@ -8,219 +8,225 @@ import { Button } from "../ui/button";
 import { Copy } from "lucide-react";
 //import { useProducts, ApiProduct } from "@/hooks/useProducts"
 
+interface ProductDetailsProps {
+    postedDate: string;
+    condition: "Brand New" | "Used"
+    product?: any;
+}
+
 
 
 // import { popularItems, servicesItems, phonesItems, propertiesItems,sponsoredItems } from "@/app/(generic)/page";
 const popularItems = [
     {
-      id: "1",
-      image: "/product1.png",
-      title: "The Green Sofa",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦85,000",
-      time: "2 hours ago",
-      location: "Lekki, Lagos",
-      distance: "3km away",
-      labels: ["Furniture", "Home"],
-      condition: "New",
+        id: "1",
+        image: "/product1.png",
+        title: "The Green Sofa",
+        description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
+        price: "₦85,000",
+        time: "2 hours ago",
+        location: "Lekki, Lagos",
+        distance: "3km away",
+        labels: ["Furniture", "Home"],
+        condition: "New",
     },
     {
-      id: "2",
-      image: "/product2.png",
-      title: "Dr Andrews Glasgow Stove",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Kitchen", "Appliances"],
-      condition: "Used",
+        id: "2",
+        image: "/product2.png",
+        title: "Dr Andrews Glasgow Stove",
+        description:
+            "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+        price: "₦65,000",
+        time: "3 hours ago",
+        location: "Ikeja, Lagos",
+        distance: "5km away",
+        labels: ["Kitchen", "Appliances"],
+        condition: "Used",
     },
     {
-      id: "3",
-      image: "/product3.png",
-      title: "AMOLED Touch Screen Laptop",
-      description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
-      price: "₦625,000",
-      time: "1 day ago",
-      location: "VI, Lagos",
-      distance: "7km away",
-      labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
+        id: "3",
+        image: "/product3.png",
+        title: "AMOLED Touch Screen Laptop",
+        description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
+        price: "₦625,000",
+        time: "1 day ago",
+        location: "VI, Lagos",
+        distance: "7km away",
+        labels: ["Electronics", "Laptop", "Gadget"],
+        condition: "New",
     },
     {
-      id: "4",
-      image: "/product4.png",
-      title: "SamsungGalaxy Note20 5G",
-      description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
-      price: "₦350,000",
-      time: "5 hours ago",
-      location: "Ajah, Lagos",
-      distance: "12km away",
-      labels: ["Phone", "Samsung", "Gadget"],
-      condition: "New",
+        id: "4",
+        image: "/product4.png",
+        title: "SamsungGalaxy Note20 5G",
+        description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
+        price: "₦350,000",
+        time: "5 hours ago",
+        location: "Ajah, Lagos",
+        distance: "12km away",
+        labels: ["Phone", "Samsung", "Gadget"],
+        condition: "New",
     },
-  ]
-  
-   const servicesItems = [
+]
+
+const servicesItems = [
     {
-      id: "5",
-      image: "/product1.png",
-      title: "Men thrift",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦25,000",
-      time: "2 hours ago",
-      location: "Surulere, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "Used",
-    },
-    {
-      id: "6",
-      image: "/product2.png",
-      title: "Table and 2 folding chairs",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦35,000",
-      time: "3 hours ago",
-      location: "Yaba, Lagos",
-      distance: "5km away",
-      labels: ["Furniture", "Outdoor"],
-      condition: "New",
+        id: "5",
+        image: "/product1.png",
+        title: "Men thrift",
+        description: "Brand new thrift clothes for men. All sizes available.",
+        price: "₦25,000",
+        time: "2 hours ago",
+        location: "Surulere, Lagos",
+        distance: "3km away",
+        labels: ["Clothing", "Fashion", "Men"],
+        condition: "Used",
     },
     {
-      id: "7",
-      image: "/product3.png",
-      title: "Women thrift",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+        id: "6",
+        image: "/product2.png",
+        title: "Table and 2 folding chairs",
+        description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
+        price: "₦35,000",
+        time: "3 hours ago",
+        location: "Yaba, Lagos",
+        distance: "5km away",
+        labels: ["Furniture", "Outdoor"],
+        condition: "New",
     },
     {
-      id: "8",
-      image: "/product4.png",
-      title: "Men shirts",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-  ]
-  
-   const phonesItems = [
-    {
-      id: "9",
-      image: "/product1.png",
-      title: "SamsungGalaxy Note20 5G",
-      description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
-      price: "₦350,000",
-      time: "5 hours ago",
-      location: "Ajah, Lagos",
-      distance: "12km away",
-      labels: ["Phone", "Samsung", "Gadget"],
-      condition: "New",
+        id: "7",
+        image: "/product3.png",
+        title: "Women thrift",
+        description: "Brand new thrift clothes for men. All sizes available.",
+        price: "₦75,000",
+        time: "2 hours ago",
+        location: "Badagry, Lagos",
+        distance: "3km away",
+        labels: ["Clothing", "Fashion", "Men"],
+        condition: "New",
     },
     {
-      id: "10",
-      image: "/product2.png",
-      title: "AMOLED Touch Screen Laptop",
-      description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
-      price: "₦625,000",
-      time: "1 day ago",
-      location: "VI, Lagos",
-      distance: "7km away",
-      labels: ["Electronics", "Laptop", "Gadget"],
-      condition: "New",
+        id: "8",
+        image: "/product4.png",
+        title: "Men shirts",
+        description: "Brand new thrift clothes for men. All sizes available.",
+        price: "₦75,000",
+        time: "2 hours ago",
+        location: "Badagry, Lagos",
+        distance: "3km away",
+        labels: ["Clothing", "Fashion", "Men"],
+        condition: "New",
+    },
+]
+
+const phonesItems = [
+    {
+        id: "9",
+        image: "/product1.png",
+        title: "SamsungGalaxy Note20 5G",
+        description: "The Samsung Galaxy Note20 5G is a powerful phone w/ beautiful 6.7 in Infinity-O with a mighty S Pen.",
+        price: "₦350,000",
+        time: "5 hours ago",
+        location: "Ajah, Lagos",
+        distance: "12km away",
+        labels: ["Phone", "Samsung", "Gadget"],
+        condition: "New",
     },
     {
-      id: "11",
-      image: "/product4.png",
-      title: "Men shirts",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
+        id: "10",
+        image: "/product2.png",
+        title: "AMOLED Touch Screen Laptop",
+        description: "Corei5 i7 - 16 - Intel Core Ultra 7 - 16GB RAM - 512GB SSD - Windows 11",
+        price: "₦625,000",
+        time: "1 day ago",
+        location: "VI, Lagos",
+        distance: "7km away",
+        labels: ["Electronics", "Laptop", "Gadget"],
+        condition: "New",
     },
     {
-      id: "12",
-      image: "/product2.png",
-      title: "Lenovo PC",
-      description: "Brand new thrift clothes for men. All sizes available.",
-      price: "₦75,000",
-      time: "2 hours ago",
-      location: "Badagry, Lagos",
-      distance: "3km away",
-      labels: ["Clothing", "Fashion", "Men"],
-      condition: "New",
-    },
-  ]
-  
-  const propertiesItems = [
-    {
-      id: "13",
-      image: "/product1.png",
-      title: "Table and 2 folding chairs",
-      description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
-      price: "₦35,000",
-      time: "3 hours ago",
-      location: "Yaba, Lagos",
-      distance: "5km away",
-      labels: ["Furniture", "Outdoor"],
-      condition: "New",
+        id: "11",
+        image: "/product4.png",
+        title: "Men shirts",
+        description: "Brand new thrift clothes for men. All sizes available.",
+        price: "₦75,000",
+        time: "2 hours ago",
+        location: "Badagry, Lagos",
+        distance: "3km away",
+        labels: ["Clothing", "Fashion", "Men"],
+        condition: "New",
     },
     {
-      id: "14",
-      image: "/product2.png",
-      title: "Small space PC gaming",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
+        id: "12",
+        image: "/product2.png",
+        title: "Lenovo PC",
+        description: "Brand new thrift clothes for men. All sizes available.",
+        price: "₦75,000",
+        time: "2 hours ago",
+        location: "Badagry, Lagos",
+        distance: "3km away",
+        labels: ["Clothing", "Fashion", "Men"],
+        condition: "New",
+    },
+]
+
+const propertiesItems = [
+    {
+        id: "13",
+        image: "/product1.png",
+        title: "Table and 2 folding chairs",
+        description: "This product is perfect for your balcony or other small spaces. Comes in a set, fits easily folded.",
+        price: "₦35,000",
+        time: "3 hours ago",
+        location: "Yaba, Lagos",
+        distance: "5km away",
+        labels: ["Furniture", "Outdoor"],
+        condition: "New",
     },
     {
-      id: "15",
-      image: "/product3.png",
-      title: "Samsung s25 Ultra",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
+        id: "14",
+        image: "/product2.png",
+        title: "Small space PC gaming",
+        description:
+            "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+        price: "₦65,000",
+        time: "3 hours ago",
+        location: "Ikeja, Lagos",
+        distance: "5km away",
+        labels: ["Gaming", "Electronics"],
+        condition: "New",
     },
     {
-      id: "16",
-      image: "/product2.png",
-      title: "Small space PC gaming",
-      description:
-        "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
-      price: "₦65,000",
-      time: "3 hours ago",
-      location: "Ikeja, Lagos",
-      distance: "5km away",
-      labels: ["Gaming", "Electronics"],
-      condition: "New",
+        id: "15",
+        image: "/product3.png",
+        title: "Samsung s25 Ultra",
+        description:
+            "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+        price: "₦65,000",
+        time: "3 hours ago",
+        location: "Ikeja, Lagos",
+        distance: "5km away",
+        labels: ["Gaming", "Electronics"],
+        condition: "New",
     },
-  ]
-  
-     const sponsoredItems = [
-      {
+    {
+        id: "16",
+        image: "/product2.png",
+        title: "Small space PC gaming",
+        description:
+            "A stove, a must-get part of a package can be a great addition to your kitchen perfect for a fine cooking experience.",
+        price: "₦65,000",
+        time: "3 hours ago",
+        location: "Ikeja, Lagos",
+        distance: "5km away",
+        labels: ["Gaming", "Electronics"],
+        condition: "New",
+    },
+]
+
+const sponsoredItems = [
+    {
         id: "17",
         title: "Men tops",
         description: "Brand new 2018 Mercedes benz viano/sprinter ...",
@@ -228,9 +234,9 @@ const popularItems = [
         category: "Hand craft",
         price: "₦32,695,000",
         image:
-          "/product1.png",
-      },
-      {
+            "/product1.png",
+    },
+    {
         id: "18",
         title: "Women's Dresses",
         description: "Premium quality summer collection 2023",
@@ -238,8 +244,8 @@ const popularItems = [
         category: "Fashion",
         price: "₦15,500",
         image: "/product2.png",
-      },
-      {
+    },
+    {
         id: "19",
         title: "Casual Shoes",
         description: "Comfortable leather shoes for everyday wear",
@@ -247,24 +253,40 @@ const popularItems = [
         category: "Footwear",
         price: "₦22,800",
         image: "/product3.png",
-      },
-    ]
+    },
+]
 
 
 interface ProductDetailsProps {
-    postedDate: string; 
+    postedDate: string;
     condition: "Brand New" | "Used"
     // productId: string; 
-  }
+}
 
 
-const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
-    const [view, setView] = useState<"default" | "requestCall" | "sendMessage" | "contactInfo">(
+const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps) => {
+    const [view, setView] = useState<"default" | "requestCall" | "sendMessage" | "contactInfo" | "requestEscrow">(
         "default"
     );
 
+    const copyLink = async () => {
+        if (!product) return;
+        const link = `${window.location.origin}/product/${product.slug || product.id}`;
+        try {
+            await navigator.clipboard.writeText(link);
+            toast.success('Link copied to clipboard!', {
+                position: "bottom-center",
+            });
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            toast.error('Failed to copy link', {
+                position: "bottom-center",
+            });
+        }
+    };
 
-   //const { products: apiProducts } = useProducts()
+
+    //const { products: apiProducts } = useProducts()
 
     // Handles submission with toast notification
     const handleSubmit = (type: string) => {
@@ -279,7 +301,7 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
         setView("default")
     }
 
-      const products =[
+    const products = [
         ...propertiesItems,
         ...phonesItems,
         ...sponsoredItems,
@@ -289,8 +311,8 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
     // const product = products; 
     // const { id, image, title, price, description, location, time, distance, isSponsored } = product;
 
-       
-    
+
+
     return (
         <section className="w-full max-w-2xl justify-end">
             <Toaster /> {/* Toast Notifications */}
@@ -308,33 +330,33 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
 
 
                     <div className="bg-white p-6 rounded-lg border w-full shadow-md md:shadow-lg">
-                        <h1 className="text-xl font-medium mb-4">{products[0]?.title || "Default Title"}</h1>
-                       
+                        <h1 className="text-xl font-medium mb-4">{product?.name || "Default Title"}</h1>
+
 
                         {/* Seller Information */}
                         <div className="flex items-center gap-3 mb-4">
                             <div className="h-10 w-10 rounded-full bg-gray-200 overflow-hidden relative">
-                                <Image src="/profile.png" alt="Seller" fill className="object-cover" />
+                                <Image src={product?.seller?.profileImage || "/profile.png"} alt="Seller" fill className="object-cover" />
                             </div>
                             <div>
-                                <h3 className="font-medium text-sm">Oyekinps Properties</h3>
-                                <p className="text-xs text-gray-500">6 years on crownlist</p>
+                                <h3 className="font-medium text-sm">{product?.seller?.fullName || "Seller Name"}</h3>
+                                <p className="text-xs text-gray-500">{product?.seller ? "Seller on crownlist" : "6 years on crownlist"}</p>
                             </div>
                         </div>
 
                         {/* Price */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2">
-                                <span className="text-xl font-bold">{products[0]?.price || "N/A"}</span>
-                                <span className="text-sm text-gray-500 line-through">$99.95</span>
+                                <span className="text-xl font-bold">₦{product?.price?.discountedPrice?.toLocaleString() || "N/A"}</span>
+                                <span className="text-sm text-gray-500 line-through">₦{product?.price?.currentPrice?.toLocaleString() || "N/A"}</span>
                             </div>
                         </div>
-                            {/* Added Posted Date */}
-                            <p className="text-[12px] text-gray-600 mt-2 mb-2">
-                                <span className="font-bold">{'time' in products[0] ? products[0].time : "N/A"}</span> 
-                               <span> posted on:{postedDate || "12/1/2024"}</span>
-                            </p>
-                                        
+                        {/* Added Posted Date */}
+                        <p className="text-[12px] text-gray-600 mt-2 mb-2">
+                            <span className="font-bold">{product ? new Date(product.createdAt).toLocaleDateString() : "N/A"}</span>
+                            <span> posted on:{postedDate || "12/1/2024"}</span>
+                        </p>
+
 
                         {/* Features */}
                         <div className="flex gap-4 mb-6">
@@ -343,7 +365,7 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                                     <rect x="3" y="3" width="18" height="18" rx="2" stroke="#4B5563" strokeWidth="2" />
                                     <path d="M3 9H21" stroke="#4B5563" strokeWidth="2" />
                                 </svg>
-                                <span className="text-xs">One room</span>
+                                <span className="text-xs">{product?.listingLocation?.city || 'Location'}</span>
                             </div>
                             <div className="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -352,7 +374,7 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                                         fill="#4B5563"
                                     />
                                 </svg>
-                                <span className="text-xs">Gate</span>
+                                <span className="text-xs">{product?.subCategory?.name || 'Category'}</span>
                             </div>
 
                             <div className="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full"  >
@@ -363,39 +385,44 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                                     />
                                 </svg>
                                 <p className="text-sm text-gray-600">
-                                <span>
-                                {condition === "Brand New" ? "Brand New" : "Used"}
+                                    <span>
+                                        {condition === "Brand New" ? "Brand New" : "Used"}
                                     </span>
                                 </p>
-                          
+
                             </div>
 
 
-                           
+
                         </div>
 
                         {/* Action Buttons */}
                         <div className="space-y-3">
-                            <Button className="w-full  text-white bg-[#1F058F] hover:bg-[#2a0bc0]"
+                            <Button className="w-full rounded-full text-white bg-[#1F058F] hover:bg-[#2a0bc0]"
                                 onClick={() => setView("requestCall")}
                             >Request call</Button>
-                            <Button variant="outline" className="w-full"
-                                onClick={() => setView("sendMessage")}
-                            >
-                                Send message
-                            </Button>
-                            <Button variant="outline" className="w-full"
-                                onClick={() => setView("contactInfo")}
-                            >
-                                Contact information
-                            </Button>
+                            <Button variant={'outline'} className="w-full rounded-full text-black border-[#1F058F] bg-white"
+                                onClick={() => setView("requestEscrow")}
+                            >Escrow</Button>
+                            <div className="flex justify-between w-full gap-3">
+                                <Button variant="outline" className="w-full rounded-full border-[#1F058F]"
+                                    onClick={() => setView("sendMessage")}
+                                >
+                                    Send message
+                                </Button>
+                                <Button variant="outline" className="w-full rounded-full border-[#1F058F]"
+                                    onClick={() => setView("contactInfo")}
+                                >
+                                    Contact information
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Share Product */}
                         <div className="mt-6 w-full">
                             <p className="text-sm font-medium mb-3">Share product</p>
                             <div className="flex gap-1 md:gap-3">
-                                <Button variant="outline" size="sm" className="flex items-center border-none gap-1 md:gap-2 text-xs">
+                                <Button onClick={copyLink} variant="outline" size="sm" className="flex items-center border-none gap-1 md:gap-2 text-xs">
                                     <Copy size={14} />
                                     Copy link
                                 </Button>
@@ -479,9 +506,9 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                         <p>Type your message, enquiry, or concern for the seller</p>
 
                         <div className="flex items-center gap-3 mt-4">
-                          
-                            <Image 
-                               src="/profile.png"
+
+                            <Image
+                                src={product?.seller?.profileImage || "/profile.png"}
                                 alt="Seller Avatar"
                                 width={40}
                                 height={40}
@@ -489,18 +516,18 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
 
                             </Image>
                             <div>
-                                <h3 className="font-semibold">Oyekings Properties</h3>
+                                <h3 className="font-semibold">{product?.seller?.fullName || "Seller Name"}</h3>
                                 <p className="text-sm flex items-center p-2">
-                                    📞 081 0000 0000 &nbsp; 📧 Oyekings@joelist.com.ng
+                                    📞 {product?.seller?.phoneNumber || "N/A"} &nbsp; 📧 {product?.seller?.email || "N/A"}
                                 </p>
                                 <p className="text-sm flex items-center p-2">
-                                    📍 Kwara, Nigeria &nbsp; ⭐ 90.9% positive feedback
+                                    📍 {product?.listingLocation?.city}, {product?.listingLocation?.country} &nbsp; ⭐ {product?.ratings?.averageRating || 0} positive feedback
                                 </p>
                             </div>
                         </div>
-                        
+
                         <button className="border py-2 px-4 w-full mt-4 mb-2 rounded-lg hover:bg-gray-100"
-                        onClick={() => setView("default")}
+                            onClick={() => setView("default")}
                         >See Store</button>
                         <button
                             onClick={() => setView("sendMessage")}
@@ -525,7 +552,7 @@ const ProductDetails = ({postedDate, condition} : ProductDetailsProps) => {
                         <textarea placeholder="Message" className="border p-2 w-full mt-2" />
                         <button
                             onClick={() => handleSubmit("Message sent")}
-                             className=" text-white px-4 py-2 rounded-lg w-full bg-[#1F058F] hover:bg-[#2a0bc0] mt-2"
+                            className=" text-white px-4 py-2 rounded-lg w-full bg-[#1F058F] hover:bg-[#2a0bc0] mt-2"
                         >
                             Send Message
                         </button>

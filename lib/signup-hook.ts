@@ -48,6 +48,7 @@ export const useUserSignupHook = () => {
     register,
     formState: { errors },
     handleSubmit,
+    control,
   } = useForm<UserSignupForm>();
 
   const onSubmit: SubmitHandler<UserSignupForm> = async (data) => {
@@ -88,5 +89,6 @@ export const useUserSignupHook = () => {
     onSubmit,
     googleLoading,
     handleGoogleSignup,
+    control,
   };
 };
