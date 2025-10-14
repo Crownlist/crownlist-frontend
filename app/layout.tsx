@@ -3,7 +3,7 @@ import type React from "react"
 import "./globals.css"
 import { Inter } from "next/font/google"
 import Wrapper from "@/client/wrapper"
-import BottomNav from "@/components/BottomNav"
+// import BottomNav from "@/components/BottomNav"
 import ReactQueryProvider from "@/providers/ReactQueryProvider"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -24,7 +24,7 @@ export default function RootLayout({
           <ReactQueryProvider>
             <Wrapper>{children}</Wrapper>
             {/* <ChatBot /> */}
-            <BottomNav/>
+            {/* <BottomNav/> */}
           </ReactQueryProvider>
       </body>
     </html>

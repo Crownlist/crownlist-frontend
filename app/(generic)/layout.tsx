@@ -32,7 +32,7 @@ export default function RootLayout({
             })();
           `}
         </Script>
-{/*     <ChatBot /> */}
+    {/* <ChatBot /> */}
     </>
   )
 }

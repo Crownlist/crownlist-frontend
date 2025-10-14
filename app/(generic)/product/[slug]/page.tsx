@@ -152,12 +152,12 @@ export default function ProductDetailPage() {
 
   const fetchServices = async () => {
     try {
-      const res = await apiClientPublic.get(`/products?product_slug=${id}`)
+      const res = await apiClientPublic.get(`/products/slug/${id}`)
       const responseData = res.data as any;
-      console.log("productaa", responseData)
+      console.log("productaa", responseData.product)
 
-      if (responseData.data.products.length > 0) {
-        const product = responseData.data.products[0]; // Get first product
+      if (responseData.product) {
+        const product = responseData.product;
         setApiProduct(product);
 
         // Update images from API
@@ -192,16 +192,16 @@ export default function ProductDetailPage() {
                         Home
                     </Link>
                     <ChevronRight size={14} />
-                    {/* <Link href="/property" className="hover:text-gray-700">
-                       {bcCat}
+                    <Link href={`/${product?.category?.name}/${product?.subCategory?.slug}`} className="hover:text-gray-700">
+                        {product?.category?.name || bcCat}
                     </Link>
-                    <ChevronRight size={14} /> */}
-                    <Link href="/product" className="hover:text-gray-700">
-                        Property
+                    <ChevronRight size={14} />
+                    <Link href={`/product/${product?.category?.slug}/${product?.subCategory?.slug}`} className="hover:text-gray-700">
+                        {product?.subCategory?.name || bcSub}
                     </Link>
                     <ChevronRight size={14} />
 
-                    <span className="text-gray-700 truncate">{String(id || '').toUpperCase()}</span>
+                    <span className="text-gray-700 truncate">{product?.name || String(id || '').toUpperCase()}</span>
                 </div>
 
 
@@ -409,9 +409,10 @@ export default function ProductDetailPage() {
                         </div>
 
                         <div className="flex md:hidden w-full h-full mt-2 md:justify-end">
-                            <ProductDetails 
+                            <ProductDetails
                                 postedDate={currentProduct.postedDate}
-                                condition={currentProduct.condition}/>
+                                condition={currentProduct.condition}
+                                product={product}/>
                         </div>
                         {/* You might also like these */}
                         <div className="mt-8">
@@ -454,9 +455,10 @@ export default function ProductDetailPage() {
 
                     {/* Right Column - Product Details */}
                     <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
-                        <ProductDetails 
+                        <ProductDetails
                          postedDate={currentProduct.postedDate}
                          condition={currentProduct.condition}
+                         product={product}
                          />
                     </div>
                 </div>
