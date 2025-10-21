@@ -1,15 +1,19 @@
+/*eslint-disable*/
 'use client';
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Mail, Phone, Calendar, Check, X, Clock } from "lucide-react";
+import { ChevronRight, Mail, Phone, Calendar, Check, X, Clock, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { apiClientAdmin } from "@/lib/interceptor";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import { SellerProducts } from "./seller-products";
 
 type UserDetails = {
@@ -30,6 +34,9 @@ type UserDetails = {
 };
 
 export default function UserDetailsClient({ userId }: { userId: string }) {
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const queryClient = useQueryClient();
+
   const { data, isLoading, error } = useQuery<UserDetails>({
     queryKey: ['user', userId],
     queryFn: async () => {
@@ -37,6 +44,38 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
       return response.data.data;
     },
   });
+
+  const blockUserMutation = useMutation({
+    mutationFn: async (blockDecision: boolean) => {
+      const response = await apiClientAdmin.patch('/users', {
+        userId,
+        blockDecision
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log('Block User API Response:', data); // Admin notification via console
+      toast.success(data.data.message || `User ${data.data?.isBlocked ? 'blocked' : 'unblocked'} successfully`);
+      setShowBlockModal(false);
+      // Invalidate the user query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['user', userId] });
+    },
+    onError: (error: any) => {
+      console.error('Block User API Error:', error.response?.data || error); // Admin notification via console
+      toast.error(`Failed to block user: ${error?.response?.data?.message || error?.message || 'Unknown error'}`);
+      setShowBlockModal(false);
+    }
+  });
+
+  const handleBlockUser = () => {
+    setShowBlockModal(false);
+    // toast.loading("Blocking user...", { id: "block-user" });
+    blockUserMutation.mutate(true);
+  };
+
+  const openBlockModal = () => {
+    setShowBlockModal(true);
+  };
 
   if (isLoading) {
     return (
@@ -90,7 +129,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
               )}
             </div>
           </div>
-          
+
           <div className="flex-1">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
@@ -110,8 +149,8 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                   Joined {formattedJoinDate}
                 </div>
               </div>
-              
-              <div className="flex flex-wrap gap-2">
+
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={user.accountType === 'Admin' ? 'default' : 'outline'}>
                   {user.accountType}
                 </Badge>
@@ -121,6 +160,17 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                 <Badge variant={user.subscriptionStatus === 'active' ? 'default' : 'outline'}>
                   {user.subscriptionStatus === 'active' ? 'Subscribed' : 'Not Subscribed'}
                 </Badge>
+                {user.isVerified &&
+                  <Button
+                    size="sm"
+                    onClick={openBlockModal}
+                    disabled={blockUserMutation.isPending}
+                    className="ml-2 bg-red-600"
+                  >
+                    <Ban className="h-4 w-4 mr-2" />
+                    {blockUserMutation.isPending ? 'Blocking...' : 'Block User'}
+                  </Button>
+                }
               </div>
             </div>
           </div>
@@ -129,11 +179,11 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
 
       {/* User Details Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 max-w-md mb-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 max-w-md mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
+          {/* <TabsTrigger value="documents">Documents</TabsTrigger> */}
           {user.accountType === 'Seller' && (
             <TabsTrigger value="products">Products</TabsTrigger>
           )}
@@ -221,8 +271,8 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                   <div>
                     <p className="font-medium">Email Verification</p>
                     <p className="text-sm text-gray-500">
-                      {user.isVerified 
-                        ? 'Your email is verified' 
+                      {user.isVerified
+                        ? 'Your email is verified'
                         : 'Please verify your email address'}
                     </p>
                   </div>
@@ -231,7 +281,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="p-4 border rounded-lg">
                 <div className="flex justify-between items-center">
                   <div>
@@ -266,7 +316,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
           <TabsContent value="products">
             <Card>
               <CardHeader>
-                <CardTitle>Seller &apos; s Products</CardTitle>
+                <CardTitle>Seller ' s Products</CardTitle>
                 <CardDescription>Manage products listed by this seller</CardDescription>
               </CardHeader>
               <CardContent>
@@ -276,6 +326,17 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
           </TabsContent>
         )}
       </Tabs>
+
+      <ConfirmationModal
+        open={showBlockModal}
+        onOpenChange={setShowBlockModal}
+        title="Block User"
+        description={`Are you sure you want to block ${user.fullName}? This will prevent them from accessing their account.`}
+        confirmText="Block User"
+        cancelText="Cancel"
+        onConfirm={handleBlockUser}
+        variant="destructive"
+      />
     </div>
   );
 }
