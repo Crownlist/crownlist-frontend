@@ -30,6 +30,7 @@ export const useAdminSigninHook = () => {
 
       // 1. Store tokens and ID in localStorage (as you're already doing)
       localStorage.setItem("leo", data?.data.account._id);
+      localStorage.setItem("leoName", data?.data.account.fullName);
       localStorage.setItem(
         "leoKey",
         obfuscateToken(true, data?.data.accessToken)

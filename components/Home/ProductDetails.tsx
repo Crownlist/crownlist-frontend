@@ -6,7 +6,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { Button } from "../ui/button";
-import { Copy } from "lucide-react";
+import { Copy, MessageCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 //import { useProducts, ApiProduct } from "@/hooks/useProducts"
 
 interface ProductDetailsProps {
@@ -270,6 +271,46 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
         "default"
     );
 
+    const router = useRouter();
+
+    // Check if user is logged in
+    const isLoggedIn = () => {
+        if (typeof window === 'undefined') return false;
+        return !!(localStorage.getItem("leoKey") || localStorage.getItem("orionKey"));
+    };
+
+    // Handle send message click
+    const handleSendMessageClick = () => {
+        if (!isLoggedIn()) {
+            // Redirect to signin page
+            router.push('/auth/login');
+            return;
+        }
+
+        // If logged in, check user role and route to messages page with seller info
+        const userRole = localStorage.getItem("leojwt") || "buyer"; // Default to buyer if not set
+
+        let targetRoute = '/buyer/messages'; // Default for buyers
+        if (userRole === "seller" || userRole === "admin") {
+            targetRoute = '/seller/messages';
+        }
+
+        // Pass seller information via search params
+        if (product?.seller?._id) {
+            const params = new URLSearchParams({
+                sellerId: product.seller._id,
+                sellerName: product.seller.fullName || 'Seller',
+                sellerAvatar: product.seller.profileImage || '/profile.png',
+                productId: product._id,
+                productName: product.name || 'Product'
+            });
+            router.push(`${targetRoute}?${params.toString()}`);
+        } else {
+            // Fallback if no seller info
+            router.push(targetRoute);
+        }
+    };
+
     const copyLink = async () => {
         if (!product) return;
         const link = `${window.location.origin}/product/${product.slug || product.id}`;
@@ -312,7 +353,7 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
     // const product = products; 
     // const { id, image, title, price, description, location, time, distance, isSponsored } = product;
 
-
+   console.log("product",product)
 
     return (
         <section className="w-full max-w-2xl justify-end">
@@ -406,9 +447,10 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                                 onClick={() => setView("requestEscrow")}
                             >Escrow</Button>
                             <div className="flex justify-between w-full gap-3">
-                                <Button variant="outline" className="w-full rounded-full border-[#1F058F]"
-                                    onClick={() => setView("sendMessage")}
+                                <Button variant="outline" className="w-full rounded-full border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F] hover:text-white"
+                                    onClick={() => handleSendMessageClick()}
                                 >
+                                    <MessageCircle className="w-4 h-4 mr-2" />
                                     Send message
                                 </Button>
                                 <Button variant="outline" className="w-full rounded-full border-[#1F058F]"

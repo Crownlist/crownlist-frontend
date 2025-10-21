@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, Heart} from "lucide-react"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
@@ -13,7 +13,7 @@ import ProductDetails from "@/components/Home/ProductDetails"
 // import { number } from "zod"
 import { useParams, useSearchParams } from "next/navigation"
 import { apiClientPublic, apiClientUser } from "@/lib/interceptor"
-import { ProductCardSkeleton } from "@/components/ProductCardSkeleton"
+// import { ProductCardSkeleton } from "@/components/ProductCardSkeleton"
 
 
 
