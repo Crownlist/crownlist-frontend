@@ -4,10 +4,11 @@ import Image from "next/image"
 import { Heart, MapPin, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
 //import ProductCard from "./Product-card"
-import router from "next/router"
+import { useRouter } from "next/navigation"
 
 interface ProductItem {
   id: string
+  slug?: string
   title: string
   description: string
   location: string
@@ -23,6 +24,7 @@ interface SponsoredPostProps {
 }
 
 export default function SponsoredPost({ items, autoSlide = true, autoSlideInterval = 5000 }: SponsoredPostProps) {
+  const router = useRouter()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [likedItems, setLikedItems] = useState<Set<string | number>>(new Set())
 
@@ -60,8 +62,8 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
   }
 
 
-  const handleCardClick = (id: string) => {
-    router.push(`/product/${id}`)
+  const handleCardClick = (item: ProductItem) => {
+    router.push(`/product/${item.slug || item.id}`)
   };
 
 
@@ -79,7 +81,7 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
       <div className="relative w-full h-[400px] rounded-lg overflow-hidden cursor-pointer">
         {/* Main Image */}
         <div className="absolute inset-0 transition-opacity duration-500"
-        onClick={() => handleCardClick(currentItem.id)}
+        onClick={() => handleCardClick(currentItem)}
         role="button"
         tabIndex={0}
         aria-label={`View details for ${currentItem.title}`}
@@ -130,7 +132,7 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
 
         {/* Content Overlay */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 text-white z-10"
-        onClick={() => handleCardClick(currentItem.id)}>
+        onClick={() => handleCardClick(currentItem)}>
           <h2 className="text-2xl font-bold mb-1">{currentItem.title}</h2>
           <p className="text-sm mb-2">{currentItem.description}</p>
 
@@ -161,4 +163,3 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
     </div>
   )
 }
-

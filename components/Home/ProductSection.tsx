@@ -8,6 +8,7 @@ import Image from "next/image"
 
 interface Product {
   id: string | number
+  slug?: string
   image: string
   title: string
   price: string
@@ -59,6 +60,7 @@ export default function ProductSection({
           <ProductCard
            key={index}
            id={product.id}
+           slug={product.slug}
             image={product.image}
             title={product.title}
             price={product.price}
