@@ -758,11 +758,11 @@ let currentMessages: Message[] = [];
                                         <MoreVertical className="h-5 w-5 text-gray-500" />
                                     </button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56">
+                                {/* <DropdownMenuContent align="end" className="w-56"> */}
                                     {/* <DropdownMenuItem>See profile</DropdownMenuItem>
                                     <DropdownMenuItem>Report</DropdownMenuItem> */}
-                                    <DropdownMenuItem>Crownlist Escrow</DropdownMenuItem>
-                                </DropdownMenuContent>
+                                    {/* <DropdownMenuItem>Crownlist Escrow</DropdownMenuItem> */}
+                                {/* </DropdownMenuContent> */}
                             </DropdownMenu>
                         </div>
 

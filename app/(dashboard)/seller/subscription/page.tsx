@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Check, Layers, Zap } from "lucide-react"
 import { apiClientPublic, apiClientUser } from "@/lib/interceptor"
+import { useGetSubscription } from "@/lib/useGetSubscription"
 import { toast } from "sonner"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ConfirmationModal } from "@/components/ui/confirmation-modal"
@@ -37,6 +38,9 @@ export default function SellerSubscriptionPage() {
   const searchParams = useSearchParams()
   const paymentStatus = searchParams.get('status')
   const paymentMessage = searchParams.get('message')
+
+  // Get current subscription data
+  const { subscriptionData } = useGetSubscription()
 
   // Fetch subscription plans on component mount
   useEffect(() => {
@@ -155,7 +159,7 @@ export default function SellerSubscriptionPage() {
                   variant={idx % 2 === 0 ? "outline" : "default"}
                   className={idx % 2 === 0 ? "w-full border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F] hover:text-white" : "w-full bg-[#1F058F] hover:bg-[#2a0bc0]"}
                   onClick={() => handleSubscribeClick(plan._id)}
-                  disabled={!!subscribing}
+                  disabled={!!subscribing || plan._id === subscriptionData?.data?.subscription?.subscriptionPlanId?._id}
                 >
                   {subscribing === plan._id ? (
                     <>
@@ -165,6 +169,8 @@ export default function SellerSubscriptionPage() {
                       </svg>
                       Processing...
                     </>
+                  ) : plan._id === subscriptionData?.data?.subscription?.subscriptionPlanId?._id ? (
+                    'Current Plan'
                   ) : (
                     'Get started'
                   )}
