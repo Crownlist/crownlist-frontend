@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LogOut, MessageSquare, Package, Settings, User, Crown, Puzzle, Database, List } from "lucide-react"
+import { Home, LogOut, MessageSquare, Package, Settings, User, Crown, Puzzle, Database, List, Shield } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import LogoutModal from "./logout-modal"
@@ -110,6 +110,17 @@ export default function DashboardSidebar() {
         >
           <Database className="h-5 w-5" />
           <span>Resources</span>
+        </Link>
+
+        <Link
+          href="/admin/escrow"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
+            isActive("/admin/escrow") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+          )}
+        >
+          <Shield className="h-5 w-5" />
+          <span>Escrow Management</span>
         </Link>
 
         {/* <Link

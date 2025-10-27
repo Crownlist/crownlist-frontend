@@ -1,10 +1,6 @@
-import NoNotificationPage from "@/components/Home/NoNotificationPage"
+import NotificationList from "@/components/Notifications/NotificationList"
 
 
-export default function Home() {
-    return (
-        <div className="flex w-full h-full justify-center items-center align-middle">
-                <NoNotificationPage />
-        </div>
-    )
+export default function NotificationPage() {
+    return <NotificationList />
 }

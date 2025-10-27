@@ -39,7 +39,8 @@ export function PromoteProductModal({ isOpen, onClose, productId, onPromoteSucce
     try {
       setLoading(true)
       const res = await apiClientUser.get('/addonservices')
-      const data = res?.data|| []
+      // console.log("res", res)
+      const data = res?.data?.addOnService|| []
       setServices(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error('Error fetching add-on services:', error)
@@ -94,10 +95,10 @@ export function PromoteProductModal({ isOpen, onClose, productId, onPromoteSucce
     
     try {
       const response = await apiClientUser.post(`/subscriptions/add-on/${selectedServiceData._id}`);
-      
-      if (response.data?.paymentUrl) {
+      console.log("response", response)
+      if (response.data?.paymentPage) {
         toast.success('Redirecting to payment page...', { id: toastId });
-        window.location.href = response.data.paymentUrl;
+        window.location.href = response.data.paymentPage;
       } else {
         toast.error('Payment URL not found', { id: toastId });
       }

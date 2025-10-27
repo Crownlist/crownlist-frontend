@@ -11,7 +11,7 @@ import LogoutModal from './logout-modal'
 
 const BuyerHeader = () => {
     const [logoutModalOpen, setLogoutModalOpen] = useState(false)
-    const {  data } = useGetAuthUser("User");
+    const { data } = useGetAuthUser("User");
     const userData = data?.data.loggedInAccount
 
     const handleLogoutClick = () => {
@@ -28,13 +28,22 @@ const BuyerHeader = () => {
                 <div className='flex items-center gap-2'>
                     <SidebarTrigger className='hidden md:inline-flex' />
                     <h5 className='hidden text-2xl font-semibold md:block'>Buyer</h5>
-                    <Link href='/'>
+                    <Link href='/' className='max-sm:hidden'>
                         <Image
                             src={userData?.profilePicture || "/profile.png"}
                             alt='fixorshublogo'
                             width={36}
                             height={36}
                             className='md:hidden'
+                        />
+
+                    </Link>
+                    <Link href='/' className='sm:hidden'>
+                        <Image
+                            src='/newlogo.jpg'
+                            alt='crownlistlogo'
+                            width={121}
+                            height={36}
                         />
 
                     </Link>

@@ -10,8 +10,9 @@ import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import Image from "next/image"
 import Link from "next/link"
-import { Check, ChevronRight, Layers, Zap } from "lucide-react"
+import { Check, ChevronRight, Layers, Zap, Home, ArrowRight } from "lucide-react"
 import { apiClientUser } from "@/lib/interceptor"
+import { useGetSubscription } from "@/lib/useGetSubscription"
 import { toast } from "sonner"
 import { ConfirmationModal } from "@/components/ui/confirmation-modal"
 
@@ -86,6 +87,19 @@ export default function ProductPostFlow() {
     // Confirmation modals state
     const [submitConfirm, setSubmitConfirm] = useState(false)
     const [submitCancel, setSubmitCancel] = useState(false)
+
+    // Get subscription data for limits checking
+    const { subscriptionData, isLoading: isLoadingSubscription } = useGetSubscription()
+
+    // State for limits checking
+    const [limitsCheckResult, setLimitsCheckResult] = useState<{
+        isAtLimit: boolean;
+        currentCount: number;
+        limit: number;
+        planName: string;
+        isSubcategoryNotInPlan?: boolean;
+    } | null>(null)
+    const [checkingLimits, setCheckingLimits] = useState(false)
 
 
     const handleModal = () => {
@@ -236,7 +250,7 @@ export default function ProductPostFlow() {
         const facilityMap: Record<string, unknown> = {}
 
         // Normalize product facilities into array of {key,label,id,value}
-        const prodFacilitiesRaw = (editProduct as any).facilities
+        const prodFacilitiesRaw = (editProduct as any).facility?.facilities
         let prodFacilities: Array<any> = []
         if (Array.isArray(prodFacilitiesRaw)) {
             prodFacilities = prodFacilitiesRaw
@@ -315,6 +329,67 @@ export default function ProductPostFlow() {
         })
     }, [selectedSubcategory, subcategories])
 
+    // Check subscription limits when subcategory changes
+    useEffect(() => {
+        const checkLimitsOnSubcategoryChange = async () => {
+            if (!selectedSubcategory || !subscriptionData?.data?.subscription || isLoadingSubscription) {
+                setLimitsCheckResult(null)
+                return
+            }
+
+            setCheckingLimits(true)
+            try {
+                // Count current products for this subcategory
+                const productResponse = await apiClientUser.get(`/products/sub-category/${selectedSubcategory}?status=approved&status=reviewing&status=live&limit=1000`)
+                console.log("productResponse", productResponse)
+                const currentProductCount = productResponse.data?.products?.length || 0
+
+                // Get the limit for this subcategory from subscription
+                const subscriptionPlanId = subscriptionData.data.subscription.subscriptionPlanId
+                const listingLimit = subscriptionPlanId?.listingLimit?.find((limit: { subCategory: string; limit: number }) =>
+                    limit.subCategory === selectedSubcategory
+                )
+                console.log("subscriptionData", subscriptionData)
+                console.log("selectedSubcategory", selectedSubcategory)
+                console.log("subscriptionPlanId", subscriptionPlanId)
+                console.log("listingLimit", listingLimit)
+
+                // Check if subcategory is part of user's plan
+                const isSubcategoryInPlan = subscriptionPlanId?.listingLimit?.some((limit: { subCategory: string; limit: number }) =>
+                    limit.subCategory === selectedSubcategory
+                ) || false
+
+                console.log("isSubcategoryInPlan", isSubcategoryInPlan)
+
+                if (!isSubcategoryInPlan) {
+                    setLimitsCheckResult({
+                        isAtLimit: false,
+                        currentCount: currentProductCount,
+                        limit: 0,
+                        planName: subscriptionPlanId.name,
+                        isSubcategoryNotInPlan: true
+                    })
+                } else if (listingLimit && currentProductCount >= listingLimit.limit) {
+                    setLimitsCheckResult({
+                        isAtLimit: true,
+                        currentCount: currentProductCount,
+                        limit: listingLimit.limit,
+                        planName: subscriptionPlanId.name
+                    })
+                } else {
+                    setLimitsCheckResult(null)
+                }
+            } catch (limitError) {
+                console.error('Error checking limits on subcategory change:', limitError)
+                setLimitsCheckResult(null)
+            } finally {
+                setCheckingLimits(false)
+            }
+        }
+
+        checkLimitsOnSubcategoryChange()
+    }, [selectedSubcategory, subscriptionData, isLoadingSubscription])
+
     const handleContinue = () => {
         // Validation based on step
         if (step === 1 && !selectedCategory) {
@@ -360,6 +435,30 @@ export default function ProductPostFlow() {
     const handleSubmit = async () => {
         try {
             setIsSubmitting(true)
+
+            // Check subscription limits before proceeding
+            if (selectedSubcategory && subscriptionData?.data?.subscription) {
+                try {
+                    // Count current products for this subcategory
+                    const productResponse = await apiClientUser.get(`/products?seller=true&subCategory=${selectedSubcategory}&status=approved&status=reviewing&status=live&limit=1000`)
+                    const currentProductCount = productResponse.data?.products?.length || 0
+
+                    // Get the limit for this subcategory from subscription
+                    const subscriptionPlanId = subscriptionData.data.subscription.subscriptionPlanId
+                    const listingLimit = subscriptionPlanId?.listingLimit?.find((limit: any) =>
+                        limit.subCategory === selectedSubcategory
+                    )
+
+                    if (listingLimit && currentProductCount >= listingLimit.limit) {
+                        toast.error(`You've reached the limit of ${listingLimit.limit} products for this subcategory (${subscriptionPlanId.name} plan). Upgrade your plan to post more products.`)
+                        return
+                    }
+                } catch (limitError) {
+                    console.error('Error checking limits:', limitError)
+                    // Continue with submission if we can't check limits (fail safe)
+                }
+            }
+
             // Prevent submit while uploading images
             if (uploadingImage) {
                 toast.error('Please wait for images to finish uploading')
@@ -847,6 +946,20 @@ export default function ProductPostFlow() {
         console.log(currentSubcategory)
         return (
             <>
+                {/* Breadcrumb Navigation */}
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+                    <Link href="/seller/analytics" className="flex items-center gap-1 hover:text-[#1F058F] transition-colors">
+                        <Home className="w-4 h-4" />
+                        Analytics
+                    </Link>
+                    <ArrowRight className="w-3 h-3" />
+                    <Link href="/seller/product" className="hover:text-[#1F058F] transition-colors">Products</Link>
+                    {/* <ArrowRight className="w-3 h-3" />
+                    <span className="text-gray-900 font-medium">Post Product</span> */}
+                    <ArrowRight className="w-3 h-3" />
+                    <span className="text-[#1F058F] font-medium">Post details</span>
+                </div>
+
                 <div className="flex-1">
                     <h1 className="text-2xl font-semibold">Post details</h1>
                     <p className="text-gray-500">Enter post details below</p>
@@ -988,6 +1101,37 @@ export default function ProductPostFlow() {
                                         })
                                     }}
                                 />
+                                {/* Limits Warning */}
+                                {checkingLimits && selectedSubcategory && (
+                                    <div className="mt-2 flex items-center gap-2 text-sm text-amber-600">
+                                        <div className="animate-spin rounded-full h-3 w-3 border border-amber-600 border-t-transparent"></div>
+                                        Checking limits...
+                                    </div>
+                                )}
+                                {limitsCheckResult?.isSubcategoryNotInPlan && (
+                                    <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                                        <div className="flex items-start gap-2">
+                                            <div className="text-red-600 mt-0.5">🚫</div>
+                                            <div className="text-sm text-red-800">
+                                                <div className="font-medium">Subcategory Not Available in Your Plan</div>
+                                                <div>This subcategory is not included in your current {limitsCheckResult.planName} subscription plan.</div>
+                                                <div className="mt-1 font-medium">Please select a different subcategory or upgrade your plan to access more categories.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {limitsCheckResult?.isAtLimit && !limitsCheckResult?.isSubcategoryNotInPlan && (
+                                    <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                                        <div className="flex items-start gap-2">
+                                            <div className="text-red-600 mt-0.5">⚠</div>
+                                            <div className="text-sm text-red-800">
+                                                <div className="font-medium">Listing Limit Reached</div>
+                                                <div>You've already posted {limitsCheckResult.currentCount} out of {limitsCheckResult.limit} allowed products in this subcategory ({limitsCheckResult.planName} plan).</div>
+                                                <div className="mt-1 font-medium">Please select a different subcategory or upgrade your plan.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div>
@@ -1114,6 +1258,20 @@ export default function ProductPostFlow() {
         console.log("fac", mandatoryFacilities, optionalFacilities)
         return (
             <>
+                {/* Breadcrumb Navigation */}
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+                    <Link href="/seller/analytics" className="flex items-center gap-1 hover:text-[#1F058F] transition-colors">
+                        <Home className="w-4 h-4" />
+                        Analytics
+                    </Link>
+                    <ArrowRight className="w-3 h-3" />
+                    <Link href="/seller/product" className="hover:text-[#1F058F] transition-colors">Products</Link>
+                    <ArrowRight className="w-3 h-3" />
+                    <span className="text-gray-900 font-medium">Post Product</span>
+                    <ArrowRight className="w-3 h-3" />
+                    <span className="text-[#1F058F] font-medium">Other details</span>
+                </div>
+
                 <div className="flex-1">
                     <h1 className="text-2xl font-semibold">Other details</h1>
                     <p className="text-gray-500">Enter other details below</p>
@@ -1165,7 +1323,7 @@ export default function ProductPostFlow() {
                                                                         }),
                                                                         menu: (base) => ({
                                                                             ...base,
-                                                                            maxHeight: '250px'
+                                                                            maxHeight: '300px'
                                                                         })
                                                                     }}
                                                                 />
@@ -1206,7 +1364,7 @@ export default function ProductPostFlow() {
                                                                 }),
                                                                 menu: (base) => ({
                                                                     ...base,
-                                                                    maxHeight: '250px'
+                                                                    maxHeight: '300px'
                                                                 })
                                                             }}
                                                         />
@@ -1309,7 +1467,7 @@ export default function ProductPostFlow() {
                                                                 }),
                                                                 menu: (base) => ({
                                                                     ...base,
-                                                                    maxHeight: '250px'
+                                                                    maxHeight: '300px'
                                                                 })
                                                             }}
                                                         />
@@ -1397,7 +1555,11 @@ export default function ProductPostFlow() {
                                 Back
                             </Button>
                         )}
-                        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8" onClick={step === 3 ? handleModal : handleContinue} disabled={submitting}>
+                        <Button
+                            className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8"
+                            onClick={step === 3 ? handleModal : handleContinue}
+                            disabled={submitting || limitsCheckResult?.isAtLimit || limitsCheckResult?.isSubcategoryNotInPlan}
+                        >
                             {step === 3 ? 'Submit' : 'Continue'}
                         </Button>
                         <Button variant="outline" className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8" onClick={() => setSubmitCancel(true)} disabled={submitting}>
@@ -1431,4 +1593,3 @@ export default function ProductPostFlow() {
         </div>
     )
 }
-

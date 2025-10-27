@@ -96,7 +96,7 @@ export default function SellerProductDetailsDynamic() {
 
       {/* Hero image with carousel controls when multiple images exist */}
       <div className="relative w-full h-[220px] md:h-[420px] rounded-md overflow-hidden bg-gray-100">
-        <Image src={primary} alt={data.name} fill className="object-cover" />
+        <Image src={primary} alt={data.name} fill className="object-contain" />
         {imgs.length > 1 && (
           <>
             <button

@@ -179,10 +179,10 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
 
       {/* User Details Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 max-w-md mb-6">
+        <TabsList className={`grid w-full grid-cols-2 ${user.accountType === 'Seller' ? 'md:grid-cols-3' : 'md:grid-cols-2'} max-w-md mb-6`}>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+          {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
           {/* <TabsTrigger value="documents">Documents</TabsTrigger> */}
           {user.accountType === 'Seller' && (
             <TabsTrigger value="products">Products</TabsTrigger>
