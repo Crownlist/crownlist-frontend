@@ -24,7 +24,7 @@ const BuyerHeader = () => {
 
     return (
         <>
-            <header className=' flex items-center justify-between border-b px-3 py-2 bg-white sticky inset-0 z-[999]'>
+            <header className=' flex items-center justify-between border-b px-3 py-2 bg-white sticky inset-0 z-[500]'>
                 <div className='flex items-center gap-2'>
                     <SidebarTrigger className='hidden md:inline-flex' />
                     <h5 className='hidden text-2xl font-semibold md:block'>Buyer</h5>
