@@ -1,11 +1,13 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNotifications } from '@/hooks/useNotifications';
 import NotificationItem from './NotificationItem';
+import NotificationDetailsModal from './NotificationDetailsModal';
 import CustomLoader from '@/components/CustomLoader';
 
 export default function NotificationList() {
+  const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
   const {
     notifications,
     isLoading,
@@ -17,8 +19,16 @@ export default function NotificationList() {
     refetch
   } = useNotifications();
 
-  const handleNotificationClick = (notificationId: string) => {
+  const handleMarkAsRead = (notificationId: string) => {
     markAsRead(notificationId);
+  };
+
+  const handleViewDetails = (notificationId: string) => {
+    setSelectedNotificationId(notificationId);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedNotificationId(null);
   };
 
   const handleMarkAllAsRead = () => {
@@ -49,7 +59,7 @@ export default function NotificationList() {
             </p>
             <button
               onClick={() => refetch()}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-[#1F058F] text-white rounded hover:bg-[#2a0bc0]"
             >
               Try Again
             </button>
@@ -68,7 +78,7 @@ export default function NotificationList() {
             <button
               onClick={handleMarkAllAsRead}
               disabled={isMarkingAllAsRead}
-              className="underline cursor-pointer text-sm text-blue-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="underline cursor-pointer text-sm text-[#1F058F] disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               {isMarkingAllAsRead ? 'Marking...' : 'Mark all as read'}
             </button>
@@ -85,11 +95,18 @@ export default function NotificationList() {
               <NotificationItem
                 key={notification._id}
                 notification={notification}
-                onClick={handleNotificationClick}
+                onMarkAsRead={handleMarkAsRead}
+                onViewDetails={handleViewDetails}
               />
             ))}
           </div>
         )}
+
+        <NotificationDetailsModal
+          notificationId={selectedNotificationId}
+          isOpen={!!selectedNotificationId}
+          onClose={handleCloseDetails}
+        />
       </main>
     </div>
   );
