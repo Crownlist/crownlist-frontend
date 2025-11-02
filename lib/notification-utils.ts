@@ -78,12 +78,80 @@ export function getNotificationIcon(notificationType: string): string {
 }
 
 /**
+ * Checks if content contains HTML tags
+ * @param content - Content to check
+ * @returns True if content contains HTML
+ */
+export function isHtmlContent(content: string): boolean {
+  const htmlRegex = /<[^>]*>/;
+  return htmlRegex.test(content);
+}
+
+/**
+ * Strips HTML tags from content for plain text display
+ * @param content - HTML content
+ * @returns Plain text content
+ */
+export function stripHtmlTags(content: string): string {
+  return content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/**
  * Truncates notification content for display in list
  * @param content - Full notification content
  * @param maxLength - Maximum length (default 100)
- * @returns Truncated content
+ * @returns Truncated content (plain text for HTML content, original for plain text)
  */
 export function truncateNotificationContent(content: string, maxLength: number = 100): string {
-  if (content.length <= maxLength) return content;
-  return content.substring(0, maxLength) + '...';
+  // Strip HTML tags first if content contains HTML
+  const plainText = isHtmlContent(content) ? stripHtmlTags(content) : content;
+
+  if (plainText.length <= maxLength) return plainText;
+  return plainText.substring(0, maxLength) + '...';
+}
+
+/**
+ * Truncates HTML content while preserving basic structure
+ * @param htmlContent - HTML content to truncate
+ * @param maxLength - Maximum plain text length (default 100)
+ * @returns Truncated HTML content
+ */
+export function truncateHtmlContent(htmlContent: string, maxLength: number = 100): string {
+  const plainText = stripHtmlTags(htmlContent);
+
+  if (plainText.length <= maxLength) return htmlContent;
+
+  // Find the position in plain text and map back to HTML
+  const truncatedPlain = plainText.substring(0, maxLength);
+  const truncatedHtml = htmlContent.substring(0, htmlContent.length * (truncatedPlain.length / plainText.length));
+
+  // Try to close any open tags
+  const openTags = [];
+  const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g;
+  let match;
+
+  while ((match = tagRegex.exec(truncatedHtml)) !== null) {
+    const tag = match[0];
+    const tagName = match[1];
+
+    if (tag.startsWith('</')) {
+      // Closing tag
+      if (openTags.length > 0 && openTags[openTags.length - 1] === tagName) {
+        openTags.pop();
+      }
+    } else if (!tag.endsWith('/>') && !['br', 'img', 'hr', 'input', 'meta', 'link'].includes(tagName.toLowerCase())) {
+      // Opening tag (not self-closing)
+      openTags.push(tagName);
+    }
+  }
+
+  let result = truncatedHtml + '...';
+
+  // Close any remaining open tags
+  while (openTags.length > 0) {
+    const tagName = openTags.pop();
+    result += `</${tagName}>`;
+  }
+
+  return result;
 }

@@ -1,9 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import Image from "next/image"
-import Link from "next/link"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { apiClientAdmin, apiClientUser } from "@/lib/interceptor"
@@ -259,18 +257,6 @@ export default function AdminEscrowPage() {
                                 ? `No escrow transactions found for status "${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}"`
                                 : "There are currently no escrow transactions to display"
                             }
-                        </p>
-                        <Link href={'/admin/products'}>
-                            <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white">Browse Products</Button>
-                        </Link>
-                    </div>
-                    <div className="mt-1 text-center text-gray-600">
-                        <p>For further assistance reach out via our 24/7</p>
-                        <p>
-                            via email at{" "}
-                            <a href="mailto:support@crownlist.com" className="text-[#1a0066]">
-                                support@crownlist.com
-                            </a>
                         </p>
                     </div>
                 </div>

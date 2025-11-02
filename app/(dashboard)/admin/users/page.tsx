@@ -53,22 +53,22 @@ export default function UsersPage() {
   useEffect(() => {
     if (data?.data?.users) {
       let result = [...data.data.users]
-      
+
       // Filter by search term
       if (searchTerm) {
         const term = searchTerm.toLowerCase()
-        result = result.filter(user => 
-          user.fullName?.toLowerCase().includes(term) || 
+        result = result.filter(user =>
+          user.fullName?.toLowerCase().includes(term) ||
           user.email?.toLowerCase().includes(term) ||
           user.userCustomId?.toLowerCase().includes(term)
         )
       }
-      
+
       // Filter by account type
       if (accountType !== "all") {
         result = result.filter(user => user.accountType === accountType)
       }
-      
+
       setFilteredUsers(result)
     } else {
       setFilteredUsers([])
@@ -81,7 +81,7 @@ export default function UsersPage() {
   const inactiveUsers = data?.data?.stats?.inactiveUsers || 0
   const sellerUsers = data?.data?.stats?.sellers || 0
   const regularUsers = data?.data?.stats?.regularUsers || 0
-  
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -110,25 +110,51 @@ export default function UsersPage() {
             <p className="text-gray-600">Manage and track all users</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-500">Show:</span>
-              <Select 
-                value={itemsPerPage.toString()} 
-                onValueChange={(value) => {
-                  setItemsPerPage(Number(value))
-                  setCurrentPage(1) // Reset to first page when changing items per page
-                }}
-              >
-                <SelectTrigger className="w-[80px]">
-                  <SelectValue placeholder={itemsPerPage} />
+            <div className="flex flex-row sm:flex-row gap-3">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500">Show:</span>
+                <Select
+                  value={itemsPerPage.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPage(Number(value))
+                    setCurrentPage(1) // Reset to first page when changing items per page
+                  }}
+                >
+                  <SelectTrigger className="w-[80px]">
+                    <SelectValue placeholder={itemsPerPage} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Select value={accountType} onValueChange={setAccountType}>
+                <SelectTrigger className="w-[180px]">
+                  <Filter className="h-4 w-4 mr-2 text-gray-400" />
+                  <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="all">All Users</SelectItem>
+                  <SelectItem value="User">Regular Users</SelectItem>
+                  <SelectItem value="Seller">Sellers</SelectItem>
+                  <SelectItem value="Admin">Admins</SelectItem>
                 </SelectContent>
               </Select>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  refetch()
+                  setCurrentPage(1) // Reset to first page on refresh
+                }}
+                className="h-10 w-10"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </Button>
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -139,29 +165,6 @@ export default function UsersPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Select value={accountType} onValueChange={setAccountType}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="h-4 w-4 mr-2 text-gray-400" />
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Users</SelectItem>
-                <SelectItem value="User">Regular Users</SelectItem>
-                <SelectItem value="Seller">Sellers</SelectItem>
-                <SelectItem value="Admin">Admins</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button 
-              variant="outline" 
-              size="icon"
-              onClick={() => {
-                refetch()
-                setCurrentPage(1) // Reset to first page on refresh
-              }}
-              className="h-10 w-10"
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </Button>
           </div>
         </div>
 
@@ -182,10 +185,10 @@ export default function UsersPage() {
               Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalUsers)} to {Math.min(currentPage * itemsPerPage, totalUsers)} of {totalUsers} users
             </div>
           </div>
-          
+
           {filteredUsers.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto w-full">
+              <Table className="min-w-[800px] w-full">
                 <TableHeader>
                   <TableRow>
                     <TableHead>User</TableHead>
@@ -224,7 +227,7 @@ export default function UsersPage() {
                       <TableCell>{user.email || 'N/A'}</TableCell>
                       {/* <TableCell>{user.userCustomId || 'N/A'}</TableCell> */}
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={user.accountType === 'Seller' ? 'default' : 'outline'}
                           className={user.accountType === 'Admin' ? 'bg-purple-100 text-purple-800' : ''}
                         >
@@ -232,7 +235,7 @@ export default function UsersPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant={user.subscriptionStatus === 'active' ? 'default' : 'outline'}
                           className={user.subscriptionStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
                         >
@@ -266,14 +269,14 @@ export default function UsersPage() {
               </div>
               <h3 className="text-lg font-medium text-gray-900">No users found</h3>
               <p className="mt-1 text-sm text-gray-500">
-                {searchTerm || accountType !== 'all' 
+                {searchTerm || accountType !== 'all'
                   ? 'Try adjusting your search or filter to find what you\'re looking for.'
                   : 'There are no users in the system yet.'}
               </p>
             </div>
           )}
         </div>
-        
+
         {/* Pagination Controls */}
         <div className="flex items-center justify-between mt-4">
           <div className="text-sm text-gray-500">
@@ -283,7 +286,7 @@ export default function UsersPage() {
             </span>{' '}
             of <span className="font-medium">{data?.data?.totalUsers || 0}</span> users
           </div>
-          
+
           <div className="flex space-x-2">
             <Button
               variant="outline"
@@ -300,7 +303,7 @@ export default function UsersPage() {
                 // Adjust if we're near the start or end
                 if (pageNum < 1) pageNum = i + 1;
                 if (pageNum > totalPages) pageNum = totalPages - 4 + i;
-                
+
                 return (
                   <Button
                     key={pageNum}
