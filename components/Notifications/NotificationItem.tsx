@@ -7,7 +7,9 @@ import {
   formatNotificationTime,
   getNotificationBellIcon,
   getNotificationIcon,
-  truncateNotificationContent
+  truncateNotificationContent,
+  isHtmlContent,
+  truncateHtmlContent
 } from '@/lib/notification-utils';
 
 interface NotificationItemProps {
@@ -61,11 +63,20 @@ export default function NotificationItem({ notification, onMarkAsRead, onViewDet
               {formatNotificationTime(notification.createdAt)}
             </p>
           </div>
-          <p className={`text-sm ${
-            notification.isRead ? 'text-gray-500' : 'text-gray-600'
-          }`}>
-            {truncateNotificationContent(notification.content)}
-          </p>
+          {isHtmlContent(notification.content) ? (
+            <div
+              className={`text-sm leading-relaxed line-clamp-2 ${
+                notification.isRead ? 'text-gray-500' : 'text-gray-600'
+              }`}
+              dangerouslySetInnerHTML={{ __html: truncateHtmlContent(notification.content) }}
+            />
+          ) : (
+            <p className={`text-sm ${
+              notification.isRead ? 'text-gray-500' : 'text-gray-600'
+            }`}>
+              {truncateNotificationContent(notification.content)}
+            </p>
+          )}
         </div>
       </div>
       {!notification.isRead && (

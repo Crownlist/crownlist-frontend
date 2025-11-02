@@ -2,21 +2,38 @@
 "use client"
 
 import Link from "next/link"
-import { Bell, Search } from "lucide-react"
+import { Bell, Search, ChevronDown, Settings, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { useLogout } from "@/lib/useLogout"
 import { useState, useEffect, useMemo } from "react"
+import { useRouter } from "next/navigation"
 
 export default function DashboardHeader() {
     const { data, isLoading } = useGetAuthUser("Admin");
-    
+    const { mutateLogout, isLoading: isLoggingOut } = useLogout("Admin");
+    const router = useRouter();
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
     // Memoize userData to prevent unnecessary re-renders
     const userData = useMemo(() => {
         return data?.data?.data?.loggedInAccount;
     }, [data?.data?.data?.loggedInAccount]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (isProfileDropdownOpen && !(event.target as Element).closest('.profile-dropdown')) {
+                setIsProfileDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isProfileDropdownOpen]);
 
     // Optional: Add loading and error states
     if (isLoading) {
@@ -111,20 +128,55 @@ export default function DashboardHeader() {
                         <span className="text-sm">Basic plan</span>
                     </div> */}
 
-                    <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8 border border-gray-600">
-                            <AvatarImage src={userData?.profilePicture || "/profile.png"} alt="User" />
-                            <AvatarFallback>
-                                {userData?.firstname?.[0]}{userData?.lastname?.[0]} || "U"
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="hidden md:block">
-                            <div className="flex items-center">
-                                <span className="text-sm font-medium">
-                                    {userData?.firstname} {userData?.lastname}
-                                </span>
+                    <div className="relative profile-dropdown">
+                        <Button
+                            variant="ghost"
+                            className="flex items-center gap-2 p-2 hover:bg-gray-100"
+                            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                        >
+                            <Avatar className="h-8 w-8 border border-gray-600">
+                                <AvatarImage src={userData?.profilePicture || "/profile.png"} alt="User" />
+                                <AvatarFallback>
+                                    {userData?.firstname?.[0]}{userData?.lastname?.[0]} || "U"
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="hidden md:block">
+                                <div className="flex items-center">
+                                    <span className="text-sm font-medium">
+                                        {userData?.firstname} {userData?.lastname}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                            <ChevronDown className="h-4 w-4" />
+                        </Button>
+
+                        {isProfileDropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-50">
+                                <div className="py-1">
+                                    <button
+                                        onClick={() => {
+                                            setIsProfileDropdownOpen(false);
+                                            router.push('/admin/settings');
+                                        }}
+                                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    >
+                                        <Settings className="h-4 w-4 mr-2" />
+                                        Settings
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setIsProfileDropdownOpen(false);
+                                            mutateLogout();
+                                        }}
+                                        disabled={isLoggingOut}
+                                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                                    >
+                                        <LogOut className="h-4 w-4 mr-2" />
+                                        {isLoggingOut ? 'Logging out...' : 'Log Out'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

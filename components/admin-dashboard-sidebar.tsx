@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LogOut, MessageSquare, Package, Settings, User, Crown, Puzzle, Database, List, Shield } from "lucide-react"
+import { Home, LogOut, Package, Settings, User, Crown, Puzzle, Database, List, Shield } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import LogoutModal from "./logout-modal"
@@ -68,7 +68,7 @@ export default function DashboardSidebar() {
           <span>Users</span>
         </Link>
 
-        <Link
+        {/* <Link
           href="/admin/messages"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
@@ -77,7 +77,7 @@ export default function DashboardSidebar() {
         >
           <MessageSquare className="h-5 w-5" />
           <span>Messages</span>
-        </Link>
+        </Link> */}
 
         <Link
           href="/admin/subscriptions"

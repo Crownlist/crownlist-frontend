@@ -12,6 +12,7 @@ import {
   formatNotificationTime,
   getNotificationBellIcon,
   getNotificationIcon,
+  isHtmlContent
 } from '@/lib/notification-utils';
 import Image from 'next/image';
 import CustomLoader from '@/components/CustomLoader';
@@ -101,9 +102,16 @@ export default function NotificationDetailsModal({ notificationId, isOpen, onClo
           </div>
 
           <div className="border-t pt-4">
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {notification.content}
-            </p>
+            {isHtmlContent(notification.content) ? (
+              <div
+                className="text-sm text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: notification.content }}
+              />
+            ) : (
+              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                {notification.content}
+              </p>
+            )}
           </div>
 
           {notification.metadata && Object.keys(notification.metadata).length > 0 && (
