@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { useGetSubscription } from "@/lib/useGetSubscription"
 import LogoutModal from "./logout-modal"
 import { useState } from "react"
 
@@ -23,8 +24,9 @@ export default function DashboardHeader() {
     const [logoutModalOpen, setLogoutModalOpen] = useState(false)
 
     const {  data } = useGetAuthUser("User");
+    const { subscriptionData } = useGetSubscription();
     const userData = data?.data.loggedInAccount
-      
+
     console.log('disp', data)
 
     const handleLogoutClick = () => {
@@ -73,7 +75,9 @@ export default function DashboardHeader() {
                                 alt="dash"
                             />
                         </div>
-                        <span className="text-sm">Basic plan</span>
+                        <span className="text-sm">
+                          {subscriptionData?.data?.subscription?.subscriptionPlanName || "Basic plan"}
+                        </span>
                     </div>
 
                     <DropdownMenu>

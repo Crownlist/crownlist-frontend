@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { X, Home, Package, MessageSquare, Settings, LogOut, Crown, Puzzle, Database, List } from "lucide-react"
+import { X, Home, Package, Settings, LogOut, Crown, Puzzle, Database, List, Shield } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -106,7 +106,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         <span>Users</span>
                     </Link>
 
-                    <Link
+                    {/* <Link
                         href="/admin/messages"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
@@ -118,7 +118,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <MessageSquare className="h-5 w-5" />
                         <span>Messages</span>
-                    </Link>
+                    </Link> */}
 
                     <Link
                         href="/admin/subscriptions"
@@ -160,6 +160,20 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <Database className="h-5 w-5" />
                         <span>Resources</span>
+                    </Link>
+
+                     <Link
+                        href="/admin/escrow"
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+                            pathname.includes("/admin/escrow") 
+                                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100" 
+                               
+                        )}
+                        onClick={onClose}
+                    >
+                        <Shield className="h-5 w-5" />
+                        <span>Escrow Management</span>
                     </Link>
 
                     {/* <Link
