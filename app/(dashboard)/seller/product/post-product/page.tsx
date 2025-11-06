@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch"
 import { Checkbox } from "@/components/ui/checkbox"
 import Image from "next/image"
 import Link from "next/link"
-import { Check, ChevronRight, Layers, Zap, Home, ArrowRight } from "lucide-react"
+import { ArrowRight, Check } from "lucide-react"
 import { apiClientUser } from "@/lib/interceptor"
 import { useGetSubscription } from "@/lib/useGetSubscription"
 import { toast } from "sonner"
@@ -948,11 +948,11 @@ export default function ProductPostFlow() {
             <>
                 {/* Breadcrumb Navigation */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-                    <Link href="/seller/analytics" className="flex items-center gap-1 hover:text-[#1F058F] transition-colors">
+                    {/* <Link href="/seller/analytics" className="flex items-center gap-1 hover:text-[#1F058F] transition-colors">
                         <Home className="w-4 h-4" />
                         Analytics
-                    </Link>
-                    <ArrowRight className="w-3 h-3" />
+                    </Link> */}
+                    {/* <ArrowRight className="w-3 h-3" /> */}
                     <Link href="/seller/product" className="hover:text-[#1F058F] transition-colors">Products</Link>
                     {/* <ArrowRight className="w-3 h-3" />
                     <span className="text-gray-900 font-medium">Post Product</span> */}
@@ -1260,11 +1260,11 @@ export default function ProductPostFlow() {
             <>
                 {/* Breadcrumb Navigation */}
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-                    <Link href="/seller/analytics" className="flex items-center gap-1 hover:text-[#1F058F] transition-colors">
+                    {/* <Link href="/seller/analytics" className="flex items-center gap-1 hover:text-[#1F058F] transition-colors">
                         <Home className="w-4 h-4" />
                         Analytics
                     </Link>
-                    <ArrowRight className="w-3 h-3" />
+                    <ArrowRight className="w-3 h-3" /> */}
                     <Link href="/seller/product" className="hover:text-[#1F058F] transition-colors">Products</Link>
                     <ArrowRight className="w-3 h-3" />
                     <span className="text-gray-900 font-medium">Post Product</span>

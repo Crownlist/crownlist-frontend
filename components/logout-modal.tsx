@@ -15,13 +15,14 @@ import { LogOut } from "lucide-react";
 type LogoutModProps = {
   open: boolean;
   handleClose: () => void;
+  userType?: "Admin" | "User";
 };
 
-export default function LogoutModal({ open, handleClose }: LogoutModProps) {
+export default function LogoutModal({ open, handleClose, userType = "User" }: LogoutModProps) {
   const {
     mutateLogout,
     isLoading,
-  } = useLogout("User");
+  } = useLogout(userType);
 
   const handleLogout = () => {
     handleClose();

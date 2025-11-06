@@ -49,6 +49,7 @@ type DashboardData = {
       name: string
       customId: string
       profilePicture: string
+      accountType?: string
     }
     plan: {
       type: string
@@ -477,9 +478,11 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Recent Listings</h2>
           {dashboardData?.recentListings && dashboardData?.recentListings?.length > 0 ? (
-            <Button variant="link" className="text-[#1a0066] p-0 h-auto">
+           <Link href="/admin/listings">
+           <Button variant="link" className="text-[#1a0066] p-0 h-auto">
               See all
             </Button>
+            </Link>
           ) : null}
         </div>
 
@@ -533,17 +536,31 @@ export default function AdminDashboard() {
                         </div>
                       </div>
 
-                      <div className="col-span-2 flex items-center space-x-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={listing.user.profilePicture} alt={listing.user.name} />
-                          <AvatarFallback>
-                            {listing.user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">{listing.user.name}</span>
+                      <div className="col-span-2">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={listing.user.profilePicture} alt={listing.user.name} />
+                            <AvatarFallback>
+                              {listing.user.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm">{listing.user.name}</span>
+                        </div>
+                        {listing.user.accountType === 'Seller' && (
+                          <div className="flex items-center justify-between">
+                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                              Seller
+                            </Badge>
+                            <Link href={`/admin/users/${listing.user.customId}`}>
+                              <Button variant="ghost" size="sm" className="text-xs h-6 px-2 text-[#1a0066] hover:bg-[#1a0066]/10">
+                                View Details
+                              </Button>
+                            </Link>
+                          </div>
+                        )}
                       </div>
 
                       <div className="col-span-2">
@@ -647,36 +664,50 @@ export default function AdminDashboard() {
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-between mt-2">
-                            <div className="flex items-center space-x-2">
-                              <Avatar className="h-6 w-6">
-                                <AvatarImage src={listing.user.profilePicture} alt={listing.user.name} />
-                                <AvatarFallback className="text-xs">
-                                  {listing.user.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-xs text-gray-600">{listing.user.name}</span>
+                          <div className="mt-2 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarImage src={listing.user.profilePicture} alt={listing.user.name} />
+                                  <AvatarFallback className="text-xs">
+                                    {listing.user.name
+                                      .split(" ")
+                                      .map((n) => n[0])
+                                      .join("")}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-xs text-gray-600">{listing.user.name}</span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Badge
+                                  variant={listing.plan.type.includes('Premium') ? 'default' : 'outline'}
+                                  className={`text-xs ${listing.plan.type.includes('Free') ? 'bg-gray-100' : ''}`}
+                                >
+                                  {listing.plan.type}
+                                </Badge>
+                                <Badge
+                                  variant={
+                                    listing.status.value === 'live' ? 'default' :
+                                    listing.status.value === 'reviewing' ? 'secondary' : 'destructive'
+                                  }
+                                  className="text-xs"
+                                >
+                                  {listing.status.label}
+                                </Badge>
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <Badge
-                                variant={listing.plan.type.includes('Premium') ? 'default' : 'outline'}
-                                className={`text-xs ${listing.plan.type.includes('Free') ? 'bg-gray-100' : ''}`}
-                              >
-                                {listing.plan.type}
-                              </Badge>
-                              <Badge
-                                variant={
-                                  listing.status.value === 'live' ? 'default' :
-                                  listing.status.value === 'reviewing' ? 'secondary' : 'destructive'
-                                }
-                                className="text-xs"
-                              >
-                                {listing.status.label}
-                              </Badge>
-                            </div>
+                            {listing.user.accountType === 'Seller' && (
+                              <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+                                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                  Seller
+                                </Badge>
+                                <Link href={`/admin/users/${listing.user.customId}`}>
+                                  <Button variant="ghost" size="sm" className="text-xs h-6 px-2 text-[#1a0066] hover:bg-[#1a0066]/10">
+                                    View Details
+                                  </Button>
+                                </Link>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

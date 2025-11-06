@@ -325,36 +325,35 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                         <button onClick={() => setView("default")} className="text-gray-500">
                             ←
                         </button>
-                        <h2 className="text-xl font-bold mt-2">Request call</h2>
+                        <h2 className="text-xl font-bold mt-2">Contact Seller</h2>
                         <p className="text-gray-500 mb-4">
-                            Enter your contact information for Seller to reach out to you
+                            Call the seller directly using the phone number below
                         </p>
 
-                        <input
-                            type="text"
-                            placeholder="Full name"
-                            className="w-full p-2 border rounded-lg mb-2"
-                        />
-                        <input
-                            type="tel"
-                            placeholder="Phone number"
-                            className="w-full p-2 border rounded-lg mb-4"
-                        />
-
-                        {/* Request Call Button */}
-                        <button
-                            onClick={() => handleSubmit("Message sent")}
-                            className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white px-4 py-2 rounded-lg w-full"
-                        >
-                            Request Call
-                        </button>
+                        {/* Seller Phone Number */}
+                        {product?.seller?.phoneNumber ? (
+                            <div className="mb-6 p-4 bg-gray-50 rounded-lg border text-center">
+                                <p className="text-sm text-gray-600 mb-2">Seller's Phone Number</p>
+                                <a
+                                    href={`tel:${product.seller.phoneNumber}`}
+                                    className="text-2xl font-bold text-[#1F058F] hover:text-[#2a0bc0] transition-colors block"
+                                >
+                                    📞 {product.seller.phoneNumber}
+                                </a>
+                                <p className="text-xs text-gray-500 mt-2">Tap to call on mobile devices</p>
+                            </div>
+                        ) : (
+                            <div className="mb-6 p-4 bg-red-50 rounded-lg border text-center">
+                                <p className="text-sm text-red-600">Phone number not available</p>
+                            </div>
+                        )}
 
                         {/* Cancel Button */}
                         <button
                             onClick={handleCancel}
-                            className="border px-4 py-2 rounded-lg w-full mt-2 hover:bg-gray-100"
+                            className="border px-4 py-2 rounded-lg w-full hover:bg-gray-100"
                         >
-                            Cancel
+                            Back
                         </button>
                     </div>
                 )}

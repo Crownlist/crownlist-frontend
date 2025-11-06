@@ -11,12 +11,14 @@ import { useGetAuthUser } from "@/lib/useGetAuthUser"
 import { useLogout } from "@/lib/useLogout"
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
+import LogoutModal from "./logout-modal"
 
 export default function DashboardHeader() {
     const { data, isLoading } = useGetAuthUser("Admin");
     const { mutateLogout, isLoading: isLoggingOut } = useLogout("Admin");
     const router = useRouter();
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     // Memoize userData to prevent unnecessary re-renders
     const userData = useMemo(() => {
@@ -166,7 +168,7 @@ export default function DashboardHeader() {
                                     <button
                                         onClick={() => {
                                             setIsProfileDropdownOpen(false);
-                                            mutateLogout();
+                                            setIsLogoutModalOpen(true);
                                         }}
                                         disabled={isLoggingOut}
                                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 disabled:opacity-50"
@@ -180,6 +182,12 @@ export default function DashboardHeader() {
                     </div>
                 </div>
             </div>
+
+            <LogoutModal
+                open={isLogoutModalOpen}
+                handleClose={() => setIsLogoutModalOpen(false)}
+                userType="Admin"
+            />
         </header>
     )
 }
