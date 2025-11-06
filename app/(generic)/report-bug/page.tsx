@@ -22,10 +22,10 @@ export default function ReportBug() {
 
       <div className="min-h-screen bg-gray-50 ">
         <div className="max-w-2xl mx-auto px-4  items-center mb-8 pt-8">
-          <div
-            className={`px-6 py-2 text-center w-40 mx-auto items-center rounded-full text-sm font-medium bg-purple-100 text-purple-700 c shadow-sm mb-8 `}
+         <div
+            className={`px-6 py-2 text-center w-40 mx-auto items-center rounded-full text-sm font-medium bg-red-100 text-red-700 c shadow-sm mb-8 `}
           >
-            Share feedback
+            Report a bug
           </div>
 
           {/* Navigation Tabs */}
@@ -68,9 +68,9 @@ export default function ReportBug() {
           {/* Form */}
           <div className="bg-white rounded-xl shadow-sm border p-8">
             <form className="space-y-8">
-              {/* Select your idea */}
+              {/* Select the issue type */}
               <div>
-                <Label className="text-base font-medium text-gray-900 mb-4 block">Select your idea</Label>
+                <Label className="text-base font-medium text-gray-900 mb-4 block">Select the issue type</Label>
                 <RadioGroup value={selectedIdea} onValueChange={setSelectedIdea} className="grid grid-cols-2 md:grid-cols-3  gap-4">
                   <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
                     <RadioGroupItem value="notification" id="notification" />
@@ -123,12 +123,12 @@ export default function ReportBug() {
                 </div>
               </div>
 
-              {/* Tell us about your idea */}
+              {/* Describe the bug */}
               <div>
-                <Label htmlFor="idea-description" className="text-base font-medium text-gray-900 mb-4 block">
-                  Tell us about your idea
+                <Label htmlFor="bug-description" className="text-base font-medium text-gray-900 mb-4 block">
+                  Describe the bug
                 </Label>
-                <Textarea id="idea-description" placeholder="" className="min-h-[120px] resize-none" />
+                <Textarea id="bug-description" placeholder="" className="min-h-[120px] resize-none" />
               </div>
 
               {/* Submit Button */}

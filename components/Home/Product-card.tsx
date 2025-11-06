@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 
 interface ProductCardProps {
   id: string | number
+  slug?: string
   image: string
   title: string
   price: string
@@ -28,6 +29,7 @@ interface ProductCardProps {
 
 export default function ProductCard({
   id,
+  slug,
   image,
   title,
   price,
@@ -53,12 +55,7 @@ export default function ProductCard({
       router.push(`/${breadcrumbCat}/${breadcrumbSub}`)
       return
     }
-    const params = new URLSearchParams()
-    if (breadcrumbCat) params.set('cat', breadcrumbCat)
-    if (breadcrumbSub) params.set('sub', breadcrumbSub)
-    if (breadcrumbLabel) params.set('label', breadcrumbLabel)
-    const qs = params.toString()
-    router.push(qs ? `/product/${id}?${qs}` : `/product/${id}`)
+    router.push(`/product/${slug || id}`)
   }
   
 

@@ -66,6 +66,7 @@ export default function Home() {
   // Helper function to convert API Product to ProductSection Product
   const convertApiProductToSectionProduct = (p: Product) => ({
     id: p._id,
+    slug: p.slug,
     image: p.images?.[0]?.url || "/placeholder.svg",
     title: p.name,
     description: p.description || "",
@@ -116,6 +117,7 @@ export default function Home() {
                 title="Trending Now"
                 products={apiProducts.slice(0, 4).map((p: ApiProduct) => ({
                   id: p._id,
+                  slug: p.slug,
                   image: p.images?.[0]?.url || "/placeholder.svg",
                   title: p.name,
                   description: p.description || "",
@@ -132,7 +134,7 @@ export default function Home() {
                 initialView="grid"
                 showSeeMore
                 onSeeMoreClick={() => handleSeeMore("/search")}
-                useBreadcrumbRouting={true}
+                useBreadcrumbRouting={false}
               />
             )}
 
@@ -154,6 +156,7 @@ export default function Home() {
               ) : (
                 <SponsoredPost items={apiProducts.slice(0, 4).map((p: ApiProduct) => ({
                   id: p._id,
+                  slug: p.slug,
                   image: p.images?.[0]?.url || "/placeholder.svg",
                   title: p.name,
                   description: p.description || "",
