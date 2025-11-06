@@ -44,7 +44,12 @@ interface DashboardData {
         totalViews: number
         potentialEarnings: string
         subscriptionStatus: string
-        subscriptionPlan: string | null
+        subscriptionPlan: {
+            name: string
+            _id: string
+            features: string[]
+            amount: number
+        }
     }
     analytics: {
         year: number
@@ -154,7 +159,7 @@ export default function DashboardPage() {
                         <CardContent className="p-6">
                             <div className="text-sm text-gray-500 mb-1">Subscription</div>
                             <div className="text-2xl font-bold mb-1 capitalize">{metrics.subscriptionStatus}</div>
-                            <div className="text-sm text-gray-400">{metrics.subscriptionPlan || "No plan"}</div>
+                            <div className="text-sm text-gray-400">{metrics.subscriptionPlan?.name || "No plan"}</div>
                         </CardContent>
                     </Card>
                 </div>
