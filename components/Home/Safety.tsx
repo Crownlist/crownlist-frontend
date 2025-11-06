@@ -1,4 +1,6 @@
-import React from "react";
+"use client"
+
+import React, { useState, useMemo } from "react";
 import { ShieldCheck, UserCheck, BadgeCheck, UserMinus, FileQuestionIcon } from "lucide-react";
 
 import {
@@ -12,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const Safety = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
   // const safetyTips = {
   //   introduction: `At CROWNLIST, your safety is our priority. While we facilitate connections between buyers and sellers, we do not handle payments, shipping, or guarantee transactions. Please follow these safety tips to ensure a secure experience.`,
   //   generalSafetyTips: {
@@ -71,7 +75,7 @@ const Safety = () => {
   //   </ul>
   // );
 
-  const faqs = [
+  const faqs = useMemo(() => [
     {
       id: 1,
       question: "General Safety Tips",
@@ -157,7 +161,17 @@ const Safety = () => {
       <p>If you have any questions or need further assistance, please contact us at <a href="mailto:support@crownlist.com">support@crownlist.com</a>.</p>
     `,
     },
-  ];
+  ], []);
+
+  const filteredFaqs = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return faqs;
+    }
+    return faqs.filter((faq) =>
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, faqs]);
 
   return (
     <div className="mx-auto p-6 space-y-8 w-full max-w-screen-md">
@@ -186,6 +200,8 @@ const Safety = () => {
         <Input
           type="text"
           placeholder="Search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 pr-4 py-2 rounded-full border border-gray-300"
         />
         <Button className="absolute right-0 top-0 bottom-0 rounded-r-full bg-[#3e0bac] hover:bg-[#2e0880] text-white px-5">
@@ -198,7 +214,7 @@ const Safety = () => {
         collapsible
         className="rounded-lg  w-full max-w-4xl p-6"
       >
-        {faqs.map((faq) => (
+        {filteredFaqs.map((faq) => (
           <AccordionItem value={`item-${faq.id}`} key={faq.id}>
             <AccordionTrigger className="cursor-pointer">
               <span className="flex items-center cursor-pointer">
