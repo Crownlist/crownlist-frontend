@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { PlusCircle } from "lucide-react"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { faqData } from "@/constants/faqData"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
@@ -13,9 +13,20 @@ import Footer from "@/components/Footer"
 
 export default function FAQSection() {
 
+  const [searchQuery, setSearchQuery] = useState("")
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({
-    1: true, 
+    1: true,
   })
+
+  const filteredFaqData = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return faqData
+    }
+    return faqData.filter(faq =>
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [searchQuery])
 
   const toggleItem = (id: number) => {
     setOpenItems((prev) => ({
@@ -43,34 +54,49 @@ export default function FAQSection() {
       </div>
 
       <div className="relative mb-10 max-w-md mx-auto">
-        <Input type="text" placeholder="Search" className="pl-10 pr-4 py-2 rounded-full border border-gray-300" />
-        <Button className="absolute right-0 top-0 bottom-0 rounded-r-full bg-[#3e0bac] hover:bg-[#2e0880] text-white px-5">
+        <Input
+          type="text"
+          placeholder="Search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 pr-4 py-2 rounded-full border border-gray-300"
+        />
+        <Button
+          onClick={() => {/* Search is handled by onChange, but keeping button for UX */}}
+          className="absolute right-0 top-0 bottom-0 rounded-r-full bg-[#3e0bac] hover:bg-[#2e0880] text-white px-5"
+        >
           Search
         </Button>
       </div>
 
       <div className="space-y-4">
-        {faqData.map((faq) => (
-          <div key={faq.id} className="border-b border-gray-200 pb-4">
-            <button
-              className="flex justify-between items-center w-full text-left py-2 focus:outline-none"
-              onClick={() => toggleItem(faq.id)}
-              aria-expanded={!!openItems[faq.id]}
-            >
-              <span className="font-medium text-gray-900">{faq.question}</span>
-              <PlusCircle
-                className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${
-                  openItems[faq.id] ? "transform rotate-45" : ""
-                }`}
-              />
-            </button>
-            {openItems[faq.id] && (
-              <div className="mt-2 text-gray-600 animate-fadeIn">
-                <p>{faq.answer}</p>
-              </div>
-            )}
+        {filteredFaqData.length > 0 ? (
+          filteredFaqData.map((faq) => (
+            <div key={faq.id} className="border-b border-gray-200 pb-4">
+              <button
+                className="flex justify-between items-center w-full text-left py-2 focus:outline-none"
+                onClick={() => toggleItem(faq.id)}
+                aria-expanded={!!openItems[faq.id]}
+              >
+                <span className="font-medium text-gray-900">{faq.question}</span>
+                <PlusCircle
+                  className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${
+                    openItems[faq.id] ? "transform rotate-45" : ""
+                  }`}
+                />
+              </button>
+              {openItems[faq.id] && (
+                <div className="mt-2 text-gray-600 animate-fadeIn">
+                  <p>{faq.answer}</p>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No FAQs found matching your search.</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
     <Footer />
