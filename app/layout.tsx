@@ -5,10 +5,14 @@ import { Inter } from "next/font/google"
 import Wrapper from "@/client/wrapper"
 // import BottomNav from "@/components/BottomNav"
 import ReactQueryProvider from "@/providers/ReactQueryProvider"
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import TawktoChat from "@/components/TawktoChat"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://crownlist.store'),
   title: "Crownlist - Buy and Sell Locally",
   description: "Find great deals on furniture, clothes, electronics, and more near you.",
   openGraph: {
@@ -46,6 +50,9 @@ export default function RootLayout({
             {/* <ChatBot /> */}
             {/* <BottomNav/> */}
           </ReactQueryProvider>
+          <TawktoChat />
+          <Analytics />
+          <SpeedInsights />
       </body>
     </html>
   )

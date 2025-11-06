@@ -3,28 +3,29 @@
 "use client"
 
 import Link from "next/link"
-import { Bell, ChevronDown, Search, LogOut } from "lucide-react"
+import { Bell, ChevronDown, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
 import { useGetSubscription } from "@/lib/useGetSubscription"
 import LogoutModal from "./logout-modal"
 import { useState } from "react"
+import { useNotifications } from "@/hooks/useNotifications"
 
 export default function DashboardHeader() {
     // const { userData } = useSelector((state: RootState) => state.userData);
     const [logoutModalOpen, setLogoutModalOpen] = useState(false)
 
-    const {  data } = useGetAuthUser("User");
+    const { data } = useGetAuthUser("User");
     const { subscriptionData } = useGetSubscription();
+      const { notifications } = useNotifications()
     const userData = data?.data.loggedInAccount
 
     console.log('disp', data)
@@ -36,6 +37,9 @@ export default function DashboardHeader() {
     const handleCloseLogoutModal = () => {
         setLogoutModalOpen(false)
     }
+
+      const unreadCount = notifications.filter(notification => !notification.isRead).length
+
     return (
         <header className="bg-[#141414] text-white py-3 px-4 md:px-6 w-full sticky inset-0 z-[999]">
             <div className="flex items-center justify-between max-sm:justify-end">
@@ -51,7 +55,7 @@ export default function DashboardHeader() {
                         </div>
                     </Link>
                 </div>
-                <div className="hidden md:flex flex-1 max-w-xl relative w-full">
+                {/* <div className="hidden md:flex flex-1 max-w-xl relative w-full">
                         <Input
                             type="text"
                             placeholder="Search"
@@ -59,11 +63,16 @@ export default function DashboardHeader() {
                         />
                           <Search size={16} color="#141414" className="absolute top-1/2 -translate-y-1/2 left-4" />
                         <Button className="bg-[#1F058F] hover:bg-[#3b0bc0] text-white rounded-l-none rounded-r-full">Search</Button>
-                    </div>
+                    </div> */}
 
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="text-white">
+                <div className="flex items-center gap-4 ">
+                    <Button variant="ghost" size="icon" className="text-white border border-gray-600 rounded-full py-1 px-7">
                         <Bell className="h-5 w-5" />
+                        {unreadCount > 0 && (
+                            <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
+                                {unreadCount > 99 ? '99+' : unreadCount}
+                            </span>
+                        )}
                     </Button>
 
                     <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-gray-600 rounded-full">
@@ -76,14 +85,14 @@ export default function DashboardHeader() {
                             />
                         </div>
                         <span className="text-sm">
-                          {subscriptionData?.data?.subscription?.subscriptionPlanName || "Basic plan"}
+                            {subscriptionData?.data?.subscription?.subscriptionPlanName || "Basic plan"}
                         </span>
                     </div>
 
                     <DropdownMenu>
                         <DropdownMenuTrigger className="flex items-center gap-2 focus:outline-none">
                             <Avatar className="h-8 w-8 border border-gray-600">
-                                <AvatarImage src={ userData?.profilePicture ||"/profile.png"} alt="User" />
+                                <AvatarImage src={userData?.profilePicture || "/profile.png"} alt="User" />
                                 <AvatarFallback>JA</AvatarFallback>
                             </Avatar>
                             <div className="hidden md:block">

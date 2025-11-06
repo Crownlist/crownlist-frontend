@@ -110,7 +110,7 @@ export default function UsersPage() {
             <p className="text-gray-600">Manage and track all users</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex flex-row sm:flex-row gap-3">
+            <div className="flex flex-row sm:flex-row justify-between align-middle items-center gap-3">
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-500">Show:</span>
                 <Select
@@ -169,7 +169,7 @@ export default function UsersPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <StatCard title="Total Users" value={totalUsers} />
           <StatCard title="Active Users" value={activeUsers} />
           <StatCard title="Inactive Users" value={inactiveUsers} />
@@ -177,7 +177,7 @@ export default function UsersPage() {
           <StatCard title="Regular Users" value={regularUsers} />
         </div>
 
-        {/* Users Table */}
+        {/* Users Table/Cards */}
         <div className="bg-white rounded-lg border shadow-sm">
           <div className="p-4">
             <h2 className="text-lg font-semibold">All Users</h2>
@@ -187,81 +187,149 @@ export default function UsersPage() {
           </div>
 
           {filteredUsers.length > 0 ? (
-            <div className="overflow-x-auto w-full">
-              <Table className="min-w-[800px] w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Email</TableHead>
-                    {/* <TableHead>User ID</TableHead> */}
-                    <TableHead>Account Type</TableHead>
-                    <TableHead>Subscription Status</TableHead>
-                    <TableHead>Joined Date</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user._id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarImage src={user.profilePicture} alt={user.fullName} />
-                            <AvatarFallback>
-                              {user.fullName
-                                .split(' ')
-                                .map((n) => n[0] || '')
-                                .join('')
-                                .toUpperCase()
-                                .slice(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{user.fullName || 'Unknown'}</div>
-                            <div className="text-sm text-gray-500">
-                              {user.isVerified ? 'Verified' : 'Not Verified'}
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto w-full">
+                <Table className="min-w-[800px] w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Account Type</TableHead>
+                      <TableHead>Subscription Status</TableHead>
+                      <TableHead>Joined Date</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.map((user) => (
+                      <TableRow key={user._id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                              <AvatarImage src={user.profilePicture} alt={user.fullName} />
+                              <AvatarFallback>
+                                {user.fullName
+                                  .split(' ')
+                                  .map((n) => n[0] || '')
+                                  .join('')
+                                  .toUpperCase()
+                                  .slice(0, 2)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{user.fullName || 'Unknown'}</div>
+                              <div className="text-sm text-gray-500">
+                                {user.isVerified ? 'Verified' : 'Not Verified'}
+                              </div>
                             </div>
                           </div>
+                        </TableCell>
+                        <TableCell>{user.email || 'N/A'}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={user.accountType === 'Seller' ? 'default' : 'outline'}
+                            className={user.accountType === 'Admin' ? 'bg-purple-100 text-purple-800' : ''}
+                          >
+                            {user.accountType || 'User'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={user.subscriptionStatus === 'active' ? 'default' : 'outline'}
+                            className={user.subscriptionStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
+                          >
+                            {(user.subscriptionStatus || 'inactive').charAt(0).toUpperCase() + (user.subscriptionStatus || 'inactive').slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'N/A'}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Link href={`/admin/users/${user._id}`}>
+                              <Button variant="outline" size="sm">View</Button>
+                            </Link>
+                            {user.accountType === 'Seller' && (
+                              <Link href={`/admin/users/${user._id}/seller-products`}>
+                                <Button variant="ghost" size="sm" className="text-[#1F058F] hover:bg-[#1F058F]/10">
+                                  View Products
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4 p-4">
+                {filteredUsers.map((user) => (
+                  <div key={user._id} className="bg-gray-50 rounded-lg p-4 border">
+                    <div className="flex items-start gap-3 mb-3">
+                      <Avatar className="h-12 w-12 flex-shrink-0">
+                        <AvatarImage src={user.profilePicture} alt={user.fullName} />
+                        <AvatarFallback>
+                          {user.fullName
+                            .split(' ')
+                            .map((n) => n[0] || '')
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-900 truncate">{user.fullName || 'Unknown'}</div>
+                        <div className="text-sm text-gray-500 mb-1">
+                          {user.isVerified ? 'Verified' : 'Not Verified'}
                         </div>
-                      </TableCell>
-                      <TableCell>{user.email || 'N/A'}</TableCell>
-                      {/* <TableCell>{user.userCustomId || 'N/A'}</TableCell> */}
-                      <TableCell>
+                        <div className="text-sm text-gray-600 truncate">{user.email || 'N/A'}</div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Account Type</div>
                         <Badge
                           variant={user.accountType === 'Seller' ? 'default' : 'outline'}
-                          className={user.accountType === 'Admin' ? 'bg-purple-100 text-purple-800' : ''}
+                          className={`mt-1 text-xs ${user.accountType === 'Admin' ? 'bg-purple-100 text-purple-800' : ''}`}
                         >
                           {user.accountType || 'User'}
                         </Badge>
-                      </TableCell>
-                      <TableCell>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Subscription</div>
                         <Badge
                           variant={user.subscriptionStatus === 'active' ? 'default' : 'outline'}
-                          className={user.subscriptionStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
+                          className={`mt-1 text-xs ${user.subscriptionStatus === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
                         >
                           {(user.subscriptionStatus || 'inactive').charAt(0).toUpperCase() + (user.subscriptionStatus || 'inactive').slice(1)}
                         </Badge>
-                      </TableCell>
-                      <TableCell>{user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'N/A'}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Link href={`/admin/users/${user._id}`}>
-                            <Button variant="outline" size="sm">View</Button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-gray-500">
+                        Joined: {user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'N/A'}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Link href={`/admin/users/${user._id}`}>
+                          <Button variant="outline" size="sm" className="text-xs px-3 py-1">View</Button>
+                        </Link>
+                        {user.accountType === 'Seller' && (
+                          <Link href={`/admin/users/${user._id}/seller-products`}>
+                            <Button variant="ghost" size="sm" className="text-xs px-3 py-1 text-[#1F058F] hover:bg-[#1F058F]/10">
+                              Products
+                            </Button>
                           </Link>
-                          {user.accountType === 'Seller' && (
-                            <Link href={`/admin/users/${user._id}/seller-products`}>
-                              <Button variant="ghost" size="sm" className="text-[#1F058F] hover:bg-[#1F058F]/10">
-                                View Products
-                              </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="p-12 text-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
@@ -278,8 +346,8 @@ export default function UsersPage() {
         </div>
 
         {/* Pagination Controls */}
-        <div className="flex items-center justify-between mt-4">
-          <div className="text-sm text-gray-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4">
+          <div className="text-sm text-gray-500 text-center sm:text-left">
             Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
             <span className="font-medium">
               {Math.min(currentPage * itemsPerPage, data?.data?.totalUsers || 0)}
@@ -287,47 +355,62 @@ export default function UsersPage() {
             of <span className="font-medium">{data?.data?.totalUsers || 0}</span> users
           </div>
 
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1 || isLoading}
-            >
-              Previous
-            </Button>
-            <div className="flex items-center space-x-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                // Show pages around current page
-                let pageNum = currentPage - 2 + i;
-                // Adjust if we're near the start or end
-                if (pageNum < 1) pageNum = i + 1;
-                if (pageNum > totalPages) pageNum = totalPages - 4 + i;
+          <div className="flex flex-col sm:flex-row items-center gap-2">
+            <div className="flex items-center gap-1 order-2 sm:order-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1 || isLoading}
+                className="text-xs px-3 py-1"
+              >
+                Previous
+              </Button>
 
-                return (
-                  <Button
-                    key={pageNum}
-                    variant={currentPage === pageNum ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(pageNum)}
-                    disabled={isLoading}
-                  >
-                    {pageNum}
-                  </Button>
-                );
-              })}
-              {totalPages > 5 && (
-                <span className="px-2 text-sm text-gray-500">... {totalPages}</span>
-              )}
+              {/* Mobile: Show fewer page buttons */}
+              <div className="flex items-center space-x-1 sm:hidden">
+                <span className="text-sm text-gray-600 px-2">
+                  {currentPage} of {totalPages}
+                </span>
+              </div>
+
+              {/* Desktop: Show page number buttons */}
+              <div className="hidden sm:flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  // Show pages around current page
+                  let pageNum = currentPage - 2 + i;
+                  // Adjust if we're near the start or end
+                  if (pageNum < 1) pageNum = i + 1;
+                  if (pageNum > totalPages) pageNum = totalPages - 4 + i;
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(pageNum)}
+                      disabled={isLoading}
+                      className="text-xs px-3 py-1 min-w-[40px]"
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
+                {totalPages > 5 && (
+                  <span className="px-2 text-sm text-gray-500">... {totalPages}</span>
+                )}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages || isLoading || totalPages === 0}
+                className="text-xs px-3 py-1"
+              >
+                Next
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            //   disabled={currentPage === totalPages || isLoading || totalPages === 0}
-            >
-              Next
-            </Button>
           </div>
         </div>
       </div>

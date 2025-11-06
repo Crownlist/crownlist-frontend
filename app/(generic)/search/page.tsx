@@ -78,10 +78,22 @@ export default function SearchPage() {
     }
 
     try {
+      const submitData = new FormData();
+
+      // Add form fields
+      submitData.append("fullName", formData.fullName);
+      submitData.append("contactNumber", formData.contactNumber);
+      submitData.append("description", formData.description);
+      submitData.append("category", formData.category);
+
+      // Add files
+      files.forEach((file) => {
+        submitData.append("files", file);
+      });
+
       const response = await fetch("/api/request-product", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: submitData,
       });
 
       if (response.ok) {
@@ -92,8 +104,10 @@ export default function SearchPage() {
           description: "",
           category: "",
         });
+        setFiles([]);
       } else {
-        toast("Error submitting request.");
+        const errorData = await response.json();
+        toast(errorData.error || "Error submitting request.");
       }
     } catch (error) {
       console.error("Submission error:", error);

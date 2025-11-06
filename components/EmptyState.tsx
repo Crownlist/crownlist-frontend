@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 import { useCategories } from "@/hooks/useCategories";
+import { Category, Subcategory } from "@/types/category/category";
+import { apiClientUser } from "@/lib/interceptor";
 
 interface EmptyStateProps {
   categorySlug?: string;
@@ -16,17 +18,33 @@ interface EmptyStateProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subcategorySlug }: EmptyStateProps) {
+  const { categories, loading: categoriesLoading } = useCategories();
+
   // State for form data
   const [formData, setFormData] = useState({
-    fullName: "",
-    contactNumber: "",
+    name: "",
     description: "",
     category: "",
+    subCategory: "",
+    phone: "",
   });
 
-  const { categories } = useCategories();
-
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([]);
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle category change
+  const handleCategoryChange = (categoryId: string) => {
+    const category = categories.find(c => c._id === categoryId);
+    setSelectedCategory(category || null);
+    setAvailableSubcategories(category?.subCategories || []);
+    setFormData(prev => ({
+      ...prev,
+      category: categoryId,
+      subCategory: '' // Reset subcategory when category changes
+    }));
+  };
 
   // Handle input changes
   const handleChange = (
@@ -35,8 +53,8 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
     >
   ) => {
     const { name, value } = e.target;
-    if (name === "contactNumber") {
-      // Allow only numeric input
+    if (name === "phone") {
+      // Allow only numeric input for phone
       const numericValue = value.replace(/[^0-9]/g, "");
       setFormData((prev) => ({ ...prev, [name]: numericValue }));
     } else {
@@ -75,33 +93,71 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!/^[0-9]+$/.test(formData.contactNumber)) {
-      toast("Contact number must be numeric.");
+    if (!formData.name || !formData.description || !formData.category ||
+        !formData.subCategory || !formData.phone) {
+      toast("Please fill in all required fields");
       return;
     }
 
-    try {
-      const response = await fetch("/api/request-product", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    if (formData.description.length < 10) {
+      toast.error("Description must be at least 10 characters long.");
+      return;
+    }
 
-      if (response.ok) {
-        toast("Request submitted successfully!");
-        setFormData({
-          fullName: "",
-          contactNumber: "",
-          description: "",
-          category: "",
-        });
-        setFiles([]);
-      } else {
-        toast("Error submitting request.");
-      }
-    } catch (error) {
+    if (files.length === 0) {
+      toast("Please select at least one image");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // TODO: First upload images to get URLs
+      // const uploadedImages = await uploadImagesToServer(files)
+
+      // For now, simulate uploaded URLs
+      const uploadedImages = files.map((file, index) => ({
+        url: `https://example.com/uploads/${file.name}`,
+        altText: `Image ${index + 1}`,
+        isPrimary: index === 0
+      }));
+
+      const payload = {
+        name: formData.name,
+        description: formData.description,
+        images: uploadedImages,
+        category: formData.category,
+        subCategory: formData.subCategory,
+        phone: formData.phone
+      };
+
+      await apiClientUser.post('/product-requests/create', payload);
+
+      toast.success("Request submitted successfully!");
+      setFormData({
+        name: "",
+        description: "",
+        category: "",
+        subCategory: "",
+        phone: "",
+      });
+      setSelectedCategory(null);
+      setAvailableSubcategories([]);
+      setFiles([]);
+    } catch (error: unknown) {
       console.error("Submission error:", error);
-      toast("An error occurred.");
+
+      // Handle different error formats from backend
+      let errorMessage = "An error occurred.";
+      if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as { message: string }).message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -138,43 +194,31 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
 
               <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-start">Full name</label>
+                  <label className="block mb-2 text-sm font-medium text-start">Product Name</label>
                   <Input
-                    name="fullName"
-                    value={formData.fullName}
+                    name="name"
+                    value={formData.name}
                     onChange={(e) => {
-                      // Remove any numbers from input
-                      const value = e.target.value.replace(/[0-9]/g, "");
-                      handleChange({
-                        ...e,
-                        target: {
-                          ...e.target,
-                          value,
-                        },
-                      });
+                      const filteredValue = e.target.value.replace(/[0-9]/g, "");
+                      setFormData((prev) => ({ ...prev, name: filteredValue }));
                     }}
                     className="w-full"
                     pattern="[A-Za-z\s]+"
                     title="Only letters and spaces are allowed"
-                    onKeyPress={(e) => {
-                      if (!/[A-Za-z\s]/.test(e.key)) {
-                        e.preventDefault();
-                      }
-                    }}
                     required
                   />
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-start">
-                    Contact number
+                    Phone Number
                   </label>
                   <Input
                     type="tel"
-                    name="contactNumber"
-                    value={formData.contactNumber}
+                    name="phone"
+                    value={formData.phone}
                     onChange={handleChange}
                     pattern="[0-9]+"
-                    title="Contact number must be numeric"
+                    title="Phone number must be numeric"
                     className="w-full"
                     onKeyPress={(e) => {
                       if (!/[0-9]/.test(e.key)) {
@@ -184,24 +228,53 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                     required
                   />
                 </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-start">Category</label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                    required
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat._id} value={cat.name}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-start">Category</label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={handleCategoryChange}
+                      disabled={categoriesLoading}
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={categoriesLoading ? "Loading..." : "Select a category"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat._id} value={cat._id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium text-start">Subcategory</label>
+                    <Select
+                      value={formData.subCategory}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, subCategory: value }))}
+                      disabled={!selectedCategory || availableSubcategories.length === 0}
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={
+                          !selectedCategory
+                            ? "Select a category first"
+                            : availableSubcategories.length === 0
+                              ? "No subcategories available"
+                              : "Select a subcategory"
+                        } />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSubcategories.map((sub) => (
+                          <SelectItem key={sub._id} value={sub._id}>
+                            {sub.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-start">Image(s)</label>
@@ -258,9 +331,10 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                 <div className="flex w-full justify-center">
                   <Button
                     type="submit"
-                    className="w-full max-w-md bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3"
+                    disabled={isSubmitting}
+                    className="w-full max-w-md bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Request product
+                    {isSubmitting ? "Submitting..." : "Request product"}
                   </Button>
                 </div>
               </form>

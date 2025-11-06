@@ -335,6 +335,38 @@ export default function SellerProductDetailsDynamic() {
               </div> */}
             </div>
 
+            {/* Seller Details */}
+            {data[0]?.seller && (
+              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="font-medium text-blue-900">Seller Information</h2>
+                  <Link href={`/admin/users/${data[0]?.seller?._id || data[0]?.seller}`}>
+                    <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+                      View Seller Details
+                    </Button>
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-gray-500 text-xs mb-1">Seller Name</div>
+                    <div className="font-medium">{data[0]?.seller?.fullName || data[0]?.seller?.name || "N/A"}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 text-xs mb-1">Seller Email</div>
+                    <div className="font-medium">{data[0]?.seller?.email || "N/A"}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 text-xs mb-1">Account Type</div>
+                    <div className="font-medium">{data[0]?.seller?.accountType || "N/A"}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 text-xs mb-1">Seller ID</div>
+                    <div className="font-medium text-xs break-all">{data[0]?.seller?._id || data[0]?.seller || "N/A"}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Timestamps */}
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <div className="border rounded-md p-3">

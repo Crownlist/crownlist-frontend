@@ -160,7 +160,9 @@ export default function AdminSubscriptionsPage() {
   const validateCreate = () => {
     const next: typeof errors = {}
     if (!createForm.name.trim()) next.name = "Name is required"
+    const descriptionWords = createForm.description.trim().split(/\s+/).filter(word => word.length > 0)
     if (!createForm.description.trim()) next.description = "Description is required"
+    else if (descriptionWords.length < 10) next.description = "Description must be at least 10 words"
     if (!featuresInput.trim()) next.featuresInput = "Enter at least one feature"
     // listingLimit is optional for now; can be managed in a dedicated edit view
     if (!createForm.amount) next.amount = "Amount is required"
@@ -308,9 +310,9 @@ export default function AdminSubscriptionsPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Subscription Plans</h1>
+    <div className="p-4 md:p-6">
+      <div className="flex flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h1 className="text-xl md:text-2xl font-bold">Subscription Plans</h1>
         <Dialog 
           open={isCreateOpen} 
           onOpenChange={(o) => { 
@@ -505,18 +507,19 @@ export default function AdminSubscriptionsPage() {
           </Button>
         </div>
       ) : (
-        <Table className="border rounded-lg">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Billing</TableHead>
-              <TableHead>Listing Limit</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-24">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+        <div className="overflow-x-auto">
+          <Table className="border rounded-lg min-w-[800px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Billing</TableHead>
+                <TableHead>Listing Limit</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead className="w-24">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
           <TableBody>
             {plans.map((p) => (
               <TableRow key={p._id}>
@@ -546,9 +549,9 @@ export default function AdminSubscriptionsPage() {
                 <TableCell>{p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "-"}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEditPlan(p);
@@ -556,9 +559,9 @@ export default function AdminSubscriptionsPage() {
                     >
                       <Pencil className="h-4 w-4 text-[#1F058F]" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={(e) => {
                         e.stopPropagation();
                         setPlanToDelete(p);
@@ -573,6 +576,7 @@ export default function AdminSubscriptionsPage() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
 
       {/* Delete Confirmation Dialog */}
@@ -784,4 +788,3 @@ export default function AdminSubscriptionsPage() {
     </div>
   )
 }
-

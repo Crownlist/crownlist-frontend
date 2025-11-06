@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { X, Home, Package, MessageSquare, PieChart, Settings, LogOut, CreditCard, Shield, Bell } from "lucide-react"
+import { X, Home, Package, MessageSquare, Settings, LogOut, CreditCard, Shield, Bell } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import LogoutModal from "./logout-modal"
 import { useState } from "react"
+import { useNotifications } from "@/hooks/useNotifications"
 
 interface MobileSidebarProps {
     isOpen: boolean
@@ -17,18 +18,21 @@ interface MobileSidebarProps {
 
 export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
     const pathname = usePathname()
+    const { notifications } = useNotifications()
     const [open, setOpen] = useState(false)
 
     const handleClose = () => {
         setOpen(false);
     };
 
+    const unreadCount = notifications.filter(notification => !notification.isRead).length
+
     return (
         <>
             {/* Mobile sidebar */}
             <div
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r transform transition-transform duration-300 ease-in-out pt-16 md:hidden",
+                    "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r transform transition-transform duration-300 ease-in-out pt-16 md:hidden h-full overflow-y-auto",
                     isOpen ? "translate-x-0" : "-translate-x-full",
                 )}
             >
@@ -120,11 +124,11 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         <span>Escrow</span>
                     </Link>
 
-                       <Link
-                        href="/seller/notifications"
+                    <Link
+                        href="/seller/notification"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
-                            pathname.includes("/seller/notifications")
+                            pathname.includes("/seller/notification")
                                 ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100"
 
                         )}
@@ -132,6 +136,11 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <Bell className="h-5 w-5" />
                         <span>Notifications</span>
+                        {unreadCount > 0 && (
+                            <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
+                                {unreadCount > 99 ? '99+' : unreadCount}
+                            </span>
+                        )}
                     </Link>
 
                     <Link
@@ -148,7 +157,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         <span>Messages</span>
                     </Link>
 
-                    <Link
+                    {/* <Link
                         href="/seller/analytics"
                         className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
@@ -160,7 +169,7 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     >
                         <PieChart className="h-5 w-5" />
                         <span>Analytics</span>
-                    </Link>
+                    </Link> */}
 
                     <Link
                         href="/seller/settings/profile"
@@ -175,17 +184,15 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         <Settings className="h-5 w-5" />
                         <span>Settings</span>
                     </Link>
-                </nav>
 
-                <div className="absolute bottom-8 w-full px-4">
                     <button
-                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary"
+                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary w-full text-left"
                         onClick={() => setOpen(true)}
                     >
                         <LogOut className="h-5 w-5" />
                         <span>Logout</span>
                     </button>
-                </div>
+                </nav>
 
                 <LogoutModal open={open} handleClose={handleClose} />
             </div>

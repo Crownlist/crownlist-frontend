@@ -98,9 +98,10 @@ export default function AdminAddOnServicesPage() {
     else if (form.category.trim().length < 3) next.category = "Category must be at least 3 characters"
     else if (form.category.trim().length > 80) next.category = "Category must be at most 80 characters"
 
+    const descriptionWords = form.description.trim().split(/\s+/).filter(word => word.length > 0)
     if (!form.description?.trim()) next.description = "Description is required"
-    else if (form.description.trim().length < 10) next.description = "Description must be at least 10 characters"
-    else if (form.description.trim().length > 1000) next.description = "Description must be at most 1000 characters"
+    else if (descriptionWords.length < 10) next.description = "Description must be at least 10 words"
+    else if (descriptionWords.length > 1000) next.description = "Description must be at most 1000 words"
 
     if (form.amount == null || isNaN(Number(form.amount)) || Number(form.amount) <= 0) next.amount = "Amount must be greater than 0"
     if (!form.billing_cycle) next.billing_cycle = "Billing cycle is required"

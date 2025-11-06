@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, LogOut, MessageSquare, Package, PieChart, SendHorizontal, Settings, CreditCard, Shield, Bell } from "lucide-react"
+import { Home, LogOut, MessageSquare, Package, SendHorizontal, Settings, CreditCard, Shield, Bell } from "lucide-react"
 import { useNotifications } from "@/hooks/useNotifications"
 
 import { cn } from "@/lib/utils"
@@ -120,7 +120,7 @@ export default function DashboardSidebar() {
           )}
         </Link>
 
-        <Link
+        {/* <Link
           href="/seller/analytics"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
@@ -129,7 +129,7 @@ export default function DashboardSidebar() {
         >
           <PieChart className="h-5 w-5" />
           <span>Analytics</span>
-        </Link>
+        </Link> */}
 
         <Link
           href="/seller/settings/profile"
