@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import { apiClientUser } from "@/lib/interceptor"
 import { useGetAuthUser } from "@/lib/useGetAuthUser"
 import { ConfirmationModal } from "@/components/ui/confirmation-modal"
+import { useRouter } from "next/navigation"
 
 interface UserProfile {
   fullName: string
@@ -35,7 +36,7 @@ export default function ProfileSettingsPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
-  
+  const router = useRouter();
   const [formData, setFormData] = useState<UserProfile>({
     fullName: "",
     email: "",
@@ -229,7 +230,7 @@ export default function ProfileSettingsPage() {
       setCurrentImage(profilePictureUrl)
       clearImageSelection()
       toast.success("Profile updated successfully")
-      
+      router.refresh();
     } catch (error: any) {
       console.error('Update profile error:', error)
       toast.error(error.response?.data?.message || "Failed to update profile")

@@ -88,7 +88,7 @@ export default function ProductDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className=" p-1 shadow-sm w-full  rounded-md">
           <TabsList className="bg-white   flex justify-start ">
             <TabsTrigger value="product" className=" data-[state=active]:border-[#1F058F] data-[state=active]:text-[#1F058F] ">Post</TabsTrigger>
-            <TabsTrigger value="feedback" className=" data-[state=active]:border-[#1F058F] data-[state=active]:text-[#1F058F] ">Feedback</TabsTrigger>
+            {/* <TabsTrigger value="feedback" className=" data-[state=active]:border-[#1F058F] data-[state=active]:text-[#1F058F] ">Feedback</TabsTrigger> */}
           </TabsList>
         </Tabs>
       </div>
@@ -105,7 +105,7 @@ export default function ProductDashboard() {
 
           {/* Status Filters */}
           <div className="flex gap-1 sm:gap-2 mb-6 border-[1.5px] border-[#1F058F] p-2 rounded-md">
-            {["all", "live", "reviewing", "declined"].map((status) => (
+            {["all", "live", "reviewing", "draft", "declined"].map((status) => (
               <Button
                 key={status}
                 className={`px-4 sm:px-5 rounded-md ${activeFilter === status ? "bg-[#1F058F] hover:bg-[#2f0a94dc]" : ' text-black shadow-none bg-transparent hover:bg-transparent hover:text-[#1F058F]'} `}
@@ -189,6 +189,7 @@ export default function ProductDashboard() {
                         <Button 
                           className="text-[#1F058F] border border-[#1F058F] hover:bg-[#2e0a94] bg-transparent hover:text-white px-1 lg:px-4 py-1 rounded-full text-[12px]"
                           onClick={() => setPromotingProductId(product?._id)}
+                          disabled={product?.status != 'live'}
                         >
                           Promote
                         </Button>
