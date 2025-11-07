@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight, Heart} from "lucide-react"
+import { ChevronRight, Heart } from "lucide-react"
 // import { Button } from "@/components/ui/button"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
@@ -109,7 +109,7 @@ export default function ProductDetailPage() {
         },
     ];
 
-    const {slug : id}= useParams()
+    const { slug: id } = useParams()
     const search = useSearchParams()
     const bcCat = search.get('cat') || 'Category'
     const bcSub = search.get('sub') || 'Property'
@@ -129,7 +129,7 @@ export default function ProductDetailPage() {
 
 
 
-   
+
     // Toggle section expansion
     const toggleSection = (section: string) => {
         setExpandedSections((prev) => ({
@@ -152,39 +152,39 @@ export default function ProductDetailPage() {
         }
     }, [id]);
 
-  const fetchServices = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiClientPublic.get(`/products/slug/${id}`)
-      const responseData = res.data as any;
-      console.log("productaa", responseData.product)
+    const fetchServices = async () => {
+        try {
+            setIsLoading(true);
+            const res = await apiClientPublic.get(`/products/slug/${id}`)
+            const responseData = res.data as any;
+            console.log("productaa", responseData.product)
 
-      if (responseData.product) {
-        const product = responseData.product;
-        setApiProduct(product);
+            if (responseData.product) {
+                const product = responseData.product;
+                setApiProduct(product);
 
-        // Update images from API
-        const apiImages = product.images.map((img: any) => img.url);
-        setImages(apiImages.length > 0 ? apiImages : ["/product1.png"]);
+                // Update images from API
+                const apiImages = product.images.map((img: any) => img.url);
+                setImages(apiImages.length > 0 ? apiImages : ["/product1.png"]);
 
-        // Update current product for ProductDetails component
-        setCurrentProduct({
-          id: product._id,
-          title: product.name,
-          postedDate: new Date(product.createdAt).toLocaleDateString(),
-          condition: product.status === "live" ? "Brand New" : "Used"
-        });
+                // Update current product for ProductDetails component
+                setCurrentProduct({
+                    id: product._id,
+                    title: product.name,
+                    postedDate: new Date(product.createdAt).toLocaleDateString(),
+                    condition: product.status === "live" ? "Brand New" : "Used"
+                });
 
-        // Update product state for accordion sections
-        setProduct(product);
-      }
-      setIsLoading(false);
-    } catch (e: any) {
-      console.log(`Failed to load product: ${String(e?.message || e)}`)
-      setIsLoading(false);
+                // Update product state for accordion sections
+                setProduct(product);
+            }
+            setIsLoading(false);
+        } catch (e: any) {
+            console.log(`Failed to load product: ${String(e?.message || e)}`)
+            setIsLoading(false);
+        }
     }
-  }
-      
+
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
@@ -210,7 +210,7 @@ export default function ProductDetailPage() {
                 </div>
 
 
-{isLoading ? (
+                {isLoading ? (
                     // Loading skeleton
                     <div className="flex flex-col md:flex-row gap-4 md:justify-between w-full">
                         {/* Left Column - Product Images Skeleton */}
@@ -393,8 +393,8 @@ export default function ProductDetailPage() {
 
                                             {/* Property Description */}
                                             <p className="text-[#525252] text-sm mt-4">
-                                            16 bed en suite property to let, 4 wheelchair access bedrooms, with communal kitchens and dining/lounge areas.
-                                            Reception/office with a surveillance monitor. CCTV throughout inside and out.
+                                                16 bed en suite property to let, 4 wheelchair access bedrooms, with communal kitchens and dining/lounge areas.
+                                                Reception/office with a surveillance monitor. CCTV throughout inside and out.
                                             </p>
                                         </AccordionContent>
                                     </AccordionItem>
@@ -485,18 +485,18 @@ export default function ProductDetailPage() {
 
 
                                     {/* Safety Tips Section */}
-                                <AccordionItem value="safety-tips" className="border-b pb-4">
-                                <AccordionTrigger className="flex items-center justify-between w-full text-left py-2">
-                                    <span className="font-medium">Safety Tips</span>
-                                </AccordionTrigger>
-                                <AccordionContent className="mt-2 text-gray-600">
-                                    <ul className="list-disc pl-5 space-y-2">
-                                    {safetyTips.map((tip, index) => (
-                                        <li key={index} className="text-sm">{tip}</li>
-                                    ))}
-                                    </ul>
-                                </AccordionContent>
-                                </AccordionItem>
+                                    <AccordionItem value="safety-tips" className="border-b pb-4">
+                                        <AccordionTrigger className="flex items-center justify-between w-full text-left py-2">
+                                            <span className="font-medium">Safety Tips</span>
+                                        </AccordionTrigger>
+                                        <AccordionContent className="mt-2 text-gray-600">
+                                            <ul className="list-disc pl-5 space-y-2">
+                                                {safetyTips.map((tip, index) => (
+                                                    <li key={index} className="text-sm">{tip}</li>
+                                                ))}
+                                            </ul>
+                                        </AccordionContent>
+                                    </AccordionItem>
                                 </Accordion>
                             </div>
 
@@ -504,7 +504,7 @@ export default function ProductDetailPage() {
                                 <ProductDetails
                                     postedDate={currentProduct.postedDate}
                                     condition={currentProduct.condition}
-                                    product={product}/>
+                                    product={product} />
                             </div>
                             {/* You might also like these */}
                             <div className="mt-8">
@@ -539,7 +539,7 @@ export default function ProductDetailPage() {
                                                 </div>
                                             </div>
 
-                                            </Link>
+                                        </Link>
                                     ))}
                                 </div>
                             </div>
@@ -548,10 +548,10 @@ export default function ProductDetailPage() {
                         {/* Right Column - Product Details */}
                         <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
                             <ProductDetails
-                             postedDate={currentProduct.postedDate}
-                             condition={currentProduct.condition}
-                             product={product}
-                             />
+                                postedDate={currentProduct.postedDate}
+                                condition={currentProduct.condition}
+                                product={product}
+                            />
                         </div>
                     </div>
                 )}
