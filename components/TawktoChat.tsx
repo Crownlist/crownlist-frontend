@@ -69,7 +69,7 @@ export default function TawktoChat() {
 
       const script = document.createElement("script");
       script.async = true;
-      script.src = "https://embed.tawk.to/5f43a3c01e7ade5df4436619/default";
+      script.src = "https://embed.tawk.to/68a20642b25b86192ad78266/1j2segtok";
       script.setAttribute("crossorigin", "*");
 
       document.head.appendChild(script);
