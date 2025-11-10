@@ -5,6 +5,7 @@ import { X, Upload, Loader2 } from 'lucide-react'
 import { useCategories } from '@/hooks/useCategories'
 import { Category, Subcategory } from '@/types/category/category'
 import { useToast } from '@/lib/useToastMessage'
+import Image from 'next/image'
 
 interface ProductRequestFormProps {
   isOpen: boolean
@@ -311,7 +312,7 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                 {imagePreviewUrls.map((url, index) => (
                   <div key={index} className="relative">
-                    <img
+                    <Image
                       src={url}
                       alt={`Preview ${index + 1}`}
                       className="w-full h-24 object-cover rounded-lg"

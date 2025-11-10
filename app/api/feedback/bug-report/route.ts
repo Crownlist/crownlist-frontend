@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     // Here you could save to database, send email, etc.
     // For now, just return the data as per example
     return NextResponse.json(body);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
