@@ -7,23 +7,60 @@ import { Mail, MapPin, Phone } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
+import { apiClientPublic } from "@/lib/interceptor"
+import { useToast } from "@/lib/useToastMessage"
 
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  })
+  const { handleMessage } = useToast()
 
- const [isSubmitting] = useState(false)
-    
-    
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    try {
+      await apiClientPublic.post('/feedback/contact-us', formData)
+      handleMessage('success', 'Contact form submitted successfully.')
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: ''
+      })
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit contact form. Please try again.'
+      handleMessage('error', errorMessage)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+
 
   return (
     <>
         <Header hidden={false} />
-    
+
       <div className="max-w-7xl mx-auto px-4 py-12">
 
       <div className="grid md:grid-cols-2 gap-8 mb-20">
         <div className="space-y-6">
-       
+
           <div className="inline-block bg-purple-100 text-purple-800 px-4 py-1 rounded-full text-sm font-medium">
             Contact us
           </div>
@@ -32,19 +69,35 @@ export default function ContactPage() {
           <p className="text-gray-600">Get in touched and let us know how we can help.</p>
 
           {/* Form */}
-          <form className="space-y-4 mt-6">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-6">
             <div className="grid grid-cols-2 gap-4 ">
               <div>
-                <label htmlFor="first-name" className="block text-sm mb-1">
+                <label htmlFor="firstName" className="block text-sm mb-1">
                   First name
                 </label>
-                <input type="text" id="first-name" className="w-full border border-gray-300 rounded p-2" />
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded p-2"
+                  required
+                />
               </div>
               <div>
-                <label htmlFor="last-name" className="block text-sm mb-1">
+                <label htmlFor="lastName" className="block text-sm mb-1">
                   Last name
                 </label>
-                <input type="text" id="last-name" className="w-full border border-gray-300 rounded p-2" />
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded p-2"
+                  required
+                />
               </div>
             </div>
 
@@ -52,14 +105,30 @@ export default function ContactPage() {
               <label htmlFor="email" className="block text-sm mb-1">
                 Email address
               </label>
-              <input type="email" id="email" className="w-full border border-gray-300 rounded p-2" />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded p-2"
+                required
+              />
             </div>
 
             <div>
               <label htmlFor="message" className="block text-sm mb-1">
                 Message
               </label>
-              <textarea id="message" rows={4} className="w-full border border-gray-300 rounded p-2"></textarea>
+              <textarea
+                id="message"
+                name="message"
+                rows={4}
+                value={formData.message}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded p-2"
+                required
+              ></textarea>
             </div>
 
             <div className="text-sm text-gray-600">
@@ -104,12 +173,12 @@ export default function ContactPage() {
         </div>
       </div>
 
-   
+
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-12">We&apos;d like to hear from you</h2>
 
         <div className="grid md:grid-cols-3 gap-8 ">
-       
+
           <div className="flex flex-col items-start border-b pb-8 md:border-b-0 md:border-r  pt-8">
             <div className="mb-4 text-gray-500">
             <Mail />
@@ -121,7 +190,7 @@ export default function ContactPage() {
             </a>
           </div>
 
-         
+
           <div className="flex flex-col items-start text-left border-b pb-8 md:border-b-0  md:border-r mb-4 md:mb-0">
             <div className="mb-4 text-gray-500">
             <MapPin />
@@ -131,7 +200,7 @@ export default function ContactPage() {
             <p className="text-gray-900">20 Eleko, Kwara Polytechnic, Kwara state, Ilorin Nigeria</p>
           </div>
 
-        
+
           <div className="flex flex-col items-start">
             <div className="mb-4 text-gray-500">
             <Phone />
