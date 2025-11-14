@@ -12,7 +12,7 @@ import TawktoChat from "@/components/TawktoChat"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://crownlist.store'),
+  metadataBase: new URL('https://crownlist.store'),
   title: "Crownlist - Buy and Sell Locally",
   description: "Find great deals on furniture, clothes, electronics, and more near you.",
   openGraph: {

@@ -153,6 +153,7 @@ export default function EscrowPage() {
     }
 
     const fetchEscrows = async (page: number) => {
+        console.log(page)
         setLoading(true)
         setError(null)
         try {

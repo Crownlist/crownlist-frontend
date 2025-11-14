@@ -1335,7 +1335,7 @@ export default function ProductPostFlow() {
                                                                             <label key={index} className="flex items-center gap-2 text-sm">
                                                                                 <Checkbox
                                                                                     checked={checked}
-                                                                                    onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                    onCheckedChange={(v:any) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
                                                                                 />
                                                                                 <span>{opt}</span>
                                                                             </label>
@@ -1438,7 +1438,7 @@ export default function ProductPostFlow() {
                                                                             <label key={index} className="flex items-center gap-2 text-sm">
                                                                                 <Checkbox
                                                                                     checked={checked}
-                                                                                    onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                    onCheckedChange={(v: any) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
                                                                                 />
                                                                                 <span>{opt}</span>
                                                                             </label>

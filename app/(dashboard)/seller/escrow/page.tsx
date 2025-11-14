@@ -151,6 +151,7 @@ export default function SellerEscrowPage() {
     }
 
     const fetchEscrows = async (page: number) => {
+        console.log(page)
         setLoading(true)
         setError(null)
         try {
