@@ -148,11 +148,11 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                 amount: product.price.discountedPrice || product.price.currentPrice
             };
 
-            await apiClientUser.post('/escrows/create', escrowData);
+            const response = await apiClientUser.post('/escrows/create', escrowData);
             toast.success("Escrow request created successfully!", {
                 position: "top-center",
             });
-            router.push('/buyer/escrow');
+            router.push(`${response.data.paymentUrl}`);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Failed to create escrow", {
                 position: "top-center",

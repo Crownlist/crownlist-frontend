@@ -629,7 +629,7 @@ const Header = ({ hidden }: props) => {
                 }
                 {isLoggedIn ? (
                   <DropdownMenu onOpenChange={setOpenChev}>
-                    <DropdownMenuTrigger className="flex  items-center gap-2 focus:outline-none">
+                    <DropdownMenuTrigger className="flex bg-white items-center gap-2 focus:outline-none">
                       <Image
                         src={typeof userData?.profilePicture === 'string' ? userData.profilePicture : '/profile.png'}
                         width={30}
@@ -637,7 +637,7 @@ const Header = ({ hidden }: props) => {
                         alt="Profile"
                         className="rounded-full"
                       />
-                      <span className="text-sm font-medium">{userData?.fullName}</span>
+                      <span className="text-sm font-medium flex items-center align-middle">{userData?.fullName}</span>
                       {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </DropdownMenuTrigger>
 

@@ -393,11 +393,11 @@ export default function ProductPostFlow() {
     const handleContinue = () => {
         // Validation based on step
         if (step === 1 && !selectedCategory) {
-            alert("Please select a category")
+            toast.error("Please select a category")
             return
         }
         if (step === 2 && !selectedSubcategory) {
-            alert("Please select a subcategory")
+            toast.error("Please select a subcategory")
             return
         }
         if (step === 3) {
@@ -953,11 +953,11 @@ export default function ProductPostFlow() {
                         Analytics
                     </Link> */}
                     {/* <ArrowRight className="w-3 h-3" /> */}
-                    <Link href="/seller/product" className="hover:text-[#1F058F] transition-colors">Products</Link>
+                    <Link href="/seller/product" className="hover:text-[#1F058F] text-[17px] transition-colors">Products</Link>
                     {/* <ArrowRight className="w-3 h-3" />
                     <span className="text-gray-900 font-medium">Post Product</span> */}
                     <ArrowRight className="w-3 h-3" />
-                    <span className="text-[#1F058F] font-medium">Post details</span>
+                    <span className="text-[#1F058F] font-medium text-[17px]">Post details</span>
                 </div>
 
                 <div className="flex-1">
@@ -1335,7 +1335,7 @@ export default function ProductPostFlow() {
                                                                             <label key={index} className="flex items-center gap-2 text-sm">
                                                                                 <Checkbox
                                                                                     checked={checked}
-                                                                                    onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                    onCheckedChange={(v:any) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
                                                                                 />
                                                                                 <span>{opt}</span>
                                                                             </label>
@@ -1438,7 +1438,7 @@ export default function ProductPostFlow() {
                                                                             <label key={index} className="flex items-center gap-2 text-sm">
                                                                                 <Checkbox
                                                                                     checked={checked}
-                                                                                    onCheckedChange={(v) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                    onCheckedChange={(v: any) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
                                                                                 />
                                                                                 <span>{opt}</span>
                                                                             </label>
