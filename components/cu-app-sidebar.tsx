@@ -11,9 +11,7 @@ import {
   useSidebar
 } from '@/components/ui/cu-sidebar'
 import {
-  User,
   Bookmark,
-  Send,
   Mail,
   MessageCircleMore,
   LogOut,
@@ -62,16 +60,16 @@ const items = [
     url: '/buyer/settings/notification',
     icon: Settings
   },
-  {
-    title: 'Sellers hub',
-    url: '/buyer/sellers-hub',
-    icon: Send
-  },
-  {
-    title: 'User hub',
-    url: '/buyer/users-hub',
-    icon: User
-  },
+  // {
+  //   title: 'Sellers hub',
+  //   url: '/buyer/sellers-hub',
+  //   icon: Send
+  // },
+  // {
+  //   title: 'User hub',
+  //   url: '/buyer/users-hub',
+  //   icon: User
+  // },
   // {
   //   title: 'Logout',
   //   url: '/buyer/logout',

@@ -154,7 +154,7 @@ export default function SellerEscrowPage() {
         setLoading(true)
         setError(null)
         try {
-            const response = await apiClientUser.get(`/escrows?limit=10&page=${page}&status=waiting&role=seller`)
+            const response = await apiClientUser.get(`/escrows?role=seller`)
             setEscrows(response.data.escrows)
             setPagination(response.data.pagination)
         } catch {

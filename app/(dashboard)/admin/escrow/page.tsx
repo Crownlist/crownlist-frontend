@@ -71,6 +71,7 @@ export default function AdminEscrowPage() {
     const [selectedEscrow, setSelectedEscrow] = useState<EscrowItem | null>(null)
     const [actionLoading, setActionLoading] = useState(false)
     const [statusFilter, setStatusFilter] = useState("")
+    const [reasonForDecline, setReasonForDecline] = useState("")
 
     // const router = useRouter() // Not needed for admin escrow
 
@@ -107,15 +108,30 @@ export default function AdminEscrowPage() {
     const handleUpdateStatus = async () => {
         if (!selectedEscrow || !selectedStatus) return
 
+        // Validate reason for decline
+        if (selectedStatus === "declined" && !reasonForDecline.trim()) {
+            toast.error("Please provide a reason for declining this escrow")
+            return
+        }
+
         setActionLoading(true)
         try {
-            await apiClientAdmin.patch(`/escrows/status/${selectedEscrow._id}`, {
+            const payload: any = {
                 status: selectedStatus
-            })
+            }
+
+            // Include reason for decline if status is declined
+            if (selectedStatus === "declined") {
+                payload.reasonForDecline = reasonForDecline.trim()
+            }
+
+            await apiClientAdmin.patch(`/escrows/status/${selectedEscrow._id}`, payload)
+            // toast("Loading...")
             toast.success(`Escrow status updated to ${selectedStatus} successfully!`)
             setShowConfirmModal(false)
             setSelectedEscrow(null)
             setSelectedStatus("")
+            setReasonForDecline("") // Reset reason
             fetchEscrows(currentPage) // Refresh the list
         } catch (error) {
             toast.error("Failed to update escrow status")
@@ -316,7 +332,7 @@ export default function AdminEscrowPage() {
             </div>
 
             {/* Table or Empty State */}
-            <div className="bg-white rounded-lg overflow-hidden mt-6 sm:mt-8">
+            <div className="bg-white rounded-lg mt-6 sm:mt-8">
                 {/* Table Header - Desktop */}
                 <div className="hidden md:grid grid-cols-14 gap-3 px-6 py-3 bg-[#EDE9FF] rounded-full text-sm font-medium text-gray-700">
                     <div className="col-span-3">Details</div>
@@ -670,6 +686,7 @@ export default function AdminEscrowPage() {
                          setShowStatusModal(false)
                          setSelectedEscrow(null)
                          setSelectedStatus("")
+                         setReasonForDecline("")
                      }}>
                     <div className="bg-white rounded-lg max-w-md w-full"
                          onClick={(e) => e.stopPropagation()}>
@@ -681,6 +698,7 @@ export default function AdminEscrowPage() {
                                         setShowStatusModal(false)
                                         setSelectedEscrow(null)
                                         setSelectedStatus("")
+                                        setReasonForDecline("")
                                     }}
                                     className="text-gray-500 hover:text-gray-700 text-xl"
                                 >
@@ -718,6 +736,20 @@ export default function AdminEscrowPage() {
                                     </select>
                                 </div>
 
+                                {selectedStatus === "declined" && (
+                                    <div>
+                                        <h3 className="font-semibold text-sm text-gray-700 mb-2">Reason for Decline <span className="text-red-500">*</span></h3>
+                                        <textarea
+                                            value={reasonForDecline}
+                                            onChange={(e) => setReasonForDecline(e.target.value)}
+                                            placeholder="Please provide a detailed reason for declining this escrow..."
+                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1F058F] focus:border-transparent resize-none"
+                                            rows={3}
+                                            required
+                                        />
+                                    </div>
+                                )}
+
                                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                                     <p><strong>Product:</strong> {selectedEscrow.details.name}</p>
                                     <p><strong>Seller:</strong> {selectedEscrow.seller.fullName}</p>
@@ -731,6 +763,7 @@ export default function AdminEscrowPage() {
                                             setShowStatusModal(false)
                                             setSelectedEscrow(null)
                                             setSelectedStatus("")
+                                            setReasonForDecline("")
                                         }}
                                         className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                                         disabled={actionLoading}
