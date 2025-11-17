@@ -308,7 +308,7 @@ export default function ProductPostFlow() {
         if (!currentSub) return
 
         const objectFacilities = currentSub.facilities.filter(f => f.dataType === 'object' && f.value)
-        
+
         objectFacilities.forEach(async (facility) => {
             const facilityKey = getFacilityKey(facility)
             if (objectFieldOptions[facilityKey]) return // Already loaded
@@ -486,6 +486,10 @@ export default function ProductPostFlow() {
             // }
             if (!formData.description || !formData.description.trim()) {
                 toast.error('Description is required')
+                return
+            }
+            if (formData.description.length < 10) {
+                toast.error('Description must be at least 10 characters long.')
                 return
             }
             if (!productName || !productName.trim()) {
@@ -1335,7 +1339,7 @@ export default function ProductPostFlow() {
                                                                             <label key={index} className="flex items-center gap-2 text-sm">
                                                                                 <Checkbox
                                                                                     checked={checked}
-                                                                                    onCheckedChange={(v:any) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
+                                                                                    onCheckedChange={(v: any) => toggleMultiOption(getFacilityKey(facility), opt, Boolean(v))}
                                                                                 />
                                                                                 <span>{opt}</span>
                                                                             </label>
@@ -1551,11 +1555,18 @@ export default function ProductPostFlow() {
                     {/* Action Buttons */}
                     <div className={`flex gap-4 mt-10 ${step === 5 ? 'hidden' : ''}`}>
                         {step > 1 && (
-                            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8" onClick={handleBack} disabled={submitting}>
+                            <Button
+                                variant="outline"
+                                className="border-[#1F058F] bg-transparent! text-[#1F058F] hover:bg-[#1F058F]/10 px-8"
+                                onClick={handleBack}
+                                disabled={submitting}
+                            >
                                 Back
                             </Button>
+
                         )}
                         <Button
+                            variant="default"
                             className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8"
                             onClick={step === 3 ? handleModal : handleContinue}
                             disabled={submitting || limitsCheckResult?.isAtLimit || limitsCheckResult?.isSubcategoryNotInPlan}

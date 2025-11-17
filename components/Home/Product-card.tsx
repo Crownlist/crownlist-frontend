@@ -73,7 +73,7 @@ export default function ProductCard({
           "relative",
           viewMode === "grid" ? "aspect-square w-full " : 
           // "h-[120px] w-[120px] sm:h-[180px] sm:w-[140px]"
-          "aspect-[4/3] w-[140px] sm:w-[200px]",
+          "aspect-4/3 w-[140px] sm:w-[200px]",
         ) }
         //  className="relative aspect-[4/3]"
       >

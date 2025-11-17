@@ -1,117 +1,156 @@
+/*eslint-disable*/
 "use client"
 import CategoryModal from "@/components/Home/CategoryModal"
-import ProductRequestCard from "@/components/ProductRequestCard"
+import AdminProductRequestCard from "@/components/AdminProductRequestCard"
+import ProductRequestDetailModal from "@/components/ProductRequestDetailModal"
 import RequestSearch from "@/components/RequestSearch"
 import CustomLoader from "@/components/CustomLoader"
+import { ConfirmationModal } from "@/components/ConfirmationModal"
 import { AlignJustify, LayoutGrid } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { useProductRequests } from "@/lib/useProductRequests"
+import {updateProductRequestStatus, useProductRequestsAdmin } from "@/lib/useProductRequests"
 import { ProductRequest } from "@/types/product/request"
 import { useToast } from "@/lib/useToastMessage"
+import { useMutation, useQueryClient } from "react-query"
 
-export default function ProductRequestsPage() {
+export default function AdminProductRequestsPage() {
     const [openCat, setOpenCat] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [selectedRequest, setSelectedRequest] = useState<ProductRequest | null>(null)
-    console.log(selectedRequest)
-    const { handleMessage } = useToast()
+    const [showDetailModal, setShowDetailModal] = useState(false)
+    const [confirmAction, setConfirmAction] = useState<{
+        type: 'approve' | 'reject'
+        request: ProductRequest
+    } | null>(null)
 
-    const { data, isLoading, error, refetch } = useProductRequests({
+    const { handleMessage } = useToast()
+    const queryClient = useQueryClient()
+
+    const { data, isLoading, error, refetch } = useProductRequestsAdmin({
         q: searchQuery || undefined,
         page: currentPage,
         limit: 12,
-    })
+    }, "seller") // Admins use "seller" mode to see all requests
 
+    const updateStatusMutation = useMutation(
+        ({ id, status }: { id: string; status: string }) => updateProductRequestStatus(id, status),
+        {
+            onSuccess: (_, { status }) => {
+                handleMessage("success", `Request ${status} successfully`)
+                queryClient.invalidateQueries(['product-requests'])
+                setConfirmAction(null)
+            },
+            onError: () => {
+                handleMessage("error", "Failed to update request status. Please try again.")
+            }
+        }
+    )
+
+    // const handleCat = () => {
+    //     setOpenCat(true)
+    // }
 
     const handleSearch = (query: string) => {
         setSearchQuery(query)
         setCurrentPage(1) // Reset to first page when searching
     }
 
-    const handleViewRequest = (request: ProductRequest) => {
-        setSelectedRequest(request)
-        // TODO: Implement modal or navigation to request details
-        handleMessage("info", `Viewing details for ${request.name}`)
+    const handleApprove = (request: ProductRequest) => {
+        setConfirmAction({ type: 'approve', request })
     }
 
-    const requests = data?.data?.productRequests || []
-    const pagination = data?.data?.pagination
+    const handleReject = (request: ProductRequest) => {
+        setConfirmAction({ type: 'reject', request })
+    }
+
+    const handleConfirmAction = () => {
+        if (!confirmAction) return
+
+        const { type, request } = confirmAction
+        const newStatus = type === 'approve' ? 'approved' : 'rejected'
+
+        updateStatusMutation.mutate({
+            id: request._id,
+            status: newStatus
+        })
+    }
+
+    const handleViewRequest = (request: ProductRequest) => {
+        setSelectedRequest(request)
+        setShowDetailModal(true)
+    }
+
+    const handleCloseModal = () => {
+        setShowDetailModal(false)
+        setSelectedRequest(null)
+    }
+
+      console.log("dat", data)
+    const requests = data?.data?.data?.productRequests || []
+    const pagination = data?.data?.data?.pagination
+
+    const getConfirmModalContent = () => {
+        if (!confirmAction) return { title: '', description: '', confirmText: 'Continue', variant: 'default' as const }
+
+        const { type, request } = confirmAction
+        const action = type === 'approve' ? 'approve' : 'reject'
+
+        return {
+            title: `Confirm ${action}`,
+            description: `Are you sure you want to ${action} the request "${request.name}"?`,
+            confirmText: `${action.charAt(0).toUpperCase() + action.slice(1)} Request`,
+            variant: type === 'reject' ? 'destructive' as const : 'default' as const
+        }
+    }
+
+    const modalContent = getConfirmModalContent()
 
     return (
         <div className="p-4 md:p-6 flex flex-col w-full min-h-screen bg-gray-50">
             <div className="w-full mx-auto">
                 {/* Header Section - Responsive */}
-                <div className="flex flex-col  justify-between gap-4 mb-8">
+                <div className="flex flex-col justify-between gap-4 mb-8">
                     {/* Title and Search Row */}
                     <div className="flex flex-row lg:justify-between lg:items-center gap-4">
                         <div className="flex-1">
-                            <h1 className="text-xl md:text-2xl font-bold mb-1">Product Requests</h1>
+                            <h1 className="text-xl md:text-2xl font-bold mb-1">Product Requests Management</h1>
                             <p className="text-gray-600 text-sm md:text-base">
-                                Keep track and manage your product requests
+                                Review and manage all product requests
                             </p>
                         </div>
 
-                          {/* View Toggle */}
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setViewMode("grid")}
-                                    className={`p-1 rounded transition-colors ${viewMode === "grid"
-                                            ? "bg-[#EDE9FF] text-[#1F058F]"
-                                            : "hover:bg-gray-100 text-gray-500"
-                                        }`}
-                                >
-                                    <LayoutGrid size={18} />
-                                </button>
-                                <button
-                                    onClick={() => setViewMode("list")}
-                                    className={`p-1 rounded transition-colors ${viewMode === "list"
-                                            ? "bg-[#EDE9FF] text-[#1F058F]"
-                                            : "hover:bg-gray-100 text-gray-500"
-                                        }`}
-                                >
-                                    <AlignJustify size={18} />
-                                </button>
-                            </div>
-
-                        {/* Controls Section - Responsive */}
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                            {/* <div className="flex items-center gap-3 flex-wrap">
-                                Category Filter
-                                <div className="flex items-center gap-2 border-r border-gray-300 pr-3">
-                                    <LayoutGrid size={16} className="text-gray-500" />
-                                    <button
-                                    className="text-sm font-medium text-gray-700 hover:text-gray-900"
-                                    onClick={handleCat}
-                                >
-                                    Category
-                                </button>
-                                </div>
-
-                                Sort By
-                                <div className="flex items-center gap-2">
-                                <SlidersHorizontal size={16} className="text-gray-500" />
-                                <span className="text-sm">Sort by:</span>
-                                <button className="flex items-center">
-                                    <ChevronDown size={12} />
-                                </button>
-                            </div>
-                            </div> */}
-
-                          
+                        {/* View Toggle */}
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setViewMode("grid")}
+                                className={`p-1 rounded transition-colors ${viewMode === "grid"
+                                    ? "bg-[#EDE9FF] text-[#1F058F]"
+                                    : "hover:bg-gray-100 text-gray-500"
+                                }`}
+                            >
+                                <LayoutGrid size={18} />
+                            </button>
+                            <button
+                                onClick={() => setViewMode("list")}
+                                className={`p-1 rounded transition-colors ${viewMode === "list"
+                                    ? "bg-[#EDE9FF] text-[#1F058F]"
+                                    : "hover:bg-gray-100 text-gray-500"
+                                }`}
+                            >
+                                <AlignJustify size={18} />
+                            </button>
                         </div>
                     </div>
 
                     <div className="w-full lg:w-auto lg:min-w-[300px] ">
                         <RequestSearch
                             onSearch={handleSearch}
-                            placeholder="Search requests by name..."
+                            placeholder="Search all requests by name..."
                         />
                     </div>
-
-
                 </div>
 
                 {/* Content Section */}
@@ -127,7 +166,7 @@ export default function ProductRequestsPage() {
                                 Failed to load requests
                             </h3>
                             <p className="text-gray-600 text-center mb-4">
-                                There was an error loading your product requests. Please try again.
+                                There was an error loading product requests. Please try again.
                             </p>
                             <button
                                 onClick={() => refetch()}
@@ -156,20 +195,9 @@ export default function ProductRequestsPage() {
                             <p className="text-gray-500 text-center text-sm md:text-base px-4 mb-4">
                                 {searchQuery
                                     ? `No requests match "${searchQuery}". Try a different search term.`
-                                    : "There are currently no product requests to display."
+                                    : "There are currently no product requests to review."
                                 }
                             </p>
-                            {!searchQuery && (
-                                <div className="text-center text-gray-600 text-xs md:text-sm px-4">
-                                    <p>For further assistance reach out via our 24/7 support</p>
-                                    <p>
-                                        via email at{" "}
-                                        <a href="mailto:support@crownlist.com" className="text-[#1F058F] hover:underline">
-                                            support@crownlist.com
-                                        </a>
-                                    </p>
-                                </div>
-                            )}
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -186,12 +214,15 @@ export default function ProductRequestsPage() {
                                     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                                     : "space-y-3"
                             }>
-                                {requests.map((request) => (
-                                    <ProductRequestCard
+                                {requests.map((request:any) => (
+                                    <AdminProductRequestCard
                                         key={request._id}
                                         request={request}
                                         viewMode={viewMode}
-                                        onClick={handleViewRequest}
+                                        onApprove={handleApprove}
+                                        onReject={handleReject}
+                                        onViewDetails={handleViewRequest}
+                                        isLoading={updateStatusMutation.isLoading}
                                     />
                                 ))}
                             </div>
@@ -213,9 +244,9 @@ export default function ProductRequestsPage() {
                                                 key={page}
                                                 onClick={() => setCurrentPage(page)}
                                                 className={`px-3 py-2 text-sm font-medium rounded-md ${page === currentPage
-                                                        ? "text-[#1F058F] bg-[#EDE9FF] border-[#1F058F]"
-                                                        : "text-gray-500 bg-white border-gray-300"
-                                                    } border hover:bg-gray-50`}
+                                                    ? "text-[#1F058F] bg-[#EDE9FF] border-[#1F058F]"
+                                                    : "text-gray-500 bg-white border-gray-300"
+                                                } border hover:bg-gray-50`}
                                             >
                                                 {page}
                                             </button>
@@ -238,6 +269,24 @@ export default function ProductRequestsPage() {
 
             {/* Modals */}
             <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
+            {showDetailModal && selectedRequest && (
+                <ProductRequestDetailModal
+                    request={selectedRequest}
+                    onClose={handleCloseModal}
+                />
+            )}
+
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                open={!!confirmAction}
+                onOpenChange={(open) => !open && setConfirmAction(null)}
+                title={modalContent.title}
+                description={modalContent.description}
+                confirmText={modalContent.confirmText}
+                cancelText="Cancel"
+                onConfirm={handleConfirmAction}
+                variant={modalContent.variant}
+            />
         </div>
     )
 }

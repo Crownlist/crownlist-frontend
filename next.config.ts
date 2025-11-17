@@ -15,7 +15,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'example.com',
-        pathname: "/images/**", // allow images under /images/
       },
       {
         protocol: 'https',
