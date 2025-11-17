@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { X, Upload, Loader2 } from 'lucide-react'
 import { useCategories } from '@/hooks/useCategories'
 import { Category, Subcategory } from '@/types/category/category'
-import { useToast } from '@/lib/useToastMessage'
+import {toast} from "sonner";
+import { apiClientUser } from '@/lib/interceptor'
 import Image from 'next/image'
 
 interface ProductRequestFormProps {
@@ -30,8 +31,6 @@ interface FormData {
 export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFormProps) {
   const { categories, loading: categoriesLoading } = useCategories()
   console.log("categories", categories)
-  const { handleMessage: showToast } = useToast()
-
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description: '',
@@ -44,6 +43,7 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploadingImages, setIsUploadingImages] = useState(false)
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
 
   // Reset form when modal closes
@@ -79,7 +79,7 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     if (files.length > 5) {
-      showToast('error', 'Maximum 5 images allowed')
+      toast.error('Maximum 5 images allowed')
       return
     }
 
@@ -99,33 +99,61 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
     setImagePreviewUrls(prev => prev.filter((_, i) => i !== index))
   }
 
+  // Upload image to server
+  const uploadImage = async (file: File): Promise<string> => {
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('fileType', 'Product-request')
+
+      const res = await apiClientUser.post('/users/upload', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+       console.log("image", res)
+      return res?.data?.fileUrl
+    } catch (error) {
+      console.error('Image upload error:', error)
+      throw new Error('Failed to upload image')
+    }
+  }
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formData.name || !formData.description || !formData.category ||
         !formData.subCategory || !formData.phone) {
-      showToast('error', 'Please fill in all required fields')
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    if (formData.description.length < 10) {
+      toast.error('Description must be at least 10 characters long.')
       return
     }
 
     if (formData.images.length === 0) {
-      showToast('error', 'Please select at least one image')
+      toast.error('Please select at least one image')
       return
     }
 
     setIsSubmitting(true)
+    setIsUploadingImages(true)
 
     try {
-      // TODO: First upload images to get URLs
-      // const uploadedImages = await uploadImagesToServer(formData.images)
+      // Upload images to server to get URLs
+      const uploadedImages: ProductImage[] = []
+      for (let i = 0; i < formData.images.length; i++) {
+        const file = formData.images[i]
+        const imageUrl = await uploadImage(file)
+        uploadedImages.push({
+          url: imageUrl,
+          altText: `Image ${i + 1}`,
+          isPrimary: i === 0 // First image is primary
+        })
+      }
 
-      // For now, simulate uploaded URLs (replace with actual upload)
-      const uploadedImages: ProductImage[] = formData.images.map((file, index) => ({
-        url: `https://example.com/uploads/${file.name}`, // Replace with actual URL
-        altText: `Image ${index + 1}`,
-        isPrimary: index === 0 // First image is primary
-      }))
+      setIsUploadingImages(false)
 
       // Prepare payload for API
       const payload = {
@@ -149,16 +177,21 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
       const result = await response.json()
 
       if (response.ok) {
-        showToast('success', 'Product request submitted successfully!')
+        toast.success('Product request submitted successfully!')
         onClose()
       } else {
-        showToast('error', result.error || 'Failed to submit request')
+        toast.error(result.error || 'Failed to submit request')
       }
     } catch (error) {
       console.error('Error submitting request:', error)
-      showToast('error', 'Failed to submit request. Please try again.')
+      if (isUploadingImages) {
+        toast.error('Failed to upload images. Please try again.')
+      } else {
+        toast.error('Failed to submit request. Please try again.')
+      }
     } finally {
       setIsSubmitting(false)
+      setIsUploadingImages(false)
     }
   }
 
@@ -346,7 +379,11 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
               disabled={isSubmitting}
             >
               {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-              {isSubmitting ? 'Submitting...' : 'Submit Request'}
+              {isUploadingImages
+                ? 'Uploading Images...'
+                : isSubmitting
+                  ? 'Submitting...'
+                  : 'Submit Request'}
             </button>
           </div>
         </form>

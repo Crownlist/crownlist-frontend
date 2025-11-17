@@ -3,28 +3,29 @@ import CategoryModal from "@/components/Home/CategoryModal"
 import ProductRequestCard from "@/components/ProductRequestCard"
 import RequestSearch from "@/components/RequestSearch"
 import CustomLoader from "@/components/CustomLoader"
-import { AlignJustify, LayoutGrid } from "lucide-react"
+import { AlignJustify, LayoutGrid} from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { useProductRequests } from "@/lib/useProductRequests"
 import { ProductRequest } from "@/types/product/request"
-import { useToast } from "@/lib/useToastMessage"
+import ProductRequestDetailModal from "@/components/ProductRequestDetailModal"
 
-export default function ProductRequestsPage() {
+export default function BuyerProductRequestsPage() {
     const [openCat, setOpenCat] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [selectedRequest, setSelectedRequest] = useState<ProductRequest | null>(null)
-    console.log(selectedRequest)
-    const { handleMessage } = useToast()
+    const [showDetailModal, setShowDetailModal] = useState(false)
+
 
     const { data, isLoading, error, refetch } = useProductRequests({
         q: searchQuery || undefined,
         page: currentPage,
         limit: 12,
-    })
+    }, "buyer")
 
+    
 
     const handleSearch = (query: string) => {
         setSearchQuery(query)
@@ -33,8 +34,12 @@ export default function ProductRequestsPage() {
 
     const handleViewRequest = (request: ProductRequest) => {
         setSelectedRequest(request)
-        // TODO: Implement modal or navigation to request details
-        handleMessage("info", `Viewing details for ${request.name}`)
+        setShowDetailModal(true)
+    }
+
+    const handleCloseModal = () => {
+        setShowDetailModal(false)
+        setSelectedRequest(null)
     }
 
     const requests = data?.data?.productRequests || []
@@ -48,9 +53,9 @@ export default function ProductRequestsPage() {
                     {/* Title and Search Row */}
                     <div className="flex flex-row lg:justify-between lg:items-center gap-4">
                         <div className="flex-1">
-                            <h1 className="text-xl md:text-2xl font-bold mb-1">Product Requests</h1>
+                            <h1 className="text-xl md:text-2xl font-bold mb-1">My Product Requests</h1>
                             <p className="text-gray-600 text-sm md:text-base">
-                                Keep track and manage your product requests
+                                Track and manage your product requests
                             </p>
                         </div>
 
@@ -100,14 +105,14 @@ export default function ProductRequestsPage() {
                             </div>
                             </div> */}
 
-                          
+
                         </div>
                     </div>
 
                     <div className="w-full lg:w-auto lg:min-w-[300px] ">
                         <RequestSearch
                             onSearch={handleSearch}
-                            placeholder="Search requests by name..."
+                            placeholder="Search my requests by name..."
                         />
                     </div>
 
@@ -161,13 +166,7 @@ export default function ProductRequestsPage() {
                             </p>
                             {!searchQuery && (
                                 <div className="text-center text-gray-600 text-xs md:text-sm px-4">
-                                    <p>For further assistance reach out via our 24/7 support</p>
-                                    <p>
-                                        via email at{" "}
-                                        <a href="mailto:support@crownlist.com" className="text-[#1F058F] hover:underline">
-                                            support@crownlist.com
-                                        </a>
-                                    </p>
+                                    <p>Submit a product request to get started</p>
                                 </div>
                             )}
                         </div>
@@ -238,6 +237,12 @@ export default function ProductRequestsPage() {
 
             {/* Modals */}
             <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
+            {showDetailModal && selectedRequest && (
+                <ProductRequestDetailModal
+                    request={selectedRequest}
+                    onClose={handleCloseModal}
+                />
+            )}
         </div>
     )
 }

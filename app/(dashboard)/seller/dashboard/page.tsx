@@ -121,7 +121,7 @@ export default function DashboardPage() {
             {/* Metric Cards */}
             <div className="mb-8 overflow-x-auto p-3">
                 <div className="flex md:grid md:grid-cols-5 gap-4 min-w-[640px] md:min-w-0">
-                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl flex-shrink-0">
+                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl shrink-0">
                         <CardContent className="p-6">
                             <div className="text-sm text-gray-500 mb-1">Total Products</div>
                             <div className="text-2xl font-bold mb-1">{metrics.totalProducts.toLocaleString()}</div>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl flex-shrink-0">
+                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl shrink-0">
                         <CardContent className="p-6">
                             <div className="text-sm text-gray-500 mb-1">Active Listings</div>
                             <div className="text-2xl font-bold mb-1">{metrics.activeListings.toLocaleString()}</div>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl flex-shrink-0">
+                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl shrink-0">
                         <CardContent className="p-6">
                             <div className="text-sm text-gray-500 mb-1">Total Views</div>
                             <div className="text-2xl font-bold mb-1">{metrics.totalViews.toLocaleString()}</div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl flex-shrink-0">
+                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl shrink-0">
                         <CardContent className="p-6">
                             <div className="text-sm text-gray-500 mb-1">Potential Earnings</div>
                             <div className="text-2xl font-bold mb-1">₦{parseFloat(metrics.potentialEarnings).toLocaleString()}</div>
@@ -155,7 +155,7 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl flex-shrink-0">
+                    <Card className="min-w-[200px] bg-white shadow-md rounded-xl shrink-0">
                         <CardContent className="p-6">
                             <div className="text-sm text-gray-500 mb-1">Subscription</div>
                             <div className="text-2xl font-bold mb-1 capitalize">{metrics.subscriptionStatus}</div>
@@ -218,7 +218,7 @@ export default function DashboardPage() {
                 </div>
 
                 {activeTab === "products" && (
-                    <div className="h-[400px] w-full">
+                    <div className="h-[400px] w-full  px-3">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart
                                 data={analytics.monthlyProducts.map(item => ({
@@ -226,7 +226,7 @@ export default function DashboardPage() {
                                     value: item.totalValue,
                                     count: item.count
                                 }))}
-                                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                                margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
                             >
                                 <XAxis
                                     dataKey="name"
@@ -275,7 +275,7 @@ export default function DashboardPage() {
                 )}
 
                 {activeTab === "performance" && (
-                    <div className="h-[400px] w-full">
+                    <div className="h-[400px] w-full px-1">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart
                                 data={analytics.monthlyPerformance.map(item => ({

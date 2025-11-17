@@ -1,45 +1,48 @@
+/*eslint-disable*/
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Upload, Heart } from "lucide-react";
+import { ChevronRight, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
+import {toast} from "sonner";
 import { useCategories } from "@/hooks/useCategories";
+import { Subcategory } from "@/types/category/category";
+import { apiClientUser } from "@/lib/interceptor";
+import { useProducts } from "@/hooks/useProducts";
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
 
 export default function SearchPage() {
   // State for form data
   const [formData, setFormData] = useState({
-    fullName: "",
-    contactNumber: "",
+    name: "",
+    phone: "",
     description: "",
     category: "",
+    subCategory: "",
   });
 
   const { categories } = useCategories();
-
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
-  // Handle input changes
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    if (name === "contactNumber") {
-      // Allow only numeric input
-      const numericValue = value.replace(/[^0-9]/g, "");
-      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+  const { products: apiProducts, loading } = useProducts()
+  useEffect(() => {
+    if (formData.category) {
+      const cat = categories.find(c => c._id === formData.category);
+      setSubcategories(cat?.subCategories || []);
+      setFormData(prev => ({ ...prev, subCategory: "" }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setSubcategories([]);
     }
-  };
+  }, [formData.category, categories]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
@@ -69,94 +72,94 @@ export default function SearchPage() {
     e.preventDefault();
   };
 
+  // Upload image to server
+  const uploadImage = async (file: File): Promise<string> => {
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('fileType', 'Product-request')
+
+      const res = await apiClientUser.post('/users/upload', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      console.log("Upload response:", res?.data)
+      return res?.data?.fileUrl
+    } catch (error) {
+      console.error('Image upload error:', error)
+      throw new Error('Failed to upload image')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!/^[0-9]+$/.test(formData.contactNumber)) {
-      toast("Contact number must be numeric.");
+    if (!/^[0-9]+$/.test(formData.phone)) {
+      toast.error("Phone number must be numeric.");
       return;
     }
 
+    if (formData.description.length < 10) {
+      toast.error("Description must be at least 10 characters long.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setIsUploadingImages(true);
+
     try {
-      const submitData = new FormData();
+      // Upload images to server to get URLs
+      const uploadedImages: any[] = []
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const imageUrl = await uploadImage(file)
+        uploadedImages.push({
+          url: imageUrl,
+          altText: `Image ${i + 1}`,
+          isPrimary: i === 0 // First image is primary
+        })
+      }
 
-      // Add form fields
-      submitData.append("fullName", formData.fullName);
-      submitData.append("contactNumber", formData.contactNumber);
-      submitData.append("description", formData.description);
-      submitData.append("category", formData.category);
+      setIsUploadingImages(false)
 
-      // Add files
-      files.forEach((file) => {
-        submitData.append("files", file);
-      });
+      const body = {
+        name: formData.name,
+        phone: formData.phone,
+        description: formData.description,
+        category: formData.category,
+        subCategory: formData.subCategory,
+        images: uploadedImages
+      };
 
-      const response = await fetch("/api/request-product", {
-        method: "POST",
-        body: submitData,
-      });
-
-      if (response.ok) {
-        toast("Request submitted successfully!");
+      const response = await apiClientUser.post("/product-requests/create", body);
+      console.log("search", response)
+      if (response.data) {
+        toast.success(`${response.data.message}`);
         setFormData({
-          fullName: "",
-          contactNumber: "",
+          name: "",
+          phone: "",
           description: "",
           category: "",
+          subCategory: "",
         });
         setFiles([]);
       } else {
-        const errorData = await response.json();
-        toast(errorData.error || "Error submitting request.");
+        const errorData = response.data;
+        toast.error(errorData.error || "Error submitting request.");
       }
     } catch (error) {
       console.error("Submission error:", error);
-      toast("An error occurred.");
+      if (isUploadingImages) {
+        toast.error("Failed to upload images. Please try again.");
+      } else {
+        toast.error("An error occurred.");
+      }
+    } finally {
+      setIsSubmitting(false);
+      setIsUploadingImages(false);
     }
   };
 
-  const similarProducts = [
-    {
-      id: 1,
-      title: "The Green hostel",
-      description:
-        "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
-      location: "Eleko",
-      features: ["One room", "Gate"],
-      price: "₦95,232",
-      image: "/product1.png",
-    },
-    {
-      id: 2,
-      title: "St Andrews Glasgow Green",
-      description:
-        "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-      location: "Poly gate",
-      features: ["Room & parlor", "24hrs solar"],
-      price: "₦595,232",
-      image: "/product2.png",
-    },
-    {
-      id: 3,
-      title: "St Andrews Glasgow Green",
-      description:
-        "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-      location: "Poly gate",
-      features: ["Room & parlor", "24hrs solar"],
-      price: "₦595,232",
-      image: "/product4.png",
-    },
-    {
-      id: 4,
-      title: "St Andrews Glasgow Green",
-      description:
-        "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-      location: "Poly gate",
-      features: ["Room & parlor", "24hrs solar"],
-      price: "₦595,232",
-      image: "/product2.png",
-    },
-  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -212,20 +215,13 @@ export default function SearchPage() {
 
                   <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
                     <div>
-                      <label className="block mb-1 text-sm">Full name</label>
+                      <label className="block mb-1 text-sm">Product name</label>
                       <Input
-                        name="fullName"
-                        value={formData.fullName}
+                        name="name"
+                        value={formData.name}
                         onChange={(e) => {
-                          // Remove any numbers from input
                           const value = e.target.value.replace(/[0-9]/g, "");
-                          handleChange({
-                            ...e,
-                            target: {
-                              ...e.target,
-                              value,
-                            },
-                          });
+                          setFormData((prev) => ({ ...prev, name: value }));
                         }}
                         className="w-full"
                         pattern="[A-Za-z\s]+"
@@ -238,14 +234,15 @@ export default function SearchPage() {
                       />
                     </div>
                     <div>
-                      <label className="block mb-1 text-sm">
-                        Contact number
-                      </label>
+                      <label className="block mb-1 text-sm">Phone number</label>
                       <Input
                         type="tel"
-                        name="contactNumber"
-                        value={formData.contactNumber}
-                        onChange={handleChange}
+                        name="phone"
+                        value={formData.phone}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, "");
+                          setFormData((prev) => ({ ...prev, phone: value }));
+                        }}
                         pattern="[0-9]+"
                         title="Contact number must be numeric"
                         className="w-full"
@@ -268,12 +265,41 @@ export default function SearchPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((cat) => (
-                            <SelectItem key={cat._id} value={cat.name}>
+                            <SelectItem key={cat._id} value={cat._id}>
                               {cat.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm">Sub Category</label>
+                      <Select
+                        value={formData.subCategory}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, subCategory: value }))}
+                        required
+                        disabled={!subcategories.length}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a sub category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {subcategories.map((sub) => (
+                            <SelectItem key={sub._id} value={sub._id}>
+                              {sub.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block mb-1 text-sm">Description</label>
+                      <Textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                        className="w-full min-h-[100px]"
+                      />
                     </div>
                     <div>
                       <label className="block mb-1 text-sm">Image(s)</label>
@@ -316,21 +342,17 @@ export default function SearchPage() {
                         )}
                       </div>
                     </div>
-                    <div>
-                      <label className="block mb-1 text-sm">Description</label>
-                      <Textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="w-full min-h-[100px]"
-                      />
-                    </div>
                     <div className="flex w-full justify-center">
                       <Button
                         type="submit"
-                        className="flex w-full justify-center max-w-xl md:p-6 items-center bg-[#1F058F] hover:bg-[#2a0bc0] text-white mt-3"
+                        disabled={isSubmitting}
+                        className="flex w-full justify-center max-w-xl md:p-6 items-center bg-[#1F058F] hover:bg-[#2a0bc0] text-white mt-3 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Request product
+                        {isUploadingImages
+                          ? 'Uploading Images...'
+                          : isSubmitting
+                            ? 'Submitting...'
+                            : 'Request product'}
                       </Button>
                     </div>
                   </form>
@@ -354,41 +376,47 @@ export default function SearchPage() {
       <div className="mt-8 mb-8 px-4 md:px-0 max-w-7xl mx-auto">
         <h3 className="font-medium text-lg mb-4">You might also like these</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {similarProducts.map((product) => (
-            <div key={product.id} className="border rounded-lg overflow-hidden">
-              <div className="relative h-[160px] cursor-pointer">
-                <Image
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.title}
-                  fill
-                  className="object-cover"
-                />
-                <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center cursor-pointer">
-                  <Heart size={14} className="text-gray-500" />
-                </button>
-              </div>
-              <div className="p-3 shadow-sm hover:shadow-xl transition duration-200 cursor-pointer">
-                <h4 className="font-medium text-sm">{product.title}</h4>
-                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                  {product.description}
-                </p>
-                <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center">
-                  <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">
-                    {product.location}
+          {loading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <ProductCardSkeleton key={index} />
+              ))
+            : apiProducts.slice(0, 4).map((product) => (
+              <Link href={`/product/${product.slug}`} key={product._id}>
+                <div key={product._id} className="border rounded-lg overflow-hidden">
+                  <div className="relative h-[160px] cursor-pointer">
+                    <Image
+                      src={product.images?.[0]?.url || "/placeholder.svg"}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                    />
+                    {/* <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                      <Heart size={14} className="text-gray-500" />
+                    </button> */}
                   </div>
-                  {product.features.map((feature, index) => (
-                    <div
-                      key={index}
-                      className="text-xs bg-gray-100 px-2 py-1 rounded"
-                    >
-                      {feature}
+                  <div className="p-3  duration-200 cursor-pointer">
+                    <h4 className="font-medium text-sm">{product.name}</h4>
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                      {product.description}
+                    </p>
+                    <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center">
+                      <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">
+                        {product.listingLocation?.city}
+                      </div>
+                      {product.features?.map((feature, index) => (
+                        <div
+                          key={index}
+                          className="text-xs bg-gray-100 px-2 py-1 rounded"
+                        >
+                          {feature}
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                    <div className="font-medium text-sm mt-2">Current Price: ₦{product.price?.currentPrice?.toLocaleString()}</div>
+                  </div>
                 </div>
-                <div className="font-medium text-sm mt-2">{product.price}</div>
-              </div>
-            </div>
-          ))}
+              </Link>
+            ))}
         </div>
       </div>
       <Footer />

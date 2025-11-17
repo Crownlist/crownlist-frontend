@@ -17,7 +17,8 @@ import {
   LogOut,
   UserRoundPen,
   Shield,
-  Settings
+  Settings,
+  Package
 
 } from 'lucide-react'
 import Link from 'next/link'
@@ -54,6 +55,11 @@ const items = [
     title: 'Saved',
     url: '/buyer/saved',
     icon: Bookmark
+  },
+  {
+    title: 'Requests',
+    url: '/buyer/request',
+    icon: Package
   },
   {
     title: 'Settings',
