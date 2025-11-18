@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 import { Heart } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useLikedProducts } from "@/hooks/useLikedProducts"
+import { useToast } from "@/lib/useToastMessage"
 
 interface ProductCardProps {
   id: string | number
@@ -25,6 +27,7 @@ interface ProductCardProps {
   breadcrumbSub?: string
   breadcrumbLabel?: string
   useBreadcrumbRouting?: boolean
+  isLiked?: boolean
 }
 
 export default function ProductCard({
@@ -45,11 +48,32 @@ export default function ProductCard({
   breadcrumbSub,
   breadcrumbLabel,
   useBreadcrumbRouting = false,
+  isLiked = false,
 }: ProductCardProps) {
-  const [liked, setLiked] = useState(false)
+  const { toggleLike } = useLikedProducts()
+  const { handleMessage } = useToast()
+  const [liked, setLiked] = useState<boolean>(isLiked)
+  const [toggling, setToggling] = useState(false)
   const router = useRouter();
 
-  
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (toggling) return
+
+    setToggling(true)
+    const newLiked = !liked
+    setLiked(newLiked)
+
+    try {
+      await toggleLike(String(id))
+    } catch (err: any) {
+      setLiked(!newLiked) // revert
+      handleMessage("error", err.message || "Failed to toggle like")
+    } finally {
+      setToggling(false)
+    }
+  }
+
   const handleClick = () => {
     if (useBreadcrumbRouting && breadcrumbCat && breadcrumbSub) {
       router.push(`/${breadcrumbCat}/${breadcrumbSub}`)
@@ -84,10 +108,8 @@ export default function ProductCard({
         {/* Like button */}
         <button
           className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 flex items-center justify-center hover:bg-white transition-colors"
-          onClick={(e) => {
-            e.stopPropagation()
-            setLiked(!liked)
-          }}
+          onClick={handleLike}
+          disabled={toggling}
           aria-label={liked ? "Unlike" : "Like"}
         >
           <Heart className={cn("h-5 w-5 transition-colors", liked ? "fill-red-500 text-red-500" : "text-gray-500")} />

@@ -21,11 +21,10 @@ export default function ProductRequestsPage() {
 
     const { data, isLoading, error, refetch } = useProductRequests({
         q: searchQuery || undefined,
-        page: currentPage,
-        limit: 12,
+        userType: "seller",
     })
 
-
+   console.log("data", data)
     const handleSearch = (query: string) => {
         setSearchQuery(query)
         setCurrentPage(1) // Reset to first page when searching

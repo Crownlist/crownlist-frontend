@@ -4,13 +4,13 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight, Heart, ChevronDown, ChevronUp, Copy } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronRight, Heart } from "lucide-react"
+// import { Button } from "@/components/ui/button"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
 import ProductDetails from "@/components/Home/ProductDetails"
-import { number } from "zod"
+// import { number } from "zod"
 
 interface Product {
     id: any;
@@ -37,9 +37,7 @@ export default function ProductDetailPage() {
     })
     const [openSection, setOpenSection] = useState<string | null>(null);
 
-    const tSection = (section: string) => {
-        setOpenSection((prev) => (prev === section ? null : section)); // Close if same, else open new one
-    };
+   
 
     //overview
     const overviewData = [
@@ -142,12 +140,12 @@ export default function ProductDetailPage() {
     ]
 
     // Toggle section expansion
-    const toggleSection = (section: string) => {
-        setExpandedSections((prev) => ({
-            ...prev,
-            [section]: !prev,
-        }))
-    }
+    // const toggleSection = (section: string) => {
+    //     setExpandedSections((prev) => ({
+    //         ...prev,
+    //         [section]: !prev,
+    //     }))
+    // }
 
     // Navigate to next/previous image
     const nextImage = () => {

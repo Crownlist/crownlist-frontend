@@ -12,8 +12,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { countries } from "@/constants/countries"
@@ -36,7 +34,7 @@ interface props {
   hidden: boolean
 }
 const Header = ({ hidden }: props) => {
-   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [search, setSearch] = useState("")
   const [searchCountry, setSearchCountry] = useState("")
   const [value, setValue] = useState("")
@@ -54,20 +52,20 @@ const Header = ({ hidden }: props) => {
 
 
 
-    // new implementation
-    const { isLoading, data } = useGetAuthUser("User");
-    const userData: any = data?.data.loggedInAccount
-      
-   useEffect(() => {
+  // new implementation
+  const { isLoading, data } = useGetAuthUser("User");
+  const userData: any = data?.data.loggedInAccount
+
+  useEffect(() => {
     // Check if either userData or adminData exists
-    if ( userData ) {
+    if (userData) {
       console.log('api', userData, isLoading)
       setIsLoggedIn(true);
     } else {
       // If both are null, the user is logged out
       setIsLoggedIn(false);
     }
-  }, [userData]); 
+  }, [userData]);
 
 
 
@@ -130,7 +128,7 @@ const Header = ({ hidden }: props) => {
 
         <div
           className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-sm transform transition-transform duration-300 ease-in-out 
-    ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:hidden h-screen overflow-y-auto`}
+            ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:hidden h-screen overflow-y-auto`}
         >
           <div className="h-full flex flex-col  gap-3">
             {/* Header */}
@@ -148,7 +146,7 @@ const Header = ({ hidden }: props) => {
             </div>
 
             {/* Search Input on mobile */}
-            <div className="px-6">
+            {/* <div className="px-6">
               <div className="flex w-full h-10 min-w-[100%] items-start relative ">
                 <Input
                   className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-3 ps-10 h-full placeholder:text-[#141414]"
@@ -226,7 +224,7 @@ const Header = ({ hidden }: props) => {
                   Search
                 </Button>
               </div>
-            </div>
+            </div> */}
             {/* Navigation Links */}
             <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-4  p-6">
 
@@ -244,7 +242,7 @@ const Header = ({ hidden }: props) => {
                   categories.map((cat, idx) => {
                     const subcategories = cat.subCategories || []
                     const hasSubcategories = subcategories.length > 0
-                    
+
                     return (
                       <AccordionItem
                         key={cat._id}
@@ -263,13 +261,13 @@ const Header = ({ hidden }: props) => {
                             <span className="text-sm font-medium">{cat.name}</span>
                           </div>
 
-                          <div className="ml-auto text-xs text-gray-500">
+                          {/* <div className="ml-auto text-xs text-gray-500">
                             {!hasSubcategories ? (
                               <span className="text-gray-400">Coming soon</span>
                             ) : (
                               <span>8,238 posts</span>
                             )}
-                          </div>
+                          </div> */}
                         </AccordionTrigger>
 
                         {hasSubcategories && (
@@ -303,7 +301,7 @@ const Header = ({ hidden }: props) => {
                 )}
               </Accordion>
 
-              <Link href='/'
+              <Link href='/seller/post-product'
                 className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
               >
                 <div className="flex flex-row gap-2 align-middle items-center">
@@ -425,7 +423,7 @@ const Header = ({ hidden }: props) => {
 
         {/* Original Header with Responsive Classes */}
         <div className=" mx-auto py-1 pt-2 w-full">
-          <div className="hidden   justify-between w-full  md:hidden">
+          {/* <div className="hidden   justify-between w-full  md:hidden">
             <div className="flex items-center gap-7">
               <div className="flex items-center gap-1.5">
                 <Image src="/icons/gmail.svg" width={24} height={24} alt="Gmail" />
@@ -455,7 +453,7 @@ const Header = ({ hidden }: props) => {
                 <Image src="/icons/facebook.svg" width={24} height={24} alt="Facebook" />
               </Link>
             </div>
-          </div>
+          </div> */}
           <div className="  bg-white max-md:container ">
             <div className="  flex  justify-between items-center w-full gap-10 ">
               <div className="w-full py-2 md:pt-1 md:pb-1 flex max-sm:flex-row-reverse items-center justify-between md:gap-8">
@@ -474,8 +472,8 @@ const Header = ({ hidden }: props) => {
                   </div>
                 </Button>
 
-                <Link href="/" className="max-md:pr-3 max-sm:mt-1">
-                  <Image src="/newlogo.jpg" width={100} height={100} alt="Logo" />
+                <Link href="/" className="max-md:pr-3 max-sm:mt-1 h-fit">
+                  <Image src="/newlogo.jpg" width={100} height={50} alt="Logo" />
                 </Link>
 
                 {!hidden &&
@@ -579,18 +577,21 @@ const Header = ({ hidden }: props) => {
                       <div className="flex align-middle"> Category</div>
                     </div>
                   </Button>
-                  <Button
-                    size="sm"
-                    className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
-                    variant="outline"
-                  >
-                    <div className="flex flex-row gap-1 align-middle">
-                      <div className="flex items-center">
-                        <Image src={'/post.svg'} width={15} height={15} alt="'svg" />
+
+                  <Link href={'/seller/product/post-product'}>
+                    <Button
+                      size="sm"
+                      className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                      variant="outline"
+                    >
+                      <div className="flex flex-row gap-1 align-middle">
+                        <div className="flex items-center">
+                          <Image src={'/post.svg'} width={15} height={15} alt="'svg" />
+                        </div>
+                        <div className="flex align-middle"> Post Product</div>
                       </div>
-                      <div className="flex align-middle"> Post Product</div>
-                    </div>
-                  </Button>
+                    </Button>
+                  </Link>
 
                 </div>}
 
@@ -612,18 +613,20 @@ const Header = ({ hidden }: props) => {
                         <div className="flex align-middle text-sm font-medium"> Category</div>
                       </div>
                     </Button>
-                    <Button
-                      size="sm"
-                      className={`${pathname == '/cwwategory' ? 'border-b-gray-950' : 'border-none'}  shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium `}
-                      variant="outline"
-                    >
-                      <div className="flex flex-row gap-1 align-middle items-center">
-                        <div className="flex items-center">
-                          <Image src={'/post.svg'} width={20} height={20} alt="'svg" />
+                    <Link href="/seller/product/post-product">
+                      <Button
+                        size="sm"
+                        className={`${pathname == '/cwwategory' ? 'border-b-gray-950' : 'border-none'}  shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium `}
+                        variant="outline"
+                      >
+                        <div className="flex flex-row gap-1 align-middle items-center">
+                          <div className="flex items-center">
+                            <Image src={'/post.svg'} width={20} height={20} alt="'svg" />
+                          </div>
+                          <div className="flex align-middle text-sm font-medium"> Post Product</div>
                         </div>
-                        <div className="flex align-middle text-sm font-medium"> Post Product</div>
-                      </div>
-                    </Button>
+                      </Button>
+                    </Link>
 
                   </div>
                 }
