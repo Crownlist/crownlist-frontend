@@ -1,20 +1,101 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { Upload } from "lucide-react"
+import { Upload, X } from "lucide-react"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Loader2 } from "lucide-react"
+import { apiClientPublic } from "@/lib/interceptor"
+import { useToast } from "@/lib/useToastMessage"
+import { SuccessModal } from "@/components/SuccessModal"
+import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store"
 
 export default function ReportBug() {
-  //const [selectedTab, setSelectedTab] = useState("share-idea")
   const [selectedIdea, setSelectedIdea] = useState("")
+  const [bugDescription, setBugDescription] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [attachments, setAttachments] = useState<File[]>([])
   const pathname = usePathname()
+  const { handleMessage } = useToast()
+  const userData = useSelector((state: RootState) => state.userData?.userData)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  useGetAuthUser("User")
+
+  const handleFileClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files) {
+      const newFiles = Array.from(files)
+      setAttachments(prev => [...prev, ...newFiles])
+    }
+  }
+
+  const removeFile = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // Basic validation
+    if (!selectedIdea) {
+      handleMessage('error', 'Please select an issue type.')
+      return
+    }
+
+    if (!bugDescription.trim()) {
+      handleMessage('error', 'Please describe the bug.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      if (!userData) {
+        handleMessage('error', 'User data not available. Please log in.')
+        return
+      }
+
+      const nameParts = userData.fullName?.split(' ') || []
+      const firstName = nameParts[0] || ''
+      const lastName = nameParts.slice(1).join(' ') || ''
+
+      // Prepare payload for bug report
+      const payload = {
+        firstName,
+        lastName,
+        email: userData.email,
+        message: bugDescription,
+        category: selectedIdea
+      }
+
+      // Send bug report via API
+      await apiClientPublic.post('/feedback/bug-report', payload)
+      setShowSuccessModal(true)
+      setSelectedIdea("")
+      setBugDescription("")
+      setAttachments([])
+
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to report bug. Please try again.'
+      handleMessage('error', errorMessage)
+      console.error('Submission error:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <>
@@ -67,7 +148,7 @@ export default function ReportBug() {
 
           {/* Form */}
           <div className="bg-white rounded-xl shadow-sm border p-8">
-            <form className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Select the issue type */}
               <div>
                 <Label className="text-base font-medium text-gray-900 mb-4 block">Select the issue type</Label>
@@ -114,13 +195,47 @@ export default function ReportBug() {
               {/* Attach a file */}
               <div>
                 <Label className="text-base font-medium text-gray-900 mb-4 block">Attach a file</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <div
+                  onClick={handleFileClick}
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                >
                   <Upload className="mx-auto h-8 w-8 text-gray-400 mb-4" />
                   <div className="text-gray-600">
                     <span className="font-medium text-gray-900 underline">Click to upload</span> or drag and drop
                   </div>
                   <div className="text-sm text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 800×400px)</div>
                 </div>
+                {attachments.length > 0 && (
+                  <div className="mt-4">
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Selected files:</Label>
+                    <div className="space-y-2">
+                      {attachments.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <Upload className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-700 truncate max-w-xs">{file.name}</span>
+                            <span className="text-xs text-gray-500">({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Describe the bug */}
@@ -128,17 +243,42 @@ export default function ReportBug() {
                 <Label htmlFor="bug-description" className="text-base font-medium text-gray-900 mb-4 block">
                   Describe the bug
                 </Label>
-                <Textarea id="bug-description" placeholder="" className="min-h-[120px] resize-none" />
+                <Textarea
+                  id="bug-description"
+                  placeholder=""
+                  value={bugDescription}
+                  onChange={(e) => setBugDescription(e.target.value)}
+                  className="min-h-[120px] resize-none"
+                />
               </div>
 
               {/* Submit Button */}
-              <Button className="w-full bg-black hover:bg-gray-800 text-white py-3 text-base font-medium">
-                Report bug
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-black hover:bg-gray-800 text-white py-3 text-base font-medium flex items-center justify-center"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    Reporting...
+                  </>
+                ) : (
+                  "Report bug"
+                )}
               </Button>
             </form>
           </div>
         </div>
       </div>
+
+      <SuccessModal
+        open={showSuccessModal}
+        onOpenChange={setShowSuccessModal}
+        title="Bug Report Sent!"
+        description="Your bug report has been submitted successfully. Our team will review it shortly."
+      />
+
       <Footer/>
     </>
   )
