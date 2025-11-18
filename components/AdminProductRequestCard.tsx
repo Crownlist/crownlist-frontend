@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { ProductRequest } from "@/types/product/request"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { CheckCircle, XCircle, Eye } from "lucide-react"
+import { CheckCircle, Eye } from "lucide-react"
 
 dayjs.extend(relativeTime)
 
@@ -14,7 +14,6 @@ interface AdminProductRequestCardProps {
   request: ProductRequest
   viewMode?: "grid" | "list"
   onApprove: (request: ProductRequest) => void
-  onReject: (request: ProductRequest) => void
   onViewDetails: (request: ProductRequest) => void
   isLoading?: boolean
 }
@@ -23,7 +22,6 @@ export default function AdminProductRequestCard({
   request,
   viewMode = "grid",
   onApprove,
-  onReject,
   onViewDetails,
   isLoading = false,
 }: AdminProductRequestCardProps) {
@@ -35,7 +33,7 @@ export default function AdminProductRequestCard({
     switch (status.toLowerCase()) {
       case 'reviewing':
         return 'bg-yellow-100 text-yellow-800'
-      case 'approved':
+      case 'live':
         return 'bg-green-100 text-green-800'
       case 'rejected':
         return 'bg-red-100 text-red-800'
@@ -125,7 +123,7 @@ export default function AdminProductRequestCard({
               Approve
             </button>
 
-            <button
+            {/* <button
               onClick={() => onReject(request)}
               disabled={!canReject || isLoading}
               className={cn(
@@ -136,7 +134,7 @@ export default function AdminProductRequestCard({
             >
               <XCircle size={12} />
               Reject
-            </button>
+            </button> */}
 
             <button
               onClick={() => onViewDetails(request)}

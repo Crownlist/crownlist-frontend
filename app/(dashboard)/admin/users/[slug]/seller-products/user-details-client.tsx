@@ -26,6 +26,7 @@ type UserDetails = {
   accountType: string;
   profilePicture: string;
   isVerified: boolean;
+  isSuspended: boolean;
   isAdmin: boolean;
   finishTourGuide: boolean;
   createdAt: string;
@@ -35,6 +36,7 @@ type UserDetails = {
 
 export default function UserDetailsClient({ userId }: { userId: string }) {
   const [showBlockModal, setShowBlockModal] = useState(false);
+   const [showUnBlockModal, setShowUnBlockModal] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<UserDetails>({
@@ -55,7 +57,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
     },
     onSuccess: (data) => {
       console.log('Block User API Response:', data); // Admin notification via console
-      toast.success(data.data.message || `User ${data.data?.isBlocked ? 'blocked' : 'unblocked'} successfully`);
+      toast.success(data.data.message || `User ${data.data?.isSuspended ? 'blocked' : 'unblocked'} successfully`);
       setShowBlockModal(false);
       // Invalidate the user query to refresh the data
       queryClient.invalidateQueries({ queryKey: ['user', userId] });
@@ -67,14 +69,46 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
     }
   });
 
+  const unblockUserMutation = useMutation({
+    mutationFn: async (blockDecision: boolean) => {
+      const response = await apiClientAdmin.patch('/users', {
+        userId,
+        blockDecision
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log('Block User API Response:', data); // Admin notification via console
+      toast.success(data.data.message || `User ${data.data?.isSuspended ? 'blocked' : 'unblocked'} successfully`);
+      setShowUnBlockModal(false);
+      // Invalidate the user query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['user', userId] });
+    },
+    onError: (error: any) => {
+      console.error('UnBlock User API Error:', error.response?.data || error); // Admin notification via console
+      toast.error(`Failed to Unblock user: ${error?.response?.data?.message || error?.message || 'Unknown error'}`);
+      setShowUnBlockModal(false);
+    }
+  });
+
   const handleBlockUser = () => {
     setShowBlockModal(false);
     // toast.loading("Blocking user...", { id: "block-user" });
     blockUserMutation.mutate(true);
   };
 
+   const handleUnBlockUser = () => {
+    setShowUnBlockModal(false);
+    // toast.loading("Blocking user...", { id: "block-user" });
+    unblockUserMutation.mutate(false);
+  };
+
   const openBlockModal = () => {
     setShowBlockModal(true);
+  };
+
+  const openUnBlockModal = () => {
+    setShowUnBlockModal(true);
   };
 
   if (isLoading) {
@@ -160,7 +194,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                 <Badge variant={user.subscriptionStatus === 'active' ? 'default' : 'outline'}>
                   {user.subscriptionStatus === 'active' ? 'Subscribed' : 'Not Subscribed'}
                 </Badge>
-                {user.isVerified &&
+                {!user.isSuspended &&
                   <Button
                     size="sm"
                     onClick={openBlockModal}
@@ -169,6 +203,17 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                   >
                     <Ban className="h-4 w-4 mr-2" />
                     {blockUserMutation.isPending ? 'Blocking...' : 'Block User'}
+                  </Button>
+                }
+                {user.isSuspended &&
+                  <Button
+                    size="sm"
+                    onClick={openUnBlockModal}
+                    disabled={unblockUserMutation.isPending}
+                    className="ml-2 bg-red-600"
+                  >
+                    <Ban className="h-4 w-4 mr-2" />             
+                    {unblockUserMutation.isPending ? 'Blocking...' : 'Unblock User'}
                   </Button>
                 }
               </div>
@@ -335,6 +380,17 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
         confirmText="Block User"
         cancelText="Cancel"
         onConfirm={handleBlockUser}
+        variant="destructive"
+      />
+
+      <ConfirmationModal
+        open={showUnBlockModal}
+        onOpenChange={setShowUnBlockModal}
+        title="Block User"
+        description={`Are you sure you want to unblock ${user.fullName}? This will allow them from accessing their account.`}
+        confirmText="Unblock User"
+        cancelText="Cancel"
+        onConfirm={handleUnBlockUser}
         variant="destructive"
       />
     </div>

@@ -23,7 +23,8 @@ export default function BuyerProductRequestsPage() {
         q: searchQuery || undefined,
         page: currentPage,
         limit: 12,
-    }, "buyer")
+        userType: "buyer"
+    },)
 
     
 

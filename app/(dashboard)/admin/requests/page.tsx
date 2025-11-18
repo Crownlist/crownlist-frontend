@@ -70,7 +70,7 @@ export default function AdminProductRequestsPage() {
         if (!confirmAction) return
 
         const { type, request } = confirmAction
-        const newStatus = type === 'approve' ? 'approved' : 'rejected'
+        const newStatus = type === 'approve' ? 'live' : 'reviewing'
 
         updateStatusMutation.mutate({
             id: request._id,
@@ -220,7 +220,6 @@ export default function AdminProductRequestsPage() {
                                         request={request}
                                         viewMode={viewMode}
                                         onApprove={handleApprove}
-                                        onReject={handleReject}
                                         onViewDetails={handleViewRequest}
                                         isLoading={updateStatusMutation.isLoading}
                                     />
