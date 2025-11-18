@@ -9,10 +9,12 @@ import Link from "next/link"
 import { Loader2 } from "lucide-react"
 import { apiClientPublic } from "@/lib/interceptor"
 import { useToast } from "@/lib/useToastMessage"
+import { SuccessModal } from "@/components/SuccessModal"
 
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -35,7 +37,7 @@ export default function ContactPage() {
 
     try {
       await apiClientPublic.post('/feedback/contact-us', formData)
-      handleMessage('success', 'Contact form submitted successfully.')
+      setShowSuccessModal(true)
       setFormData({
         firstName: '',
         lastName: '',
@@ -214,6 +216,14 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+
+    <SuccessModal
+      open={showSuccessModal}
+      onOpenChange={setShowSuccessModal}
+      title="Message Sent!"
+      description="Your message has been sent successfully. We'll get back to you soon."
+    />
+
     <Footer />
     </>
   )
