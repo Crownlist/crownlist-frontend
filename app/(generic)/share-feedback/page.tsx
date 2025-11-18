@@ -26,7 +26,7 @@ export default function ShareAnIdea() {
   const [attachments, setAttachments] = useState<File[]>([])
   const { handleMessage } = useToast()
   const userData = useSelector((state: RootState) => state.userData?.userData)
-  const { isLoading: userLoading } = useGetAuthUser("User")
+  const {} = useGetAuthUser("User")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileClick = () => {
