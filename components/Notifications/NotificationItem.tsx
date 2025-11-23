@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter, usePathname } from 'next/navigation';
 import { Notification } from '@/types/general';
 import {
   formatNotificationTime,
@@ -19,9 +20,26 @@ interface NotificationItemProps {
 }
 
 export default function NotificationItem({ notification, onMarkAsRead, onViewDetails }: NotificationItemProps) {
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleViewDetails = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    // If it's a NEW_MESSAGE notification with a chat_id, navigate to messages page
+    if (notification.notificationType === 'NEW_MESSAGE' && notification.chat_id) {
+      const currentPath = pathname;
+      let messagesPath = '/messages';
+      if (currentPath.includes('/buyer/')) {
+        messagesPath = '/buyer/messages';
+      } else if (currentPath.includes('/seller/')) {
+        messagesPath = '/seller/messages';
+      }
+      router.push(`${messagesPath}?chat_id=${notification.chat_id}`);
+      return;
+    }
+
+    // Otherwise, open the details modal
     onViewDetails(notification._id);
   };
 

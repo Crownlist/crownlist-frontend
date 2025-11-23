@@ -1,6 +1,7 @@
 "use client"
 import CategoryModal from "@/components/Home/CategoryModal"
 import ProductRequestCard from "@/components/ProductRequestCard"
+import ContactBuyerModal from "@/components/ContactBuyerModal"
 import RequestSearch from "@/components/RequestSearch"
 import CustomLoader from "@/components/CustomLoader"
 import { AlignJustify, LayoutGrid } from "lucide-react"
@@ -16,6 +17,8 @@ export default function ProductRequestsPage() {
     const [currentPage, setCurrentPage] = useState(1)
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [selectedRequest, setSelectedRequest] = useState<ProductRequest | null>(null)
+    const [contactModalOpen, setContactModalOpen] = useState(false)
+    const [selectedRequestForContact, setSelectedRequestForContact] = useState<ProductRequest | null>(null)
     console.log(selectedRequest)
     const { handleMessage } = useToast()
 
@@ -191,10 +194,13 @@ export default function ProductRequestsPage() {
                                         request={request}
                                         viewMode={viewMode}
                                         onClick={handleViewRequest}
+                                        onContact={(req) => {
+                                            setSelectedRequestForContact(req)
+                                            setContactModalOpen(true)
+                                        }}
                                     />
                                 ))}
                             </div>
-
                             {/* Pagination */}
                             {pagination && pagination.pages > 1 && (
                                 <div className="flex items-center justify-center gap-2 pt-6">
@@ -237,6 +243,12 @@ export default function ProductRequestsPage() {
 
             {/* Modals */}
             <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
+            {contactModalOpen && selectedRequestForContact && (
+                <ContactBuyerModal
+                    request={selectedRequestForContact as ProductRequest}
+                    onClose={() => setContactModalOpen(false)}
+                />
+            )}
         </div>
     )
 }

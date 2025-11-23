@@ -22,7 +22,7 @@ export default function SignupForm({
 }) {
   const [showPassword, setShowPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
- const [lastName, setLastName] = useState('')
+
  const [confirmPassword, setConfirmPassword] = useState("");
 
   const {
@@ -42,9 +42,13 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       toast.error("Passwords do not match");
       return;
     }
+      // Store email in sessionStorage for verification page
+  sessionStorage.setItem("signup-email", data.email);
+      // Store email in sessionStorage for verification page
+  sessionStorage.setItem("signup-email", data.email);
       // Combine firstname and lastname into fullname
   const requestData = {
-    fullName: `${data.fullName} ${lastName}`,
+    fullName: `${data.fullName} ${data.lastName}`,
     phoneNumber: data.phoneNumber,
     accountType: data.accountType,
     email: data.email,
@@ -90,6 +94,10 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   placeholder=""
                   {...register("fullName", {
                     required: "Firstname is required",
+                    pattern: {
+                      value: /^[a-zA-Z\s]+$/,
+                      message: "Only letters and spaces are allowed"
+                    }
                   })}
                   disabled={isLoading || googleLoading}
                 />
@@ -103,14 +111,17 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   id="lastname"
                   type="text"
                   placeholder=""
-                  onChange={e => setLastName(e.target.value)}
-                  // {...register("lastname", {
-                  //   required: "Lastname is required",
-                  // })}
+                  {...register("lastName", {
+                    required: "Lastname is required",
+                    pattern: {
+                      value: /^[a-zA-Z\s]+$/,
+                      message: "Only letters and spaces are allowed"
+                    }
+                  })}
                   disabled={isLoading || googleLoading}
                 />
-                {errors.fullName && (
-                  <p className="text-sm text-red-500">{errors.fullName.message}</p>
+                {errors.lastName && (
+                  <p className="text-sm text-red-500">{errors.lastName.message}</p>
                 )}
               </div>
             </div>
