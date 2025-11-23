@@ -133,7 +133,7 @@ export default function Home() {
                 }))}
                 initialView="grid"
                 showSeeMore
-                onSeeMoreClick={() => handleSeeMore("/search")}
+                onSeeMoreClick={() => handleSeeMore("/product")}
                 useBreadcrumbRouting={false}
               />
             )}

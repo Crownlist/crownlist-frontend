@@ -28,7 +28,7 @@ export const useLikedProducts = () => {
 
   const toggleLike = useCallback(async (productId: string) => {
     try {
-      const res = await apiClientUser.post('/products/liked', { productId })
+      const res = await apiClientUser.post(`/products/like/${ productId }`)
       // After toggling, refetch the liked products to stay in sync
       await fetchLikedProducts()
       return { success: true }

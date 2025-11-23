@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { ProductRequest } from "@/types/product/request"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import { Phone } from "lucide-react"
 
 dayjs.extend(relativeTime)
 
@@ -13,14 +14,17 @@ interface ProductRequestCardProps {
   request: ProductRequest
   viewMode?: "grid" | "list"
   onClick?: (request: ProductRequest) => void
+  onContact?: (request: ProductRequest) => void
 }
 
 export default function ProductRequestCard({
   request,
   viewMode = "grid",
   onClick,
+  onContact,
 }: ProductRequestCardProps) {
   console.log("req", request)
+  console.log("onContact function present:", typeof onContact)
   const primaryImage = request.images.find(img => img.isPrimary) || request.images[0]
   console.log("primaryImage", primaryImage)
   const handleClick = () => {
@@ -90,8 +94,20 @@ export default function ProductRequestCard({
         </div>
 
         <div className="mt-2">
-          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-            <span>📞 {request.phone}</span>
+          <div className="flex items-center justify-between mb-1">
+            {/* <div className="flex items-center gap-2 text-xs text-gray-500">
+              <span>📞 {request.phone}</span>
+            </div> */}
+            <button
+              onClick={(e) => {
+                console.log('Contact button clicked for:', request.name)
+                e.stopPropagation()
+                onContact?.(request)
+              }}
+              className="text-[#1F058F] hover:text-blue-600  text-sm rounded  transition-colors flex items-center gap-1"
+            >
+              📞 Contact Buyer
+            </button>
           </div>
 
           <div className="flex items-center justify-between text-xs text-gray-500">

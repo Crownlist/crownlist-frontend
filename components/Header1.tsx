@@ -36,11 +36,11 @@ interface props {
 const Header = ({ hidden }: props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [search, setSearch] = useState("")
-  const [searchCountry, setSearchCountry] = useState("")
-  const [value, setValue] = useState("")
+  const [location, setLocation] = useState("")
   const [open, setOpen] = useState(false)
   const [filteredCountries, setFilteredCountries] = useState(countries)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [searchCountry, setSearchCountry] = useState("")
   const router = useRouter()
   const pathname = usePathname()
   const [openChev, setOpenChev] = useState(false)
@@ -88,11 +88,12 @@ const Header = ({ hidden }: props) => {
   }
 
   const handleSearch = () => {
-    if (search == '' || searchCountry == "") {
-      router.push('/search')
-    }
-    else {
-      router.push('/search/kwara')
+    if (search.trim() === '') {
+      router.push('/product')
+    } else {
+      const searchTerm = search.trim().toLowerCase().replace(/\s+/g, '-')
+      const queryParams = location.trim() ? `?location=${encodeURIComponent(location.trim())}` : ''
+      router.push(`/product/${encodeURIComponent(searchTerm)}${queryParams}`)
     }
   }
 
@@ -115,7 +116,7 @@ const Header = ({ hidden }: props) => {
   // Filter countries based on search input
   useEffect(() => {
     if (searchCountry) {
-      setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(search.toLowerCase())))
+      setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(searchCountry.toLowerCase())))
     } else {
       setFilteredCountries(countries)
     }
@@ -145,86 +146,6 @@ const Header = ({ hidden }: props) => {
               </Button>
             </div>
 
-            {/* Search Input on mobile */}
-            {/* <div className="px-6">
-              <div className="flex w-full h-10 min-w-[100%] items-start relative ">
-                <Input
-                  className="border border-[#D6D6D6] rounded w-full max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-3 ps-10 h-full placeholder:text-[#141414]"
-                  placeholder="Search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-
-                <Search size={16} color="#141414" className="absolute top-3 left-4" />
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      // aria-expanded={open}
-                      className=" h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
-                    >
-                      {value ? countries.find((country) => country.name === value)?.name : "Select."}
-                      <ChevronsUpDownIcon className="opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-2  z-[999] ">
-                    <div className="mb-2">
-                      <Input
-                        placeholder="Search country..."
-                        value={searchCountry}
-                        onChange={(e) => setSearchCountry(e.target.value)}
-                        className="h-9"
-                      />
-                    </div>
-
-                    <div className="max-h-[300px] overflow-y-auto">
-                      {filteredCountries.length === 0 ? (
-                        <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
-                      ) : (
-                        <div className="space-y-1">
-                          {filteredCountries.map((country, index) => (
-                            <div
-                              key={index}
-                              className={cn(
-                                "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
-                                value === country.name && "bg-muted",
-                              )}
-                              onClick={() => {
-                                const newValue = country.name === value ? "" : country.name
-                                setValue(newValue)
-                                setSearchCountry(newValue)
-                                setOpen(false)
-                                // setSearch("hahahah")
-                              }}
-                            >
-                              <Image
-                                src={country.flag || "/placeholder.svg"}
-                                alt={country.name}
-                                width={24}
-                                height={24}
-                                className="mr-2"
-                              />
-                              <span>{country.name}</span>
-                              {value === country.name && <Check className="ml-auto h-4 w-4" />}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-
-                <Button
-                  size="sm"
-                  className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
-                  onClick={handleSearch}
-                >
-                  Search
-                </Button>
-              </div>
-            </div> */}
             {/* Navigation Links */}
             <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-4  p-6">
 
@@ -487,69 +408,12 @@ const Header = ({ hidden }: props) => {
 
                     <Search size={16} color="#141414" className="absolute top-3 left-4" />
 
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={open}
-                          className="xl:w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 justify-between"
-                        >
-                          <div className='hidden xl:flex'>
-                            {value ? countries.find((country) => country.name === value)?.name : "Select country..."}
-                          </div>
-                          <div className='hidden max-xl:flex'>
-                            {value ? countries.find((country) => country.name === value)?.name : "Select.."}
-                          </div>
-                          <ChevronsUpDownIcon className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-2">
-                        <div className="mb-2">
-                          <Input
-                            placeholder="Search country..."
-                            value={searchCountry}
-                            onChange={(e) => setSearchCountry(e.target.value)}
-                            className="h-9"
-                          />
-                        </div>
-
-                        <div className="max-h-[300px] overflow-y-auto">
-                          {filteredCountries.length === 0 ? (
-                            <div className="py-2 text-center text-sm text-muted-foreground">No country found.</div>
-                          ) : (
-                            <div className="space-y-1">
-                              {filteredCountries.map((country, index) => (
-                                <div
-                                  key={index}
-                                  className={cn(
-                                    "flex items-center px-2 py-1.5 text-sm rounded-md cursor-pointer hover:bg-muted",
-                                    value === country.name && "bg-muted",
-                                  )}
-                                  onClick={() => {
-                                    const newValue = country.name === value ? "" : country.name
-                                    setValue(newValue)
-                                    setSearchCountry(newValue)
-                                    setOpen(false)
-                                    // setSearch("hahahah")
-                                  }}
-                                >
-                                  <Image
-                                    src={country.flag || "/placeholder.svg"}
-                                    alt={country.name}
-                                    width={24}
-                                    height={24}
-                                    className="mr-2"
-                                  />
-                                  <span>{country.name}</span>
-                                  {value === country.name && <Check className="ml-auto h-4 w-4" />}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <Input
+                      className="xl:w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 rounded-r-none xl:rounded-r-none xl:rounded-l-none"
+                      placeholder="Location"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
 
                     <Button
                       size="sm"

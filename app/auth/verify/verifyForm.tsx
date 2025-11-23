@@ -116,7 +116,7 @@ export function VerifyForm({
               <h1 className="text-2xl">Verify your email</h1>
               <p className="text-sm text-balance mt-1">
                 Please enter the code sent to <br className="hidden md:block" />
-                &quot;Sample@gmail.com&quot;
+                {email}
               </p>
             </div>
 

@@ -188,11 +188,38 @@ export default function MessagingInterface() {
         }
     }, []);
 
-    // Handle auto-conversation creation from product page
+    // Handle auto-conversation creation from product page or notification chat_id
     useEffect(() => {
         const sellerId = searchParams.get('sellerId');
         const sellerName = searchParams.get('sellerName');
         const sellerAvatar = searchParams.get('sellerAvatar');
+        const chatId = searchParams.get('chat_id');
+
+        // Handle notification chat_id auto-selection
+        if (chatId && userProfile && !isConversationsLoading) {
+            console.log('🔍 Auto-selecting conversation from URL param:', chatId);
+
+            // Find the conversation with the matching chat_id
+            const existingConversation = state.conversations.find(conv => conv.id === chatId);
+
+            if (existingConversation) {
+                console.log('✅ Found existing conversation, setting as active:', existingConversation.id);
+                actions.setActiveConversation(existingConversation.id);
+
+                // Clear the chat_id param after setting
+                if (typeof window !== 'undefined') {
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('chat_id');
+                    url.searchParams.delete('sellerId'); // also clear any leftover params
+                    url.searchParams.delete('sellerName');
+                    url.searchParams.delete('sellerAvatar');
+                    window.history.replaceState({}, '', url.pathname + url.search);
+                }
+                return;
+            } else {
+                console.log('❌ Conversation not found for chat_id:', chatId, 'Available conversations:', state.conversations.map(c => c.id));
+            }
+        }
 
         if (sellerId && sellerName && userProfile && !isConversationsLoading) {
             // Check if conversation already exists

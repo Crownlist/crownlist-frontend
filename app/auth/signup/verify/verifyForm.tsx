@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { apiClientPublic } from "@/lib/interceptor";
 import { useVerifyOtp } from "@/lib/useVerifyOtp";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
@@ -43,10 +43,17 @@ export function VerifyForm({
     defaultValues: { pin: "" },
   });
 
-  const { submit,  res } = useVerifyOtp();
+  const { submit,  res, isLoading } = useVerifyOtp();
   const [modalOpen, setModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const storedEmail = sessionStorage.getItem("signup-email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+  }, []);
 
   // 2. Open modal on resend click
   const handleResendClick = (e: { preventDefault: () => void; }) => {
@@ -92,6 +99,13 @@ export function VerifyForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="min-h-screen flex flex-col gap-5 max-md:px-7 justify-center w-full items-center md:mt-2"
         >
+          <div className="flex flex-col items-center md:items-start md:mb-[10px]">
+            <h1 className="text-2xl">Verify your email</h1>
+            <p className="text-sm text-balance mt-2">
+              Please enter the code sent to <br className="hidden md:block" />
+              {email}
+            </p>
+          </div>
           <FormField
             control={form.control}
             name="pin"
@@ -124,7 +138,9 @@ export function VerifyForm({
             )}
           />
           <Button type="submit" className=" mt-2 w-full h-[43px] max-w-[250px]">
-            <div className="flex py-3">Continue</div>
+            <div className="flex py-3">
+               {isLoading ? 'Sending...' : 'Continue'}
+            </div>
           </Button>
           <p className="text-center text-sm mt-1">
             Do you have an account?{" "}
