@@ -15,6 +15,9 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { apiClientPublic, apiClientUser } from "@/lib/interceptor"
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton"
 import { useProducts } from "@/hooks/useProducts"
+import { cn } from "@/lib/utils"
+import { useLikedProducts } from "@/hooks/useLikedProducts"
+import { toast } from "sonner"
 // import { ProductCardSkeleton } from "@/components/ProductCardSkeleton"
 
 
@@ -33,8 +36,15 @@ export default function ProductDetailPage() {
 
     const [currentProduct, setCurrentProduct] = useState<any>()
 
+    const [liked, setLiked] = useState<boolean>(false)
+    const [toggling, setToggling] = useState(false)
     const [apiProduct, setApiProduct] = useState<any | null>(null);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false)
     const [isLoading, setIsLoading] = useState(true);
+
+    const { toggleLike } = useLikedProducts()
+
+
 
     const safetyTips = [
         "Do not send money or personal information until you’ve seen the product.",
@@ -76,30 +86,6 @@ export default function ProductDetailPage() {
         },
     ];
 
-    // const similarProducts: any[] = [
-    //     {
-    //         id: "1",
-    //         title: "The Green hostel",
-    //         description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
-    //         location: "Eleko",
-    //         features: ["One room", "Gate"],
-    //         price: "₦95,232",
-    //         image: "/product1.png",
-    //         condition: "Used",
-    //         postedDate: "12/1/2024",
-    //     },
-    //     {
-    //         id: "2",
-    //         title: "St Andrews Glasgow Green",
-    //         description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-    //         location: "Poly gate",
-    //         features: ["Room & parlor", "24hrs solar"],
-    //         price: "₦595,232",
-    //         image: "/product2.png",
-    //         postedDate: "12/2/2024",
-    //         condition: "Brand New",
-    //     },
-    // ];
 
     const { slug: id } = useParams()
     const search = useSearchParams()
@@ -189,6 +175,31 @@ export default function ProductDetailPage() {
                 return;
             }
             setIsLoading(false);
+        }
+    }
+
+    const handleLike = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (toggling) return
+
+        // Check authentication
+        const isAuthenticated = typeof window !== "undefined" && !!localStorage.getItem("leoKey")
+        if (!isAuthenticated) {
+            setShowLoginPrompt(true)
+            return
+        }
+
+        setToggling(true)
+        const newLiked = !liked
+        setLiked(newLiked)
+
+        try {
+            await toggleLike(String(currentProduct?.id))
+        } catch (err: any) {
+            setLiked(!newLiked) // revert
+            toast("error", err.message || "Failed to toggle like")
+        } finally {
+            setToggling(false)
         }
     }
 
@@ -317,10 +328,12 @@ export default function ProductDetailPage() {
                                         className="object-contain bg-white rounded-md "
                                     />
                                     <button
+                                        onClick={handleLike}
+                                        disabled={toggling}
+                                        aria-label={liked ? "Unlike" : "Like"}
                                         className="absolute top-2 right-2 h-8 w-8 bg-white rounded-full flex items-center justify-center shadow-md"
-                                        aria-label="Add to favorites"
                                     >
-                                        <Heart size={18} className="text-gray-500" />
+                                        <Heart className={cn("h-5 w-5 transition-colors", liked ? "fill-red-500 text-red-500" : "text-gray-500")} />
                                     </button>
                                 </div>
 
@@ -565,11 +578,11 @@ export default function ProductDetailPage() {
                         {/* Right Column - Product Details */}
                         <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
                             {currentProduct && (
-                            <ProductDetails
-                                postedDate={currentProduct.postedDate}
-                                condition={currentProduct.condition}
-                                product={product}
-                            />
+                                <ProductDetails
+                                    postedDate={currentProduct.postedDate}
+                                    condition={currentProduct.condition}
+                                    product={product}
+                                />
                             )}
                         </div>
                     </div>

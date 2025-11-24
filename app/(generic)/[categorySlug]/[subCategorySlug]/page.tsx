@@ -704,9 +704,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                               fill
                               className="object-cover"
                             />
-                            <button className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md">
+                            {/* <button className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md">
                               <Heart size={18} className="text-gray-600" />
-                            </button>
+                            </button> */}
                             {product.isFeatured && (
                               <div className="absolute top-3 left-3 bg-yellow-400 text-black px-2 py-1 text-xs font-medium rounded">
                                 Featured

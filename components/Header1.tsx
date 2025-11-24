@@ -75,8 +75,7 @@ const Header = ({ hidden }: props) => {
     { title: "Notification", link: '/buyer/notification' },
     { title: "Messages", link: '/buyer/messages' },
     { title: "Saved", link: '/buyer/saved' },
-    { title: "Sellers hub", link: '/seller/dashboard' },
-    { title: "User hub", link: '/buyer/profile' },
+    { title: "Dashboard", link: `/${userData?.accountType === "seller" ? "seller" : "buyer"}/${userData?.accountType === "seller" ? "dashboard" : "profile"}` },
   ]
 
   const handleLogoutClick = () => {
@@ -133,7 +132,7 @@ const Header = ({ hidden }: props) => {
         >
           <div className="h-full flex flex-col  gap-3">
             {/* Header */}
-            <div className="flex justify-between items-center mb-6 p-6">
+            <div className="flex justify-between items-center mb-3 px-6 py-3 ">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
                 <Image src="/newlogo.jpg" width={100} height={100} alt="Logo" />
               </Link>
@@ -147,7 +146,7 @@ const Header = ({ hidden }: props) => {
             </div>
 
             {/* Navigation Links */}
-            <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-4  p-6">
+            <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-2  p-6">
 
               <Accordion type="single" collapsible className="w-full">
                 {categoriesLoading ? (
@@ -222,7 +221,7 @@ const Header = ({ hidden }: props) => {
                 )}
               </Accordion>
 
-              <Link href='/seller/post-product'
+              {/* <Link href='/seller/post-product'
                 className={` rounded-none shadow-none flex w-full text-start border-transparent border-2 border-b-[#F5F5F5] items-start py-3`}
               >
                 <div className="flex flex-row gap-2 align-middle items-center">
@@ -231,7 +230,7 @@ const Header = ({ hidden }: props) => {
                   </div>
                   <div className="flex align-middle items-center"> Post Product</div>
                 </div>
-              </Link>
+              </Link> */}
 
               {/* Auth Buttons on mobile */}
               {isLoggedIn && (
@@ -268,6 +267,11 @@ const Header = ({ hidden }: props) => {
                           {item.title}
                         </Link>
                       ))}
+                    </AccordionContent>
+                    <AccordionContent
+                      className="pl-10  space-y-2"
+                      onClick={handleLogoutClick}>
+                      Logout
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -344,37 +348,6 @@ const Header = ({ hidden }: props) => {
 
         {/* Original Header with Responsive Classes */}
         <div className=" mx-auto py-1 pt-2 w-full">
-          {/* <div className="hidden   justify-between w-full  md:hidden">
-            <div className="flex items-center gap-7">
-              <div className="flex items-center gap-1.5">
-                <Image src="/icons/gmail.svg" width={24} height={24} alt="Gmail" />
-                <small className="text-[#131416] text-sm">Info@joelist.com.ng</small>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <Image src="/icons/maps.svg" width={24} height={24} alt="Google Maps" />
-                <small className="text-[#131416] text-sm">Kwara, Nigeria</small>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-5">
-              <Link href="#">
-                <Image src="/icons/twitter.svg" width={24} height={24} alt="Twitter" />
-              </Link>
-
-              <Link href="#">
-                <Image src="/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
-              </Link>
-
-              <Link href="#">
-                <Image src="/icons/instagram.svg" width={24} height={24} alt="Instagram" />
-              </Link>
-
-              <Link href="#">
-                <Image src="/icons/facebook.svg" width={24} height={24} alt="Facebook" />
-              </Link>
-            </div>
-          </div> */}
           <div className="  bg-white max-md:container ">
             <div className="  flex  justify-between items-center w-full gap-10 ">
               <div className="w-full py-2 md:pt-1 md:pb-1 flex max-sm:flex-row-reverse items-center justify-between md:gap-8">
@@ -426,15 +399,15 @@ const Header = ({ hidden }: props) => {
               </div>
 
               {hidden &&
-                <div className="hidden md:flex items-center gap-3 w-full" >
+                <div className="hidden md:flex gap-3 w-full  justify-center items-center" >
 
                   <Button
                     size="sm"
-                    className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium relative"
+                    className="border-none w-full shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium relative"
                     variant="outline"
                     onClick={handleCat}
                   >
-                    <div className="flex flex-row gap-1 align-middle">
+                    <div className="flex flex-row gap-1 align-middle ">
                       <div className="flex items-center">
                         <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
                       </div>
@@ -442,7 +415,7 @@ const Header = ({ hidden }: props) => {
                     </div>
                   </Button>
 
-                  <Link href={'/seller/product/post-product'}>
+                  {/* <Link href={'/seller/product/post-product'}>
                     <Button
                       size="sm"
                       className="border-none shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium"
@@ -455,7 +428,7 @@ const Header = ({ hidden }: props) => {
                         <div className="flex align-middle"> Post Product</div>
                       </div>
                     </Button>
-                  </Link>
+                  </Link> */}
 
                 </div>}
 
@@ -477,7 +450,7 @@ const Header = ({ hidden }: props) => {
                         <div className="flex align-middle text-sm font-medium"> Category</div>
                       </div>
                     </Button>
-                    <Link href="/seller/product/post-product">
+                    {/* <Link href="/seller/product/post-product">
                       <Button
                         size="sm"
                         className={`${pathname == '/cwwategory' ? 'border-b-gray-950' : 'border-none'}  shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium `}
@@ -490,7 +463,7 @@ const Header = ({ hidden }: props) => {
                           <div className="flex align-middle text-sm font-medium"> Post Product</div>
                         </div>
                       </Button>
-                    </Link>
+                    </Link> */}
 
                   </div>
                 }
@@ -549,7 +522,7 @@ const Header = ({ hidden }: props) => {
         <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
         <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
       </div>
-    </nav>
+    </nav >
   )
 }
 

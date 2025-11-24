@@ -9,10 +9,20 @@ import { useSearchParams } from "next/navigation"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
 import { useProducts, ApiProduct } from "@/hooks/useProducts"
+import { useLikedProducts } from "@/hooks/useLikedProducts"
+import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
 function ProductContent() {
   const searchParams = useSearchParams()
   const { products: apiProducts, loading } = useProducts()
+
+  const [liked, setLiked] = useState<boolean>(false)
+  const [toggling, setToggling] = useState(false)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
+  // const [isLoading, setIsLoading] = useState(true);
+  const { toggleLike } = useLikedProducts()
+
 
   const searchTerm = searchParams?.get('search') || ''
   const locationFilter = searchParams?.get('location') || ''
@@ -60,6 +70,31 @@ function ProductContent() {
     category: p.category,
     subCategory: p.subCategory,
   })
+
+  const handleLike = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    if (toggling) return
+
+    // Check authentication
+    const isAuthenticated = typeof window !== "undefined" && !!localStorage.getItem("leoKey")
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true)
+      return
+    }
+
+    setToggling(true)
+    const newLiked = !liked
+    setLiked(newLiked)
+
+    try {
+      await toggleLike(id)
+    } catch (err: any) {
+      setLiked(!newLiked) // revert
+      toast("error", err.message || "Failed to toggle like")
+    } finally {
+      setToggling(false)
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -133,9 +168,13 @@ function ProductContent() {
                         fill
                         className="object-cover"
                       />
-                      <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50">
-                        <Heart size={14} className="text-gray-500" />
-                      </button>
+                     {/* <button
+                        onClick={(e) => handleLike(e, displayProduct.id)}
+                        disabled={toggling}
+                        aria-label={liked ? "Unlike" : "Like"}
+                        className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50">
+                        <Heart className={cn("h-5 w-5 transition-colors", liked ? "fill-red-500 text-red-500" : "text-gray-500")} />
+                      </button>  */}
                     </div>
                     <div className="p-3">
                       <h4 className="font-medium text-sm line-clamp-2">{displayProduct.title}</h4>
