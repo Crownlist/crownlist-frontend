@@ -1,3 +1,4 @@
+/*eslint-disable*/
 "use client"
 
 import Image from "next/image"
@@ -5,6 +6,10 @@ import { Heart, MapPin, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
 //import ProductCard from "./Product-card"
 import { useRouter } from "next/navigation"
+import { useLikedProducts } from "@/hooks/useLikedProducts"
+import { useToast } from "@/lib/useToastMessage"
+import { ConfirmationModal } from "@/components/ConfirmationModal"
+import { cn } from "@/lib/utils"
 
 interface ProductItem {
   id: string
@@ -25,8 +30,11 @@ interface SponsoredPostProps {
 
 export default function SponsoredPost({ items, autoSlide = true, autoSlideInterval = 5000 }: SponsoredPostProps) {
   const router = useRouter()
+  const { products: likedProducts, toggleLike: apiToggleLike } = useLikedProducts()
+  const { handleMessage } = useToast()
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [likedItems, setLikedItems] = useState<Set<string | number>>(new Set())
+  const [togglingLike, setTogglingLike] = useState<string | null>(null)
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
 
   // Auto slide functionality
   useEffect(() => {
@@ -48,17 +56,35 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
     setCurrentIndex((prevIndex) => (prevIndex === items.length - 1 ? 0 : prevIndex + 1))
   }
 
+  // Check if item is liked
+  const isItemLiked = (id: string) => {
+    return likedProducts.some(product => product._id === id)
+  }
+
   // Handle like toggle
-  const toggleLike = (id: string | number) => {
-    setLikedItems((prevLiked) => {
-      const newLiked = new Set(prevLiked)
-      if (newLiked.has(id)) {
-        newLiked.delete(id)
-      } else {
-        newLiked.add(id)
-      }
-      return newLiked
-    })
+  const handleLike = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    if (togglingLike) return
+
+    // Check authentication
+    const isAuthenticated = typeof window !== "undefined" && !!localStorage.getItem("leoKey")
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true)
+      return
+    }
+
+    setTogglingLike(id)
+    // const wasLiked = isItemLiked(id)
+
+    try {
+      await apiToggleLike(id)
+      // Success - the likedProducts list will be updated automatically by the hook
+    } catch (err: any) {
+      handleMessage("error", err.message || "Failed to toggle like")
+      // Reset state on error - but since we're using the hook's data, it should be reverted automatically
+    } finally {
+      setTogglingLike(null)
+    }
   }
 
 
@@ -120,14 +146,12 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
 
         {/* Like Button */}
         <button
-          className="absolute top-4 right-4 text-gray-200 hover:text-white transition-colors z-10"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleLike(currentItem.id);
-          }}
-          aria-label={likedItems.has(currentItem.id) ? "Unlike" : "Like"}
+          className="absolute top-4 right-4 text-gray-200  transition-colors z-10 disabled:opacity-50"
+          onClick={(e) => handleLike(e, currentItem.id)}
+          disabled={togglingLike === currentItem.id}
+          aria-label={isItemLiked(currentItem.id) ? "Unlike" : "Like"}
         >
-          <Heart size={24} fill={likedItems.has(currentItem.id) ? "white" : "none"} />
+          <Heart size={24} className={cn( isItemLiked(currentItem.id) ? "fill-red-500 text-red-500" : "none")} />
         </button>
 
         {/* Content Overlay */}
@@ -160,6 +184,16 @@ export default function SponsoredPost({ items, autoSlide = true, autoSlideInterv
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        open={showLoginPrompt}
+        onOpenChange={setShowLoginPrompt}
+        title="Login Required"
+        description="You need to be logged in to like products."
+        confirmText="Login"
+        cancelText="Cancel"
+        onConfirm={() => router.push("/auth/login")}
+      />
     </div>
   )
 }

@@ -50,6 +50,7 @@ export default function TawktoChat() {
         .widget-visible .tawk-button,
         .widget-minimized .tawk-button {
           background-color: #1F058F !important;
+          bottom: 10px !important;
         }
       `;
       document.head.appendChild(globalStyle);
