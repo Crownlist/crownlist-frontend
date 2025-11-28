@@ -8,6 +8,7 @@ import { store } from "@/store/index";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import BackToTop from "@/components/BackToTop";
 const queryClient = new QueryClient();
 
 export default function Wrapper({ children }: { children: ReactNode }) {
@@ -18,6 +19,7 @@ export default function Wrapper({ children }: { children: ReactNode }) {
           <NextTopLoader color="#0177AB" showSpinner={false} />
           <Toaster position="top-center" />
           {children}
+          <BackToTop />
         </ThemeProvider>
       </QueryClientProvider>
     </Provider>

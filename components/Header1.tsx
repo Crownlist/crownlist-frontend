@@ -88,11 +88,11 @@ const Header = ({ hidden }: props) => {
 
   const handleSearch = () => {
     if (search.trim() === '') {
-      router.push('/product')
+      router.push('/search/slug')
     } else {
       const searchTerm = search.trim().toLowerCase().replace(/\s+/g, '-')
       const queryParams = location.trim() ? `?location=${encodeURIComponent(location.trim())}` : ''
-      router.push(`/product/${encodeURIComponent(searchTerm)}${queryParams}`)
+      router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`)
     }
   }
 
@@ -270,7 +270,10 @@ const Header = ({ hidden }: props) => {
                     </AccordionContent>
                     <AccordionContent
                       className="pl-10  space-y-2"
-                      onClick={handleLogoutClick}>
+                      onClick={() => {
+                        setMobileMenuOpen(false)
+                        handleLogoutClick()
+                      }}>
                       Logout
                     </AccordionContent>
                   </AccordionItem>
@@ -286,10 +289,10 @@ const Header = ({ hidden }: props) => {
                   <div>
                     If you already have an account, click <span>
                       <Link href='/auth/login'
-                        className="text-[#2a0bc0]"> Login</Link>
+                        className="text-[#1F058F]"> Login</Link>
                     </span> to access your profile. If you’re a new user, click <span>
                       <Link href='/auth/signup'
-                        className="text-[#2a0bc0]"> Sign Up</Link>
+                        className="text-[#1F058F]"> Sign Up</Link>
                     </span> to create an account.
                   </div>
                   <div className="flex flex-row gap-4">
