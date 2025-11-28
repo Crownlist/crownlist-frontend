@@ -25,12 +25,12 @@ const Hero = () => {
     console.log('search', search );
     console.log('location', location);
     if(search.trim() === ''){
-      router.push('/product')
+      router.push('/search/slug')
     }
     else{
       const searchTerm = search.trim().toLowerCase().replace(/\s+/g, '-')
       const queryParams = location.trim() ? `?location=${encodeURIComponent(location.trim())}` : ''
-      router.push(`/product/${encodeURIComponent(searchTerm)}${queryParams}`)
+      router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`)
     }
   }
 

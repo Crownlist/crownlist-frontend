@@ -814,14 +814,14 @@ let currentMessages: Message[] = [];
                                                 </div>
                                             )} */}
                                             <div className="flex flex-col">
-                                                {!message.isUser && (
+                                                {/* {!message.isUser && (
                                                     <div className="flex items-center mb-1 ml-2">
                                                         <span className="text-xs font-medium text-gray-700 mr-2">{message.sender}</span>
                                                     </div>
-                                                )}
+                                                )} */}
                                                 <div
                                                     className={cn(
-                                                        "px-4 py-2 max-w-full break-words",
+                                                        "px-4 py-2 max-w-full wrap-break-word",
                                                         message.isUser
                                                             ? "bg-[#1F058F] text-white rounded-l-2xl rounded-tr-2xl rounded-br-md"
                                                             : "bg-gray-100 text-gray-800 rounded-r-2xl rounded-tl-2xl rounded-bl-md",

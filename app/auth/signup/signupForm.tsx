@@ -74,7 +74,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         </div>
         
         <form 
-          className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-2"
+          className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-2 mt-5"
           onSubmit={handleSubmit(handleFormSubmit)}
         >
           <div className="flex flex-col gap-6 justify-center w-full max-w-md">
