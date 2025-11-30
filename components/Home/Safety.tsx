@@ -212,6 +212,7 @@ const Safety = () => {
       <Accordion
         type="single"
         collapsible
+        defaultValue="item-1"
         className="rounded-lg  w-full max-w-4xl p-6"
       >
         {filteredFaqs.map((faq) => (

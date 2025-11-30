@@ -1,7 +1,7 @@
 // lib/useToastMessage.ts
 "use client";
 
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useState } from "react";
 
 export type ToastMessageType = {
@@ -22,11 +22,23 @@ export const useToast = () => {
     setSnackBarOpen(false);
     setHandleSnack({ alert: indicator, message: mssg });
 
-    toast({
-      title: indicator.toUpperCase(),
-      description: mssg,
-      variant: indicator === "error" ? "destructive" : "default",
-    });
+    const title = indicator.toUpperCase() + ": " + mssg;
+
+    // Use Sonner toast
+    switch (indicator) {
+      case "error":
+        toast.error(title);
+        break;
+      case "warning":
+        toast.warning(title);
+        break;
+      case "info":
+        toast.info(title);
+        break;
+      case "success":
+        toast.success(title);
+        break;
+    }
 
     setSnackBarOpen(true);
   };
