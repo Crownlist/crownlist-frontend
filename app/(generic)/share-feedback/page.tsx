@@ -17,6 +17,11 @@ import { useGetAuthUser } from "@/lib/useGetAuthUser"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
 
+interface FeedbackIdeaResponse {
+  status: string
+  message?: string
+}
+
 export default function ShareAnIdea() {
   const [selectedTab, setSelectedTab] = useState("share-idea")
   const [selectedIdea, setSelectedIdea] = useState("")
@@ -53,6 +58,11 @@ export default function ShareAnIdea() {
       return
     }
 
+    if (ideaDescription.trim().length < 20) {
+      handleMessage('error', 'Message must be at least 20 characters.')
+      return
+    }
+
     if (!selectedIdea) {
       handleMessage('error', 'Please select an idea category.')
       return
@@ -81,14 +91,59 @@ export default function ShareAnIdea() {
       }
 
       // Send idea via API
-      await apiClientPublic.post('/feedback/idea', payload)
+      const response: FeedbackIdeaResponse = await apiClientPublic.post('/feedback/idea', payload)
+
+      // Check if backend returned an error status
+      if (response?.status === 'error') {
+        handleMessage('error', response.message || 'An error occurred while sharing your idea.')
+        return
+      }
+
+      handleMessage('success', 'Your idea has been shared successfully!')
       setShowSuccessModal(true)
       setSelectedIdea("")
       setIdeaDescription("")
       setAttachments([])
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to share idea. Please try again.'
-      handleMessage('error', errorMessage)
+      let errorMessage = 'Failed to share idea. Please try again.'
+      const errorType: 'error' | 'warning' = 'error'
+
+      if (error && typeof error === 'object') {
+        const err = error as {
+          response?: { status?: number; data?: { message?: string; code?: string; status?: string } }
+          message?: string
+        }
+
+        if (err.response) {
+          const status = err.response.status
+          const data = err.response.data
+
+          if (status && (status === 400 || status === 422)) {
+            // Validation error
+            errorMessage = data?.message || 'Invalid input. Please check your data.'
+          } else if (status && status >= 500) {
+            // Server error
+            errorMessage = 'Server error. Please try again later.'
+          } else if (status && status >= 400) {
+            // Other client error
+            errorMessage = data?.message || err.message || errorMessage
+          } else {
+            // Unknown error with response
+            errorMessage = data?.message || err.message || errorMessage
+          }
+        } else {
+          // Network error or other error without response
+          if (err.message?.includes('Network') || err.message?.includes('fetch')) {
+            errorMessage = 'Network error. Please check your internet connection.'
+          } else if (err.message) {
+            errorMessage = err.message
+          }
+        }
+      } else if (typeof error === 'string') {
+        errorMessage = error
+      }
+
+      handleMessage(errorType, errorMessage)
     } finally {
       setIsSubmitting(false)
     }
