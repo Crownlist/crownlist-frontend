@@ -74,12 +74,12 @@ if (typeof window !== "undefined") {
 /**
  * API client for user protected endpoints
  * Includes Authorization header with user access token
+ * Note: Authorization header will be set dynamically in request interceptor
  */
 export const apiClientUser = Axios.create({
   ...apiSettings,
   headers: {
     ...apiSettings.headers,
-    Authorization: `Bearer ${leoKey}`,
   },
 });
 
@@ -100,43 +100,54 @@ const handleUserError = (error: AxiosError | any) => {
  * Automatically checks token expiration and refreshes if needed before each request
  */
 apiClientUser.interceptors.request.use(async (req: any) => {
+  // Get current tokens from localStorage on each request
+  const currentLeoKey = localStorage.getItem("leoKey")
+    ? obfuscateToken(false, localStorage.getItem("leoKey") ?? "")
+    : "";
+  const currentLeoLoop = localStorage.getItem("leoLoop")
+    ? obfuscateToken(false, localStorage.getItem("leoLoop") ?? "")
+    : "";
+
   // Only proceed if we have both access and refresh tokens
-  if (leoLoop && leoKey) {
+  if (currentLeoLoop && currentLeoKey) {
     // Decode the JWT access token to extract expiration time
-    const userJWTDecode: any = jwtDecode(leoKey);
-    
+    const userJWTDecode: any = jwtDecode(currentLeoKey);
+
     // Check if token is expired by comparing with current time
     // dayjs.unix converts UNIX timestamp to dayjs object
     // .diff(dayjs()) < 1 checks if difference is less than 1ms (expired)
     const isExpired = dayjs.unix(Number(userJWTDecode.exp)).diff(dayjs()) < 1;
 
     // If token is still valid, proceed with the original request
-    if (!isExpired) return req;
+    if (!isExpired) {
+      req.headers.Authorization = `Bearer ${currentLeoKey}`;
+      return req;
+    }
 
     // Token is expired, attempt to refresh it before continuing
     try {
       const res: any = await apiClientPublic.post(
         "/auth/refresh-token",
         {
-          refreshToken: leoLoop,
+          refreshToken: currentLeoLoop,
           accountType: "User", // Specify this is a user token refresh
         },
         {
           headers: {
-            Authorization: `Bearer ${leoKey}`, // Send current token for validation
+            Authorization: `Bearer ${currentLeoKey}`, // Send current token for validation
           },
         }
       );
 
       // Extract the new access token from response
       const accessTokenNew = res.data.accessToken;
-      
+
       // Update the current request with the new token
       req.headers.Authorization = `Bearer ${accessTokenNew}`;
 
       // Save new token to localStorage for future use
       localStorage.setItem("leoKey", obfuscateToken(true, accessTokenNew));
-      
+
       // Note: Refresh token typically doesn't change, so we don't update leoLoop
       // If your API returns a new refresh token, uncomment these lines:
       // const refreshTokenNew = res.data.refreshToken;
