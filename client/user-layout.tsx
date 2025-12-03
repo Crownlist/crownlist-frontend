@@ -41,12 +41,13 @@ export default function UserLayout({ children }: { children: ReactNode }) {
     return () => clearInterval(checkData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // console.log(userData)
+
+  // Check if user is authenticated (has tokens) while data is loading
+  const isAuthenticated = getLeoKeys();
+
   return (
     <>
-      {userData ? children : <CustomLoader text="Loading data..." />}
-       
-    
+      {userData || isAuthenticated ? children : <CustomLoader text="Loading data..." />}
     </>
   );
 }

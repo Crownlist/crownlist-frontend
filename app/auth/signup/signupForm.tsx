@@ -12,6 +12,7 @@ import { useUserSignupHook } from "@/lib/signup-hook";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff, Loader2, Target } from "lucide-react";
+import { AccountTypeModal } from "@/components/AccountTypeModal";
 
 export default function SignupForm({
   className,
@@ -34,6 +35,8 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     onSubmit,
     handleGoogleSignup,
     control,
+    showAccountTypeModal,
+    onSelectAccountType,
   } = useUserSignupHook();
 
   const handleFormSubmit = (data: any) => {
@@ -74,10 +77,10 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         </div>
         
         <form 
-          className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-2 mt-5"
+          className="min-h-screen flex max-md:px-7 justify-center w-full items-center md:mt-1 mt-5"
           onSubmit={handleSubmit(handleFormSubmit)}
         >
-          <div className="flex flex-col gap-6 justify-center w-full max-w-md">
+          <div className="flex flex-col gap-6 md:gap-3 justify-center w-full max-w-md">
             <div className="flex flex-col items-start text-start mb-[10px]">
               <h1 className="text-2xl font-semibold">Sign up to Crownlist</h1>
               <p className="text-sm text-balance mt-1">
@@ -309,6 +312,16 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           </div>
         </form>
       </div>
+      <AccountTypeModal
+        open={showAccountTypeModal}
+        onOpenChange={(open) => {
+          if (!open) {
+            // Allow closing modal by clicking outside
+          }
+        }}
+        onSelectAccountType={onSelectAccountType}
+        isLoading={googleLoading}
+      />
       {/* {isLoading && <LoadingPage />} */}
           {/* <SnackbarComp
             snackBarOpen={snackBarOpen}
