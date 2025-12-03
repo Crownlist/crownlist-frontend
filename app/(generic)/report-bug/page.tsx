@@ -60,6 +60,11 @@ export default function ReportBug() {
       return
     }
 
+    if (bugDescription.trim().length < 20) {
+      handleMessage('error', 'Message must be at least 20 characters.')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -82,15 +87,60 @@ export default function ReportBug() {
       }
 
       // Send bug report via API
-      await apiClientPublic.post('/feedback/bug-report', payload)
+      const response: { status: string; message?: string } = await apiClientPublic.post('/feedback/bug-report', payload)
+
+      // Check if backend returned an error status
+      if (response?.status === 'error') {
+        handleMessage('error', response.message || 'An error occurred while submitting your bug report.')
+        return
+      }
+
+      handleMessage('success', 'Your bug report has been submitted successfully!')
       setShowSuccessModal(true)
       setSelectedIdea("")
       setBugDescription("")
       setAttachments([])
 
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to report bug. Please try again.'
-      handleMessage('error', errorMessage)
+      let errorMessage = 'Failed to report bug. Please try again.'
+      const errorType: 'error' | 'warning' = 'error'
+
+      if (error && typeof error === 'object') {
+        const err = error as {
+          response?: { status?: number; data?: { message?: string; code?: string; status?: string } }
+          message?: string
+        }
+
+        if (err.response) {
+          const status = err.response.status
+          const data = err.response.data
+
+          if (status && (status === 400 || status === 422)) {
+            // Validation error
+            errorMessage = data?.message || 'Invalid input. Please check your data.'
+          } else if (status && status >= 500) {
+            // Server error
+            errorMessage = 'Server error. Please try again later.'
+          } else if (status && status >= 400) {
+            // Other client error
+            errorMessage = data?.message || err.message || errorMessage
+          } else {
+            // Unknown error with response
+            errorMessage = data?.message || err.message || errorMessage
+          }
+        } else {
+          // Network error or other error without response
+          if (err.message?.includes('Network') || err.message?.includes('fetch')) {
+            errorMessage = 'Network error. Please check your internet connection.'
+          } else if (err.message) {
+            errorMessage = err.message
+          }
+        }
+      } else if (typeof error === 'string') {
+        errorMessage = error
+      }
+
+      handleMessage(errorType, errorMessage)
       console.error('Submission error:', error)
     } finally {
       setIsSubmitting(false)
