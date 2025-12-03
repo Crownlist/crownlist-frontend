@@ -13,6 +13,7 @@ import { useAdminSigninHook, useFetchData } from "@/lib/signin-hook";
 import { EyeOff, Eye, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { AccountTypeModal } from "@/components/AccountTypeModal";
 
 
 export function LoginForm({
@@ -34,6 +35,8 @@ export function LoginForm({
     onSubmit,
     handleGoogleSignup,
     googleLoading,
+    showAccountTypeModal,
+    onSelectAccountType,
   } = useAdminSigninHook();
 
   const [showPassword, setShowPassword] = useState(false)
@@ -138,17 +141,23 @@ export function LoginForm({
                 <div className="text-[#525252] flex align-middle justify-center h-full ">OR</div>
                 <div className="border border-[#525252] h-[1px] w-[100%]" />
               </div>
-              <Button className="w-full h-full bg-white text-black  border border-[#D6D6D6] hover:text-white mt-2">
-                <div className="flex flex-row gap-3 py-1 items-center ">
+              <Button
+                type="button"
+                className="w-full h-full bg-white text-black border border-[#D6D6D6] hover:text-white hover:bg-primary mt-2"
+                onClick={handleGoogleSignup}
+                disabled={isLoading || googleLoading}
+              >
+                <div className="flex flex-row gap-3 py-1 items-center">
                   <div className="flex">
-                    <Image
-                      src='/google.svg'
-                      width={20}
-                      height={20}
-                      alt="icon"
-                    />
+                    <Image src="/google.svg" width={20} height={20} alt="Google icon" />
                   </div>
-                  <div className="flex ">Continue with Google</div>
+                  <div className="flex">
+                    {googleLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Continue with Google"
+                    )}
+                  </div>
                 </div>
               </Button>
             </div>
@@ -162,6 +171,16 @@ export function LoginForm({
           </div>
         </form>
       </div>
+      <AccountTypeModal
+        open={showAccountTypeModal}
+        onOpenChange={(open) => {
+          if (!open) {
+            // Allow closing modal by clicking outside
+          }
+        }}
+        onSelectAccountType={onSelectAccountType}
+        isLoading={googleLoading}
+      />
     </div>
   );
 }
