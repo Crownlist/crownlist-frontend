@@ -11,6 +11,8 @@ import { useLikedProducts } from "@/hooks/useLikedProducts"
 import { useToast } from "@/lib/useToastMessage"
 import { useState } from "react"
 import ProductCard from "./Product-card"
+import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { OnlyBuyerCanLikeModal } from "@/components/OnlyBuyerCanLikeModal"
 
 interface SavedProps {
 }
@@ -19,6 +21,8 @@ export default function Saved({}: SavedProps) {
   const { products, meta, toggleLike } = useLikedProducts()
   const { handleMessage } = useToast()
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid')
+  const { data: userData } = useGetAuthUser("User")
+  const [showModal, setShowModal] = useState(false)
 
   const savedItems = products.map((product) => ({
     id: product._id,
@@ -32,6 +36,10 @@ export default function Saved({}: SavedProps) {
   }))
 
   const handleToggle = async (productId: string) => {
+    if (userData?.data?.data?.loggedInAccount?.accountType === "Seller") {
+      setShowModal(true)
+      return
+    }
     try {
       await toggleLike(productId)
     } catch (err: any) {
@@ -45,8 +53,8 @@ export default function Saved({}: SavedProps) {
   return (
     <div className="flex flex-col md:flex-row">
       {/* Main Content */}
-      <main className="flex-1 md:p-8">
-        <div className="flex justify-between items-center mb-6">
+      <main className="flex-1 md:p-8 md:mx-auto md:max-w-4xl max-sm:pt-10">
+        <div className="flex justify-between md:items-center mb-6">
           <h2 className="text-xl font-semibold">Saved</h2>
           {/* <button
             onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
@@ -58,7 +66,7 @@ export default function Saved({}: SavedProps) {
         </div>
 
         {viewMode === 'list' ? (
-          <div className="space-y-6">
+          <div className="md:space-y-6">
             {savedItems.map((item) => (
               <Link href={`/product/${item.slug || item.id}`} key={item.id}>
               <div  className="flex flex-col sm:flex-row gap-4 border p-4 rounded-xl bg-white mb-2 hover:shadow-md transition-shadow">
@@ -107,7 +115,7 @@ export default function Saved({}: SavedProps) {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4 mx-auto max-w-4xl">
             {savedItems.map((item) => (
               <ProductCard
                 key={item.id}
@@ -162,6 +170,10 @@ export default function Saved({}: SavedProps) {
           </div>
         )}
       </main>
+      <OnlyBuyerCanLikeModal
+        open={showModal}
+        onOpenChange={setShowModal}
+      />
     </div>
   )
 }

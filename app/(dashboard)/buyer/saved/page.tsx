@@ -22,7 +22,7 @@ export default function Home() {
     const hasSaved = products && products.length > 0;
 
     return (
-        <div className="flex w-full h-full justify-center items-center align-middle">
+        <div className="flex w-full h-full justify-center md:items-center max-sm:px-3 align-middle">
             {!hasSaved && <NoSavedPage />}
             {hasSaved && <Saved />}
         </div>
