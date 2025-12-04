@@ -301,7 +301,7 @@ export default function ProfileSettingsPage() {
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
       {/* Tabs */}
-      <div className="border rounded-lg mb-8 border-[#1F058F]">
+      <div className="border hidden rounded-lg mb-8 border-[#1F058F]">
         <div className="flex">
           <Link href="/seller/settings/profile" className="px-6 py-4 text-white bg-[#1F058F] rounded-l-lg font-medium">
             Profile

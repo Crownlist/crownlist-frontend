@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation"
 import { useLikedProducts } from "@/hooks/useLikedProducts"
 import { useToast } from "@/lib/useToastMessage"
 import { ConfirmationModal } from "@/components/ConfirmationModal"
+import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { OnlyBuyerCanLikeModal } from "@/components/OnlyBuyerCanLikeModal"
 
 interface ProductCardProps {
   id: string | number
@@ -56,7 +58,9 @@ export default function ProductCard({
   const [liked, setLiked] = useState<boolean>(isLiked)
   const [toggling, setToggling] = useState(false)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
+  const [showSellerModal, setShowSellerModal] = useState(false)
   const router = useRouter();
+  const { data: userData } = useGetAuthUser("User")
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -66,6 +70,12 @@ export default function ProductCard({
     const isAuthenticated = typeof window !== "undefined" && !!localStorage.getItem("leoKey")
     if (!isAuthenticated) {
       setShowLoginPrompt(true)
+      return
+    }
+
+    // Check if user is seller
+    if (userData?.data?.data?.loggedInAccount?.accountType === "Seller") {
+      setShowSellerModal(true)
       return
     }
 
@@ -105,7 +115,7 @@ export default function ProductCard({
         <div
           className={cn(
             "relative",
-            viewMode === "grid" ? "aspect-square w-full " :
+            viewMode === "grid" ? "aspect-[3/2] w-full " :
               // "h-[120px] w-[120px] sm:h-[180px] sm:w-[140px]"
               "aspect-4/3 w-[140px] sm:w-[200px]",
           )}
@@ -173,6 +183,11 @@ export default function ProductCard({
         confirmText="Login"
         cancelText="Cancel"
         onConfirm={() => router.push("/auth/login")}
+      />
+
+      <OnlyBuyerCanLikeModal
+        open={showSellerModal}
+        onOpenChange={setShowSellerModal}
       />
     </>
   )

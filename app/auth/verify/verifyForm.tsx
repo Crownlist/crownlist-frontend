@@ -140,6 +140,7 @@ export function VerifyForm({
                             <InputOTPSlot index={2} />
                             <InputOTPSlot index={3} />
                             <InputOTPSlot index={4} />
+                            <InputOTPSlot index={5} />
                           </InputOTPGroup>
                         </InputOTP>
                       </FormControl>

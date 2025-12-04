@@ -2,19 +2,20 @@ import { MediaAppMeta } from "./add-media-print";
 
 export interface Admin {
   _id: string;
-  firstname: string;
-  lastname: string;
   email: string;
   adminCustomId?: string;
-  accountType?: string;
-  role?: string;
+  accountType: string;
   adminType: string;
-  phoneNumber?: string;
   profilePicture?: string;
-  password?: string;
-  isAdmin?: boolean;
+  isAdmin: boolean;
+  createdAt: string;
   deletedAt?: boolean;
-  createdAt?: Date;
+  // Optional fields for backward compatibility
+  firstname?: string;
+  lastname?: string;
+  role?: string;
+  phoneNumber?: string;
+  password?: string;
 }
 
 export interface AdminsResponse {
