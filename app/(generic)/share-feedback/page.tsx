@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Upload, X } from "lucide-react"
 import Header from "@/components/Header1"
 import Footer from "@/components/Footer"
-import Link from "next/link"
+//import Link from "next/link"
 import { Loader2 } from "lucide-react"
 import { apiClientPublic } from "@/lib/interceptor"
 import { useToast } from "@/lib/useToastMessage"
@@ -23,7 +23,7 @@ interface FeedbackIdeaResponse {
 }
 
 export default function ShareAnIdea() {
-  const [selectedTab, setSelectedTab] = useState("share-idea")
+  //const [selectedTab, setSelectedTab] = useState("share-idea")
   const [selectedIdea, setSelectedIdea] = useState("")
   const [ideaDescription, setIdeaDescription] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -153,9 +153,9 @@ export default function ShareAnIdea() {
   <>
    <Header hidden={false} />
 
-    <div className="min-h-screen bg-gray-50 ">
+    <div className="min-h-screen bg-gray-50 mb-10">
 
-      <div className="max-w-2xl mx-auto px-4  items-center mb-8 pt-8">
+      <div className="max-w-2xl mx-auto px-4  items-center mb-12 pt-8">
 
          <div
               className={`px-6 py-2 text-center w-40 mx-auto items-center rounded-full text-sm font-medium bg-purple-100 text-purple-700 c shadow-sm mb-8 `}
@@ -166,7 +166,7 @@ export default function ShareAnIdea() {
 
 
         {/* Navigation Tabs */}
-        <div className="flex justify-center mb-8">
+        {/* <div className="flex justify-center mb-8">
           <div className="flex bg-purple-100 text-purple-700 rounded-full py-1 px-4 shadow-sm border">
 
             <Link
@@ -188,7 +188,7 @@ export default function ShareAnIdea() {
               Report a bug
             </Link>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Content */}
         <div className="text-center mb-8">
@@ -202,7 +202,7 @@ export default function ShareAnIdea() {
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+        <div className="bg-white rounded-xl shadow-sm border p-8 mb-12 ">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Select your idea */}
             <div>
