@@ -85,17 +85,17 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
           const remaining = colors.length - 2;
 
           return (
-            <div key={index} className="flex gap-1 mb-2">
+            <div key={index} className="flex gap-1 mb-2 ">
               {displayColors.map((color: string, colorIndex: number) => (
                 <span
                   key={colorIndex}
-                  className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+                  className="text-xs bg-blue-100 text-blue-800 px-2.5 py-2 rounded-full"
                 >
                   {color}
                 </span>
               ))}
               {remaining > 0 && (
-                <span className="text-xs text-gray-500 px-2 py-1">
+                <span className="text-xs text-gray-500 px-2 py-2">
                   +{remaining} more
                 </span>
               )}
@@ -104,7 +104,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         } catch {
           // Fallback if parsing fails
           return (
-            <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
+            <div key={index} className="text-xs bg-gray-300 px-2 py-2 rounded-full">
               {facility.label}: {parseFacilityValue(facility.value)}
             </div>
           );
@@ -113,8 +113,8 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         return (
           <div
             key={index}
-            className={`text-xs bg-gray-100 px-2 py-1 rounded ${
-              facility.label.toLowerCase().includes("size") ? "w-fit" : ""
+            className={` text-xs bg-gray-200 items-center flex  rounded-full ${
+              facility.label.toLowerCase().includes("size") ? "px-2.5 py-2 text-center" : ""
             }`}
           >
             {facility.label}: {parseFacilityValue(facility.value)}
@@ -732,7 +732,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                               </div>
                             </div>
 
-                            <div className="mb-3">
+                            <div className="mb-3 flex gap-2 flex-wrap">
                               {renderFacilities(
                                 product.facility?.facilities?.slice(0, 2) || []
                               )}
