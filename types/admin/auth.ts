@@ -71,6 +71,7 @@ export interface UserSigninForm {
 
 export interface UserSignupForm {
  fullName:string;
+ lastName?: string;
   email: string;
   phoneNumber?: string;
   accountType: 'Seller' | 'User' | string;

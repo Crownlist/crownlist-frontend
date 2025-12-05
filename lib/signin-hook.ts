@@ -19,6 +19,7 @@ const resendVerificationEmail = (email: string): Promise<any> => {
 export const useAdminSigninHook = () => {
   // const dispatch = useDispatch(); // Get the dispatch function
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showAccountTypeModal, setShowAccountTypeModal] = useState(false);
   const { handleMessage, handleSnack, snackBarOpen, setSnackBarOpen } =
     useToast();
 
@@ -108,12 +109,17 @@ export const useAdminSigninHook = () => {
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleGoogleSignup = () => {
+    setShowAccountTypeModal(true);
+  };
+
+  const onSelectAccountType = async (accountType: "User" | "Seller") => {
+    setShowAccountTypeModal(false);
     setGoogleLoading(true);
     try {
-      const res: any = await apiClientPublic.get("/auth/google/getauthurl");
+      const res: any = await apiClientPublic.get(`/auth/google/getauthurl?accountType=${accountType}`);
       if (res.status === "success") {
-        location.replace(res.data.urlAuth);
+        location.replace(res.data.url);
         setGoogleLoading(false);
       }
     } catch (error: any) {
@@ -133,6 +139,8 @@ export const useAdminSigninHook = () => {
     onSubmit,
     handleGoogleSignup,
     googleLoading,
+    showAccountTypeModal,
+    onSelectAccountType,
   };
 };
 

@@ -19,7 +19,12 @@ const getNotification = async (notificationId: string): Promise<GetNotificationR
 
 // Mark notification as read
 const markAsRead = async (notificationId: string): Promise<any> => {
-  return await apiClientUser.patch(`/notifications/one?notificationId=${notificationId}`);
+  return await apiClientUser.patch(`/notifications/one?notificationId=${notificationId}`, { isRead: true });
+};
+
+// Mark all notifications as read
+const markAllAsRead = async (): Promise<any> => {
+  return await apiClientUser.patch('/notifications/mark-all-read');
 };
 
 export function useNotifications() {
@@ -56,12 +61,7 @@ export function useNotifications() {
 
   // Mark all as read mutation
   const markAllAsReadMutation = useMutation(
-    async () => {
-      const unreadNotifications = localNotifications.filter(n => !n.isRead);
-      await Promise.all(
-        unreadNotifications.map(notification => markAsRead(notification._id))
-      );
-    },
+    markAllAsRead,
     {
       onSuccess: () => {
         setLocalNotifications(prev =>

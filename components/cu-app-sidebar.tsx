@@ -11,15 +11,14 @@ import {
   useSidebar
 } from '@/components/ui/cu-sidebar'
 import {
-  User,
   Bookmark,
-  Send,
   Mail,
   MessageCircleMore,
   LogOut,
   UserRoundPen,
   Shield,
-  Settings
+  Settings,
+  Package
 
 } from 'lucide-react'
 import Link from 'next/link'
@@ -58,20 +57,25 @@ const items = [
     icon: Bookmark
   },
   {
+    title: 'Requests',
+    url: '/buyer/request',
+    icon: Package
+  },
+  {
     title: 'Settings',
     url: '/buyer/settings/notification',
     icon: Settings
   },
-  {
-    title: 'Sellers hub',
-    url: '/buyer/sellers-hub',
-    icon: Send
-  },
-  {
-    title: 'User hub',
-    url: '/buyer/users-hub',
-    icon: User
-  },
+  // {
+  //   title: 'Sellers hub',
+  //   url: '/buyer/sellers-hub',
+  //   icon: Send
+  // },
+  // {
+  //   title: 'User hub',
+  //   url: '/buyer/users-hub',
+  //   icon: User
+  // },
   // {
   //   title: 'Logout',
   //   url: '/buyer/logout',

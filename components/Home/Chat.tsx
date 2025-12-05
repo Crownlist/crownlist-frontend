@@ -188,11 +188,38 @@ export default function MessagingInterface() {
         }
     }, []);
 
-    // Handle auto-conversation creation from product page
+    // Handle auto-conversation creation from product page or notification chat_id
     useEffect(() => {
         const sellerId = searchParams.get('sellerId');
         const sellerName = searchParams.get('sellerName');
         const sellerAvatar = searchParams.get('sellerAvatar');
+        const chatId = searchParams.get('chat_id');
+
+        // Handle notification chat_id auto-selection
+        if (chatId && userProfile && !isConversationsLoading) {
+            console.log('🔍 Auto-selecting conversation from URL param:', chatId);
+
+            // Find the conversation with the matching chat_id
+            const existingConversation = state.conversations.find(conv => conv.id === chatId);
+
+            if (existingConversation) {
+                console.log('✅ Found existing conversation, setting as active:', existingConversation.id);
+                actions.setActiveConversation(existingConversation.id);
+
+                // Clear the chat_id param after setting
+                if (typeof window !== 'undefined') {
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('chat_id');
+                    url.searchParams.delete('sellerId'); // also clear any leftover params
+                    url.searchParams.delete('sellerName');
+                    url.searchParams.delete('sellerAvatar');
+                    window.history.replaceState({}, '', url.pathname + url.search);
+                }
+                return;
+            } else {
+                console.log('❌ Conversation not found for chat_id:', chatId, 'Available conversations:', state.conversations.map(c => c.id));
+            }
+        }
 
         if (sellerId && sellerName && userProfile && !isConversationsLoading) {
             // Check if conversation already exists
@@ -787,14 +814,14 @@ let currentMessages: Message[] = [];
                                                 </div>
                                             )} */}
                                             <div className="flex flex-col">
-                                                {!message.isUser && (
+                                                {/* {!message.isUser && (
                                                     <div className="flex items-center mb-1 ml-2">
                                                         <span className="text-xs font-medium text-gray-700 mr-2">{message.sender}</span>
                                                     </div>
-                                                )}
+                                                )} */}
                                                 <div
                                                     className={cn(
-                                                        "px-4 py-2 max-w-full break-words",
+                                                        "px-4 py-2 max-w-full wrap-break-word",
                                                         message.isUser
                                                             ? "bg-[#1F058F] text-white rounded-l-2xl rounded-tr-2xl rounded-br-md"
                                                             : "bg-gray-100 text-gray-800 rounded-r-2xl rounded-tl-2xl rounded-bl-md",

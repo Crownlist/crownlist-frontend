@@ -42,11 +42,7 @@ export default function TawktoChat() {
         [class*="tawk-"] button,
         [class*="tawk-"] .button,
         iframe[src*="tawk.to"] ~ div button,
-        iframe[src*="tawk.to"] ~ div .button {
-          background-color: #1F058F !important;
-          background: #1F058F !important;
-          border-color: #1F058F !important;
-        }
+        iframe[src*="tawk.to"] ~ div
 
         /* Additional selectors for different widget states */
         .tawk-branding,
@@ -54,11 +50,7 @@ export default function TawktoChat() {
         .widget-visible .tawk-button,
         .widget-minimized .tawk-button {
           background-color: #1F058F !important;
-        }
-
-        /* Override any inline styles */
-        [style*="background-color"] {
-          background-color: #1F058F !important;
+          bottom: 10px !important;
         }
       `;
       document.head.appendChild(globalStyle);
@@ -100,14 +92,14 @@ export default function TawktoChat() {
               mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                   const element = node as Element;
-                  if (element.className && (
-                    element.className.includes('tawk') ||
-                    element.className.includes('widget') ||
-                    element.tagName === 'BUTTON'
-                  )) {
-                    (element as HTMLElement).style.backgroundColor = '#1F058F';
-                    (element as HTMLElement).style.borderColor = '#1F058F';
-                  }
+                  // if (element.className && (
+                  //   element.className.includes('tawk') ||
+                  //   element.className.includes('widget') ||
+                  //   element.tagName === 'BUTTON'
+                  // )) {
+                  //   (element as HTMLElement).style.backgroundColor = '#1F058F';
+                  //   (element as HTMLElement).style.borderColor = '#1F058F';
+                  // }
                 }
               });
             }

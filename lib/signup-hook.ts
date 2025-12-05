@@ -17,6 +17,7 @@ export const useUserSignupHook = () => {
   const { handleMessage, snackBarOpen, setSnackBarOpen } =
     useToast();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showAccountTypeModal, setShowAccountTypeModal] = useState(false);
 
   const { mutateAsync: submit, isLoading } = useMutation({
     mutationFn: signup,
@@ -65,13 +66,17 @@ export const useUserSignupHook = () => {
     }
   };
 
-  const handleGoogleSignup = async () => {
+  const handleGoogleSignup = () => {
+    setShowAccountTypeModal(true);
+  };
+
+  const onSelectAccountType = async (accountType: "User" | "Seller") => {
+    setShowAccountTypeModal(false);
     setGoogleLoading(true);
     try {
-      const res: any = await apiClientPublic.get("/auth/google/getauthurl");
+      const res: any = await apiClientPublic.get(`/auth/google/getauthurl?accountType=${accountType}`);
       if (res.status === "success") {
-        location.replace(res.data.urlAuth);
-
+        location.replace(res.data.url);
         setGoogleLoading(false);
       }
     } catch (error: any) {
@@ -90,5 +95,7 @@ export const useUserSignupHook = () => {
     googleLoading,
     handleGoogleSignup,
     control,
+    showAccountTypeModal,
+    onSelectAccountType,
   };
 };

@@ -35,7 +35,7 @@ export const useVerifyOtp = () => {
 
   const {
     mutateAsync: submit,
-    // isLoading, // You might want to export isLoading if you use it for UI states
+    isLoading, // You might want to export isLoading if you use it for UI states
     isError,
     error,
     data: res,
@@ -85,5 +85,5 @@ export const useVerifyOtp = () => {
       // You can add toast messages or other error handling here
     },
   });
-  return { submit, isError, error, res };
+  return { submit, isError, error, res, isLoading };
 };

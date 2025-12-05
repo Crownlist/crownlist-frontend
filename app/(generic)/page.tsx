@@ -133,7 +133,7 @@ export default function Home() {
                 }))}
                 initialView="grid"
                 showSeeMore
-                onSeeMoreClick={() => handleSeeMore("/search")}
+                onSeeMoreClick={() => handleSeeMore("/product")}
                 useBreadcrumbRouting={false}
               />
             )}
@@ -145,7 +145,7 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                   {[1,2].map((i) => (
                     <div key={i} className="rounded-lg overflow-hidden border border-gray-200">
-                      <div className="aspect-[4/3] w-full bg-gray-200 animate-pulse" />
+                      <div className="aspect-4/3 w-full bg-gray-200 animate-pulse" />
                       <div className="p-3">
                         <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
                         <div className="h-3 bg-gray-100 rounded w-full mt-2 animate-pulse" />

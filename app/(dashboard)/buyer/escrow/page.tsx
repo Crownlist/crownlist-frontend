@@ -153,10 +153,11 @@ export default function EscrowPage() {
     }
 
     const fetchEscrows = async (page: number) => {
+        console.log(page)
         setLoading(true)
         setError(null)
         try {
-            const response = await apiClientUser.get(`/escrows?limit=10&page=${page}&status=waiting&role=buyer`)
+            const response = await apiClientUser.get(`/escrows?role=buyer`)
             setEscrows(response.data.escrows)
             setPagination(response.data.pagination)
         } catch {
@@ -264,7 +265,7 @@ export default function EscrowPage() {
                         <div key={item._id} className="bg-white border rounded-lg mb-4 p-4 space-y-3">
                             {/* Product Details */}
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 overflow-hidden">
+                                <div className="w-12 h-12 bg-gray-200 rounded shrink-0 overflow-hidden">
                                     <Image
                                         src={item.details.images?.find(img => img.isPrimary)?.url || item.details.images?.[0]?.url || "/box.png"}
                                         width={48}
@@ -285,7 +286,7 @@ export default function EscrowPage() {
                             {/* Seller and Timestamp */}
                             <div className="flex items-center justify-between text-sm">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex-shrink-0 overflow-hidden">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full shrink-0 overflow-hidden">
                                         <Image
                                             src={item.seller.profilePicture || "/profile.png"}
                                             width={24}
@@ -351,7 +352,7 @@ export default function EscrowPage() {
                         <div key={item._id} className="grid grid-cols-13 gap-3 px-6 py-4 items-center hover:bg-gray-50 border-b border-gray-200">
                             {/* Details */}
                             <div className="col-span-3 flex items-center gap-3">
-                                <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 overflow-hidden">
+                                <div className="w-12 h-12 bg-gray-200 rounded shrink-0 overflow-hidden">
                                     <Image
                                         src={item.details.images?.find(img => img.isPrimary)?.url || item.details.images?.[0]?.url || "/box.png"}
                                         width={48}
@@ -365,7 +366,7 @@ export default function EscrowPage() {
 
                             {/* Seller */}
                             <div className="col-span-2 flex items-center gap-2">
-                                <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0 overflow-hidden">
+                                <div className="w-8 h-8 bg-gray-300 rounded-full shrink-0 overflow-hidden">
                                     <Image
                                         src={item.seller.profilePicture || "/profile.png"}
                                         width={32}
@@ -455,8 +456,8 @@ export default function EscrowPage() {
                                 <button
                                     key={page}
                                     className={`px-3 py-1 text-sm rounded ${page === currentPage
-                                            ? "bg-[#1F058F] text-white"
-                                            : "text-gray-600 hover:text-gray-900"
+                                        ? "bg-[#1F058F] text-white"
+                                        : "text-gray-600 hover:text-gray-900"
                                         }`}
                                     onClick={() => setCurrentPage(page)}
                                 >
@@ -480,13 +481,13 @@ export default function EscrowPage() {
 
             {/* Escrow Details Modal */}
             {showEscrowDetails && escrowDetails && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-                     onClick={() => {
-                         setShowEscrowDetails(false)
-                         setEscrowDetails(null)
-                     }}>
+                <div className="fixed inset-0 bg-black/85 flex items-center justify-center z-[500000px] p-4"
+                    onClick={() => {
+                        setShowEscrowDetails(false)
+                        setEscrowDetails(null)
+                    }}>
                     <div className="bg-white rounded-lg max-w-2xl w-full max-h-full overflow-y-auto"
-                         onClick={(e) => e.stopPropagation()}>
+                        onClick={(e) => e.stopPropagation()}>
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-bold">Escrow Details</h2>
@@ -609,13 +610,13 @@ export default function EscrowPage() {
             {/* Decline Confirm Modal */}
             {showDeclineModal && selectedEscrow && (
                 <div className="fixed inset-0 bg-black/55 bg-opacity-90 flex items-center justify-center z-50000 p-4"
-                     onClick={() => {
-                         setShowDeclineModal(false)
-                         setSelectedEscrow(null)
-                         setDeclineReason("")
-                     }}>
+                    onClick={() => {
+                        setShowDeclineModal(false)
+                        setSelectedEscrow(null)
+                        setDeclineReason("")
+                    }}>
                     <div className="bg-white rounded-lg max-w-md w-full"
-                         onClick={(e) => e.stopPropagation()}>
+                        onClick={(e) => e.stopPropagation()}>
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-bold">Decline Escrow</h2>

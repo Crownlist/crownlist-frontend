@@ -85,9 +85,9 @@ export default function NotificationList() {
           )}
         </div>
 
-        {notifications.length === 0 ? (
+        {notifications && notifications.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500">No notifications to display</p>
+            <p className="text-gray-500">Loading.....</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">

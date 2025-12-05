@@ -25,7 +25,7 @@ export default function DashboardHeader() {
 
     const { data } = useGetAuthUser("User");
     const { subscriptionData } = useGetSubscription();
-      const { notifications } = useNotifications()
+    const { notifications } = useNotifications()
     const userData = data?.data.loggedInAccount
 
     console.log('disp', data)
@@ -38,7 +38,7 @@ export default function DashboardHeader() {
         setLogoutModalOpen(false)
     }
 
-      const unreadCount = notifications.filter(notification => !notification.isRead).length
+    const unreadCount = notifications.filter(notification => !notification.isRead).length
 
     return (
         <header className="bg-[#141414] text-white py-3 px-4 md:px-6 w-full sticky inset-0 z-[999]">
@@ -66,14 +66,16 @@ export default function DashboardHeader() {
                     </div> */}
 
                 <div className="flex items-center gap-4 ">
-                    <Button variant="ghost" size="icon" className="text-white border border-gray-600 rounded-full py-1 px-7">
-                        <Bell className="h-5 w-5" />
-                        {unreadCount > 0 && (
-                            <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
-                                {unreadCount > 99 ? '99+' : unreadCount}
-                            </span>
-                        )}
-                    </Button>
+                    <Link href="/seller/notification">
+                        <Button variant="ghost" size="icon" className="text-white border border-gray-600 rounded-full py-1 px-7">
+                            <Bell className="h-5 w-5 max-sm:h-7 max-sm:w-7" />
+                            {unreadCount > 0 && (
+                                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </span>
+                            )}
+                        </Button>
+                    </Link>
 
                     <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-gray-600 rounded-full">
                         <div className="rounded-full">

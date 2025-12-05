@@ -2,8 +2,8 @@
 type hookProps = () => {
   removeOrionKeys: () => void;
   removeLeoKeys: () => void;
-  getOrionKeys: () => string | null;
-  getLeoKeys: () => string | null;
+  getOrionKeys: () => boolean | string | null;
+  getLeoKeys: () => boolean | string | null;
 };
 
 export const useMgtKeys: hookProps = () => {
@@ -20,6 +20,7 @@ export const useMgtKeys: hookProps = () => {
   };
 
   const getOrionKeys = () => {
+    if (typeof window === 'undefined') return false;
     const isStorePresent =
       localStorage.getItem("orion") &&
       localStorage.getItem("orionKey") &&
@@ -29,6 +30,7 @@ export const useMgtKeys: hookProps = () => {
   };
 
   const getLeoKeys = () => {
+    if (typeof window === 'undefined') return false;
     const isUserPresent =
       localStorage.getItem("leo") &&
       localStorage.getItem("leoKey") &&

@@ -11,8 +11,13 @@ import Footer from "@/components/Footer"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"; // Adjust import path
 import ProductDetails from "@/components/Home/ProductDetails"
 // import { number } from "zod"
-import { useParams, useSearchParams } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { apiClientPublic, apiClientUser } from "@/lib/interceptor"
+import { ProductCardSkeleton } from "@/components/ProductCardSkeleton"
+import { useProducts } from "@/hooks/useProducts"
+import { cn } from "@/lib/utils"
+import { useLikedProducts } from "@/hooks/useLikedProducts"
+import { toast } from "sonner"
 // import { ProductCardSkeleton } from "@/components/ProductCardSkeleton"
 
 
@@ -25,24 +30,21 @@ export default function ProductDetailPage() {
         delivery: true,
         reviews: false,
     })
-    const [openSection, setOpenSection] = useState<string | null>(null);
+    // const [openSection, setOpenSection] = useState<string | null>(null);
     const [product, setProduct] = useState<any | null>(null)
-    const [images, setImages] = useState<string[]>([
-        "/product1.png",
-        "/product2.png",
-        "/product3.png",
-        "/product4.png",
-    ])
+    const [images, setImages] = useState<string[]>([])
 
-    const [currentProduct, setCurrentProduct] = useState<any>({
-        id: "1",
-        title: "Furnished room and parlor in Eleko Junction, Poygate for rent",
-        postedDate: new Date("2024-01-12").toLocaleDateString(),
-        condition: "Brand New"
-    });
+    const [currentProduct, setCurrentProduct] = useState<any>()
 
+    const [liked, setLiked] = useState<boolean>(false)
+    const [toggling, setToggling] = useState(false)
     const [apiProduct, setApiProduct] = useState<any | null>(null);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false)
     const [isLoading, setIsLoading] = useState(true);
+
+    const { toggleLike } = useLikedProducts()
+
+
 
     const safetyTips = [
         "Do not send money or personal information until you’ve seen the product.",
@@ -84,40 +86,17 @@ export default function ProductDetailPage() {
         },
     ];
 
-    const similarProducts: any[] = [
-        {
-            id: "1",
-            title: "The Green hostel",
-            description: "This product is perfect for your balcony or other smaller spaces since it can be easily folded",
-            location: "Eleko",
-            features: ["One room", "Gate"],
-            price: "₦95,232",
-            image: "/product1.png",
-            condition: "Used",
-            postedDate: "12/1/2024",
-        },
-        {
-            id: "2",
-            title: "St Andrews Glasgow Green",
-            description: "A corner, a nook or even part of a passage can be a well-equipped, comfortable place for a few ...",
-            location: "Poly gate",
-            features: ["Room & parlor", "24hrs solar"],
-            price: "₦595,232",
-            image: "/product2.png",
-            postedDate: "12/2/2024",
-            condition: "Brand New",
-        },
-    ];
 
     const { slug: id } = useParams()
     const search = useSearchParams()
-    const bcCat = search.get('cat') || 'Category'
+    const router = useRouter()
+    // const bcCat = search.get('cat') || 'Category'
     const bcSub = search.get('sub') || 'Property'
+    const { products: apiProducts, loading } = useProducts()
 
-
-    const tSection = (section: string) => {
-        setOpenSection((prev) => (prev === section ? null : section)); // Close if same, else open new one
-    };
+    // const tSection = (section: string) => {
+    //     setOpenSection((prev) => (prev === section ? null : section)); // Close if same, else open new one
+    // };
 
     //overview
     const overviewData = [
@@ -157,12 +136,19 @@ export default function ProductDetailPage() {
             setIsLoading(true);
             const res = await apiClientPublic.get(`/products/slug/${id}`)
             const responseData = res.data as any;
-            console.log("productaa", responseData.product)
+            console.log("productaa", res)
+            console.log("responseData", responseData)
+
+            if (res.status === 404 || !responseData.product) {
+                console.log("Redirecting to search page - product not found");
+                router.push(`/search/${id}`)
+                return;
+            }
 
             if (responseData.product) {
                 const product = responseData.product;
                 setApiProduct(product);
-
+                console.log("product", product)
                 // Update images from API
                 const apiImages = product.images.map((img: any) => img.url);
                 setImages(apiImages.length > 0 ? apiImages : ["/product1.png"]);
@@ -181,7 +167,39 @@ export default function ProductDetailPage() {
             setIsLoading(false);
         } catch (e: any) {
             console.log(`Failed to load product: ${String(e?.message || e)}`)
+            console.log("Error response:", e.response?.data)
+            router.push(`/search/${id}`)
+            if (e.response?.data?.code === "RESOURCE_NOT_FOUND" || e.response?.data?.status === "error") {
+                console.log("Redirecting to search page due to error");
+                router.push(`/search/${id}`)
+                return;
+            }
             setIsLoading(false);
+        }
+    }
+
+    const handleLike = async (e: React.MouseEvent) => {
+        e.stopPropagation()
+        if (toggling) return
+
+        // Check authentication
+        const isAuthenticated = typeof window !== "undefined" && !!localStorage.getItem("leoKey")
+        if (!isAuthenticated) {
+            setShowLoginPrompt(true)
+            return
+        }
+
+        setToggling(true)
+        const newLiked = !liked
+        setLiked(newLiked)
+
+        try {
+            await toggleLike(String(currentProduct?.id))
+        } catch (err: any) {
+            setLiked(!newLiked) // revert
+            toast("error", err.message || "Failed to toggle like")
+        } finally {
+            setToggling(false)
         }
     }
 
@@ -310,10 +328,12 @@ export default function ProductDetailPage() {
                                         className="object-contain bg-white rounded-md "
                                     />
                                     <button
+                                        onClick={handleLike}
+                                        disabled={toggling}
+                                        aria-label={liked ? "Unlike" : "Like"}
                                         className="absolute top-2 right-2 h-8 w-8 bg-white rounded-full flex items-center justify-center shadow-md"
-                                        aria-label="Add to favorites"
                                     >
-                                        <Heart size={18} className="text-gray-500" />
+                                        <Heart className={cn("h-5 w-5 transition-colors", liked ? "fill-red-500 text-red-500" : "text-gray-500")} />
                                     </button>
                                 </div>
 
@@ -502,56 +522,68 @@ export default function ProductDetailPage() {
 
                             <div className="flex md:hidden w-full h-full mt-2 md:justify-end">
                                 <ProductDetails
-                                    postedDate={currentProduct.postedDate}
-                                    condition={currentProduct.condition}
+                                    postedDate={currentProduct?.postedDate}
+                                    condition={currentProduct?.condition}
                                     product={product} />
                             </div>
                             {/* You might also like these */}
-                            <div className="mt-8">
+                            <div className="mt-8 mb-8 px-4 md:px-0 max-w-7xl mx-auto">
                                 <h3 className="font-medium text-lg mb-4">You might also like these</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {similarProducts.map((product) => (
-                                        <Link href={`/product/${product.id}`} className="w-full" key={product.id}>
-                                            <div className="border rounded-lg overflow-hidden">
-                                                <div className="relative h-[160px]">
-                                                    <Image
-                                                        src={product.image || "/placeholder.svg"}
-                                                        alt={product.title}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                    <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center shadow-sm">
-                                                        <Heart size={14} className="text-gray-500" />
-                                                    </button>
-                                                </div>
-                                                <div className="p-3">
-                                                    <h4 className="font-medium text-sm">{product.title}</h4>
-                                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{product.description}</p>
-                                                    <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center ">
-                                                        <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">{product.location}</div>
-                                                        {(product.features ?? []).map((feature: any, index: number) => (
-                                                            <div key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                                                {feature}
-                                                            </div>
-                                                        ))}
+                                    {loading
+                                        ? Array.from({ length: 4 }).map((_, index) => (
+                                            <ProductCardSkeleton key={index} />
+                                        ))
+                                        : apiProducts.slice(0, 4).map((product) => (
+                                            <Link href={`/product/${product.slug}`} key={product._id}>
+                                                <div key={product._id} className="border rounded-lg overflow-hidden">
+                                                    <div className="relative h-[160px] cursor-pointer">
+                                                        <Image
+                                                            src={product.images?.[0]?.url || "/placeholder.svg"}
+                                                            alt={product.name}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                        {/* <button className="absolute top-2 right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                                                          <Heart size={14} className="text-gray-500" />
+                                                        </button> */}
                                                     </div>
-                                                    <div className="font-medium text-sm mt-2">{product.price}</div>
+                                                    <div className="p-3  duration-200 cursor-pointer">
+                                                        <h4 className="font-medium text-sm">{product.name}</h4>
+                                                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                                            {product.description}
+                                                        </p>
+                                                        <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center">
+                                                            <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">
+                                                                {product.listingLocation?.city}
+                                                            </div>
+                                                            {product.features?.map((feature, index) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className="text-xs bg-gray-100 px-2 py-1 rounded"
+                                                                >
+                                                                    {feature}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <div className="font-medium text-sm mt-2">Current Price: ₦{product.price?.currentPrice?.toLocaleString()}</div>
+                                                    </div>
                                                 </div>
-                                            </div>
-
-                                        </Link>
-                                    ))}
+                                            </Link>
+                                        ))}
                                 </div>
                             </div>
                         </div>
 
                         {/* Right Column - Product Details */}
                         <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
-                            <ProductDetails
-                                postedDate={currentProduct.postedDate}
-                                condition={currentProduct.condition}
-                                product={product}
-                            />
+                            {currentProduct && (
+                                <ProductDetails
+                                    postedDate={currentProduct.postedDate}
+                                    condition={currentProduct.condition}
+                                    product={product}
+                                />
+                            )}
                         </div>
                     </div>
                 )}

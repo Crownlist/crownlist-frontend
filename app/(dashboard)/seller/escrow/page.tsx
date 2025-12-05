@@ -151,10 +151,11 @@ export default function SellerEscrowPage() {
     }
 
     const fetchEscrows = async (page: number) => {
+        console.log(page)
         setLoading(true)
         setError(null)
         try {
-            const response = await apiClientUser.get(`/escrows?limit=10&page=${page}&status=waiting&role=seller`)
+            const response = await apiClientUser.get(`/escrows?role=seller`)
             setEscrows(response.data.escrows)
             setPagination(response.data.pagination)
         } catch {
@@ -251,7 +252,7 @@ export default function SellerEscrowPage() {
                         <div key={item._id} className="bg-white border rounded-lg mb-4 p-4 space-y-3">
                             {/* Product Details */}
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 overflow-hidden">
+                                <div className="w-12 h-12 bg-gray-200 rounded shrink-0 overflow-hidden">
                                     <Image
                                         src={item.details.images?.find(img => img.isPrimary)?.url || item.details.images?.[0]?.url || "/box.png"}
                                         width={48}
@@ -272,7 +273,7 @@ export default function SellerEscrowPage() {
                             {/* Buyer and Timestamp */}
                             <div className="flex items-center justify-between text-sm">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex-shrink-0 overflow-hidden">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full shrink-0 overflow-hidden">
                                         <Image
                                             src={item.buyer.profilePicture || "/profile.png"}
                                             width={24}
@@ -338,7 +339,7 @@ export default function SellerEscrowPage() {
                         <div key={item._id} className="grid grid-cols-13 gap-3 px-6 py-4 items-center hover:bg-gray-50 border-b border-gray-200">
                             {/* Details */}
                             <div className="col-span-3 flex items-center gap-3">
-                                <div className="w-12 h-12 bg-gray-200 rounded flex-shrink-0 overflow-hidden">
+                                <div className="w-12 h-12 bg-gray-200 rounded shrink-0 overflow-hidden">
                                     <Image
                                         src={item.details.images?.find(img => img.isPrimary)?.url || item.details.images?.[0]?.url || "/box.png"}
                                         width={48}
@@ -352,7 +353,7 @@ export default function SellerEscrowPage() {
 
                             {/* Buyer */}
                             <div className="col-span-2 flex items-center gap-2">
-                                <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0 overflow-hidden">
+                                <div className="w-8 h-8 bg-gray-300 rounded-full shrink-0 overflow-hidden">
                                     <Image
                                         src={item.buyer.profilePicture || "/profile.png"}
                                         width={32}

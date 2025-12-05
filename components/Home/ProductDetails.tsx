@@ -22,7 +22,7 @@ interface ProductDetailsProps {
 interface ProductDetailsProps {
     postedDate: string;
     condition: "Brand New" | "Used"
-    // productId: string; 
+    // productId: string;
 }
 
 
@@ -71,6 +71,50 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
             // Fallback if no seller info
             router.push(targetRoute);
         }
+    };
+
+    const shareOnWhatsApp = () => {
+        if (!product) return;
+        const link = `${window.location.origin}/product/${product.slug || product._id}`;
+        const text = `Check out this product: ${product.name || 'Product'}\n${link}`;
+
+        if (navigator.share) {
+            navigator.share({ title: product.name || 'Product', text: 'Found this on Crownlist', url: link });
+        } else {
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+        }
+    };
+
+    const shareOnInstagram = () => {
+        if (!product) return;
+        const link = `${window.location.origin}/product/${product.slug || product._id}`;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(link);
+
+        let instagramUrl = 'https://www.instagram.com/'; // Default to web
+
+        if (navigator.userAgent.match(/iPhone|iPad|iPod/)) {
+            // iOS: try to open Instagram app
+            instagramUrl = 'instagram://user?username=';
+        } else if (navigator.userAgent.match(/Android/)) {
+            // Android: try to open Instagram app
+            instagramUrl = 'intent://instagram.com/#Intent;package=com.instagram.android;scheme=https;end;';
+        } else if (navigator.userAgent.match(/Samsung/)) {
+            // Samsung: try Samsung apps
+            instagramUrl = 'samsungapps://com.instagram.android/';
+        }
+
+        // Try to open Instagram
+        if (navigator.userAgent.match(/Android|iPhone|iPad|iPod|Samsung/)) {
+            window.location.href = instagramUrl;
+        } else {
+            window.open(instagramUrl, '_blank');
+        }
+
+        toast.success('Link copied! Open Instagram to share.', {
+            position: "bottom-center",
+        });
     };
 
     const copyLink = async () => {
@@ -135,7 +179,7 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
 
     // Create escrow
     const handleCreateEscrow = async () => {
-        console.log("authData",authData)
+        console.log("authData", authData)
         if (!authData?.data?.loggedInAccount || !product) return;
 
         setIsCreatingEscrow(true);
@@ -148,11 +192,11 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                 amount: product.price.discountedPrice || product.price.currentPrice
             };
 
-            await apiClientUser.post('/escrows/create', escrowData);
+            const response = await apiClientUser.post('/escrows/create', escrowData);
             toast.success("Escrow request created successfully!", {
                 position: "top-center",
             });
-            router.push('/buyer/escrow');
+            router.push(`${response.data.paymentUrl}`);
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Failed to create escrow", {
                 position: "top-center",
@@ -169,10 +213,10 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
     //     ...popularItems,
     //     ...servicesItems,
     // ];
-    // const product = products; 
+    // const product = products;
     // const { id, image, title, price, description, location, time, distance, isSponsored } = product;
 
-   console.log("product",product)
+    console.log("product", product)
 
     return (
         <section className="w-full max-w-2xl justify-end">
@@ -184,6 +228,8 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                     // ============= Product Details Card =============
 
                     // {products.map((product: ApiProduct, idx: number) => (
+
+
 
 
                     // ))}
@@ -208,7 +254,7 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                         {/* Price */}
                         <div className="mb-6">
                             <div className="flex items-center gap-2">
-                               {product?.price?.discountedPrice && <span className="text-xl font-bold">₦{product?.price?.discountedPrice?.toLocaleString() || ""}</span>}
+                                {product?.price?.discountedPrice && <span className="text-xl font-bold">₦{product?.price?.discountedPrice?.toLocaleString() || ""}</span>}
                                 <span className={`${product?.price?.discountedPrice ? "line-through text-gray-500 text-sm" : "text-xl font-bold"}`}>₦{product?.price?.currentPrice?.toLocaleString() || "N/A"}</span>
                             </div>
                         </div>
@@ -241,7 +287,7 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                             <div className="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full"  >
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path
-                                        d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15 8H9V6C9 4.34 10.34 3 12 3C13.66 3 15 4.34 15 6V8Z"
+                                        d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15 8H9V6C9 4.34 10.34 3 12 3C13.66 3 15 4.34 15 6:V8Z"
                                         fill="#4B5563"
                                     />
                                 </svg>
@@ -259,10 +305,10 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
 
                         {/* Action Buttons */}
                         <div className="space-y-3">
-                            <Button className="w-full rounded-full text-white bg-[#1F058F] hover:bg-[#2a0bc0]"
+                            {/* <Button className="w-full rounded-full text-white bg-[#1F058F] hover:bg-[#2a0bc0]"
                                 onClick={() => setView("requestCall")}
-                            >Request call</Button>
-                            <Button variant={'outline'} className="w-full rounded-full text-black border-[#1F058F] bg-white"
+                            >Request call</Button> */}
+                            <Button variant={'outline'} className="w-full rounded-full text-white bg-[#1F058F] hover:bg-[#2a0bc0]"
                                 onClick={() => setView("requestEscrow")}
                             >Escrow</Button>
                             <div className="flex justify-between w-full gap-3">
@@ -272,10 +318,10 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                                     <MessageCircle className="w-4 h-4 mr-2" />
                                     Send message
                                 </Button>
-                                <Button variant="outline" className="w-full rounded-full border-[#1F058F]"
-                                    onClick={() => setView("contactInfo")}
+                                <Button variant="outline" className="w-full rounded-full border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F] hover:text-white"
+                                    onClick={() => setView("requestCall")}
                                 >
-                                    Contact information
+                                    Contact Seller
                                 </Button>
                             </div>
                         </div>
@@ -289,6 +335,7 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                                     Copy link
                                 </Button>
                                 <Button
+                                    onClick={shareOnWhatsApp}
                                     variant="outline"
                                     size="sm"
                                     className="flex items-center gap-2 border-none text-xs "
@@ -302,6 +349,7 @@ const ProductDetails = ({ postedDate, condition, product }: ProductDetailsProps)
                                     Whatsapp
                                 </Button>
                                 <Button
+                                    onClick={shareOnInstagram}
                                     variant="outline"
                                     size="sm"
                                     className="flex border-none items-center gap-2 text-xs "

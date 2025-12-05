@@ -1,11 +1,11 @@
+/*eslint-disable*/
+
 import Image from "next/image";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import {
-  Twitter,
-  Linkedin,
   Instagram,
   Facebook,
   MapPin,
@@ -20,7 +20,7 @@ export default function Footer() {
        <div className='container mx-auto'>
         <div className="flex flex-row w-full justify-between sm:justify-evenly md:gap-18 p-5 text-white align-middle items-center  ">
            <div className="flex align-middle font-semibold">Have something to sell?</div>
-            <Link href={'/seller/dashboard'}>       
+            <Link href={'/seller/dashboard'}>
            <Button className="flex align-middle rounded-full bg-transparent   hover:bg-[#2a0bc0] text-white border-2 border-white">Post ads..</Button>
            </Link>
         </div>
@@ -63,7 +63,7 @@ export default function Footer() {
                 Join our newsletter
               </h6>
               <span className="text-sm text-white">
-                We’ll send you a nice letter once per week. No spam.
+                We'll send you a nice letter once per week. No spam.
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -186,37 +186,41 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <Mail size={16} />
-                  <span>info@joelist.com.ng</span>
+                  <span>crownliststore@gmail.com</span>
                 </div>
               </div>
             </div>
 
             <div>
               <h3 className="font-medium  mb-4">Socials</h3>
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 align-middle items-center">
                 <Link
-                  href="#"
+                  href="https://www.facebook.com/share/1GDX5ybABh/"
+                  target="blank"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  <Twitter size={20} />
+                  <Facebook size={20} />
                 </Link>
                 <Link
-                  href="#"
+                  href="https://wa.me/2349063301718"
+                  target="blank"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  <Linkedin size={20} />
+                  <Image src="/whatsapp.svg" alt="WhatsApp" width={20} height={20}/>
                 </Link>
                 <Link
-                  href="#"
+                  href="https://www.instagram.com/crownlistltd?igsh=dGsyZDdpcHp5aDdl"
+                  target="blank"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   <Instagram size={20} />
                 </Link>
                 <Link
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  href="https://www.tiktok.com/@crownlist.store?_r=1&_t=ZM-91eKDIG9uA8"
+                  target="blank"
+                  className="text-gray-400 hover:text-white transition-colors mt-[-1]"
                 >
-                  <Facebook size={20} />
+                  <img src="/tikk.svg" alt="TikTok" width={30} height={20} />
                 </Link>
               </div>
             </div>
@@ -232,7 +236,7 @@ export default function Footer() {
               src={"/fottertext.png"}
               alt={"footer"}
               fill
-              className="object-fill"
+              className="object-cover"
             />
           </div>
 
@@ -246,124 +250,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
-{
-  /* <div className="mt-5 bg-white shadow rounded-lg overflow-hidden w-full">
-              <div className="flex flex-col md:flex-row w-full justify-between">
-                <div className="p-6 md:w-1/2">
-                  <h2 className="text-xl font-medium mb-2">Request product/services</h2>
-                  <p className="text-gray-500 mb-6">
-                    If you can‘t find the product you‘re looking for, please enter the product or service details below.
-                  </p>
-
-                  <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-                    <div>
-                      <label className="block mb-1 text-sm">Full name</label>
-                      <Input
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="block mb-1 text-sm">Contact number</label>
-                      <Input
-                        type="tel"
-                        name="contactNumber"
-                        value={formData.contactNumber}
-                        onChange={handleChange}
-                        pattern="[0-9]+"
-                        title="Contact number must be numeric"
-                        className="w-full"
-                        onKeyPress={(e) => {
-                          if (!/[0-9]/.test(e.key)) {
-                            e.preventDefault()
-                          }
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block mb-1 text-sm">Category</label>
-                      <Select
-                        value={formData.category}
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                        required
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categoryList.map((cat) => (
-                            <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="block mb-1 text-sm">Image(s)</label>
-                      <div
-                        className="border border-dashed rounded-md p-4 text-center"
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                      >
-                        <input
-                          type="file"
-                          accept="image/svg+xml,image/png,image/jpeg,image/gif"
-                          multiple
-                          onChange={handleFileChange}
-                          className="hidden"
-                          id="file-upload"
-                        />
-                        <label htmlFor="file-upload" className="cursor-pointer">
-                          <div className="flex flex-col items-center justify-center gap-2">
-                            <Upload size={20} className="text-gray-400" />
-                            <div className="text-sm">
-                              <span className="text-blue-600 font-medium">Click to upload</span> or drag and drop
-                            </div>
-                            <div className="text-xs text-gray-400">SVG, PNG, JPG or GIF (max. 800×400px)</div>
-                          </div>
-                        </label>
-                        {files.length > 0 && (
-                          <div className="mt-2 text-sm text-gray-600">
-                            <p>Selected files:</p>
-                            <ul className="list-disc list-inside">
-                              {files.map((file, index) => (
-                                <li key={index}>{file.name}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block mb-1 text-sm">Description</label>
-                      <Textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="w-full min-h-[100px]"
-                      />
-                    </div>
-                    <div className="flex w-full justify-center">
-                      <Button
-                        type="submit"
-                        className="flex w-full justify-center max-w-xl md:p-6 items-center bg-[#1F058F] hover:bg-[#2a0bc0] text-white mt-3"
-                      >
-                        Request product
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-                <div className="w-full h-auto relative md:w-1/2 p-6 max-sm:hidden">
-                  <Image
-                    src="/hanger.png"
-                    alt="Clothing on hangers"
-                    width={600}
-                    height={600}
-                    className="object-cover h-full w-full rounded-r-md"
-                  />
-                </div>
-              </div>
-            </div> */
 }

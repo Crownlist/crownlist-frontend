@@ -704,9 +704,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                               fill
                               className="object-cover"
                             />
-                            <button className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md">
+                            {/* <button className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md">
                               <Heart size={18} className="text-gray-600" />
-                            </button>
+                            </button> */}
                             {product.isFeatured && (
                               <div className="absolute top-3 left-3 bg-yellow-400 text-black px-2 py-1 text-xs font-medium rounded">
                                 Featured
@@ -769,14 +769,14 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                     {products.map((product) => (
                       <div
                         key={product._id}
-                        className="border rounded-lg overflow-hidden flex flex-col md:flex-row w-full"
+                        className="border rounded-lg overflow-hidden flex flex-row w-full"
                       >
-                        <div className="relative h-[200px] md:h-auto md:w-[350px]  flex-shrink-0">
+                        <div className="relative w-[140px]  md:w-[350px] md:h-auto flex-shrink-0">
                           <Image
                             src={product.images?.[0]?.url || "/placeholder.svg"}
                             alt={product.name}
                             fill
-                            className="object-cover"
+                            className="object-cover flex justify-center items-center align-middle"
                           />
                           <button className="absolute top-3 right-3 bg-white p-1.5 rounded-full shadow-md">
                             <Heart size={18} className="text-gray-600" />

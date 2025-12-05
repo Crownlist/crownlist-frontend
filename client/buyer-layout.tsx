@@ -20,6 +20,8 @@ export default function BuyerLayout({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   useEffect(() => {
+    router.refresh()
+    console.log("layoutt", data)
     const user = data?.data.loggedInAccount.accountType
     console.log('layout', user)
     if (user == "Seller"){
@@ -41,12 +43,13 @@ export default function BuyerLayout({ children }: { children: ReactNode }) {
     return () => clearInterval(checkData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // console.log(userData)
+
+  // Check if user is authenticated (has tokens) while data is loading
+  const isAuthenticated = getLeoKeys();
+
   return (
     <>
-      {userData ? children : <CustomLoader text="Loading data..." />}
-       
-    
+      {userData || isAuthenticated ? children : <CustomLoader text="Loading data..." />}
     </>
   );
 }
