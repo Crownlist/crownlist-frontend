@@ -2,6 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -10,9 +14,41 @@ import {
   Facebook,
   MapPin,
   Mail,
+  AlertCircle,
+  Send,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Footer() {
+  const router = useRouter();
+  const { userData } = useSelector((state: RootState) => state.userData);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handlePostAdClick = () => {
+    if (!userData) {
+      setModalMessage(
+        "Please log in to post an ad. Only sellers can post products on our platform."
+      );
+      setModalOpen(true);
+    } else if (userData.accountType !== "Seller") {
+      setModalMessage(
+        "Only sellers can post ads. Please switch to a seller account or contact support for assistance."
+      );
+      setModalOpen(true);
+    } else {
+      router.push("/seller/product/post-product");
+    }
+  };
+
   return (
     <footer className="w-full z-10">
       {/* Newsletter Section */}
@@ -37,7 +73,10 @@ export default function Footer() {
               seen today! posting an ad takes just a few seconds
             </p>
             <div className="flex w-full max-sm:justify-center align-middle">
-              <Button className="flex justify-center bg-[#1F058F] rounded-full items-center px-12">
+              <Button
+                onClick={handlePostAdClick}
+                className="flex justify-center bg-[#1F058F] rounded-full items-center px-12"
+              >
                 Post Your ad now
               </Button>
             </div>
@@ -186,14 +225,16 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <Mail size={16} />
-                  <span>crownliststore@gmail.com</span>
+                  <span className="text-xs sm:text-sm">
+                    crownliststore@gmail.com
+                  </span>
                 </div>
               </div>
             </div>
 
             <div>
               <h3 className="font-medium  mb-4">Socials</h3>
-              <div className="flex space-x-4 align-middle items-center">
+              <div className="flex flex-wrap gap-4 align-middle items-center">
                 <Link
                   href="https://www.facebook.com/share/1GDX5ybABh/"
                   target="blank"
@@ -206,7 +247,13 @@ export default function Footer() {
                   target="blank"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  <Image src="/whatsapp.svg" alt="WhatsApp" width={20} height={20}/>
+                  <Image
+                    src="/whatsapp.svg"
+                    alt="WhatsApp"
+                    width={20}
+                    height={20}
+                    className="min-w-5"
+                  />
                 </Link>
                 <Link
                   href="https://www.instagram.com/crownlistltd?igsh=dGsyZDdpcHp5aDdl"
@@ -220,7 +267,20 @@ export default function Footer() {
                   target="blank"
                   className="text-gray-400 hover:text-white transition-colors mt-[-1]"
                 >
-                  <img src="/tikk.svg" alt="TikTok" width={30} height={20} />
+                  <Image
+                    src="/tikk.svg"
+                    alt="TikTok"
+                    width={25}
+                    height={25}
+                    className="min-w-[25px]"
+                  />
+                </Link>
+                <Link
+                  href="https://t.me/crownliststore"
+                  target="blank"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <Send size={20} />
                 </Link>
               </div>
             </div>
@@ -248,6 +308,31 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Modal for login/seller check */}
+      <AlertDialog open={modalOpen} onOpenChange={setModalOpen}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <div className="flex flex-col items-center text-center">
+              <AlertCircle className="w-12 h-12 text-orange-500 mb-4" />
+              <AlertDialogTitle className="text-lg">
+                Access Restricted
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-gray-600 mt-2">
+                {modalMessage}
+              </AlertDialogDescription>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex justify-center">
+            <AlertDialogAction
+              onClick={() => setModalOpen(false)}
+              className="bg-[#1a0066] hover:bg-[#2a0bc0] px-6"
+            >
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </footer>
   );
 }

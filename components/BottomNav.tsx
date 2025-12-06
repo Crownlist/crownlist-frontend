@@ -1,56 +1,94 @@
-"use client"
+"use client";
 
-import { usePathname, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Home, MessageSquare, Bookmark, ShoppingBag, User } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { useState, useEffect, useRef } from "react"
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Home,
+  MessageSquare,
+  Bookmark,
+  ShoppingBag,
+  User,
+  Inbox,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState, useEffect, useRef } from "react";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
-
-const navItems = [
-  { name: "Home", path: "/", icon: Home },
-  { name: "Saved", path: "/buyer/saved", icon: Bookmark },
-  { name: "Sell", path: "/seller/dashboard", icon: ShoppingBag },
-  { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
-  { name: "Profile", path: "/buyer/profile", icon: User },
-]
 // Bottom nav is hidden on any /buyer/* or /seller/* route
 
 export default function BottomNav() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const [isVisible, setIsVisible] = useState(true)
-  const lastScrollY = useRef(0)
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
 
+  // Get logged in user data
+  const { data } = useGetAuthUser("User");
+  const userData = data?.data.loggedInAccount;
+  const isLoggedIn = !!userData;
 
+  // Define nav items based on user type
+  const getNavItems = () => {
+    if (!isLoggedIn) return [];
+
+    const accountType = userData?.accountType;
+
+    if (accountType === "Seller") {
+      return [
+        { name: "Home", path: "/seller/dashboard", icon: Home },
+        { name: "Request", path: "/seller/request", icon: Inbox },
+        {
+          name: "Sell",
+          path: "/seller/product/post-product",
+          icon: ShoppingBag,
+        },
+        { name: "Messages", path: "/seller/messages", icon: MessageSquare },
+        { name: "Profile", path: "/seller/profile", icon: User },
+      ];
+    } else if (accountType === "User") {
+      return [
+        { name: "Home", path: "/buyer/dashboard", icon: Home },
+        { name: "Saved", path: "/buyer/saved", icon: Bookmark },
+        { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
+        { name: "Profile", path: "/buyer/profile", icon: User },
+      ];
+    }
+
+    return [];
+  };
+
+  const navItems = getNavItems();
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY.current) {
         // Scrolling down
-        setIsVisible(false)
+        setIsVisible(false);
       } else {
         // Scrolling up
-        setIsVisible(true)
+        setIsVisible(true);
       }
 
-      lastScrollY.current = currentScrollY
-    }
+      lastScrollY.current = currentScrollY;
+    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
-    // Hide bottom nav on ALL seller and buyer routes
-    if (pathname.startsWith('/seller/') || pathname.startsWith('/buyer/')) {
-      return null
-    }
-
+  // Hide bottom nav if user is not logged in or on seller/buyer routes
+  if (
+    !isLoggedIn ||
+    pathname.startsWith("/seller/") ||
+    pathname.startsWith("/buyer/")
+  ) {
+    return null;
+  }
 
   return (
     <nav
@@ -77,5 +115,5 @@ export default function BottomNav() {
         ))}
       </div>
     </nav>
-  )
+  );
 }

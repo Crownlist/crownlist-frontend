@@ -17,9 +17,13 @@ import {
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
+import * as Slider from "@radix-ui/react-slider";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
-import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
+import {
+  ProductCardSkeleton,
+  ProductListSkeleton,
+} from "@/components/ProductCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
 import { useSubcategoryProductsQuery } from "@/hooks/useSubcategoryProducts";
@@ -48,6 +52,8 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   const [locationSearch, setLocationSearch] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [sliderValues, setSliderValues] = useState<number[]>([0, 1000000]);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   // Helper function to parse facility values that might be array strings
   const parseFacilityValue = (value: string) => {
@@ -104,7 +110,10 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         } catch {
           // Fallback if parsing fails
           return (
-            <div key={index} className="text-xs bg-gray-300 px-2 py-2 rounded-full">
+            <div
+              key={index}
+              className="text-xs bg-gray-300 px-2 py-2 rounded-full"
+            >
               {facility.label}: {parseFacilityValue(facility.value)}
             </div>
           );
@@ -114,7 +123,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
           <div
             key={index}
             className={` text-xs bg-gray-200 items-center flex  rounded-full ${
-              facility.label.toLowerCase().includes("size") ? "px-2.5 py-2 text-center" : ""
+              facility.label.toLowerCase().includes("size")
+                ? "px-2.5 py-2 text-center"
+                : ""
             }`}
           >
             {facility.label}: {parseFacilityValue(facility.value)}
@@ -137,6 +148,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   // Reset current page when filters change
   useEffect(() => {
     setCurrentPage(1);
+    setIsFiltering(true);
   }, [
     isFeatured,
     sortOption,
@@ -161,6 +173,13 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     location: selectedLocation || undefined,
   });
 
+  // Reset filtering state when loading completes
+  useEffect(() => {
+    if (!loading) {
+      setIsFiltering(false);
+    }
+  }, [loading]);
+
   // Helper functions
   const toggleFilter = (filter: string) => {
     setExpandedFilters((prev) => ({
@@ -183,6 +202,14 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
   const toggleLocation = (location: string) => {
     setSelectedLocation(selectedLocation === location ? "" : location);
+  };
+
+  const handleSliderChange = (values: number[]) => {
+    setSliderValues(values);
+    setPriceRange({
+      min: values[0].toString(),
+      max: values[1].toString(),
+    });
   };
 
   const retryFetch = () => {
@@ -228,8 +255,8 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     location.toLowerCase().includes(locationSearch.toLowerCase())
   );
 
-  // Loading state with skeleton
-  if (loading) {
+  // Initial loading state with skeleton
+  if (loading && !isFiltering) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
         <Header hidden={false} />
@@ -296,9 +323,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
               Home
             </Link>
             <ChevronRight size={16} />
-            <span className="hover:text-gray-700">
-              {categoryTitle}
-            </span>
+            <span className="hover:text-gray-700">{categoryTitle}</span>
             <ChevronRight size={16} />
             <span className="text-gray-700">{subcategoryTitle}</span>
           </div>
@@ -340,9 +365,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             Home
           </Link>
           <ChevronRight size={16} />
-          <span className="hover:text-gray-700">
-            {categoryTitle}
-          </span>
+          <span className="hover:text-gray-700">{categoryTitle}</span>
           <ChevronRight size={16} />
           <span className="text-gray-700">{subcategoryTitle}</span>
         </div>
@@ -518,40 +541,31 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
                 {expandedFilters.price && (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">
-                          Min
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full border border-gray-300 rounded p-2 text-sm"
-                          value={priceRange.min}
-                          onChange={(e) =>
-                            setPriceRange((prev) => ({
-                              ...prev,
-                              min: e.target.value,
-                            }))
-                          }
+                    <div className="px-2">
+                      <Slider.Root
+                        className="relative flex items-center select-none touch-none w-full h-5"
+                        value={sliderValues}
+                        onValueChange={handleSliderChange}
+                        max={1000000}
+                        min={0}
+                        step={1000}
+                      >
+                        <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
+                          <Slider.Range className="absolute bg-[#1F058F] rounded-full h-full" />
+                        </Slider.Track>
+                        <Slider.Thumb
+                          className="block w-4 h-4 bg-[#1F058F] rounded-full shadow-md hover:bg-[#2a0bc0] focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:ring-opacity-50"
+                          aria-label="Min price"
                         />
-                      </div>
-                      <div className="pt-6">→</div>
-                      <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">
-                          Max
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full border border-gray-300 rounded p-2 text-sm"
-                          value={priceRange.max}
-                          onChange={(e) =>
-                            setPriceRange((prev) => ({
-                              ...prev,
-                              max: e.target.value,
-                            }))
-                          }
+                        <Slider.Thumb
+                          className="block w-4 h-4 bg-[#1F058F] rounded-full shadow-md hover:bg-[#2a0bc0] focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:ring-opacity-50"
+                          aria-label="Max price"
                         />
-                      </div>
+                      </Slider.Root>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-600">
+                      <span>₦{sliderValues[0].toLocaleString()}</span>
+                      <span>₦{sliderValues[1].toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -637,40 +651,31 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
                 {expandedFilters.price && (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">
-                          Min
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full border border-gray-300 rounded p-2 text-sm"
-                          value={priceRange.min}
-                          onChange={(e) =>
-                            setPriceRange((prev) => ({
-                              ...prev,
-                              min: e.target.value,
-                            }))
-                          }
+                    <div className="px-2">
+                      <Slider.Root
+                        className="relative flex items-center select-none touch-none w-full h-5"
+                        value={sliderValues}
+                        onValueChange={handleSliderChange}
+                        max={1000000}
+                        min={0}
+                        step={1000}
+                      >
+                        <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
+                          <Slider.Range className="absolute bg-[#1F058F] rounded-full h-full" />
+                        </Slider.Track>
+                        <Slider.Thumb
+                          className="block w-4 h-4 bg-[#1F058F] rounded-full shadow-md hover:bg-[#2a0bc0] focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:ring-opacity-50"
+                          aria-label="Min price"
                         />
-                      </div>
-                      <div className="pt-6">→</div>
-                      <div className="flex-1">
-                        <label className="text-sm text-gray-500 mb-1 block">
-                          Max
-                        </label>
-                        <input
-                          type="number"
-                          className="w-full border border-gray-300 rounded p-2 text-sm"
-                          value={priceRange.max}
-                          onChange={(e) =>
-                            setPriceRange((prev) => ({
-                              ...prev,
-                              max: e.target.value,
-                            }))
-                          }
+                        <Slider.Thumb
+                          className="block w-4 h-4 bg-[#1F058F] rounded-full shadow-md hover:bg-[#2a0bc0] focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:ring-opacity-50"
+                          aria-label="Max price"
                         />
-                      </div>
+                      </Slider.Root>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-600">
+                      <span>₦{sliderValues[0].toLocaleString()}</span>
+                      <span>₦{sliderValues[1].toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -680,7 +685,23 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
           {/* Products Grid/List */}
           <div className="flex-1">
-            {products.length === 0 ? (
+            {isFiltering ? (
+              <>
+                {viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <ProductCardSkeleton key={i} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <ProductListSkeleton key={i} />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : products.length === 0 ? (
               <EmptyState
                 categorySlug={categorySlug}
                 subcategorySlug={subCategorySlug}
