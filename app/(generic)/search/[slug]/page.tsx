@@ -101,7 +101,7 @@ export default function SearchPage() {
         </div>
 
         {/* Desktop Search and Filters */}
-        <div className="hidden md:block bg-gray-50 py-4">
+        <div className="hidden md:block sticky top-0 z-[1000] bg-gray-50 border-b py-4 shadow-sm">
           <div className="container mx-auto px-4">
             <div className="flex gap-4 items-center">
               <SearchBar

@@ -4,31 +4,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Input } from "./ui/custom-input";
 import { Button } from "./ui/button";
-import {
-  AlignJustify,
-  Check,
-  ChevronDown,
-  ChevronsUpDownIcon,
-  ChevronUp,
-  Menu,
-  Search,
-  X,
-} from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { AlignJustify, ChevronDown, ChevronUp, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { countries } from "@/constants/countries";
-import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Accordion,
@@ -47,12 +30,7 @@ interface props {
 }
 const Header = ({ hidden }: props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [search, setSearch] = useState("");
-  const [location, setLocation] = useState("");
-  const [open, setOpen] = useState(false);
-  const [filteredCountries, setFilteredCountries] = useState(countries);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchCountry, setSearchCountry] = useState("");
   const router = useRouter();
   const pathname = usePathname();
   const [openChev, setOpenChev] = useState(false);
@@ -80,16 +58,27 @@ const Header = ({ hidden }: props) => {
     }
   }, [userData]);
 
+  const notificationRoute =
+    userData?.accountType === "User"
+      ? "/buyer/notification"
+      : "/seller/notification";
+  const messagesRoute =
+    userData?.accountType === "User" ? "/buyer/messages" : "/seller/messages";
+  const savedRoute =
+    userData?.accountType === "User" ? "/buyer/saved" : "/seller/saved";
+  const dashboardRoute =
+    userData?.accountType === "User" ? "/buyer/profile" : "/seller/dashboard";
+
   const navItems = [
     //{ title: "Profile", link: '/buyer/profile' },
-    { title: "Notification", link: "/buyer/notification" },
-    { title: "Messages", link: "/buyer/messages" },
-    { title: "Saved", link: "/buyer/saved" },
+    { title: "Notification", link: notificationRoute },
+    { title: "Messages", link: messagesRoute },
+    ...(userData?.accountType === "User"
+      ? [{ title: "Saved", link: savedRoute }]
+      : []),
     {
       title: "Dashboard",
-      link: `/${userData?.accountType === "seller" ? "seller" : "buyer"}/${
-        userData?.accountType === "seller" ? "dashboard" : "profile"
-      }`,
+      link: dashboardRoute,
     },
   ];
 
@@ -99,18 +88,6 @@ const Header = ({ hidden }: props) => {
 
   const handleCloseLogoutModal = () => {
     setLogoutModalOpen(false);
-  };
-
-  const handleSearch = () => {
-    if (search.trim() === "") {
-      router.push("/search/slug");
-    } else {
-      const searchTerm = search.trim().toLowerCase().replace(/\s+/g, "-");
-      const queryParams = location.trim()
-        ? `?location=${encodeURIComponent(location.trim())}`
-        : "";
-      router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`);
-    }
   };
 
   // console.log(pathname)
@@ -128,19 +105,6 @@ const Header = ({ hidden }: props) => {
     // router.push("/category")
     setOpenCat(true);
   };
-
-  // Filter countries based on search input
-  useEffect(() => {
-    if (searchCountry) {
-      setFilteredCountries(
-        countries.filter((country) =>
-          country.name.toLowerCase().includes(searchCountry.toLowerCase())
-        )
-      );
-    } else {
-      setFilteredCountries(countries);
-    }
-  }, [searchCountry]);
 
   return (
     <nav
@@ -468,38 +432,6 @@ const Header = ({ hidden }: props) => {
                     alt="Logo"
                   />
                 </Link>
-
-                {!hidden && (
-                  <div className="hidden md:flex w-full h-10 items-start relative">
-                    <Input
-                      className="border border-[#D6D6D6] rounded w-full xl:max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-1 xl:px-10 ps-10 h-full placeholder:text-crown-black"
-                      placeholder="Search"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-
-                    <Search
-                      size={16}
-                      color="#141414"
-                      className="absolute top-3 left-4"
-                    />
-
-                    <Input
-                      className="xl:w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 rounded-r-none xl:rounded-r-none xl:rounded-l-none"
-                      placeholder="Location"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    />
-
-                    <Button
-                      size="sm"
-                      className="bg-[#1F058F] hover:bg-[#2a0bc0] text-white py-3 px-5 rounded-tr-[99px] rounded-br-[99px] rounded-tl-0 rounded-bl-0 text-sm flex justify-between items-center h-full"
-                      onClick={handleSearch}
-                    >
-                      Search
-                    </Button>
-                  </div>
-                )}
               </div>
 
               {hidden && (
@@ -586,7 +518,7 @@ const Header = ({ hidden }: props) => {
                 )}
                 {isLoggedIn ? (
                   <DropdownMenu onOpenChange={setOpenChev}>
-                    <DropdownMenuTrigger className="flex bg-white items-center gap-2 focus:outline-none">
+                    <DropdownMenuTrigger className="flex cursor-pointer bg-white items-center gap-2 focus:outline-none">
                       <Image
                         src={
                           typeof userData?.profilePicture === "string"
@@ -596,7 +528,7 @@ const Header = ({ hidden }: props) => {
                         width={30}
                         height={30}
                         alt="Profile"
-                        className="rounded-full"
+                        className="max-w-[30px] max-h-[30px] rounded-full"
                       />
                       <span className="text-sm font-medium flex items-center align-middle">
                         {userData?.fullName}
@@ -612,8 +544,10 @@ const Header = ({ hidden }: props) => {
                       {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                       {/* <DropdownMenuSeparator /> */}
                       {navItems.map((item, id) => (
-                        <DropdownMenuItem key={id}>
-                          <Link href={item.link}>{item.title}</Link>
+                        <DropdownMenuItem key={id} className="w-full">
+                          <Link href={item.link} className="w-full">
+                            {item.title}
+                          </Link>
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuItem onClick={handleLogoutClick}>
