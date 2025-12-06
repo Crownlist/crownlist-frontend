@@ -1,65 +1,74 @@
 /* eslint-disable */
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { Input } from "./ui/custom-input"
-import { Button } from "./ui/button"
-import { AlignJustify, Check, ChevronDown, ChevronsUpDownIcon, ChevronUp, Menu, Search, X } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { Input } from "./ui/custom-input";
+import { Button } from "./ui/button";
+import {
+  AlignJustify,
+  Check,
+  ChevronDown,
+  ChevronsUpDownIcon,
+  ChevronUp,
+  Menu,
+  Search,
+  X,
+} from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { countries } from "@/constants/countries"
-import { cn } from "@/lib/utils"
-import { usePathname, useRouter } from "next/navigation"
+} from "@/components/ui/dropdown-menu";
+import { countries } from "@/constants/countries";
+import { cn } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import CategoryModal from "./Home/CategoryModal"
-import { useGetAuthUser } from "@/lib/useGetAuthUser"
-import { useCategories } from "@/hooks/useCategories"
-import LogoutModal from "./logout-modal"
-
-
+} from "@/components/ui/accordion";
+import CategoryModal from "./Home/CategoryModal";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
+import { useCategories } from "@/hooks/useCategories";
+import LogoutModal from "./logout-modal";
 
 interface props {
-  hidden: boolean
+  hidden: boolean;
 }
 const Header = ({ hidden }: props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [search, setSearch] = useState("")
-  const [location, setLocation] = useState("")
-  const [open, setOpen] = useState(false)
-  const [filteredCountries, setFilteredCountries] = useState(countries)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [searchCountry, setSearchCountry] = useState("")
-  const router = useRouter()
-  const pathname = usePathname()
-  const [openChev, setOpenChev] = useState(false)
-  const [openCat, setOpenCat] = useState(false)
-  const [logoutModalOpen, setLogoutModalOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [search, setSearch] = useState("");
+  const [location, setLocation] = useState("");
+  const [open, setOpen] = useState(false);
+  const [filteredCountries, setFilteredCountries] = useState(countries);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchCountry, setSearchCountry] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const [openChev, setOpenChev] = useState(false);
+  const [openCat, setOpenCat] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
   // Fetch categories data
-  const { categories, loading: categoriesLoading } = useCategories()
-
-
+  const { categories, loading: categoriesLoading } = useCategories();
 
   // new implementation
   const { isLoading, data } = useGetAuthUser("User");
-  const userData: any = data?.data.loggedInAccount
+  const userData: any = data?.data.loggedInAccount;
 
   useEffect(() => {
     // Check if either userData or adminData exists
     if (userData) {
-      console.log('api', userData, isLoading)
+      console.log("api", userData, isLoading);
       setIsLoggedIn(true);
     } else {
       // If both are null, the user is logged out
@@ -67,78 +76,94 @@ const Header = ({ hidden }: props) => {
     }
   }, [userData]);
 
-
-
-
   const navItems = [
     //{ title: "Profile", link: '/buyer/profile' },
-    { title: "Notification", link: '/buyer/notification' },
-    { title: "Messages", link: '/buyer/messages' },
-    { title: "Saved", link: '/buyer/saved' },
-    { title: "Dashboard", link: `/${userData?.accountType === "seller" ? "seller" : "buyer"}/${userData?.accountType === "seller" ? "dashboard" : "profile"}` },
-  ]
+    { title: "Notification", link: "/buyer/notification" },
+    { title: "Messages", link: "/buyer/messages" },
+    { title: "Saved", link: "/buyer/saved" },
+    {
+      title: "Dashboard",
+      link: `/${userData?.accountType === "seller" ? "seller" : "buyer"}/${
+        userData?.accountType === "seller" ? "dashboard" : "profile"
+      }`,
+    },
+  ];
 
   const handleLogoutClick = () => {
-    setLogoutModalOpen(true)
-  }
+    setLogoutModalOpen(true);
+  };
 
   const handleCloseLogoutModal = () => {
-    setLogoutModalOpen(false)
-  }
+    setLogoutModalOpen(false);
+  };
 
   const handleSearch = () => {
-    if (search.trim() === '') {
-      router.push('/search/slug')
+    if (search.trim() === "") {
+      router.push("/search/slug");
     } else {
-      const searchTerm = search.trim().toLowerCase().replace(/\s+/g, '-')
-      const queryParams = location.trim() ? `?location=${encodeURIComponent(location.trim())}` : ''
-      router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`)
+      const searchTerm = search.trim().toLowerCase().replace(/\s+/g, "-");
+      const queryParams = location.trim()
+        ? `?location=${encodeURIComponent(location.trim())}`
+        : "";
+      router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`);
     }
-  }
+  };
 
   // console.log(pathname)
   const handleLogin = (e: any) => {
     e.preventDefault();
-    router.push("/auth/login")
-  }
+    router.push("/auth/login");
+  };
 
   const handleSignUp = (e: any) => {
-    e.preventDefault()
-    router.push('/auth/signup')
-  }
+    e.preventDefault();
+    router.push("/auth/signup");
+  };
   const handleCat = (e: any) => {
     e.preventDefault();
     // router.push("/category")
-    setOpenCat(true)
-  }
+    setOpenCat(true);
+  };
 
   // Filter countries based on search input
   useEffect(() => {
     if (searchCountry) {
-      setFilteredCountries(countries.filter((country) => country.name.toLowerCase().includes(searchCountry.toLowerCase())))
+      setFilteredCountries(
+        countries.filter((country) =>
+          country.name.toLowerCase().includes(searchCountry.toLowerCase())
+        )
+      );
     } else {
-      setFilteredCountries(countries)
+      setFilteredCountries(countries);
     }
-  }, [searchCountry])
+  }, [searchCountry]);
 
   return (
     <nav className="bg-white sticky inset-0 z-[999] shadow-sm ">
-      <div className='container w-full mx-auto flex items-center justify-between gap-2'>
+      <div className="container w-full mx-auto flex items-center justify-between gap-2">
         {/* Mobile Menu */}
 
         <div
           className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-sm transform transition-transform duration-300 ease-in-out 
-            ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:hidden h-screen overflow-y-auto`}
+            ${
+              mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            } md:hidden h-screen overflow-y-auto`}
         >
           <div className="h-full flex flex-col  gap-3">
             {/* Header */}
-            <div className="flex justify-between items-center mb-3 px-6 py-3 ">
+            <div className="flex justify-between items-center px-6 py-3 ">
               <Link href="/" onClick={() => setMobileMenuOpen(false)}>
                 <Image src="/newlogo.jpg" width={100} height={100} alt="Logo" />
               </Link>
-              <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => setMobileMenuOpen(false)}>
-                <X className="h-5 w-5"
-                  size={100} // Increase the size 
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <X
+                  className="h-5 w-5"
+                  size={100} // Increase the size
                   strokeWidth={2}
                   style={{ width: "30px", height: "110px" }} // Override viewBox issue
                 />
@@ -146,8 +171,7 @@ const Header = ({ hidden }: props) => {
             </div>
 
             {/* Navigation Links */}
-            <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 mt-2  p-6">
-
+            <div className="flex flex-col w-full  justify-start items-start gap-2 space-y-4 mb-6 p-6 pt-0">
               <Accordion type="single" collapsible className="w-full">
                 {categoriesLoading ? (
                   <div className="space-y-4">
@@ -160,8 +184,8 @@ const Header = ({ hidden }: props) => {
                   </div>
                 ) : (
                   categories.map((cat, idx) => {
-                    const subcategories = cat.subCategories || []
-                    const hasSubcategories = subcategories.length > 0
+                    const subcategories = cat.subCategories || [];
+                    const hasSubcategories = subcategories.length > 0;
 
                     return (
                       <AccordionItem
@@ -178,7 +202,9 @@ const Header = ({ hidden }: props) => {
                               alt={cat.name}
                               className="rounded-md"
                             />
-                            <span className="text-sm font-medium">{cat.name}</span>
+                            <span className="text-sm font-medium">
+                              {cat.name}
+                            </span>
                           </div>
 
                           {/* <div className="ml-auto text-xs text-gray-500">
@@ -192,7 +218,11 @@ const Header = ({ hidden }: props) => {
 
                         {hasSubcategories && (
                           <AccordionContent className="pl-6 transition-all duration-300 ease-in-out overflow-hidden data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                            <Accordion type="single" collapsible className="w-full">
+                            <Accordion
+                              type="single"
+                              collapsible
+                              className="w-full"
+                            >
                               {subcategories.map((sub, subIdx) => (
                                 <AccordionItem
                                   key={sub._id}
@@ -216,7 +246,7 @@ const Header = ({ hidden }: props) => {
                           </AccordionContent>
                         )}
                       </AccordionItem>
-                    )
+                    );
                   })
                 )}
               </Accordion>
@@ -242,17 +272,23 @@ const Header = ({ hidden }: props) => {
                 >
                   <AccordionItem value="profile" className="border-none">
                     <AccordionTrigger className="flex items-center gap-2  hover:no-underline">
-                      <div className='flex flex-row gap-3 items-center'>
-                        <div className='flex'>
+                      <div className="flex flex-row gap-3 items-center">
+                        <div className="flex">
                           <Image
-                            src={typeof userData?.profilePicture === 'string' ? userData.profilePicture : '/profile.png'}
+                            src={
+                              typeof userData?.profilePicture === "string"
+                                ? userData.profilePicture
+                                : "/profile.png"
+                            }
                             width={30}
                             height={30}
                             alt="Profile"
                             className="rounded-full"
                           />
                         </div>
-                        <span className="text-sm font-medium flex">{userData?.fullName}</span>
+                        <span className="text-sm font-medium flex">
+                          {userData?.fullName}
+                        </span>
                       </div>
                       {/* {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />} */}
                     </AccordionTrigger>
@@ -271,9 +307,10 @@ const Header = ({ hidden }: props) => {
                     <AccordionContent
                       className="pl-10  space-y-2"
                       onClick={() => {
-                        setMobileMenuOpen(false)
-                        handleLogoutClick()
-                      }}>
+                        setMobileMenuOpen(false);
+                        handleLogoutClick();
+                      }}
+                    >
                       Logout
                     </AccordionContent>
                   </AccordionItem>
@@ -281,19 +318,26 @@ const Header = ({ hidden }: props) => {
               )}
             </div>
 
-
             {/* Contact & Social Links on mobile */}
             <div className="mt-auto space-y-3">
               {!isLoggedIn && (
                 <div className="flex flex-col gap-5 mb-10 p-6">
                   <div>
-                    If you already have an account, click <span>
-                      <Link href='/auth/login'
-                        className="text-[#1F058F]"> Login</Link>
-                    </span> to access your profile. If you’re a new user, click <span>
-                      <Link href='/auth/signup'
-                        className="text-[#1F058F]"> Sign Up</Link>
-                    </span> to create an account.
+                    If you already have an account, click{" "}
+                    <span>
+                      <Link href="/auth/login" className="text-[#1F058F]">
+                        {" "}
+                        Login
+                      </Link>
+                    </span>{" "}
+                    to access your profile. If you’re a new user, click{" "}
+                    <span>
+                      <Link href="/auth/signup" className="text-[#1F058F]">
+                        {" "}
+                        Sign Up
+                      </Link>
+                    </span>{" "}
+                    to create an account.
                   </div>
                   <div className="flex flex-row gap-4">
                     <Button
@@ -305,7 +349,10 @@ const Header = ({ hidden }: props) => {
                       Login
                     </Button>
 
-                    <Button size="sm" className="px-2 py-3 rounded-[99px] bg-white hover:bg-[#2a0bc0]  w-[90px] font-medium" variant="outline"
+                    <Button
+                      size="sm"
+                      className="px-2 py-3 rounded-[99px] bg-white hover:bg-[#2a0bc0]  w-[90px] font-medium"
+                      variant="outline"
                       onClick={handleSignUp}
                     >
                       Sign up
@@ -313,29 +360,63 @@ const Header = ({ hidden }: props) => {
                   </div>
                 </div>
               )}
-              <div className='bg-[#FAFAFA] p-6 w-full'>
+              <div className="bg-[#FAFAFA] p-6 w-full">
                 <div className="flex flex-row gap-3">
                   <div className="flex items-center gap-2">
-                    <Image src="/icons/gmail.svg" width={20} height={20} alt="Gmail" />
-                    <small className="text-[#131416] text-xs">Info@joelist.com.ng</small>
+                    <Image
+                      src="/icons/gmail.svg"
+                      width={20}
+                      height={20}
+                      alt="Gmail"
+                    />
+                    <small className="text-[#131416] text-xs">
+                      Info@joelist.com.ng
+                    </small>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Image src="/icons/maps.svg" width={20} height={20} alt="Google Maps" />
-                    <small className="text-[#131416] text-xs">Kwara, Nigeria</small>
+                    <Image
+                      src="/icons/maps.svg"
+                      width={20}
+                      height={20}
+                      alt="Google Maps"
+                    />
+                    <small className="text-[#131416] text-xs">
+                      Kwara, Nigeria
+                    </small>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mt-2">
                   <Link href="#">
-                    <Image src="/icons/twitter.svg" width={24} height={24} alt="Twitter" />
+                    <Image
+                      src="/icons/twitter.svg"
+                      width={24}
+                      height={24}
+                      alt="Twitter"
+                    />
                   </Link>
                   <Link href="#">
-                    <Image src="/icons/linkedin.svg" width={24} height={24} alt="LinkedIn" />
+                    <Image
+                      src="/icons/linkedin.svg"
+                      width={24}
+                      height={24}
+                      alt="LinkedIn"
+                    />
                   </Link>
                   <Link href="#">
-                    <Image src="/icons/instagram.svg" width={24} height={24} alt="Instagram" />
+                    <Image
+                      src="/icons/instagram.svg"
+                      width={24}
+                      height={24}
+                      alt="Instagram"
+                    />
                   </Link>
                   <Link href="#">
-                    <Image src="/icons/facebook.svg" width={24} height={24} alt="Facebook" />
+                    <Image
+                      src="/icons/facebook.svg"
+                      width={24}
+                      height={24}
+                      alt="Facebook"
+                    />
                   </Link>
                 </div>
               </div>
@@ -345,9 +426,11 @@ const Header = ({ hidden }: props) => {
 
         {/* Overlay when mobile menu is open */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={() => setMobileMenuOpen(false)}></div>
+          <div
+            className="fixed inset-0 bg-black/50 z-30 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          ></div>
         )}
-
 
         {/* Original Header with Responsive Classes */}
         <div className=" mx-auto py-1 pt-2 w-full">
@@ -362,7 +445,7 @@ const Header = ({ hidden }: props) => {
                 >
                   <div className="w-10 h-10 flex items-center justify-center">
                     <AlignJustify
-                      size={100} // Increase the size 
+                      size={100} // Increase the size
                       strokeWidth={2}
                       style={{ width: "30px", height: "110px" }} // Override viewBox issue
                     />
@@ -370,10 +453,15 @@ const Header = ({ hidden }: props) => {
                 </Button>
 
                 <Link href="/" className="max-md:pr-3 max-sm:mt-1 h-fit">
-                  <Image src="/newlogo.jpg" width={100} height={50} alt="Logo" />
+                  <Image
+                    src="/newlogo.jpg"
+                    width={100}
+                    height={50}
+                    alt="Logo"
+                  />
                 </Link>
 
-                {!hidden &&
+                {!hidden && (
                   <div className="hidden md:flex w-full h-10 items-start relative">
                     <Input
                       className="border border-[#D6D6D6] rounded w-full xl:max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-1 xl:px-10 ps-10 h-full placeholder:text-[#141414]"
@@ -382,7 +470,11 @@ const Header = ({ hidden }: props) => {
                       onChange={(e) => setSearch(e.target.value)}
                     />
 
-                    <Search size={16} color="#141414" className="absolute top-3 left-4" />
+                    <Search
+                      size={16}
+                      color="#141414"
+                      className="absolute top-3 left-4"
+                    />
 
                     <Input
                       className="xl:w-[150px] h-full rounded-none border-[#D6D6D6] border-l-0 rounded-r-none xl:rounded-r-none xl:rounded-l-none"
@@ -398,12 +490,12 @@ const Header = ({ hidden }: props) => {
                     >
                       Search
                     </Button>
-                  </div>}
+                  </div>
+                )}
               </div>
 
-              {hidden &&
-                <div className="hidden md:flex gap-3 w-full  justify-center items-center" >
-
+              {hidden && (
+                <div className="hidden md:flex gap-3 w-full  justify-center items-center">
                   <Button
                     size="sm"
                     className="border-none w-full shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium relative"
@@ -412,7 +504,12 @@ const Header = ({ hidden }: props) => {
                   >
                     <div className="flex flex-row gap-1 align-middle ">
                       <div className="flex items-center">
-                        <Image src={'/pp.svg'} width={15} height={15} alt="'svg" />
+                        <Image
+                          src={"/pp.svg"}
+                          width={15}
+                          height={15}
+                          alt="'svg"
+                        />
                       </div>
                       <div className="flex align-middle"> Category</div>
                     </div>
@@ -432,25 +529,35 @@ const Header = ({ hidden }: props) => {
                       </div>
                     </Button>
                   </Link> */}
-
-                </div>}
+                </div>
+              )}
 
               <div className="hidden md:flex items-center gap-3 w-full  justify-end">
-
-                {!hidden &&
-                  <div className="hidden md:flex items-start gap-1 justify-center" >
-
+                {!hidden && (
+                  <div className="hidden md:flex items-start gap-1 justify-center">
                     <Button
                       size="sm"
-                      className={`${pathname == '/category' ? 'border-2  border-b-[#141414] border-x-transparent border-t-transparent' : 'border-none'}  shadow-none px-2 py-1 rounded-none text-[#141414] font-medium `}
+                      className={`${
+                        pathname == "/category"
+                          ? "border-2  border-b-[#141414] border-x-transparent border-t-transparent"
+                          : "border-none"
+                      }  shadow-none px-2 py-1 rounded-none text-[#141414] font-medium `}
                       variant="outline"
                       onClick={handleCat}
                     >
                       <div className="flex flex-row gap-1 align-middle items-center">
                         <div className="flex items-center">
-                          <Image src={'/pp.svg'} width={20} height={20} alt="'svg" />
+                          <Image
+                            src={"/pp.svg"}
+                            width={20}
+                            height={20}
+                            alt="'svg"
+                          />
                         </div>
-                        <div className="flex align-middle text-sm font-medium"> Category</div>
+                        <div className="flex align-middle text-sm font-medium">
+                          {" "}
+                          Category
+                        </div>
                       </div>
                     </Button>
                     {/* <Link href="/seller/product/post-product">
@@ -467,21 +574,30 @@ const Header = ({ hidden }: props) => {
                         </div>
                       </Button>
                     </Link> */}
-
                   </div>
-                }
+                )}
                 {isLoggedIn ? (
                   <DropdownMenu onOpenChange={setOpenChev}>
                     <DropdownMenuTrigger className="flex bg-white items-center gap-2 focus:outline-none">
                       <Image
-                        src={typeof userData?.profilePicture === 'string' ? userData.profilePicture : '/profile.png'}
+                        src={
+                          typeof userData?.profilePicture === "string"
+                            ? userData.profilePicture
+                            : "/profile.png"
+                        }
                         width={30}
                         height={30}
                         alt="Profile"
                         className="rounded-full"
                       />
-                      <span className="text-sm font-medium flex items-center align-middle">{userData?.fullName}</span>
-                      {openChev ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      <span className="text-sm font-medium flex items-center align-middle">
+                        {userData?.fullName}
+                      </span>
+                      {openChev ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      )}
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent className="w-48 mt-2">
@@ -489,9 +605,7 @@ const Header = ({ hidden }: props) => {
                       {/* <DropdownMenuSeparator /> */}
                       {navItems.map((item, id) => (
                         <DropdownMenuItem key={id}>
-                          <Link href={item.link}>
-                            {item.title}
-                          </Link>
+                          <Link href={item.link}>{item.title}</Link>
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuItem onClick={handleLogoutClick}>
@@ -510,7 +624,10 @@ const Header = ({ hidden }: props) => {
                       Login
                     </Button>
 
-                    <Button size="sm" className="px-2 py-3 rounded-[99px] text-[#141414] font-medium" variant="outline"
+                    <Button
+                      size="sm"
+                      className="px-2 py-3 rounded-[99px] text-[#141414] font-medium"
+                      variant="outline"
                       onClick={handleSignUp}
                     >
                       Sign up
@@ -523,10 +640,13 @@ const Header = ({ hidden }: props) => {
         </div>
         {/* category modal */}
         <CategoryModal isOpen={openCat} onClose={() => setOpenCat(false)} />
-        <LogoutModal open={logoutModalOpen} handleClose={handleCloseLogoutModal} />
+        <LogoutModal
+          open={logoutModalOpen}
+          handleClose={handleCloseLogoutModal}
+        />
       </div>
-    </nav >
-  )
-}
+    </nav>
+  );
+};
 
-export default Header
+export default Header;
