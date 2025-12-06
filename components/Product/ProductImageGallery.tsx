@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { ChevronRight, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -16,6 +17,9 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   toggling,
   onLike,
 }) => {
+  const { data: userData } = useGetAuthUser("User");
+  const isBuyerLoggedIn =
+    userData?.data?.loggedInAccount?.accountType === "User";
   const [currentImage, setCurrentImage] = React.useState(0);
 
   const nextImage = () => {
@@ -45,19 +49,21 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
             fill
             className="object-contain bg-white rounded-md"
           />
-          <button
-            onClick={onLike}
-            disabled={toggling}
-            aria-label={liked ? "Unlike" : "Like"}
-            className="absolute top-2 right-2 h-8 w-8 bg-white rounded-full flex items-center justify-center shadow-md"
-          >
-            <Heart
-              className={cn(
-                "h-5 w-5 transition-colors",
-                liked ? "fill-red-500 text-red-500" : "text-gray-500"
-              )}
-            />
-          </button>
+          {isBuyerLoggedIn && (
+            <button
+              onClick={onLike}
+              disabled={toggling}
+              aria-label={liked ? "Unlike" : "Like"}
+              className="absolute top-2 right-2 h-8 w-8 bg-white rounded-full flex items-center justify-center shadow-md"
+            >
+              <Heart
+                className={cn(
+                  "h-5 w-5 transition-colors",
+                  liked ? "fill-red-500 text-red-500" : "text-gray-500"
+                )}
+              />
+            </button>
+          )}
         </div>
 
         {/* Navigation Arrows */}
