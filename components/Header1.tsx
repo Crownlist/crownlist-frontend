@@ -40,6 +40,7 @@ import CategoryModal from "./Home/CategoryModal";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { useCategories } from "@/hooks/useCategories";
 import LogoutModal from "./logout-modal";
+import { useScrollNavigation } from "@/hooks/useScrollNavigation";
 
 interface props {
   hidden: boolean;
@@ -57,6 +58,9 @@ const Header = ({ hidden }: props) => {
   const [openChev, setOpenChev] = useState(false);
   const [openCat, setOpenCat] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+
+  // Scroll navigation hook for global navbar
+  const { isNavbarVisible, scrollPosition } = useScrollNavigation(2000);
 
   // Fetch categories data
   const { categories, loading: categoriesLoading } = useCategories();
@@ -139,7 +143,11 @@ const Header = ({ hidden }: props) => {
   }, [searchCountry]);
 
   return (
-    <nav className="bg-white sticky inset-0 z-[999] shadow-sm ">
+    <nav
+      className={`bg-white sticky inset-0 z-[999] shadow-sm transition-transform duration-300 ${
+        isNavbarVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container w-full mx-auto flex items-center justify-between gap-2">
         {/* Mobile Menu */}
 
@@ -464,7 +472,7 @@ const Header = ({ hidden }: props) => {
                 {!hidden && (
                   <div className="hidden md:flex w-full h-10 items-start relative">
                     <Input
-                      className="border border-[#D6D6D6] rounded w-full xl:max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-1 xl:px-10 ps-10 h-full placeholder:text-[#141414]"
+                      className="border border-[#D6D6D6] rounded w-full xl:max-w-[470px] rounded-tl-[99px] rounded-bl-[99px] py-3 px-1 xl:px-10 ps-10 h-full placeholder:text-crown-black"
                       placeholder="Search"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
@@ -498,7 +506,7 @@ const Header = ({ hidden }: props) => {
                 <div className="hidden md:flex gap-3 w-full  justify-center items-center">
                   <Button
                     size="sm"
-                    className="border-none w-full shadow-none px-2 py-3 rounded-[99px] text-[#141414] font-medium relative"
+                    className="border-none w-full shadow-none px-2 py-3 rounded-[99px] text-crown-black font-medium relative"
                     variant="outline"
                     onClick={handleCat}
                   >
@@ -539,9 +547,9 @@ const Header = ({ hidden }: props) => {
                       size="sm"
                       className={`${
                         pathname == "/category"
-                          ? "border-2  border-b-[#141414] border-x-transparent border-t-transparent"
+                          ? "border-2  border-b-crown-black border-x-transparent border-t-transparent"
                           : "border-none"
-                      }  shadow-none px-2 py-1 rounded-none text-[#141414] font-medium `}
+                      }  shadow-none px-2 py-1 rounded-none text-crown-black font-medium `}
                       variant="outline"
                       onClick={handleCat}
                     >
