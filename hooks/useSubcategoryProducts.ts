@@ -6,7 +6,17 @@ import { Product, ProductsResponse } from "@/types/product/product";
 interface PaginationParams {
   page?: number;
   limit?: number;
-  sort?: "price_asc" | "price_desc" | "newest" | "oldest";
+  sortBy?:
+    | "price-asc"
+    | "price-desc"
+    | "rating"
+    | "likes"
+    | "trending"
+    | "newest"
+    | "oldest"
+    | "name-asc"
+    | "name-desc"
+    | "promoted";
   minPrice?: number;
   maxPrice?: number;
   location?: string;
@@ -26,7 +36,7 @@ export const useSubcategoryProductsQuery = (
   options: {
     page?: number;
     limit?: number;
-    sort?: string;
+    sortBy?: string;
     isFeatured?: boolean;
     minPrice?: number;
     maxPrice?: number;
@@ -38,7 +48,7 @@ export const useSubcategoryProductsQuery = (
     subcategorySlug,
     options.page,
     options.limit,
-    options.sort,
+    options.sortBy,
     options.isFeatured,
     options.minPrice,
     options.maxPrice,
@@ -54,7 +64,7 @@ export const useSubcategoryProductsQuery = (
       if (options.isFeatured) queryParams.append("isFeatured", "true");
       if (options.page) queryParams.append("page", options.page.toString());
       if (options.limit) queryParams.append("limit", options.limit.toString());
-      if (options.sort) queryParams.append("sort", options.sort);
+      if (options.sortBy) queryParams.append("sortBy", options.sortBy);
       if (options.minPrice !== undefined)
         queryParams.append("minPrice", options.minPrice.toString());
       if (options.maxPrice !== undefined)
@@ -109,7 +119,7 @@ export const useSubcategoryProducts = () => {
         if (isFeatured) queryParams.append("isFeatured", "true");
         if (params.page) queryParams.append("page", params.page.toString());
         if (params.limit) queryParams.append("limit", params.limit.toString());
-        if (params.sort) queryParams.append("sort", params.sort);
+        if (params.sortBy) queryParams.append("sortBy", params.sortBy);
         if (params.minPrice)
           queryParams.append("minPrice", params.minPrice.toString());
         if (params.maxPrice)

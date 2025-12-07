@@ -52,7 +52,7 @@ export const useSearchFunctionality = ({
       params.append("limit", "12");
       params.append("page", page.toString());
       if (featured) params.append("isFeatured", "true");
-      if (sort && sort !== "newest") params.append("sort", sort);
+      if (sort && sort !== "newest") params.append("sortBy", sort);
 
       const res = await apiClientPublic.get(
         `/products/search?${params.toString()}`

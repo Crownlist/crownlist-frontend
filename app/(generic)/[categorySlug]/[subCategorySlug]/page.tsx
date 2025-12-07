@@ -91,17 +91,17 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
           const remaining = colors.length - 2;
 
           return (
-            <div key={index} className="flex gap-1 mb-2 ">
+            <div key={index} className="flex gap-1 mb-2">
               {displayColors.map((color: string, colorIndex: number) => (
                 <span
                   key={colorIndex}
-                  className="text-xs bg-blue-100 text-blue-800 px-2.5 py-2 rounded-full"
+                  className="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 w-fit rounded-full"
                 >
                   {color}
                 </span>
               ))}
               {remaining > 0 && (
-                <span className="text-xs text-gray-500 px-2 py-2">
+                <span className="text-xs text-gray-500 px-2 py-1">
                   +{remaining} more
                 </span>
               )}
@@ -112,7 +112,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
           return (
             <div
               key={index}
-              className="text-xs bg-gray-300 px-2 py-2 rounded-full"
+              className="text-xs bg-gray-300 px-2 py-1 w-fit rounded-full"
             >
               {facility.label}: {parseFacilityValue(facility.value)}
             </div>
@@ -122,9 +122,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         return (
           <div
             key={index}
-            className={` text-xs bg-gray-200 items-center flex  rounded-full ${
+            className={`text-xs bg-gray-200 items-center flex my-1 w-fit px-2 py-1 rounded-full ${
               facility.label.toLowerCase().includes("size")
-                ? "px-2.5 py-2 text-center"
+                ? "px-2.5 py-1 text-center"
                 : ""
             }`}
           >
@@ -166,7 +166,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     refetch: refetchProducts,
   } = useSubcategoryProductsQuery(subCategorySlug, {
     page: currentPage,
-    sort: sortOption,
+    sortBy: sortOption,
     isFeatured,
     minPrice: priceRange.min ? parseInt(priceRange.min) : undefined,
     maxPrice: priceRange.max ? parseInt(priceRange.max) : undefined,
@@ -192,9 +192,16 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     // Map display options to API sort parameters
     const sortMapping: { [key: string]: string } = {
       All: "",
-      "Newest first": "newest",
-      "Lowest price": "price_asc",
-      "Highest price": "price_desc",
+      "Price: Low to High": "price-asc",
+      "Price: High to Low": "price-desc",
+      Rating: "rating",
+      Likes: "likes",
+      Trending: "trending",
+      Newest: "newest",
+      Oldest: "oldest",
+      "Name: A to Z": "name-asc",
+      "Name: Z to A": "name-desc",
+      Promoted: "promoted",
     };
     setSortOption(sortMapping[option] || "");
     setSortDropdownOpen(false);
@@ -221,18 +228,32 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   const totalPages = productsData?.totalPages || 1;
   const sortOptionsDisplay = [
     "All",
-    "Newest first",
-    "Lowest price",
-    "Highest price",
+    "Price: Low to High",
+    "Price: High to Low",
+    "Rating",
+    "Likes",
+    "Trending",
+    "Newest",
+    "Oldest",
+    "Name: A to Z",
+    "Name: Z to A",
+    "Promoted",
   ];
 
   // Helper to get display text from sort value
   const getSortDisplayText = (sortValue: string) => {
     const displayMapping: { [key: string]: string } = {
       "": "All",
-      newest: "Newest first",
-      price_asc: "Lowest price",
-      price_desc: "Highest price",
+      "price-asc": "Price: Low to High",
+      "price-desc": "Price: High to Low",
+      rating: "Rating",
+      likes: "Likes",
+      trending: "Trending",
+      newest: "Newest",
+      oldest: "Oldest",
+      "name-asc": "Name: A to Z",
+      "name-desc": "Name: Z to A",
+      promoted: "Promoted",
     };
     return displayMapping[sortValue] || "All";
   };
@@ -298,7 +319,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
             {/* Products grid skeleton */}
             <div className="flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-2 md:gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))}
@@ -688,7 +709,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             {isFiltering ? (
               <>
                 {viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-2 md:gap-4">
                     {Array.from({ length: 6 }).map((_, i) => (
                       <ProductCardSkeleton key={i} />
                     ))}
@@ -709,14 +730,14 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             ) : (
               <>
                 {viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-2 md:gap-4">
                     {products.map((product) => (
                       <div
                         key={product._id}
                         className="border rounded-lg overflow-hidden"
                       >
                         <Link href={`/product/${product.slug}`}>
-                          <div className="relative h-[200px]">
+                          <div className="relative h-40 md:h-[200px] max-h-[200px]">
                             <Image
                               src={
                                 product.images?.[0]?.url || "/placeholder.svg"
@@ -735,11 +756,11 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                             )}
                           </div>
 
-                          <div className="p-4">
-                            <h3 className="font-medium text-lg mb-1">
+                          <div className="p-2 sm:p-4">
+                            <h3 className="font-medium min-h-12 text-base lg:text-lg mb-1">
                               {product.name}
                             </h3>
-                            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            <p className="text-gray-600 text-sm mb-3 line-clamp-2 h-10">
                               {product.description}
                             </p>
 
@@ -792,7 +813,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                         key={product._id}
                         className="border rounded-lg overflow-hidden flex flex-row w-full"
                       >
-                        <div className="relative w-[140px]  md:w-[350px] md:h-auto flex-shrink-0">
+                        <div className="relative w-[140px] md:w-[350px] md:h-auto shrink-0">
                           <Image
                             src={product.images?.[0]?.url || "/placeholder.svg"}
                             alt={product.name}
@@ -813,7 +834,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
                           <h3 className="font-medium text-lg mb-1">
                             {product.name}
                           </h3>
-                          <p className="text-gray-600 text-sm mb-3">
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-3">
                             {product.description}
                           </p>
 
