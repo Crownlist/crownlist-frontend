@@ -43,7 +43,7 @@ export default function BottomNav() {
           icon: ShoppingBag,
         },
         { name: "Messages", path: "/seller/messages", icon: MessageSquare },
-        { name: "Profile", path: "/seller/profile", icon: User },
+        { name: "Profile", path: "/seller/settings/profile", icon: User },
       ];
     } else if (accountType === "User") {
       return [

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 "use client"
 import { X, User, Phone, Tag, Clock, Wrench } from "lucide-react"
 import Image from "next/image"

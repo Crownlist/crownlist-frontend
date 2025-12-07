@@ -1,16 +1,28 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Home, LogOut, Package, Settings, User, Crown, Puzzle, Database, List, Shield, FileText } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Home,
+  LogOut,
+  Package,
+  Settings,
+  User,
+  Crown,
+  Puzzle,
+  Database,
+  List,
+  Shield,
+  FileText,
+} from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import LogoutModal from "./logout-modal"
-import { useState } from "react"
+import { cn } from "@/lib/utils";
+import LogoutModal from "./logout-modal";
+import { useState } from "react";
 
 export default function DashboardSidebar() {
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -18,8 +30,8 @@ export default function DashboardSidebar() {
 
   // Helper function to check if path is active
   const isActive = (path: string) => {
-    return pathname.includes(path)
-  }
+    return pathname.includes(path);
+  };
 
   return (
     <aside className="w-64 bg-white border-r h-full overflow-y-auto scrollbar-hide">
@@ -28,7 +40,9 @@ export default function DashboardSidebar() {
           href="/admin/dashboard"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/dashboard") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/dashboard")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Home className="h-5 w-5" />
@@ -39,7 +53,9 @@ export default function DashboardSidebar() {
           href="/admin/listings"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/listings") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/listings")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <List className="h-5 w-5" />
@@ -50,7 +66,9 @@ export default function DashboardSidebar() {
           href="/admin/categories"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/categories") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/categories")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Package className="h-5 w-5" />
@@ -61,7 +79,9 @@ export default function DashboardSidebar() {
           href="/admin/users"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/users") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/users")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <User className="h-5 w-5" />
@@ -72,7 +92,9 @@ export default function DashboardSidebar() {
           href="/admin/admins"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/admins") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/admins")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Shield className="h-5 w-5" />
@@ -94,7 +116,9 @@ export default function DashboardSidebar() {
           href="/admin/subscriptions"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/subscriptions") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/subscriptions")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Crown className="h-5 w-5" />
@@ -105,7 +129,9 @@ export default function DashboardSidebar() {
           href="/admin/addon-services"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/addon-services") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/addon-services")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Puzzle className="h-5 w-5" />
@@ -116,7 +142,9 @@ export default function DashboardSidebar() {
           href="/admin/resources"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/resources") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/resources")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Database className="h-5 w-5" />
@@ -127,7 +155,9 @@ export default function DashboardSidebar() {
           href="/admin/escrow"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/escrow") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/escrow")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Shield className="h-5 w-5" />
@@ -138,7 +168,9 @@ export default function DashboardSidebar() {
           href="/admin/requests"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/requests") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/requests")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <FileText className="h-5 w-5" />
@@ -160,7 +192,9 @@ export default function DashboardSidebar() {
           href="/admin/settings"
           className={cn(
             "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/settings") ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]" : "text-gray-700 hover:bg-gray-100",
+            isActive("/admin/settings")
+              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+              : "text-gray-700 hover:bg-gray-100"
           )}
         >
           <Settings className="h-5 w-5" />
@@ -169,14 +203,15 @@ export default function DashboardSidebar() {
       </nav>
 
       <div className="absolute bottom-8 w-full px-4">
-        <button onClick={() => setOpen(true)}
+        <button
+          onClick={() => setOpen(true)}
           className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
         >
           <LogOut className="h-5 w-5" />
           <span>Logout</span>
         </button>
       </div>
-      <LogoutModal open={open} handleClose={handleClose} />
+      <LogoutModal open={open} handleClose={handleClose} userType="Admin" />
     </aside>
-  )
+  );
 }

@@ -19,8 +19,6 @@ export const logout = (logoutData: LogoutProps): Promise<any> => {
 };
 
 export const useLogout = (userType: userTypeProps) => {
-
-
   const dispatch = useDispatch();
 
   const { removeOrionKeys, removeLeoKeys } = useMgtKeys();
@@ -31,7 +29,7 @@ export const useLogout = (userType: userTypeProps) => {
     data,
   } = useMutation({
     mutationFn: () => {
-      console.log(data)
+      console.log(data);
       if (userType === "Admin") {
         return logout({
           refreshToken: obfuscateToken(
@@ -67,6 +65,6 @@ export const useLogout = (userType: userTypeProps) => {
 
   return {
     mutateLogout,
-    isLoading
+    isLoading,
   };
 };

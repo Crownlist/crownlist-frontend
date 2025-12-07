@@ -8,17 +8,10 @@ import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import BackToTop from "@/components/BackToTop";
-import BottomNav from "@/components/BottomNav";
-import { usePathname } from "next/navigation";
+
 const queryClient = new QueryClient();
 
-export default function Wrapper({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-
-  // Don't show BottomNav on admin pages
-  const showBottomNav =
-    !pathname?.startsWith("/admin") && !pathname?.startsWith("/auth/admin");
-
+export default function AdminAuthLayout({ children }: { children: ReactNode }) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
@@ -31,7 +24,6 @@ export default function Wrapper({ children }: { children: ReactNode }) {
           <NextTopLoader color="#0177AB" showSpinner={false} />
           <Toaster position="top-center" />
           {children}
-          {showBottomNav && <BottomNav />}
           <BackToTop />
         </ThemeProvider>
       </QueryClientProvider>
