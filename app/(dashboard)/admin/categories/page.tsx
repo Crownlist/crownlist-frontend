@@ -1,12 +1,26 @@
-"use client"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { toast } from "sonner"
-import { Trash2, Edit, Plus } from "lucide-react"
-import Image from "next/image"
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { toast } from "sonner";
+import {
+  Trash2,
+  Edit,
+  Plus,
+  ChevronDown,
+  ChevronUp,
+  MoreHorizontal,
+} from "lucide-react";
+import Image from "next/image";
 
 import {
   Dialog,
@@ -14,139 +28,166 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
-import { apiClientAdmin } from "@/lib/interceptor"
+} from "@/components/ui/dropdown-menu";
+import { apiClientAdmin } from "@/lib/interceptor";
 
 interface Category {
-  _id: string
-  name: string
-  slug: string
-  description: string
-  imageUrl: string
-  status: string
-  createdAt: string
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  imageUrl: string;
+  status: string;
+  createdAt: string;
 }
 
 export default function CategoryManagementPage() {
-  const router = useRouter()
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   // Updated state for two-step upload
   const [newCategory, setNewCategory] = useState({
     name: "",
     description: "",
     imageUrl: "", // Back to imageUrl since API expects URL
-    status: "active"
-  })
+    status: "active",
+  });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [uploadingImage, setUploadingImage] = useState(false)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   // Inline errors for create form
-  const [createErrors, setCreateErrors] = useState<{ name?: string; description?: string; image?: string }>({})
+  const [createErrors, setCreateErrors] = useState<{
+    name?: string;
+    description?: string;
+    image?: string;
+  }>({});
   // Inline errors for edit form
-  const [editErrors, setEditErrors] = useState<{ name?: string; description?: string }>({})
+  const [editErrors, setEditErrors] = useState<{
+    name?: string;
+    description?: string;
+  }>({});
 
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const response = await apiClientAdmin.get("/categories")
-      console.log("neww", response)
-      setCategories(response.data?.data?.total)
+      const response = await apiClientAdmin.get("/categories");
+      console.log("neww", response);
+      setCategories(response.data?.data?.total);
     } catch (error) {
-      toast.error(`Failed to fetch categories, ${error}`)
+      toast.error(`Failed to fetch categories, ${error}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
+
+  const toggleDropdown = (id: string) => {
+    setActiveDropdown(activeDropdown === id ? null : id);
+  };
+
+  const toggleCardExpansion = (id: string) => {
+    const newExpanded = new Set(expandedCards);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedCards(newExpanded);
+  };
 
   // Upload image to get URL
   const uploadImage = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('fileType', 'Profile-pics')
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileType", "Profile-pics");
 
     const response = await apiClientAdmin.post("/users/upload", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
-    })
+    });
 
-    return response.data.data.fileUrl
-  }
+    return response.data.data.fileUrl;
+  };
 
   // Handle file selection and preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
-    setSelectedFile(file)
+    const file = e.target.files?.[0] || null;
+    setSelectedFile(file);
 
     // Create preview URL
     if (file) {
-      const previewUrl = URL.createObjectURL(file)
-      setImagePreview(previewUrl)
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
       // clear image url if file picked and clear error
-      setNewCategory(prev => ({ ...prev, imageUrl: prev.imageUrl }))
-      setCreateErrors(prev => ({ ...prev, image: undefined }))
+      setNewCategory((prev) => ({ ...prev, imageUrl: prev.imageUrl }));
+      setCreateErrors((prev) => ({ ...prev, image: undefined }));
     } else {
-      setImagePreview(null)
-      setNewCategory({ ...newCategory, imageUrl: "" })
+      setImagePreview(null);
+      setNewCategory({ ...newCategory, imageUrl: "" });
     }
-  }
+  };
 
   // Updated create category handler with two-step process
   const handleCreateCategory = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       // Validate required fields before any upload/API calls
-      const nextErrors: { name?: string; description?: string; image?: string } = {}
+      const nextErrors: {
+        name?: string;
+        description?: string;
+        image?: string;
+      } = {};
       if (!newCategory.name.trim()) {
-        nextErrors.name = "Category name is required"
+        nextErrors.name = "Category name is required";
       }
       if (!newCategory.description.trim()) {
-        nextErrors.description = "Category description is required"
+        nextErrors.description = "Category description is required";
       }
       // Image required: either selected file or valid URL
       if (!selectedFile && !newCategory.imageUrl.trim()) {
-        nextErrors.image = "Category image is required (upload a file or paste a URL)"
+        nextErrors.image =
+          "Category image is required (upload a file or paste a URL)";
       }
-      setCreateErrors(nextErrors)
+      setCreateErrors(nextErrors);
       if (Object.keys(nextErrors).length > 0) {
         // Also show toast summary
-        toast.error("Please fix the highlighted fields")
-        return
+        toast.error("Please fix the highlighted fields");
+        return;
       }
 
-      let imageUrl = newCategory.imageUrl
+      let imageUrl = newCategory.imageUrl;
 
       // If user selected a new file, upload it first
       if (selectedFile) {
-        setUploadingImage(true)
+        setUploadingImage(true);
         try {
-          imageUrl = await uploadImage(selectedFile)
-          toast.success("Image uploaded successfully")
+          imageUrl = await uploadImage(selectedFile);
+          toast.success("Image uploaded successfully");
         } catch (uploadError) {
-          toast.error(`Failed to upload image, ${uploadError}`)
-          return // Stop if image upload fails
+          toast.error(`Failed to upload image, ${uploadError}`);
+          return; // Stop if image upload fails
         } finally {
-          setUploadingImage(false)
-          fetchCategories()
+          setUploadingImage(false);
+          fetchCategories();
         }
       }
 
@@ -155,90 +196,114 @@ export default function CategoryManagementPage() {
         name: newCategory.name,
         description: newCategory.description,
         imageUrl: imageUrl,
-        status: newCategory.status
-      }
+        status: newCategory.status,
+      };
 
-      const response = await apiClientAdmin.post("/categories/create", categoryData)
-      
-      toast.success(response.data.message)
-      
+      const response = await apiClientAdmin.post(
+        "/categories/create",
+        categoryData
+      );
+
+      toast.success(response.data.message);
+
       // Reset form
-      setNewCategory({ name: "", description: "", imageUrl: "", status: "active" })
-      setSelectedFile(null)
-      setImagePreview(null)
-      setIsCreateModalOpen(false)
-
+      setNewCategory({
+        name: "",
+        description: "",
+        imageUrl: "",
+        status: "active",
+      });
+      setSelectedFile(null);
+      setImagePreview(null);
+      setIsCreateModalOpen(false);
     } catch (error) {
-      toast.error(`Failed to create category, ${error}`)
+      toast.error(`Failed to create category, ${error}`);
     } finally {
-      setLoading(false)
-      fetchCategories()
+      setLoading(false);
+      fetchCategories();
     }
-  }
+  };
 
   // Update category
   const handleUpdateCategory = async () => {
-    if (!editingCategory) return
+    if (!editingCategory) return;
 
     try {
-      setLoading(true)
+      setLoading(true);
 
       // Validate required fields before API call (inline)
-      const nextErrors: { name?: string; description?: string } = {}
-      if (!editingCategory.name.trim()) nextErrors.name = "Category name is required"
-      if (!editingCategory.description.trim()) nextErrors.description = "Category description is required"
-      setEditErrors(nextErrors)
+      const nextErrors: { name?: string; description?: string } = {};
+      if (!editingCategory.name.trim())
+        nextErrors.name = "Category name is required";
+      if (!editingCategory.description.trim())
+        nextErrors.description = "Category description is required";
+      setEditErrors(nextErrors);
       if (Object.keys(nextErrors).length > 0) {
-        toast.error("Please fix the highlighted fields")
-        return
+        toast.error("Please fix the highlighted fields");
+        return;
       }
       const response = await apiClientAdmin.patch(
         `/categories/update/${editingCategory._id}`,
         editingCategory
-      )
+      );
 
-      
-    console.log(response)
+      console.log(response);
       // toast.success(`${response.data.message}`)
-      setIsEditModalOpen(false)
+      setIsEditModalOpen(false);
     } catch (error) {
-      toast.error(`Failed to update category, ${error}`)
+      toast.error(`Failed to update category, ${error}`);
     } finally {
-      setLoading(false)
-      fetchCategories()
+      setLoading(false);
+      fetchCategories();
     }
-  }
+  };
 
   // Delete category
   const handleDeleteCategory = async (id: string | undefined) => {
     try {
-      setLoading(true)
-      await apiClientAdmin.delete(`/categories/delete/${id}`)
-      fetchCategories()
-      toast.success("Category deleted successfully")
+      setLoading(true);
+      await apiClientAdmin.delete(`/categories/delete/${id}`);
+      fetchCategories();
+      toast.success("Category deleted successfully");
     } catch (error) {
-      toast.error(`Failed to delete category, ${error}`)
+      toast.error(`Failed to delete category, ${error}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Cleanup preview URL
   useEffect(() => {
     return () => {
       if (imagePreview) {
-        URL.revokeObjectURL(imagePreview)
+        URL.revokeObjectURL(imagePreview);
       }
-    }
-  }, [imagePreview])
+    };
+  }, [imagePreview]);
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center gap-2 flex-wrap mb-6">
         <h1 className="text-2xl font-bold">Category Management</h1>
 
         {/* Create Category Dialog */}
-        <Dialog open={isCreateModalOpen} onOpenChange={(o)=>{ setIsCreateModalOpen(o); if(!o){ setNewCategory({ name: "", description: "", imageUrl: "", status: "active" }); setSelectedFile(null); setImagePreview(null); setCreateErrors({}); } }}>
+        <Dialog
+          open={isCreateModalOpen}
+          onOpenChange={(o) => {
+            setIsCreateModalOpen(o);
+            if (!o) {
+              setNewCategory({
+                name: "",
+                description: "",
+                imageUrl: "",
+                status: "active",
+              });
+              setSelectedFile(null);
+              setImagePreview(null);
+              setCreateErrors({});
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90">
               <Plus className="mr-2 h-4 w-4" />
@@ -251,13 +316,16 @@ export default function CategoryManagementPage() {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Category Name *</label>
+                <label className="block text-sm font-medium mb-2">
+                  Category Name *
+                </label>
                 <Input
                   placeholder="Category Name"
                   value={newCategory.name}
                   onChange={(e) => {
-                    setNewCategory({ ...newCategory, name: e.target.value })
-                    if (e.target.value.trim()) setCreateErrors(prev => ({ ...prev, name: undefined }))
+                    setNewCategory({ ...newCategory, name: e.target.value });
+                    if (e.target.value.trim())
+                      setCreateErrors((prev) => ({ ...prev, name: undefined }));
                   }}
                   required
                 />
@@ -266,13 +334,22 @@ export default function CategoryManagementPage() {
                 <p className="text-sm text-red-600">{createErrors.name}</p>
               )}
               <div>
-                <label className="block text-sm font-medium mb-2">Description *</label>
+                <label className="block text-sm font-medium mb-2">
+                  Description *
+                </label>
                 <textarea
                   placeholder="Description"
                   value={newCategory.description}
                   onChange={(e) => {
-                    setNewCategory({ ...newCategory, description: e.target.value })
-                    if (e.target.value.trim()) setCreateErrors(prev => ({ ...prev, description: undefined }))
+                    setNewCategory({
+                      ...newCategory,
+                      description: e.target.value,
+                    });
+                    if (e.target.value.trim())
+                      setCreateErrors((prev) => ({
+                        ...prev,
+                        description: undefined,
+                      }));
                   }}
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
                   rows={3}
@@ -280,7 +357,9 @@ export default function CategoryManagementPage() {
                 />
               </div>
               {createErrors.description && (
-                <p className="text-sm text-red-600">{createErrors.description}</p>
+                <p className="text-sm text-red-600">
+                  {createErrors.description}
+                </p>
               )}
 
               {/* File upload with preview */}
@@ -307,7 +386,6 @@ export default function CategoryManagementPage() {
                       src={imagePreview}
                       alt="Preview"
                       className="w-20 h-20 object-cover rounded-md border"
-                      
                     />
                   </div>
                 )}
@@ -318,13 +396,16 @@ export default function CategoryManagementPage() {
                   placeholder="https://example.com/image.jpg"
                   value={newCategory.imageUrl}
                   onChange={(e) => {
-                    setNewCategory({ ...newCategory, imageUrl: e.target.value })
+                    setNewCategory({
+                      ...newCategory,
+                      imageUrl: e.target.value,
+                    });
                     // Clear file selection if URL is entered
                     if (e.target.value) {
-                      setSelectedFile(null)
-                      setImagePreview(null)
+                      setSelectedFile(null);
+                      setImagePreview(null);
                     }
-                    setCreateErrors(prev => ({ ...prev, image: undefined }))
+                    setCreateErrors((prev) => ({ ...prev, image: undefined }));
                   }}
                 />
                 {createErrors.image && (
@@ -340,10 +421,18 @@ export default function CategoryManagementPage() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-[--radix-dropdown-menu-trigger-width]">
-                  <DropdownMenuItem onClick={() => setNewCategory({ ...newCategory, status: "active" })}>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setNewCategory({ ...newCategory, status: "active" })
+                    }
+                  >
                     Active
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setNewCategory({ ...newCategory, status: "inactive" })}>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setNewCategory({ ...newCategory, status: "inactive" })
+                    }
+                  >
                     Inactive
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -353,12 +442,17 @@ export default function CategoryManagementPage() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setIsCreateModalOpen(false)
+                  setIsCreateModalOpen(false);
                   // Reset form when closing
-                  setNewCategory({ name: "", description: "", imageUrl: "", status: "active" })
-                  setSelectedFile(null)
-                  setImagePreview(null)
-                  setCreateErrors({})
+                  setNewCategory({
+                    name: "",
+                    description: "",
+                    imageUrl: "",
+                    status: "active",
+                  });
+                  setSelectedFile(null);
+                  setImagePreview(null);
+                  setCreateErrors({});
                 }}
               >
                 Cancel
@@ -368,7 +462,11 @@ export default function CategoryManagementPage() {
                 onClick={handleCreateCategory}
                 disabled={loading || uploadingImage}
               >
-                {uploadingImage ? "Uploading Image..." : loading ? "Creating..." : "Create"}
+                {uploadingImage
+                  ? "Uploading Image..."
+                  : loading
+                  ? "Creating..."
+                  : "Create"}
               </Button>
             </div>
           </DialogContent>
@@ -390,179 +488,369 @@ export default function CategoryManagementPage() {
           </Button>
         </div>
       ) : (
-        <Table className="border rounded-lg">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories?.length > 0 && categories?.map(category => (
-              <TableRow key={category?._id}>
-                <TableCell
-                  className="font-medium cursor-pointer text-[#1F058F]"
-                  onClick={() => router.push(`/admin/categories/${category._id}`)}
-                >
-                  {category?.name}
-                </TableCell>
-                <TableCell>{category?.description}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs ${category?.status === "active"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                    }`}>
-                    {category?.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {new Date(category?.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="flex space-x-2">
-                  <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setEditingCategory(category)}
+        <>
+          {/* Desktop Table View */}
+          <div className="hidden lg:block">
+            <Table className="border rounded-lg">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categories?.length > 0 &&
+                  categories?.map((category) => (
+                    <TableRow key={category?._id}>
+                      <TableCell
+                        className="font-medium cursor-pointer text-[#1F058F]"
+                        onClick={() =>
+                          router.push(`/admin/categories/${category._id}`)
+                        }
                       >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[900px] lg:max-w-[1100px] xl:max-w-[1200px] max-h-[85vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Edit Category</DialogTitle>
-                      </DialogHeader>
-                      {editingCategory && (
-                        <div className="space-y-6 py-4">
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Category Name *</label>
-                                <Input
-                                  placeholder="Category Name"
-                                  value={editingCategory.name}
-                                  onChange={(e) => {
-                                    setEditingCategory({
-                                      ...editingCategory,
-                                      name: e.target.value
-                                    })
-                                    if (e.target.value.trim()) setEditErrors(prev => ({ ...prev, name: undefined }))
-                                  }}
-                                  required
-                                />
-                                {editErrors.name && (
-                                  <p className="text-sm text-red-600 mt-1">{editErrors.name}</p>
-                                )}
-                              </div>
+                        {category?.name}
+                      </TableCell>
+                      <TableCell>{category?.description}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            category?.status === "active"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {category?.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(category?.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="flex space-x-2">
+                        <Dialog
+                          open={isEditModalOpen}
+                          onOpenChange={setIsEditModalOpen}
+                        >
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => setEditingCategory(category)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[900px] lg:max-w-[1100px] xl:max-w-[1200px] max-h-[85vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle>Edit Category</DialogTitle>
+                            </DialogHeader>
+                            {editingCategory && (
+                              <div className="space-y-6 py-4">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                  <div className="space-y-4">
+                                    <div>
+                                      <label className="block text-sm font-medium mb-2">
+                                        Category Name *
+                                      </label>
+                                      <Input
+                                        placeholder="Category Name"
+                                        value={editingCategory.name}
+                                        onChange={(e) => {
+                                          setEditingCategory({
+                                            ...editingCategory,
+                                            name: e.target.value,
+                                          });
+                                          if (e.target.value.trim())
+                                            setEditErrors((prev) => ({
+                                              ...prev,
+                                              name: undefined,
+                                            }));
+                                        }}
+                                        required
+                                      />
+                                      {editErrors.name && (
+                                        <p className="text-sm text-red-600 mt-1">
+                                          {editErrors.name}
+                                        </p>
+                                      )}
+                                    </div>
 
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Status</label>
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-between">
-                                      {editingCategory.status === "active" ? "Active" : "Inactive"}
-                                      <ChevronDown className="h-4 w-4 opacity-50" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-[--radix-dropdown-menu-trigger-width]">
-                                    <DropdownMenuItem onClick={() => setEditingCategory({
-                                      ...editingCategory,
-                                      status: "active"
-                                    })}>
-                                      Active
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setEditingCategory({
-                                      ...editingCategory,
-                                      status: "inactive"
-                                    })}>
-                                      Inactive
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
+                                    <div>
+                                      <label className="block text-sm font-medium mb-2">
+                                        Status
+                                      </label>
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button
+                                            variant="outline"
+                                            className="w-full justify-between"
+                                          >
+                                            {editingCategory.status === "active"
+                                              ? "Active"
+                                              : "Inactive"}
+                                            <ChevronDown className="h-4 w-4 opacity-50" />
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-[--radix-dropdown-menu-trigger-width]">
+                                          <DropdownMenuItem
+                                            onClick={() =>
+                                              setEditingCategory({
+                                                ...editingCategory,
+                                                status: "active",
+                                              })
+                                            }
+                                          >
+                                            Active
+                                          </DropdownMenuItem>
+                                          <DropdownMenuItem
+                                            onClick={() =>
+                                              setEditingCategory({
+                                                ...editingCategory,
+                                                status: "inactive",
+                                              })
+                                            }
+                                          >
+                                            Inactive
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    </div>
 
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Description *</label>
-                                <textarea
-                                  placeholder="Description"
-                                  value={editingCategory.description}
-                                  onChange={(e) => {
-                                    setEditingCategory({
-                                      ...editingCategory,
-                                      description: e.target.value
-                                    })
-                                    if (e.target.value.trim()) setEditErrors(prev => ({ ...prev, description: undefined }))
-                                  }}
-                                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
-                                  rows={3}
-                                  required
-                                />
-                                {editErrors.description && (
-                                  <p className="text-sm text-red-600 mt-1">{editErrors.description}</p>
-                                )}
+                                    <div>
+                                      <label className="block text-sm font-medium mb-2">
+                                        Description *
+                                      </label>
+                                      <textarea
+                                        placeholder="Description"
+                                        value={editingCategory.description}
+                                        onChange={(e) => {
+                                          setEditingCategory({
+                                            ...editingCategory,
+                                            description: e.target.value,
+                                          });
+                                          if (e.target.value.trim())
+                                            setEditErrors((prev) => ({
+                                              ...prev,
+                                              description: undefined,
+                                            }));
+                                        }}
+                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
+                                        rows={3}
+                                        required
+                                      />
+                                      {editErrors.description && (
+                                        <p className="text-sm text-red-600 mt-1">
+                                          {editErrors.description}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div className="space-y-4">
+                                    <div>
+                                      <label className="block text-sm font-medium mb-2">
+                                        Image URL
+                                      </label>
+                                      <Input
+                                        placeholder="Image URL"
+                                        value={editingCategory.imageUrl}
+                                        onChange={(e) =>
+                                          setEditingCategory({
+                                            ...editingCategory,
+                                            imageUrl: e.target.value,
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
+                            )}
+                            <div className="flex justify-end space-x-3 pt-4 border-t">
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  setIsEditModalOpen(false);
+                                  setEditErrors({});
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                className="bg-[#1F058F] hover:bg-[#1F058F]/90"
+                                onClick={() => {
+                                  // Add delete functionality here
+                                  // console.log("Delete category:", editingCategory?.id);
+                                  handleDeleteCategory(editingCategory?._id);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </Button>
+                              <Button
+                                className="bg-[#1F058F] hover:bg-[#1F058F]/90"
+                                onClick={handleUpdateCategory}
+                              >
+                                Update
+                              </Button>
                             </div>
+                          </DialogContent>
+                        </Dialog>
+                        <Button
+                          className="bg-[#1F058F]"
+                          size="icon"
+                          onClick={() => handleDeleteCategory(category._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </div>
 
-                            <div className="space-y-4">
-                              <div>
-                                <label className="block text-sm font-medium mb-2">Image URL</label>
-                                <Input
-                                  placeholder="Image URL"
-                                  value={editingCategory.imageUrl}
-                                  onChange={(e) => setEditingCategory({
-                                    ...editingCategory,
-                                    imageUrl: e.target.value
-                                  })}
-                                />
-                              </div>
+          {/* Mobile Card View */}
+          <div className="lg:hidden space-y-4">
+            {categories?.length > 0 &&
+              categories?.map((category) => {
+                const isExpanded = expandedCards.has(category._id);
+                return (
+                  <div
+                    key={category._id}
+                    className="bg-white rounded-lg border shadow-sm relative"
+                  >
+                    {/* Card Header */}
+                    <div className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3 flex-1">
+                          {category.imageUrl && (
+                            <div className="w-16 h-16 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                              <Image
+                                src={category.imageUrl}
+                                alt={category.name}
+                                width={64}
+                                height={64}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div
+                              className="font-medium text-base text-gray-900 cursor-pointer hover:text-[#1F058F]"
+                              onClick={() =>
+                                router.push(`/admin/categories/${category._id}`)
+                              }
+                            >
+                              {category.name}
+                            </div>
+                            <p className="text-sm text-gray-500 truncate mb-2">
+                              {category.slug}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs ${
+                                  category.status === "active"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {category.status}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  toggleCardExpansion(category._id)
+                                }
+                                className="p-1 h-8 w-8"
+                              >
+                                {isExpanded ? (
+                                  <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4" />
+                                )}
+                              </Button>
                             </div>
                           </div>
                         </div>
-                      )}
-                      <div className="flex justify-end space-x-3 pt-4 border-t">
-                        <Button
-                          variant="outline"
-                          onClick={() => { setIsEditModalOpen(false); setEditErrors({}); }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          className="bg-[#1F058F] hover:bg-[#1F058F]/90"
-                          onClick={() => {
-                            // Add delete functionality here
-                            // console.log("Delete category:", editingCategory?.id);
-                            handleDeleteCategory(editingCategory?._id)
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                        <Button
-                          className="bg-[#1F058F] hover:bg-[#1F058F]/90"
-                          onClick={handleUpdateCategory}
-                        >
-                          Update
-                        </Button>
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                  <Button
-                    className="bg-[#1F058F]"
-                    size="icon"
-                    onClick={() => handleDeleteCategory(category._id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                    </div>
+
+                    {/* Expanded Card Content */}
+                    {isExpanded && (
+                      <div className="px-4 pb-4 border-t bg-gray-50">
+                        <div className="pt-4 space-y-3">
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="font-medium text-gray-600">
+                                Created:
+                              </span>
+                              <p className="mt-1">
+                                {new Date(
+                                  category.createdAt
+                                ).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="font-medium text-gray-600">
+                                Description:
+                              </span>
+                              <p className="mt-1 text-gray-700">
+                                {category.description}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end pt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => toggleDropdown(category._id)}
+                              className="h-8"
+                            >
+                              <MoreHorizontal className="h-4 w-4 mr-1" />
+                              Actions
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Mobile Actions Dropdown - positioned outside card to avoid clipping */}
+                    {activeDropdown === category._id && (
+                      <div className="absolute top-full right-4 mt-1 w-40 bg-white rounded-md shadow-lg z-50 border">
+                        <div className="py-1">
+                          <button
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={() => {
+                              setEditingCategory(category);
+                              setIsEditModalOpen(true);
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            Edit Category
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleDeleteCategory(category._id);
+                              setActiveDropdown(null);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Delete Category
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        </>
       )}
     </div>
-  )
+  );
 }
