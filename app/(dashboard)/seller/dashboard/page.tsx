@@ -110,18 +110,31 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 md:p-6">
-      <div className="flex justify-between">
-        <div className="mb-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+        <div className="mb-6 md:mb-0">
           <h1 className="text-2xl font-semibold mb-1">Dashboard</h1>
           <p className="text-sm text-gray-500">
             Keep track and manage your products
           </p>
         </div>
-        <Link href="/seller/product/post-product">
-          <Button className="text-white bg-[#1F058F] hover:bg-gray-100 justify-start ">
-            Add product
-          </Button>
-        </Link>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Link
+            href="/seller/product/post-product"
+            className="w-full sm:w-auto"
+          >
+            <Button className="text-white text-center bg-[#1F058F] hover:bg-gray-100 w-full">
+              Add product
+            </Button>
+          </Link>
+          <Link href="/seller/products" className="w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F] hover:text-white w-full"
+            >
+              Manage products
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Metric Cards */}
