@@ -2,7 +2,13 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +25,9 @@ export default function ProductDashboard() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [promotingProductId, setPromotingProductId] = useState<string | null>(null);
+  const [promotingProductId, setPromotingProductId] = useState<string | null>(
+    null
+  );
   const [declineModalOpen, setDeclineModalOpen] = useState(false);
   const [declineMessage, setDeclineMessage] = useState<string | null>(null);
   const [declineProductId, setDeclineProductId] = useState<string | null>(null);
@@ -48,7 +56,10 @@ export default function ProductDashboard() {
       setTotalPages(payload?.totalPages || 1);
       setPage(payload?.currentPage || pageNo);
     } catch (err: any) {
-      const msg = typeof err === "string" ? err : err?.message || "Failed to fetch products";
+      const msg =
+        typeof err === "string"
+          ? err
+          : err?.message || "Failed to fetch products";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -56,10 +67,12 @@ export default function ProductDashboard() {
     }
   };
 
-
-  const handleDeclineMessageClick = async (reasonForDecline: string, productId: string) => {
+  const handleDeclineMessageClick = async (
+    reasonForDecline: string,
+    productId: string
+  ) => {
     setDeclineProductId(productId);
-    const message = reasonForDecline
+    const message = reasonForDecline;
     setDeclineMessage(message);
     setDeclineModalOpen(true);
   };
@@ -71,7 +84,9 @@ export default function ProductDashboard() {
 
   const filtered = useMemo(() => {
     if (activeFilter === "all") return products;
-    return products.filter((p) => String(p?.status || "").toLowerCase() === activeFilter);
+    return products.filter(
+      (p) => String(p?.status || "").toLowerCase() === activeFilter
+    );
   }, [products, activeFilter]);
 
   const statusColor = {
@@ -84,31 +99,49 @@ export default function ProductDashboard() {
     <div className="p-6 bg-white min-h-screen">
       {/* Header Tabs */}
       <h1 className="text-2xl font-bold mb-5 justify-start flex ">Product</h1>
-      <div className="flex justify-between items-center mb-4 w-full ">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className=" p-1 shadow-sm w-full  rounded-md">
+      <div className="hidden justify-between items-center mb-4 w-full ">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className=" p-1 shadow-sm w-full  rounded-md"
+        >
           <TabsList className="bg-white   flex justify-start ">
-            <TabsTrigger value="product" className=" data-[state=active]:border-[#1F058F] data-[state=active]:text-[#1F058F] ">Post</TabsTrigger>
+            <TabsTrigger
+              value="product"
+              className=" data-[state=active]:border-[#1F058F] data-[state=active]:text-[#1F058F] "
+            >
+              Post
+            </TabsTrigger>
             {/* <TabsTrigger value="feedback" className=" data-[state=active]:border-[#1F058F] data-[state=active]:text-[#1F058F] ">Feedback</TabsTrigger> */}
           </TabsList>
         </Tabs>
       </div>
 
-      {activeTab == 'product' && (
+      {activeTab == "product" && (
         <>
-          <div className="font-bold mb-2">Post</div>
-          <div className="flex flex-row items-center  mb-4 justify-between text-center">
-            <p className="text-sm text-muted-foreground flex">Keep track and manage your post</p>
-            <Button onClick={() => router.push('/seller/product/post-product')} className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-5 py-2 rounded-full text-[13px]">
+          {/* <div className="font-bold mb-2">Post</div> */}
+          <div className="flex flex-col gap-2 md:flex-row md:items-center mb-4 justify-between text-center">
+            <p className="text-sm text-muted-foreground flex">
+              Keep track and manage your post
+            </p>
+            <Button
+              onClick={() => router.push("/seller/product/post-product")}
+              className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-5 py-2 rounded-full text-[13px]"
+            >
               Add product
             </Button>
           </div>
 
           {/* Status Filters */}
-          <div className="flex gap-1 sm:gap-2 mb-6 border-[1.5px] border-[#1F058F] p-2 rounded-md">
+          <div className="flex gap-1 sm:gap-2 mb-6 border-[1.5px] border-[#1F058F] p-2 rounded-md overflow-x-auto">
             {["all", "live", "reviewing", "draft", "declined"].map((status) => (
               <Button
                 key={status}
-                className={`px-4 sm:px-5 rounded-md ${activeFilter === status ? "bg-[#1F058F] hover:bg-[#2f0a94dc]" : ' text-black shadow-none bg-transparent hover:bg-transparent hover:text-[#1F058F]'} `}
+                className={`px-3 sm:px-4 md:px-5 rounded-md whitespace-nowrap ${
+                  activeFilter === status
+                    ? "bg-[#1F058F] hover:bg-[#2f0a94dc]"
+                    : " text-black shadow-none bg-transparent hover:bg-transparent hover:text-[#1F058F]"
+                } `}
                 onClick={() => setActiveFilter(status)}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -118,32 +151,53 @@ export default function ProductDashboard() {
 
           {/* Body: loading, empty, list */}
           {loading ? (
-            <div className="flex flex-col h-64 items-center justify-center text-sm text-muted-foreground">Loading products...</div>
+            <div className="flex flex-col h-64 items-center justify-center text-sm text-muted-foreground">
+              Loading products...
+            </div>
           ) : error ? (
-            <div className="flex flex-col h-64 items-center justify-center text-sm text-red-600">{error}</div>
+            <div className="flex flex-col h-64 items-center justify-center text-sm text-red-600">
+              {error}
+            </div>
           ) : products.length === 0 ? (
             <div className="pt-3 flex flex-col w-full h-full">
-              <div className=" flex flex-col h-full  justify-center items-center">
+              <div className="flex flex-col h-full justify-center text-center items-center">
                 <div className="mb-4 flex justify-center">
-                  <Image src={'/feed.svg'} width={80} height={80} alt="box" />
+                  <Image src={"/feed.svg"} width={80} height={80} alt="box" />
                 </div>
                 <h2 className="text-xl font-semibold mb-2">No products yet</h2>
-                <p className="text-gray-500 mb-8">You currently have no products to display</p>
-                <Button onClick={() => router.push('/seller/product/post-product')} className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full">Add product</Button>
+                <p className="text-gray-500 mb-8">
+                  You currently have no products to display
+                </p>
+                <Button
+                  onClick={() => router.push("/seller/product/post-product")}
+                  className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full"
+                >
+                  Add product
+                </Button>
               </div>
             </div>
           ) : (
             <div className="space-y-4 gap-3 flex flex-col w-full h-full">
               {filtered.map((product: any) => {
                 const primaryImg = Array.isArray(product?.images)
-                  ? (product.images.find((img: any) => img?.isPrimary)?.url || product.images[0]?.url)
+                  ? product.images.find((img: any) => img?.isPrimary)?.url ||
+                    product.images[0]?.url
                   : undefined;
-                  // console.log("stattus", product)
-                const status = String(product?.status || '').toLowerCase() as keyof typeof statusColor;
+                // console.log("stattus", product)
+                const status = String(
+                  product?.status || ""
+                ).toLowerCase() as keyof typeof statusColor;
                 return (
-                  <div key={product?._id} className="flex max-md:flex-col flex-row bg-white rounded-xl shadow p-4 gap-5 md:gap-7  md:items-center  overflow-hidden">
+                  <div
+                    key={product?._id}
+                    className="flex max-md:flex-col flex-row bg-white rounded-xl shadow p-4 gap-5 md:gap-7  md:items-center  overflow-hidden"
+                  >
                     <button
-                      onClick={() => router.push(`/seller/product/product_details/${product?._id}`)}
+                      onClick={() =>
+                        router.push(
+                          `/seller/product/product_details/${product?._id}`
+                        )
+                      }
                       className="relative h-[200px] md:w-[400px] flex-shrink-0 rounded text-left"
                     >
                       <Image
@@ -156,40 +210,93 @@ export default function ProductDashboard() {
                     <div className="flex flex-col gap-3 w-full h-[100%] justify-start  align-middle">
                       <div className="flex flex-col gap-2 justify-start ">
                         <div className="flex flex-col ">
-                          <h3 className="flex font-semibold text-base">{product?.name}</h3>
-                          <p className="flex text-sm text-gray-500 mt-1 line-clamp-2">{product?.description}</p>
+                          <h3 className="flex font-semibold text-base">
+                            {product?.name}
+                          </h3>
+                          <p className="flex text-sm text-gray-500 mt-1 line-clamp-2">
+                            {product?.description}
+                          </p>
                         </div>
-                        <div className={`flex justify-start px-4 w-fit  py-1 text-xs font-medium rounded-full  ${statusColor[status] || ''}`}>
-                          {String(product?.status || '').charAt(0).toUpperCase() + String(product?.status || '').slice(1)}
+                        <div
+                          className={`flex justify-start px-4 w-fit  py-1 text-xs font-medium rounded-full  ${
+                            statusColor[status] || ""
+                          }`}
+                        >
+                          {String(product?.status || "")
+                            .charAt(0)
+                            .toUpperCase() +
+                            String(product?.status || "").slice(1)}
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex gap-1">
-                          <Button className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]" onClick={() => router.push(`/seller/product/edit/${product?._id}`)}>
+                          <Button
+                            className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]"
+                            onClick={() =>
+                              router.push(
+                                `/seller/product/edit/${product?._id}`
+                              )
+                            }
+                          >
                             <div className="flex">
-                              <Image src={'/edit.svg'} width={15} height={15} alt='svg' />
+                              <Image
+                                src={"/edit.svg"}
+                                width={15}
+                                height={15}
+                                alt="svg"
+                              />
                             </div>
-                            <div className="text-[#525252] hover:text-[#1F058F] text-sm underline">Edit</div>
+                            <div className="text-[#525252] hover:text-[#1F058F] text-sm underline">
+                              Edit
+                            </div>
                           </Button>
-                          <Button className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]" onClick={() => { setDeletingId(product?._id); setIsModalOpen(true); }}>
+                          <Button
+                            className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]"
+                            onClick={() => {
+                              setDeletingId(product?._id);
+                              setIsModalOpen(true);
+                            }}
+                          >
                             <div className="flex hover:text-[#1F058F]">
-                              <Image src={'/del.svg'} width={15} height={15} alt='svg' />
+                              <Image
+                                src={"/del.svg"}
+                                width={15}
+                                height={15}
+                                alt="svg"
+                              />
                             </div>
-                            <div className="text-[#525252] text-sm underline hover:text-[#1F058F] ">Delete</div>
+                            <div className="text-[#525252] text-sm underline hover:text-[#1F058F] ">
+                              Delete
+                            </div>
                           </Button>
-                          {status === 'declined' && (
-                            <Button className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]" onClick={() => handleDeclineMessageClick(product?.reasonForDecline, product?._id)}>
+                          {status === "declined" && (
+                            <Button
+                              className="flex p-1 gap-1 items-center align-middle bg-transparent shadow-none hover:bg-transparent hover:text-[#1F058F]"
+                              onClick={() =>
+                                handleDeclineMessageClick(
+                                  product?.reasonForDecline,
+                                  product?._id
+                                )
+                              }
+                            >
                               <div className="flex">
-                                <Image src={'/post.svg'} width={15} height={15} alt='info' />
+                                <Image
+                                  src={"/post.svg"}
+                                  width={15}
+                                  height={15}
+                                  alt="info"
+                                />
                               </div>
-                              <div className="text-[#525252] hover:text-[#1F058F] text-sm underline">Decline Message</div>
+                              <div className="text-[#525252] hover:text-[#1F058F] text-sm underline">
+                                Decline Message
+                              </div>
                             </Button>
                           )}
                         </div>
-                        <Button 
+                        <Button
                           className="text-[#1F058F] border border-[#1F058F] hover:bg-[#2e0a94] bg-transparent hover:text-white px-1 lg:px-4 py-1 rounded-full text-[12px]"
                           onClick={() => setPromotingProductId(product?._id)}
-                          disabled={product?.status != 'live'}
+                          disabled={product?.status != "live"}
                         >
                           Promote
                         </Button>
@@ -209,15 +316,29 @@ export default function ProductDashboard() {
                 {(page - 1) * limit + filtered.length} of {totalProducts}
               </p>
               <div className="flex gap-2 w-fit">
-                <Button variant="outline" className="max-sm:text-[10px] px-2 py-1" disabled={page <= 1} onClick={() => fetchProducts(page - 1)}>
+                <Button
+                  variant="outline"
+                  className="max-sm:text-[10px] px-2 py-1"
+                  disabled={page <= 1}
+                  onClick={() => fetchProducts(page - 1)}
+                >
                   Previous
                 </Button>
                 {Array.from({ length: totalPages }).map((_, idx) => (
-                  <Button key={idx} variant={page === idx + 1 ? undefined : "outline"} onClick={() => fetchProducts(idx + 1)}>
+                  <Button
+                    key={idx}
+                    variant={page === idx + 1 ? undefined : "outline"}
+                    onClick={() => fetchProducts(idx + 1)}
+                  >
                     {idx + 1}
                   </Button>
                 ))}
-                <Button variant="outline" className="max-sm:text-[10px] px-2 py-1" disabled={page >= totalPages} onClick={() => fetchProducts(page + 1)}>
+                <Button
+                  variant="outline"
+                  className="max-sm:text-[10px] px-2 py-1"
+                  disabled={page >= totalPages}
+                  onClick={() => fetchProducts(page + 1)}
+                >
                   Next
                 </Button>
               </div>
@@ -230,7 +351,7 @@ export default function ProductDashboard() {
       <PromoteProductModal
         isOpen={!!promotingProductId}
         onClose={() => setPromotingProductId(null)}
-        productId={promotingProductId || ''}
+        productId={promotingProductId || ""}
       />
 
       {/* Decline Message Modal */}
@@ -245,7 +366,7 @@ export default function ProductDashboard() {
           <div className="flex flex-col gap-4">
             <div className="p-4 bg-red-50 border border-red-200 rounded-md">
               <p className="text-sm text-red-800">
-                {declineMessage || 'Loading decline message...'}
+                {declineMessage || "Loading decline message..."}
               </p>
             </div>
             <div className="flex justify-end">
@@ -260,33 +381,37 @@ export default function ProductDashboard() {
         </DialogContent>
       </Dialog>
 
-      {activeTab == 'feedback' && (
+      {activeTab == "feedback" && (
         <>
           <div className="pt-3 flex flex-col w-full  h-full">
             <div className=" w-full mx-auto">
-              <h1 className="text-md font-bold mb-1 justify-start flex ">Feedback</h1>
+              <h1 className="text-md font-bold mb-1 justify-start flex ">
+                Feedback
+              </h1>
               <p className="text-gray-600 mb-12">Manage your post feedback</p>
               <div className=" flex flex-col h-full  justify-center items-center">
                 <div className="mb-4 flex justify-center">
-                  <Image
-                    src={'/feed.svg'}
-                    width={80}
-                    height={80}
-                    alt="box"
-                  />
+                  <Image src={"/feed.svg"} width={80} height={80} alt="box" />
                 </div>
 
                 <h2 className="text-xl font-semibold mb-2">No feedback</h2>
-                <p className="text-gray-500 mb-8">You currently have no post feedback to display</p>
+                <p className="text-gray-500 mb-8">
+                  You currently have no post feedback to display
+                </p>
 
-                <Link href={'/seller/product/1'}>
-                  <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full">Post product</Button>
+                <Link href={"/seller/product/1"}>
+                  <Button className="bg-[#1F058F] hover:bg-[#2e0a94] text-white px-8 py-2 rounded-full">
+                    Post product
+                  </Button>
                 </Link>
                 <div className="mt-16 text-center text-gray-600 text-sm">
                   <p>For further assistance reach out via our 24/7</p>
                   <p>
                     via email at{" "}
-                    <a href="mailto:support@crownlist.com" className="text-[#1F058F]">
+                    <a
+                      href="mailto:support@crownlist.com"
+                      className="text-[#1F058F]"
+                    >
                       support@crownlist.com
                     </a>
                   </p>
@@ -309,7 +434,12 @@ export default function ProductDashboard() {
             setDeletingId(null);
             fetchProducts(page);
           } catch (err: any) {
-            toast.error(typeof err === "string" ? err : err?.message || "Failed to delete product", { id: "del" });
+            toast.error(
+              typeof err === "string"
+                ? err
+                : err?.message || "Failed to delete product",
+              { id: "del" }
+            );
           }
         }}
       />
