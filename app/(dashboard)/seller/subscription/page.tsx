@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Layers, Zap } from "lucide-react";
 import { apiClientPublic, apiClientUser } from "@/lib/interceptor";
 import { useGetSubscription } from "@/lib/useGetSubscription";
+import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
@@ -63,6 +64,25 @@ export default function SellerSubscriptionPage() {
 
   // Get current subscription data
   const { subscriptionData } = useGetSubscription();
+
+  // Get categories data for mapping subcategory IDs to names
+  const { categories } = useCategories();
+
+  // Helper function to get subcategory name by ID
+  const getSubcategoryName = useCallback(
+    (subcategoryId: string): string => {
+      for (const category of categories) {
+        const subcategory = category.subCategories?.find(
+          (sub) => sub._id === subcategoryId
+        );
+        if (subcategory) {
+          return subcategory.name;
+        }
+      }
+      return "Unknown Category";
+    },
+    [categories]
+  );
 
   // Fetch subscription plans on component mount
   useEffect(() => {
@@ -157,7 +177,7 @@ export default function SellerSubscriptionPage() {
       {/* Current Subscription Summary */}
       {subscriptionData?.data?.subscription && (
         <div className="mb-8 bg-linear-to-r from-[#1F058F] to-[#2a0bc0] rounded-lg p-6 text-white">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Plan Name */}
             <div>
               <p className="text-sm opacity-90 mb-1">
@@ -204,6 +224,46 @@ export default function SellerSubscriptionPage() {
               )}
             </div>
           </div>
+
+          {/* Listing Benefits - Only show if subscription is active */}
+          {subscriptionData.data.subscription.status === "active" &&
+            subscriptionData.data.subscription.subscriptionPlanId
+              ?.listingLimit &&
+            subscriptionData.data.subscription.subscriptionPlanId.listingLimit
+              .length > 0 && (
+              <div className="border-t border-white/20 pt-6">
+                <h4 className="text-lg font-semibold mb-4">
+                  Current Listing Benefits
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {subscriptionData.data.subscription.subscriptionPlanId.listingLimit.map(
+                    (limit, index) => (
+                      <div
+                        key={limit._id || index}
+                        className="bg-white/10 rounded-lg p-4"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm opacity-90">Category Limit</p>
+                            <p className="text-lg font-semibold">
+                              {typeof limit.subCategory === "string"
+                                ? getSubcategoryName(limit.subCategory)
+                                : getSubcategoryName(
+                                    (limit.subCategory as any)?._id
+                                  ) || "Unknown Category"}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold">{limit.limit}</p>
+                            <p className="text-xs opacity-75">listings</p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
         </div>
       )}
 
@@ -329,8 +389,10 @@ export default function SellerSubscriptionPage() {
                             : item.subCategory?._id;
                         const subName =
                           typeof item.subCategory === "string"
-                            ? item.subCategory
-                            : item.subCategory?.name || subId;
+                            ? getSubcategoryName(item.subCategory)
+                            : getSubcategoryName(
+                                (item.subCategory as any)?._id
+                              ) || "Unknown Category";
                         return (
                           <li
                             key={`${subId}-${i}`}

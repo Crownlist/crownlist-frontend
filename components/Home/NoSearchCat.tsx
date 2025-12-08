@@ -1,33 +1,42 @@
 /* eslint-disable */
-import {useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import Link from "next/link";
 import { ChevronRight, Upload, Heart } from "lucide-react";
-import { useCategories } from "@/hooks/useCategories"
-import { Category, Subcategory } from "@/types/category/category"
+import { useCategories } from "@/hooks/useCategories";
+import { Category, Subcategory } from "@/types/category/category";
 
 const NoSearchCat = ({ cat, subcat }: any) => {
-
-const { categories } = useCategories()
+  const { categories } = useCategories();
 
   // Find the current category based on the cat prop
-  const currentCategory = categories.find(category => category.slug === cat || category.name.toLowerCase() === cat?.toLowerCase())
+  const currentCategory = categories.find(
+    (category) =>
+      category.slug === cat ||
+      category.name.toLowerCase() === cat?.toLowerCase()
+  );
 
-
- const generateCategoryUrl = (category: Category, subcategory?: Subcategory) => {
+  const generateCategoryUrl = (
+    category: Category,
+    subcategory?: Subcategory
+  ) => {
     if (subcategory) {
-      return `/category/${category.slug}?subcategory=${subcategory.name.toLowerCase().replace(/\s+/g, '-')}`
+      return `/category/${category.slug}?subcategory=${subcategory.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")}`;
     }
-    return `/category/${category.slug}`
-  }
-
-
-
-
+    return `/category/${category.slug}`;
+  };
 
   const similarProducts = [
     {
@@ -87,8 +96,8 @@ const { categories } = useCategories()
             <span className="text-gray-700">{cat}</span>
           </div>
           <div className="flex flex-row gap-0">
-            <p className="font-semibold">Search results -  {subcat} </p>
-            <p className="font-light">({subcat > 0 ? subcat : 0 } results found)</p>
+            <p className="font-semibold">Search results - {subcat || cat} </p>
+            <p className="font-light">(0 results found)</p>
           </div>
         </div>
         {/* {subcat > 0 ? subcat : 0 } */}
@@ -114,13 +123,14 @@ const { categories } = useCategories()
                 />
               </div>
               <h2 className="text-xl font-medium mb-2">
-                {subcat = subcat.length > 0 ? `Results found for ${subcat}` : `No search results for &ldquo; ${subcat}&ldquo;` }
-                                
+                {subcat && subcat.length > 0
+                  ? `Results found for ${subcat}`
+                  : `No search results for "${cat}"`}
               </h2>
               <div className="text-gray-500 max-w-md space-y-2">
-                {currentCategory?.subCategories && currentCategory.subCategories.length > 0 ? (
+                {currentCategory?.subCategories &&
+                currentCategory.subCategories.length > 0 ? (
                   <div className="space-y-2">
-                    
                     {/* <div>
                       {currentCategory.subCategories.map((subcategory) => (
                         <div key={subcategory._id} className="">
@@ -143,8 +153,7 @@ const { categories } = useCategories()
                         </div>
                       ))}
                     </div> */}
-                    </div>
-                 
+                  </div>
                 ) : (
                   <>
                     <p>Ensure all words are spelled correctly</p>
@@ -170,7 +179,7 @@ const { categories } = useCategories()
                   <form className="flex flex-col gap-2 ">
                     <div>
                       <label className="block mb-1 text-sm">Full name</label>
-                       <Input
+                      <Input
                         className="w-full"
                         pattern="[A-Za-z\s]+"
                         title="Only letters and spaces are allowed"
@@ -203,7 +212,8 @@ const { categories } = useCategories()
                         onChange={(e) => {
                           // Remove any non-numeric characters from input
                           e.target.value = e.target.value.replace(
-                            /[^0-9]/g,""
+                            /[^0-9]/g,
+                            ""
                           );
                         }}
                       />
@@ -217,13 +227,21 @@ const { categories } = useCategories()
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="phones-tablets">Phones & Tablets</SelectItem>
+                          <SelectItem value="phones-tablets">
+                            Phones & Tablets
+                          </SelectItem>
                           <SelectItem value="land">Land</SelectItem>
                           <SelectItem value="property">Property</SelectItem>
-                          <SelectItem value="electronics">Electronics</SelectItem>
-                          <SelectItem value="home-appliances">Home Appliances</SelectItem>
+                          <SelectItem value="electronics">
+                            Electronics
+                          </SelectItem>
+                          <SelectItem value="home-appliances">
+                            Home Appliances
+                          </SelectItem>
                           <SelectItem value="automotive">Automotive</SelectItem>
-                          <SelectItem value="fashion">Fashion & Accessories</SelectItem>
+                          <SelectItem value="fashion">
+                            Fashion & Accessories
+                          </SelectItem>
                           <SelectItem value="services">Services</SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
