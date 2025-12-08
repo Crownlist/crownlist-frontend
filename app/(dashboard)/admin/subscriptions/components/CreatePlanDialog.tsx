@@ -25,8 +25,7 @@ export const CreatePlanDialog = ({
   isOpen,
   onOpenChange,
 }: CreatePlanDialogProps) => {
-  const { createPlan, validateForm } = useSubscriptionPlans();
-  const [isCreating, setIsCreating] = useState(false);
+  const { createPlan, validateForm, isCreating } = useSubscriptionPlans();
   const {
     categories,
     subcategoriesByCat,
@@ -130,35 +129,36 @@ export const CreatePlanDialog = ({
       toast.error("Please fix the highlighted fields");
       return;
     }
-    try {
-      setIsCreating(true);
-      setApiError(""); // Clear any previous errors
-      await createPlan(formData, featuresInput);
-      // reset
-      setFormData({
-        name: "",
-        description: "",
-        features: [],
-        listingLimit: [],
-        amount: "",
-        billing_cycle: "monthly",
-        status: "active",
-      });
-      setFeaturesInput("");
-      setSelectedCatForLimit("");
-      setSelectedSubForLimit("");
-      setLimitValue("");
-      onOpenChange(false);
-    } catch (error: unknown) {
-      // Handle API errors
-      const errorMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.message ||
-        "An error occurred while creating the plan";
-      setApiError(errorMessage);
-    } finally {
-      setIsCreating(false);
-    }
+    setApiError(""); // Clear any previous errors
+    createPlan(
+      { formData, featuresInput },
+      {
+        onSuccess: () => {
+          // reset
+          setFormData({
+            name: "",
+            description: "",
+            features: [],
+            listingLimit: [],
+            amount: "",
+            billing_cycle: "monthly",
+            status: "active",
+          });
+          setFeaturesInput("");
+          setSelectedCatForLimit("");
+          setSelectedSubForLimit("");
+          setLimitValue("");
+          onOpenChange(false);
+        },
+        onError: (error: any) => {
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            "An error occurred while creating the plan";
+          setApiError(errorMessage);
+        },
+      }
+    );
   };
 
   const handleOpenChange = (open: boolean) => {

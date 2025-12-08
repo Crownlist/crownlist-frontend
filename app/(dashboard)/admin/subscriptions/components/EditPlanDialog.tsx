@@ -25,8 +25,7 @@ export const EditPlanDialog = ({
   onOpenChange,
   plan,
 }: EditPlanDialogProps) => {
-  const { updatePlan, validateForm } = useSubscriptionPlans();
-  const [isUpdating, setIsUpdating] = useState(false);
+  const { updatePlan, validateForm, isUpdating } = useSubscriptionPlans();
   const {
     categories,
     subcategoriesByCat,
@@ -149,21 +148,22 @@ export const EditPlanDialog = ({
       return;
     }
 
-    try {
-      setIsUpdating(true);
-      setApiError(""); // Clear any previous errors
-      await updatePlan(plan._id, formData, featuresInput);
-      onOpenChange(false);
-    } catch (error: unknown) {
-      // Handle API errors
-      const errorMessage =
-        (error as any)?.response?.data?.message ||
-        (error as any)?.message ||
-        "An error occurred while updating the plan";
-      setApiError(errorMessage);
-    } finally {
-      setIsUpdating(false);
-    }
+    setApiError(""); // Clear any previous errors
+    updatePlan(
+      { planId: plan._id, formData, featuresInput },
+      {
+        onSuccess: () => {
+          onOpenChange(false);
+        },
+        onError: (error: any) => {
+          const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            "An error occurred while updating the plan";
+          setApiError(errorMessage);
+        },
+      }
+    );
   };
 
   const handleOpenChange = (open: boolean) => {

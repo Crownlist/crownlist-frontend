@@ -20,17 +20,16 @@ export const DeletePlanDialog = ({
   onOpenChange,
   plan,
 }: DeletePlanDialogProps) => {
-  const { deletePlan, loading } = useSubscriptionPlans();
+  const { deletePlan, isDeleting } = useSubscriptionPlans();
 
   const handleDelete = async () => {
     if (!plan?._id) return;
 
-    try {
-      await deletePlan(plan._id);
-      onOpenChange(false);
-    } catch {
-      // Error is handled in the hook
-    }
+    deletePlan(plan._id, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+    });
   };
 
   return (
@@ -53,9 +52,9 @@ export const DeletePlanDialog = ({
             variant="destructive"
             className="text-white"
             onClick={handleDelete}
-            disabled={loading}
+            disabled={isDeleting}
           >
-            {loading ? "Deleting..." : "Delete Plan"}
+            {isDeleting ? "Deleting..." : "Delete Plan"}
           </Button>
         </DialogFooter>
       </DialogContent>
