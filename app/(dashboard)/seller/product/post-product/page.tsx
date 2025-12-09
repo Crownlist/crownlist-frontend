@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { apiClientUser } from "@/lib/interceptor";
 import { useGetSubscription } from "@/lib/useGetSubscription";
 import { toast } from "sonner";
@@ -15,6 +14,7 @@ import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { CategorySelectionStep } from "./components/CategorySelectionStep";
 import { ProductDetailsStep } from "./components/ProductDetailsStep";
 import { ProductFormStepper } from "./components/ProductFormStepper";
+import { FacilitiesStep } from "./components/FacilitiesStep";
 import { useCategories } from "./hooks/useCategories";
 import { useImageUpload } from "./hooks/useImageUpload";
 import { useFacilities } from "./hooks/useFacilities";
@@ -68,6 +68,27 @@ export default function ProductPostFlow() {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
     null
   );
+
+  // Facilities state for object-type field options
+  const [objectFieldOptions, setObjectFieldOptions] = useState<
+    Record<string, string[]>
+  >({});
+  const [loadingObjectFields, setLoadingObjectFields] = useState<
+    Record<string, boolean>
+  >({});
+
+  // Facility interface
+  interface Facility {
+    _id?: string;
+    label: string;
+    description: string;
+    mandatory: boolean;
+    filterable: boolean;
+    isActive: boolean;
+    dataType: "string" | "number" | "boolean" | "array" | "object";
+    selectType?: "single" | "multiple";
+    value?: string;
+  }
 
   // Use custom hooks
   const { subscriptionData, isLoading: isLoadingSubscription } =
@@ -170,6 +191,51 @@ export default function ProductPostFlow() {
     setStep((s) => (s < 2 ? 2 : s));
   }, [categories, subcategories, editProduct, editId]);
 
+  // Fetch options for object-type facilities
+  useEffect(() => {
+    const currentSub = subcategories.find(
+      (sub) => sub._id === selectedSubcategory
+    );
+    if (!currentSub) return;
+
+    const objectFacilities = currentSub.facilities.filter(
+      (f) => f.dataType === "object" && f.value
+    );
+
+    objectFacilities.forEach(async (facility) => {
+      const facilityKey = getFacilityKey(facility);
+      if (objectFieldOptions[facilityKey]) return;
+
+      try {
+        setLoadingObjectFields((prev) => ({
+          ...prev,
+          [facilityKey]: true,
+        }));
+        const endpoint = facility.value as string;
+        const res = await apiClientUser.get(endpoint);
+        const data = res?.data?.data || res?.data;
+        const options = Array.isArray(data?.value) ? data.value : [];
+        setObjectFieldOptions((prev) => ({
+          ...prev,
+          [facilityKey]: options,
+        }));
+      } catch (e: any) {
+        console.error(`Failed to load options for ${facility.label}:`, e);
+        toast.error(`Failed to load options for ${facility.label}`);
+      } finally {
+        setLoadingObjectFields((prev) => ({
+          ...prev,
+          [facilityKey]: false,
+        }));
+      }
+    });
+  }, [selectedSubcategory, subcategories]);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   const handleModal = () => {
     setSubmitConfirm(true);
   };
@@ -196,6 +262,43 @@ export default function ProductPostFlow() {
 
   const removeFeature = (feature: string) => {
     setSelectedFeatures((prev) => prev.filter((f) => f !== feature));
+  };
+
+  // =============================
+  // Facility Array Helpers
+  // =============================
+  const getArrayOptions = (facility: Facility): string[] => {
+    const raw = facility.value as any;
+    if (raw == null) return [];
+    // Try JSON array first
+    try {
+      const parsed = JSON.parse(String(raw));
+      if (Array.isArray(parsed))
+        return parsed.map((x) => String(x)).filter(Boolean);
+    } catch {}
+    // Fallback: comma-separated string
+    return String(raw)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  };
+
+  const getFacilityArrayValue = (facilityId: string): string[] => {
+    const v = facilityValues[facilityId];
+    return Array.isArray(v) ? (v as string[]) : [];
+  };
+
+  const toggleMultiOption = (
+    facilityId: string,
+    option: string,
+    checked: boolean
+  ) => {
+    handleFacilityChange(
+      facilityId,
+      checked
+        ? [...getFacilityArrayValue(facilityId), option]
+        : getFacilityArrayValue(facilityId).filter((x) => x !== option)
+    );
   };
 
   const handleContinue = () => {
@@ -462,42 +565,19 @@ export default function ProductPostFlow() {
 
       case 3:
         return (
-          <div className="flex flex-col-reverse md:flex-row gap-10 flex-1">
-            <div className="order-2 md:order-1 flex w-full flex-col gap-10">
-              <div>
-                {/* Breadcrumb Navigation */}
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-                  <Link
-                    href="/seller/product"
-                    className="hover:text-[#1F058F] transition-colors"
-                  >
-                    Products
-                  </Link>
-                  <ArrowRight className="w-3 h-3" />
-                  <span className="text-[#1F058F] font-medium">
-                    Other details
-                  </span>
-                </div>
-
-                <div className="flex-1">
-                  <h1 className="text-2xl font-semibold">Other details</h1>
-                  <p className="text-gray-500">Enter other details below</p>
-                </div>
-
-                {/* Facilities content would go here - simplified for now */}
-                <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-gray-600">
-                    Facilities configuration would be implemented here.
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2">
-                    This step handles dynamic facility fields based on the
-                    selected subcategory.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <ProductFormStepper currentStep={step} />
-          </div>
+          <FacilitiesStep
+            subcategories={subcategories}
+            selectedSubcategory={selectedSubcategory}
+            facilityValues={facilityValues}
+            objectFieldOptions={objectFieldOptions}
+            loadingObjectFields={loadingObjectFields}
+            handleFacilityChange={handleFacilityChange}
+            getFacilityKey={getFacilityKey}
+            getArrayOptions={getArrayOptions}
+            getFacilityArrayValue={getFacilityArrayValue}
+            toggleMultiOption={toggleMultiOption}
+            currentStep={step}
+          />
         );
 
       case 5:

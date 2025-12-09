@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import ReactSelect from "react-select";
@@ -11,6 +12,7 @@ import {
   Category,
 } from "../types";
 import { formatNumberInput, parseFormattedNumber } from "../utils/helpers";
+import { nigeriaCities } from "../../../../../../constants/nigeriaCities";
 
 interface ProductDetailsStepProps {
   // Form data
@@ -94,11 +96,9 @@ export const ProductDetailsStep = ({
   limitsCheckResult,
   checkingLimits,
 }: ProductDetailsStepProps) => {
-  const countryOptions = ["Nigeria", "Ghana", "USA"];
+  const countryOptions = ["Nigeria"];
   const cityOptionsMap: Record<string, string[]> = {
-    Nigeria: ["Lagos", "Abuja", "Port Harcourt"],
-    Ghana: ["Accra", "Kumasi", "Tamale"],
-    USA: ["New York", "San Francisco", "Cupertino"],
+    Nigeria: nigeriaCities,
   };
 
   return (

@@ -1,24 +1,27 @@
 /* eslint-disable */
 
-"use client"
+"use client";
 
-
-import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
-import { Eye, EyeOff, Upload, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "sonner"
-import { useGetAuthUser } from "@/lib/useGetAuthUser"
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { Eye, EyeOff, Upload, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
 export default function AdminProfileSettingsPage() {
   // Profile form state
 
-  const {  data } = useGetAuthUser("Admin");
+  const { data } = useGetAuthUser("Admin");
 
- 
-  
   const [profileData, setProfileData] = useState({
     firstname: "Jimoh Adesina",
     email: "Sample@gmail.com",
@@ -26,117 +29,115 @@ export default function AdminProfileSettingsPage() {
     country: "",
     state: "",
     address: "",
-    lastname:''
-  })
+    lastname: "",
+  });
 
   // Password form state
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
-    confirmPassword: ""
-  })
-  const [showOldPassword, setShowOldPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    confirmPassword: "",
+  });
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Loading states
-  const [isProfileLoading, setIsProfileLoading] = useState(false)
-  const [isPasswordLoading, setIsPasswordLoading] = useState(false)
-  const [isImageUploading, setIsImageUploading] = useState(false)
-
-
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   useEffect(() => {
-    if(data){
-      const user : any = data?.data?.data?.loggedInAccount
-      setProfileData(user)
+    if (data) {
+      const user: any = data?.data?.data?.loggedInAccount;
+      setProfileData(user);
     }
-  }, [data])
-  
+  }, [data]);
+
   // Image upload ref
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Handle profile form changes
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setProfileData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setProfileData((prev) => ({ ...prev, [name]: value }));
+  };
 
   // Handle password form changes
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setPasswordData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
+  };
 
   // Handle profile form submission
   const handleProfileSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsProfileLoading(true)
-    
+    e.preventDefault();
+    setIsProfileLoading(true);
+
     try {
       // TODO: Implement profile update API call
       // await apiClientUser.put("/admin/profile", profileData)
-      toast.success("Profile updated successfully")
+      toast.success("Profile updated successfully");
     } catch (error) {
-      toast.error(`Failed to update profile, ${error}`)
+      toast.error(`Failed to update profile, ${error}`);
     } finally {
-      setIsProfileLoading(false)
+      setIsProfileLoading(false);
     }
-  }
+  };
 
   // Handle password form submission
   const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error("Passwords don't match")
-      return
+      toast.error("Passwords don't match");
+      return;
     }
 
-    setIsPasswordLoading(true)
-    
+    setIsPasswordLoading(true);
+
     try {
       // TODO: Implement password change API call
       // await apiClientUser.put("/admin/change-password", {
       //   oldPassword: passwordData.oldPassword,
       //   newPassword: passwordData.newPassword
       // })
-      toast.success("Password changed successfully")
+      toast.success("Password changed successfully");
       setPasswordData({
         oldPassword: "",
         newPassword: "",
-        confirmPassword: ""
-      })
+        confirmPassword: "",
+      });
     } catch (error) {
-      toast.error(`Failed to change password, ${error}`)
+      toast.error(`Failed to change password, ${error}`);
     } finally {
-      setIsPasswordLoading(false)
+      setIsPasswordLoading(false);
     }
-  }
+  };
 
   // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    setIsImageUploading(true)
-    
+    setIsImageUploading(true);
+
     try {
       // TODO: Implement image upload to CDN
       // const imageUrl = await uploadToCdn(file)
       // await apiClientUser.patch("/admin/profile-image", { imageUrl })
-      toast.success("Profile image updated successfully")
+      toast.success("Profile image updated successfully");
     } catch (error) {
-      toast.error(`Failed to upload image, ${error}`)
+      toast.error(`Failed to upload image, ${error}`);
     } finally {
-      setIsImageUploading(false)
+      setIsImageUploading(false);
     }
-  }
+  };
 
   // Trigger file input click
   const triggerFileInput = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   return (
     <div className="p-4 md:p-6">
@@ -156,7 +157,10 @@ export default function AdminProfileSettingsPage() {
         >
           Notification
         </Link>
-        <Link href="/admin/settings/team" className="px-6 py-2 rounded-full text-gray-700 font-medium hover:bg-gray-50">
+        <Link
+          href="/admin/settings/team"
+          className="px-6 py-2 rounded-full text-gray-700 font-medium hover:bg-gray-50"
+        >
           Team
         </Link>
       </div>
@@ -180,9 +184,9 @@ export default function AdminProfileSettingsPage() {
                 accept="image/*"
                 className="hidden"
               />
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="flex items-center gap-2"
                 type="button"
                 onClick={triggerFileInput}
@@ -200,59 +204,70 @@ export default function AdminProfileSettingsPage() {
             {/* Form Fields */}
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full name</label>
-                <Input 
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full name
+                </label>
+                <Input
                   name="fullName"
                   value={`${profileData.firstname} ${profileData.lastname}`}
                   onChange={handleProfileChange}
-                  className="w-full" 
+                  className="w-full"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <Input 
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <Input
                   name="email"
                   value={profileData.email}
                   disabled
-                  className="w-full" 
+                  className="w-full"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
-                <Input 
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone number
+                </label>
+                <Input
                   name="phoneNumber"
                   value={profileData.phoneNumber}
                   onChange={handleProfileChange}
-                  className="w-full" 
+                  className="w-full"
                   type="tel"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Country
+                </label>
                 <Select
                   value={profileData.country}
-                  onValueChange={(value) => setProfileData(prev => ({ ...prev, country: value }))}
+                  onValueChange={(value) =>
+                    setProfileData((prev) => ({ ...prev, country: value }))
+                  }
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="nigeria">Nigeria</SelectItem>
-                    <SelectItem value="ghana">Ghana</SelectItem>
-                    <SelectItem value="kenya">Kenya</SelectItem>
-                    <SelectItem value="southafrica">South Africa</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  State
+                </label>
                 <Select
                   value={profileData.state}
-                  onValueChange={(value) => setProfileData(prev => ({ ...prev, state: value }))}
+                  onValueChange={(value) =>
+                    setProfileData((prev) => ({ ...prev, state: value }))
+                  }
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select state" />
@@ -267,12 +282,14 @@ export default function AdminProfileSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                <Input 
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address
+                </label>
+                <Input
                   name="address"
                   value={profileData.address}
                   onChange={handleProfileChange}
-                  className="w-full" 
+                  className="w-full"
                 />
               </div>
             </div>
@@ -281,8 +298,8 @@ export default function AdminProfileSettingsPage() {
 
         {/* Profile Action Buttons */}
         <div className="flex gap-4 mb-12">
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="bg-[#1a0066] hover:bg-[#2a0bc0]"
             disabled={isProfileLoading}
           >
@@ -291,7 +308,9 @@ export default function AdminProfileSettingsPage() {
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Updating...
               </>
-            ) : "Update Profile"}
+            ) : (
+              "Update Profile"
+            )}
           </Button>
           <Button variant="outline" type="button">
             Cancel
@@ -307,14 +326,16 @@ export default function AdminProfileSettingsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Old password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Old password
+              </label>
               <div className="relative">
-                <Input 
+                <Input
                   name="oldPassword"
                   type={showOldPassword ? "text" : "password"}
                   value={passwordData.oldPassword}
                   onChange={handlePasswordChange}
-                  className="w-full pr-10" 
+                  className="w-full pr-10"
                 />
                 <button
                   type="button"
@@ -331,14 +352,16 @@ export default function AdminProfileSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">New password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                New password
+              </label>
               <div className="relative">
-                <Input 
+                <Input
                   name="newPassword"
                   type={showNewPassword ? "text" : "password"}
                   value={passwordData.newPassword}
                   onChange={handlePasswordChange}
-                  className="w-full pr-10" 
+                  className="w-full pr-10"
                 />
                 <button
                   type="button"
@@ -355,14 +378,16 @@ export default function AdminProfileSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm new password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm new password
+              </label>
               <div className="relative">
-                <Input 
+                <Input
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   value={passwordData.confirmPassword}
                   onChange={handlePasswordChange}
-                  className="w-full pr-10" 
+                  className="w-full pr-10"
                 />
                 <button
                   type="button"
@@ -382,35 +407,40 @@ export default function AdminProfileSettingsPage() {
 
         {/* Password Action Buttons */}
         <div className="flex gap-4">
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="bg-[#1a0066] hover:bg-[#2a0bc0]"
-            disabled={isPasswordLoading || 
-              !passwordData.oldPassword || 
-              !passwordData.newPassword || 
-              passwordData.newPassword !== passwordData.confirmPassword}
+            disabled={
+              isPasswordLoading ||
+              !passwordData.oldPassword ||
+              !passwordData.newPassword ||
+              passwordData.newPassword !== passwordData.confirmPassword
+            }
           >
             {isPasswordLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Updating...
               </>
-            ) : "Change Password"}
+            ) : (
+              "Change Password"
+            )}
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             type="button"
-            onClick={() => setPasswordData({
-              oldPassword: "",
-              newPassword: "",
-              confirmPassword: ""
-            })}
+            onClick={() =>
+              setPasswordData({
+                oldPassword: "",
+                newPassword: "",
+                confirmPassword: "",
+              })
+            }
           >
             Clear
           </Button>
         </div>
       </form>
     </div>
-  )
+  );
 }
-
