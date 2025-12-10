@@ -20,8 +20,6 @@ interface ProductCardProps {
   price: string;
   description: string;
   location?: string;
-  time?: string;
-  distance?: string;
   isSponsored?: boolean;
   condition?: string;
   viewMode?: "grid" | "list";
@@ -41,8 +39,6 @@ export default function ProductCard({
   price,
   description,
   location,
-  time,
-  distance,
   isSponsored,
   condition,
   viewMode = "grid",
@@ -115,7 +111,7 @@ export default function ProductCard({
           className={cn(
             "relative",
             viewMode === "grid"
-              ? "aspect-[3/2] w-full "
+              ? "aspect-3/2 w-full "
               : // "h-[120px] w-[120px] sm:h-[180px] sm:w-[140px]"
                 "aspect-4/3 w-[140px] sm:w-[200px]"
           )}
@@ -167,29 +163,11 @@ export default function ProductCard({
             {location && (
               <span className="text-gray-500 text-xs">{location}</span>
             )}
-            {time && <span className="text-gray-500 text-xs">Used</span>}
-            {distance && (
+            {/* {time && <span className="text-gray-500 text-xs">Used</span>} */}
+            {/* {distance && (
               <span className="text-gray-500 text-xs">{distance}</span>
-            )}
+            )} */}
           </div>
-
-          {/* {labels.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1.5">
-            {labels.map((label, index) => (
-              <span key={index} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                {label}
-              </span>
-            ))}
-          </div>
-        )} */}
-
-          {/* {viewMode === "list" && (
-          <div className="mt-2">
-            <Button variant="outline" size="sm" className="text-xs h-7 px-3 rounded-full">
-              See more
-            </Button>
-          </div>
-        )} */}
         </div>
       </div>
 

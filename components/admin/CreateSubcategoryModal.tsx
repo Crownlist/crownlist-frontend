@@ -198,7 +198,7 @@ export const CreateSubcategoryModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#1F058F] hover:bg-[#1F058F]/90">
+        <Button className="bg-[#1F058F] mb-3 hover:bg-[#1F058F]/90">
           <Plus className="mr-2 h-4 w-4" />
           Add Subcategory
         </Button>

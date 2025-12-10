@@ -72,8 +72,6 @@ export default function ProductSection({
               price={product.price}
               description={product.description}
               location={product.location}
-              time={product.time}
-              distance={product.distance}
               isSponsored={product.isSponsored}
               condition={product.condition}
               viewMode={viewMode}
