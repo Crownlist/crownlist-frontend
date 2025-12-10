@@ -639,7 +639,7 @@ export default function ProductPostFlow() {
               {step > 1 && (
                 <Button
                   variant="outline"
-                  className="border-[#1F058F] bg-transparent text-[#1F058F] hover:bg-[#1F058F]/10 px-8"
+                  className="border-[#1F058F] grow bg-transparent text-[#1F058F] hover:bg-[#1F058F]/10 px-8"
                   onClick={handleBack}
                   disabled={submitting}
                 >
@@ -648,7 +648,7 @@ export default function ProductPostFlow() {
               )}
               <Button
                 variant="default"
-                className="bg-[#1F058F] hover:bg-[#1F058F]/90 px-8"
+                className="bg-[#1F058F] grow hover:bg-[#1F058F]/90 px-8"
                 onClick={step === 3 ? handleModal : handleContinue}
                 disabled={
                   submitting ||

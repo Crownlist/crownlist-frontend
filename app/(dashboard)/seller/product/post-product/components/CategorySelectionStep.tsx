@@ -18,7 +18,7 @@ export const CategorySelectionStep = ({
   if (loading) {
     return (
       <div className="flex-1">
-        <h2 className="text-2xl font-semibold mb-2">Category</h2>
+        <h2 className="text-xl md:text-2xl font-semibold mb-2">Category</h2>
         <p className="text-gray-500 mb-6">Loading categories...</p>
       </div>
     );
@@ -27,11 +27,11 @@ export const CategorySelectionStep = ({
   return (
     <div>
       <div className="flex-1">
-        <h2 className="text-2xl font-semibold mb-2">Category</h2>
+        <h2 className="text-xl md:text-2xl font-semibold mb-2">Category</h2>
         <p className="text-gray-500 mb-6">Select post category below</p>
       </div>
       <div className="flex flex-col md:flex-row md:justify-between gap-10 flex-1">
-        <div className="order-2 md:order-1 grid grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="order-2 md:order-1 grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
           {categories.map((cat) => (
             <div
               key={cat._id}
@@ -47,16 +47,16 @@ export const CategorySelectionStep = ({
                 alt={cat.name}
                 width={400}
                 height={250}
-                className="w-full h-[200px] md:h-60 object-cover"
+                className="w-full h-28 sm:h-36 md:h-60 object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 flex items-end p-4">
-                <span className="text-white text-lg font-semibold">
+              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 flex items-end p-3 md:p-4">
+                <span className="text-white text-sm md:text-lg font-semibold">
                   {cat.name}
                 </span>
               </div>
               {selectedCategory === cat._id && (
-                <div className="absolute -top-0.5 -right-0.5 bg-[#1F058F] rounded-bl-[30px] p-5">
-                  <Check className="text-white w-4 h-4" />
+                <div className="absolute -top-0.5 -right-0.5 bg-[#1F058F] rounded-bl-[30px] p-2 md:p-5">
+                  <Check className="text-white w-3 h-3 md:w-4 md:h-4" />
                 </div>
               )}
             </div>

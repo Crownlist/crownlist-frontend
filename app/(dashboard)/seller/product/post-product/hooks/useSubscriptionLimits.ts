@@ -26,12 +26,28 @@ export const useSubscriptionLimits = (
 
       setCheckingLimits(true);
       try {
-        // Count current products for this subcategory
+        // Fetch all of the current user's products and filter locally by subcategory
         const productResponse = await apiClientUser.get(
-          `/products/sub-category/${selectedSubcategory}?status=approved&status=reviewing&status=live&limit=1000`
+          `/products/me?page=1&limit=1000`
         );
-        console.log("productResponse", productResponse);
-        const currentProductCount = productResponse.data?.products?.length || 0;
+        console.log("productResponse (me)", productResponse);
+        const allProducts =
+          productResponse.data?.products || productResponse.data || [];
+        // Helper to extract subcategory id from product (handles object or string)
+        const getSubId = (p: any) => {
+          if (!p) return null;
+          const sc = p.subCategory || p.subCategoryId || p.sub_category || null;
+          if (!sc) return null;
+          if (typeof sc === "string") return sc;
+          return sc?._id || sc?.id || null;
+        };
+        const allowedStatuses = new Set(["approved", "reviewing", "live"]);
+        const currentProductCount =
+          allProducts.filter((p: any) => {
+            const sid = getSubId(p);
+            const status = (p.status || "").toString();
+            return sid === selectedSubcategory && allowedStatuses.has(status);
+          }).length || 0;
 
         // Get the limit for this subcategory from subscription
         const data = subscriptionData as any;
@@ -98,11 +114,26 @@ export const useSubscriptionLimits = (
     }
 
     try {
-      // Count current products for this subcategory
+      // Fetch the seller's products and filter locally by subcategory
       const productResponse = await apiClientUser.get(
-        `/products?seller=true&subCategory=${selectedSubcategory}&status=approved&status=reviewing&status=live&limit=1000`
+        `/products/me?page=1&limit=1000`
       );
-      const currentProductCount = productResponse.data?.products?.length || 0;
+      const allProducts =
+        productResponse.data?.products || productResponse.data || [];
+      const getSubId = (p: any) => {
+        if (!p) return null;
+        const sc = p.subCategory || p.subCategoryId || p.sub_category || null;
+        if (!sc) return null;
+        if (typeof sc === "string") return sc;
+        return sc?._id || sc?.id || null;
+      };
+      const allowedStatuses = new Set(["approved", "reviewing", "live"]);
+      const currentProductCount =
+        allProducts.filter((p: any) => {
+          const sid = getSubId(p);
+          const status = (p.status || "").toString();
+          return sid === selectedSubcategory && allowedStatuses.has(status);
+        }).length || 0;
 
       // Get the limit for this subcategory from subscription
       const data = subscriptionData as any;
