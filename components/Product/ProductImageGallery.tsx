@@ -1,19 +1,13 @@
 import React from "react";
-import Image from "next/image";
-import { ChevronRight, Heart } from "lucide-react";
-import { cn } from "@/lib/utils";
 import ProductImageGalleryClient from "./ProductImageGalleryClient";
-import { ServerProductData } from "@/lib/server/product-service";
 
 interface ProductImageGalleryProps {
   images: string[];
-  product?: ServerProductData;
   productId?: string;
 }
 
 export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   images,
-  product,
   productId,
 }) => {
   if (!images.length) {

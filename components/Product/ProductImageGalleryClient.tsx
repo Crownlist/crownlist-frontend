@@ -72,9 +72,11 @@ export default function ProductImageGalleryClient({
 
     try {
       await toggleLike(productId);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setLiked(!newLiked); // revert
-      handleMessage("error", err.message || "Failed to toggle like");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to toggle like";
+      handleMessage("error", errorMessage);
     } finally {
       setToggling(false);
     }
@@ -178,8 +180,8 @@ export default function ProductImageGalleryClient({
       )}
 
       <OnlyBuyerCanLikeModal
-        isOpen={showSellerModal}
-        onClose={() => setShowSellerModal(false)}
+        open={showSellerModal}
+        onOpenChange={setShowSellerModal}
       />
     </div>
   );

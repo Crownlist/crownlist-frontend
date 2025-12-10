@@ -154,11 +154,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <div className="lg:col-span-2 space-y-6 sm:space-y-8">
               {/* Product Image Gallery */}
               <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <ProductImageGallery
-                  images={images}
-                  product={product}
-                  productId={product._id}
-                />
+                <ProductImageGallery images={images} productId={product._id} />
               </div>
 
               {/* Product Information Sections */}
