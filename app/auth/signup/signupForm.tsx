@@ -99,30 +99,8 @@ export default function SignupForm({
                   id="firstname"
                   type="text"
                   placeholder=""
-                  onKeyDown={(e) => {
-                    // Allow backspace, delete, tab, escape, enter, arrow keys
-                    if (
-                      e.key === "Backspace" ||
-                      e.key === "Delete" ||
-                      e.key === "Tab" ||
-                      e.key === "Escape" ||
-                      e.key === "Enter" ||
-                      e.key === "ArrowLeft" ||
-                      e.key === "ArrowRight" ||
-                      e.key === "ArrowUp" ||
-                      e.key === "ArrowDown"
-                    ) {
-                      return;
-                    }
-                    // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
-                    if (e.ctrlKey || e.metaKey) {
-                      return;
-                    }
-                    // Prevent numbers and special characters
-                    if (!/^[a-zA-Z\s]$/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  inputMode="text"
+                  autoComplete="given-name"
                   {...register("fullName", {
                     required: "Firstname is required",
                     minLength: {
@@ -145,6 +123,12 @@ export default function SignupForm({
                         return true;
                       },
                     },
+                    onChange: (e) => {
+                      e.target.value = e.target.value.replace(
+                        /[^a-zA-Z\s]/g,
+                        ""
+                      );
+                    },
                   })}
                   disabled={isLoading || googleLoading}
                 />
@@ -160,30 +144,8 @@ export default function SignupForm({
                   id="lastname"
                   type="text"
                   placeholder=""
-                  onKeyDown={(e) => {
-                    // Allow backspace, delete, tab, escape, enter, arrow keys
-                    if (
-                      e.key === "Backspace" ||
-                      e.key === "Delete" ||
-                      e.key === "Tab" ||
-                      e.key === "Escape" ||
-                      e.key === "Enter" ||
-                      e.key === "ArrowLeft" ||
-                      e.key === "ArrowRight" ||
-                      e.key === "ArrowUp" ||
-                      e.key === "ArrowDown"
-                    ) {
-                      return;
-                    }
-                    // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
-                    if (e.ctrlKey || e.metaKey) {
-                      return;
-                    }
-                    // Prevent numbers and special characters
-                    if (!/^[a-zA-Z\s]$/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  inputMode="text"
+                  autoComplete="family-name"
                   {...register("lastName", {
                     required: "Lastname is required",
                     minLength: {
@@ -205,6 +167,12 @@ export default function SignupForm({
                         }
                         return true;
                       },
+                    },
+                    onChange: (e) => {
+                      e.target.value = e.target.value.replace(
+                        /[^a-zA-Z\s]/g,
+                        ""
+                      );
                     },
                   })}
                   disabled={isLoading || googleLoading}
