@@ -25,7 +25,7 @@ export default function CategoryManagementPage() {
   const fetchCategories = async () => {
     try {
       const response = await apiClientAdmin.get("/categories");
-      console.log("neww", response);
+      // console.log("neww", response);
       setCategories(response.data?.data?.total);
     } catch (error) {
       toast.error(`Failed to fetch categories, ${error}`);

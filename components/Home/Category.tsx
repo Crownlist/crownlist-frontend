@@ -41,12 +41,12 @@ export default function CategoryGrid() {
 
   if (loading) {
     return (
-      <div className="py-5 mx-auto justify-center sticky inset-18 z-[9]">
+      <div className="py-5 mx-auto justify-center sticky inset-18 z-9">
         <div className="text-black font-semibold text-lg mb-5">
           Category Picks
         </div>
         <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 justify-center items-start">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="w-20 flex flex-col items-center text-center"
@@ -61,13 +61,14 @@ export default function CategoryGrid() {
   }
 
   return (
-    <div className="py-5 mx-auto justify-center sticky inset-18 z-[9]">
+    <div className="py-5 mx-auto justify-center sticky inset-18 z-9">
       <div className="text-black font-semibold text-lg mb-5">
         Category Picks
       </div>
       <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 justify-center items-start">
         {categories.map((cat) => {
-          const isActive = pathname === "/product";
+          const isActive =
+            cat.status === "active" && pathname === `/${cat.slug}`;
           const subcategories = cat.subCategories || [];
           const hasSubcategories = subcategories.length > 0;
 
@@ -76,11 +77,9 @@ export default function CategoryGrid() {
               <div
                 className={clsx(
                   "w-20 flex flex-col items-center text-center group transition-all hover:scale-105 cursor-pointer",
-                  isActive &&
-                    cat.name === "Health & Beauty" &&
-                    "bg-blue-100 rounded-xl py-1"
+                  isActive && "bg-blue-100 rounded-xl py-1"
                 )}
-                onClick={() => handleCategoryClick(cat)}
+                onClick={() => hasSubcategories && handleCategoryClick(cat)}
               >
                 <div className="relative w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
                   <Image
@@ -90,7 +89,7 @@ export default function CategoryGrid() {
                     height={38}
                   />
                   {!hasSubcategories && (
-                    <span className="absolute -top-2 -right-0 bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold shadow">
+                    <span className="absolute -top-2 right-0 bg-red-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold shadow">
                       soon.
                     </span>
                   )}

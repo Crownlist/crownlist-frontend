@@ -47,7 +47,7 @@ export const CategorySelectionStep = ({
                 alt={cat.name}
                 width={400}
                 height={250}
-                className="w-full h-[200px] md:h-[240px] object-cover"
+                className="w-full h-[200px] md:h-60 object-cover"
               />
               <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 flex items-end p-4">
                 <span className="text-white text-lg font-semibold">
@@ -55,7 +55,7 @@ export const CategorySelectionStep = ({
                 </span>
               </div>
               {selectedCategory === cat._id && (
-                <div className="absolute top-[-2px] right-[-2px] bg-[#1F058F] rounded-bl-[30px] p-5">
+                <div className="absolute -top-0.5 -right-0.5 bg-[#1F058F] rounded-bl-[30px] p-5">
                   <Check className="text-white w-4 h-4" />
                 </div>
               )}

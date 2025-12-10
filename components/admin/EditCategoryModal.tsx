@@ -208,7 +208,7 @@ export function EditCategoryModal({
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[900px] lg:max-w-[1100px] xl:max-w-[1200px] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
         </DialogHeader>
@@ -416,7 +416,7 @@ export function EditCategoryModal({
             </div>
           </div>
         )}
-        <div className="flex flex-col justify-end space-x-3 pt-4 border-t">
+        <div className="flex flex-col justify-end gap-2 pt-4 border-t">
           <Button
             variant="outline"
             onClick={() => {
@@ -426,7 +426,7 @@ export function EditCategoryModal({
           >
             Cancel
           </Button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-center">
             <Button
               className="bg-[#1F058F] hover:bg-[#1F058F]/90"
               onClick={() => {
