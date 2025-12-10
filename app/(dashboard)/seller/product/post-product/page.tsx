@@ -110,6 +110,7 @@ export default function ProductPostFlow() {
   const { limitsCheckResult, checkingLimits, checkLimitsBeforeSubmit } =
     useSubscriptionLimits(
       selectedSubcategory,
+      selectedCategory,
       subscriptionData as any,
       isLoadingSubscription
     );
@@ -652,8 +653,9 @@ export default function ProductPostFlow() {
                 onClick={step === 3 ? handleModal : handleContinue}
                 disabled={
                   submitting ||
-                  limitsCheckResult?.isAtLimit ||
-                  limitsCheckResult?.isSubcategoryNotInPlan
+                  (step >= 2 &&
+                    (limitsCheckResult?.isAtLimit ||
+                      limitsCheckResult?.isSubcategoryNotInPlan))
                 }
               >
                 {step === 3 ? "Submit" : "Continue"}

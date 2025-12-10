@@ -5,12 +5,19 @@ import { LimitsCheckResult } from "../types";
 
 export const useSubscriptionLimits = (
   selectedSubcategory: string | null,
+  selectedCategory: string | null,
   subscriptionData: Record<string, unknown> | null,
   isLoadingSubscription: boolean
 ) => {
   const [limitsCheckResult, setLimitsCheckResult] =
     useState<LimitsCheckResult | null>(null);
   const [checkingLimits, setCheckingLimits] = useState(false);
+
+  useEffect(() => {
+    // Clear the limits info when the selected category changes
+    if (selectedCategory == null) return;
+    setLimitsCheckResult(null);
+  }, [selectedCategory]);
 
   useEffect(() => {
     const checkLimitsOnSubcategoryChange = async () => {

@@ -1,17 +1,24 @@
-import { Button } from "./button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./dialog"
+import { Button } from "./button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./dialog";
 
 type ConfirmationModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  onConfirm: () => void
-  title: string
-  description: string
-  confirmText?: string
-  cancelText?: string
-  isPending?: boolean
-  colour?: boolean 
-}
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  description: string;
+  confirmText?: string;
+  cancelText?: string;
+  isPending?: boolean;
+  colour?: boolean;
+};
 
 export function ConfirmationModal({
   isOpen,
@@ -40,13 +47,17 @@ export function ConfirmationModal({
             onClick={onClose}
             disabled={isPending}
           >
-            {cancelText}
+            {cancelText === "Cancel" ? "Close" : cancelText}
           </Button>
           <Button
             type="button"
             onClick={onConfirm}
             disabled={isPending}
-            className={`${colour ? 'bg-red-600 hover:bg-red-400': 'bg-[#1F058F] hover:bg-[#2a0bc0]'}`}
+            className={`${
+              colour
+                ? "bg-red-600 hover:bg-red-400"
+                : "bg-[#1F058F] hover:bg-[#2a0bc0]"
+            }`}
           >
             {isPending ? (
               <>
@@ -60,5 +71,5 @@ export function ConfirmationModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
