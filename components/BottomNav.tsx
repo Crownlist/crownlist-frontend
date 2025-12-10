@@ -50,6 +50,7 @@ export default function BottomNav() {
         { name: "Home", path: "/buyer/dashboard", icon: Home },
         { name: "Saved", path: "/buyer/saved", icon: Bookmark },
         { name: "Messages", path: "/buyer/messages", icon: MessageSquare },
+        { name: "Request", path: "/buyer/request", icon: Inbox },
         { name: "Profile", path: "/buyer/profile", icon: User },
       ];
     }

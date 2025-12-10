@@ -1,159 +1,171 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { X, Upload, Loader2 } from 'lucide-react'
-import { useCategories } from '@/hooks/useCategories'
-import { Category, Subcategory } from '@/types/category/category'
-import {toast} from "sonner";
-import { apiClientUser } from '@/lib/interceptor'
-import Image from 'next/image'
+import { useState, useEffect } from "react";
+import { X, Upload, Loader2 } from "lucide-react";
+import { useCategories } from "@/hooks/useCategories";
+import { Category, Subcategory } from "@/types/category/category";
+import { toast } from "sonner";
+import { apiClientUser } from "@/lib/interceptor";
+import Image from "next/image";
 
 interface ProductRequestFormProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 interface ProductImage {
-  url: string
-  altText?: string
-  isPrimary: boolean
+  url: string;
+  altText?: string;
+  isPrimary: boolean;
 }
 
 interface FormData {
-  name: string
-  description: string
-  category: string
-  subCategory: string
-  phone: string
-  images: File[]
+  name: string;
+  description: string;
+  category: string;
+  subCategory: string;
+  phone: string;
+  images: File[];
 }
 
-export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFormProps) {
-  const { categories, loading: categoriesLoading } = useCategories()
-  console.log("categories", categories)
+export default function ProductRequestForm({
+  isOpen,
+  onClose,
+}: ProductRequestFormProps) {
+  const { categories, loading: categoriesLoading } = useCategories();
+  // console.log("categories", categories)
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    description: '',
-    category: '',
-    subCategory: '',
-    phone: '',
-    images: []
-  })
+    name: "",
+    description: "",
+    category: "",
+    subCategory: "",
+    phone: "",
+    images: [],
+  });
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
-  const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isUploadingImages, setIsUploadingImages] = useState(false)
-  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [availableSubcategories, setAvailableSubcategories] = useState<
+    Subcategory[]
+  >([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
 
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
       setFormData({
-        name: '',
-        description: '',
-        category: '',
-        subCategory: '',
-        phone: '',
-        images: []
-      })
-      setSelectedCategory(null)
-      setAvailableSubcategories([])
-      setImagePreviewUrls([])
+        name: "",
+        description: "",
+        category: "",
+        subCategory: "",
+        phone: "",
+        images: [],
+      });
+      setSelectedCategory(null);
+      setAvailableSubcategories([]);
+      setImagePreviewUrls([]);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   // Handle category change
   const handleCategoryChange = (categoryId: string) => {
-    const category = categories.find(c => c._id === categoryId)
-    setSelectedCategory(category || null)
-    setAvailableSubcategories(category?.subCategories || [])
-    setFormData(prev => ({
+    const category = categories.find((c) => c._id === categoryId);
+    setSelectedCategory(category || null);
+    setAvailableSubcategories(category?.subCategories || []);
+    setFormData((prev) => ({
       ...prev,
       category: categoryId,
-      subCategory: '' // Reset subcategory when category changes
-    }))
-  }
+      subCategory: "", // Reset subcategory when category changes
+    }));
+  };
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
+    const files = Array.from(e.target.files || []);
     if (files.length > 5) {
-      toast.error('Maximum 5 images allowed')
-      return
+      toast.error("Maximum 5 images allowed");
+      return;
     }
 
-    setFormData(prev => ({ ...prev, images: files }))
+    setFormData((prev) => ({ ...prev, images: files }));
 
     // Create preview URLs
-    const urls = files.map(file => URL.createObjectURL(file))
-    setImagePreviewUrls(urls)
-  }
+    const urls = files.map((file) => URL.createObjectURL(file));
+    setImagePreviewUrls(urls);
+  };
 
   // Remove image
   const removeImage = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }))
-    setImagePreviewUrls(prev => prev.filter((_, i) => i !== index))
-  }
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+    setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // Upload image to server
   const uploadImage = async (file: File): Promise<string> => {
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('fileType', 'Product-request')
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("fileType", "Product-request");
 
-      const res = await apiClientUser.post('/users/upload', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-       console.log("image", res)
-      return res?.data?.fileUrl
+      const res = await apiClientUser.post("/users/upload", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("image", res);
+      return res?.data?.fileUrl;
     } catch (error) {
-      console.error('Image upload error:', error)
-      throw new Error('Failed to upload image')
+      console.error("Image upload error:", error);
+      throw new Error("Failed to upload image");
     }
-  }
+  };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!formData.name || !formData.description || !formData.category ||
-        !formData.subCategory || !formData.phone) {
-      toast.error('Please fill in all required fields')
-      return
+    if (
+      !formData.name ||
+      !formData.description ||
+      !formData.category ||
+      !formData.subCategory ||
+      !formData.phone
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
     }
 
     if (formData.description.length < 10) {
-      toast.error('Description must be at least 10 characters long.')
-      return
+      toast.error("Description must be at least 10 characters long.");
+      return;
     }
 
     if (formData.images.length === 0) {
-      toast.error('Please select at least one image')
-      return
+      toast.error("Please select at least one image");
+      return;
     }
 
-    setIsSubmitting(true)
-    setIsUploadingImages(true)
+    setIsSubmitting(true);
+    setIsUploadingImages(true);
 
     try {
       // Upload images to server to get URLs
-      const uploadedImages: ProductImage[] = []
+      const uploadedImages: ProductImage[] = [];
       for (let i = 0; i < formData.images.length; i++) {
-        const file = formData.images[i]
-        const imageUrl = await uploadImage(file)
+        const file = formData.images[i];
+        const imageUrl = await uploadImage(file);
         uploadedImages.push({
           url: imageUrl,
           altText: `Image ${i + 1}`,
-          isPrimary: i === 0 // First image is primary
-        })
+          isPrimary: i === 0, // First image is primary
+        });
       }
 
-      setIsUploadingImages(false)
+      setIsUploadingImages(false);
 
       // Prepare payload for API
       const payload = {
@@ -162,44 +174,44 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
         images: uploadedImages,
         category: formData.category,
         subCategory: formData.subCategory,
-        phone: formData.phone
-      }
+        phone: formData.phone,
+      };
 
       // Submit to API
-      const response = await fetch('/api/request-product', {
-        method: 'POST',
+      const response = await fetch("/api/request-product", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload)
-      })
+        body: JSON.stringify(payload),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (response.ok) {
-        toast.success('Product request submitted successfully!')
-        onClose()
+        toast.success("Product request submitted successfully!");
+        onClose();
       } else {
-        toast.error(result.error || 'Failed to submit request')
+        toast.error(result.error || "Failed to submit request");
       }
     } catch (error) {
-      console.error('Error submitting request:', error)
+      console.error("Error submitting request:", error);
       if (isUploadingImages) {
-        toast.error('Failed to upload images. Please try again.')
+        toast.error("Failed to upload images. Please try again.");
       } else {
-        toast.error('Failed to submit request. Please try again.')
+        toast.error("Failed to submit request. Please try again.");
       }
     } finally {
-      setIsSubmitting(false)
-      setIsUploadingImages(false)
+      setIsSubmitting(false);
+      setIsUploadingImages(false);
     }
-  }
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold">Request New Product</h2>
@@ -221,7 +233,9 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent"
               placeholder="Enter product name"
               required
@@ -235,7 +249,12 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent"
               rows={4}
               placeholder="Describe the product you want to request"
@@ -257,7 +276,7 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
                 disabled={categoriesLoading}
               >
                 <option value="">
-                  {categoriesLoading ? 'Loading...' : 'Select a category'}
+                  {categoriesLoading ? "Loading..." : "Select a category"}
                 </option>
                 {categories.map((category) => (
                   <option key={category._id} value={category._id}>
@@ -273,18 +292,24 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
               </label>
               <select
                 value={formData.subCategory}
-                onChange={(e) => setFormData(prev => ({ ...prev, subCategory: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    subCategory: e.target.value,
+                  }))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent disabled:bg-gray-100"
                 required
-                disabled={!selectedCategory || availableSubcategories.length === 0}
+                disabled={
+                  !selectedCategory || availableSubcategories.length === 0
+                }
               >
                 <option value="">
                   {!selectedCategory
-                    ? 'Select a category first'
+                    ? "Select a category first"
                     : availableSubcategories.length === 0
-                      ? 'No subcategories available'
-                      : 'Select a subcategory'
-                  }
+                    ? "No subcategories available"
+                    : "Select a subcategory"}
                 </option>
                 {availableSubcategories.map((subcategory) => (
                   <option key={subcategory._id} value={subcategory._id}>
@@ -303,7 +328,9 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, phone: e.target.value }))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent"
               placeholder="Enter your phone number"
               required
@@ -380,14 +407,14 @@ export default function ProductRequestForm({ isOpen, onClose }: ProductRequestFo
             >
               {isSubmitting && <Loader2 size={16} className="animate-spin" />}
               {isUploadingImages
-                ? 'Uploading Images...'
+                ? "Uploading Images..."
                 : isSubmitting
-                  ? 'Submitting...'
-                  : 'Submit Request'}
+                ? "Submitting..."
+                : "Submit Request"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
