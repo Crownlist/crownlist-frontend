@@ -1,211 +1,198 @@
-/* eslint-disable */
-"use client";
-
 import React from "react";
 import Link from "next/link";
+import { Metadata } from "next";
 import { ChevronRight } from "lucide-react";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
-import ProductDetails from "@/components/Home/ProductDetails";
-import { useParams, useSearchParams } from "next/navigation";
-import { useProducts } from "@/hooks/useProducts";
-import { useProductData } from "@/hooks/useProductData";
-import { useProductLike } from "@/hooks/useProductLike";
 import {
   ProductImageGallery,
   ProductAccordion,
   SafetyTipsSection,
   SimilarProducts,
 } from "@/components/Product";
+import ProductDetailsSidebar from "@/components/Home/ProductDetailsSidebar";
+import {
+  fetchProductBySlug,
+  fetchSimilarProducts,
+  generateProductMetadata,
+  formatProductDate,
+} from "@/lib/server/product-service";
+import { notFound } from "next/navigation";
 
-export default function ProductDetailPage() {
-  const { slug: productSlug } = useParams();
-  const search = useSearchParams();
-  const bcSub = search.get("sub") || "Property";
-  const { products: similarProducts, loading: similarProductsLoading } =
-    useProducts();
+interface PageProps {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-  // Custom hooks
-  const { product, images, currentProduct, isLoading } = useProductData(
-    productSlug as string
-  );
-  const { liked, toggling, showLoginPrompt, setShowLoginPrompt, handleLike } =
-    useProductLike();
+/**
+ * Generate metadata for SEO
+ */
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await fetchProductBySlug(slug);
 
-  // Handle like click for the product
-  const onLikeClick = (e: React.MouseEvent) => {
-    if (currentProduct?.id) {
-      handleLike(currentProduct.id, e);
-    }
+  if (!product) {
+    return {
+      title: "Product Not Found",
+      description: "The product you're looking for doesn't exist.",
+    };
+  }
+
+  const metadata = generateProductMetadata(product);
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    keywords: metadata.keywords,
+    openGraph: metadata.openGraph as Record<string, unknown>,
+    twitter: metadata.twitter as Record<string, unknown>,
+    alternates: metadata.alternates as Record<string, unknown>,
+    robots: {
+      index: true,
+      follow: true,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   };
+}
+
+export async function generateStaticParams() {
+  // This can be empty if you want dynamic rendering
+  // or populated with top products for better performance
+  return [];
+}
+
+/**
+ * Server Component: Product Detail Page
+ */
+export default async function ProductDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  // Fetch product data server-side
+  const product = await fetchProductBySlug(slug);
+
+  if (!product) {
+    notFound();
+  }
+
+  // Fetch similar products
+  const categorySlug = product.category?.slug || product.subCategory?.slug;
+  const similarProducts = categorySlug
+    ? await fetchSimilarProducts(categorySlug, 4, product._id)
+    : [];
+
+  // Format data for display
+  const images = product.images?.map((img) => img.url) || ["/placeholder.svg"];
+  const postedDate = formatProductDate(product.createdAt);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-50 to-white">
       {/* Header */}
       <Header hidden={false} />
-      <div className="container mx-auto px-2 py-6 max-md:px-5">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-gray-700">
-            Home
-          </Link>
-          <ChevronRight size={14} />
-          <Link
-            href={`/${product?.category?.slug}/${product?.subCategory?.slug}`}
-            className="hover:text-gray-700"
-          >
-            {product?.subCategory?.name || bcSub}
-          </Link>
-          <ChevronRight size={14} />
-          <span className="text-gray-700 truncate">
-            {product?.name || String(productSlug || "").toUpperCase()}
-          </span>
-        </div>
 
-        {isLoading ? (
-          // Loading skeleton
-          <div className="flex flex-col md:flex-row gap-4 md:justify-between w-full">
-            {/* Left Column - Product Images Skeleton */}
-            <div className="w-full">
-              <div className="space-y-6">
-                {/* Main Image Skeleton */}
-                <div className="relative h-[200px] md:h-[400px] w-full bg-gray-200 rounded-md"></div>
+      <main className="flex-1 w-full">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+          {/* Product Title */}
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">
+            {product.name}
+          </h1>
 
-                {/* Thumbnails Skeleton */}
-                <div className="flex gap-2">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="h-16 w-16 bg-gray-200 rounded-md"
-                    ></div>
-                  ))}
-                </div>
+          {/* Enhanced Breadcrumb Navigation */}
+          <nav aria-label="Breadcrumb" className="mb-6 sm:mb-8">
+            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600 overflow-x-auto pb-2">
+              <Link
+                href="/"
+                className="hover:text-gray-900 transition-colors whitespace-nowrap"
+              >
+                Home
+              </Link>
+              <ChevronRight size={14} className="shrink-0" />
 
-                {/* Accordion Sections Skeleton */}
-                <div className="space-y-4">
-                  <div className="border-b pb-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  </div>
+              {product.category && (
+                <>
+                  <Link
+                    href={`/${product.category.slug}`}
+                    className="hover:text-gray-900 transition-colors truncate max-w-[150px] sm:max-w-none"
+                  >
+                    {product.category.name}
+                  </Link>
+                  <ChevronRight size={14} className="shrink-0" />
+                </>
+              )}
 
-                  <div className="border-b pb-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/3 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                  </div>
+              {product.subCategory && (
+                <>
+                  <Link
+                    href={`/${product.category?.slug || ""}/${
+                      product.subCategory.slug
+                    }`}
+                    className="hover:text-gray-900 transition-colors truncate max-w-[150px] sm:max-w-none"
+                  >
+                    {product.subCategory.name}
+                  </Link>
+                  <ChevronRight size={14} className="shrink-0" />
+                </>
+              )}
 
-                  <div className="border-b pb-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/5 mb-2"></div>
-                    <div className="space-y-2">
-                      {Array.from({ length: 3 }).map((_, index) => (
-                        <div
-                          key={index}
-                          className="h-4 bg-gray-200 rounded w-full"
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Product Details Skeleton for Mobile */}
-                <div className="flex md:hidden bg-white border rounded-lg p-6 shadow-md">
-                  <div className="space-y-4 w-full">
-                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                    <div className="space-y-2">
-                      <div className="h-10 bg-gray-200 rounded"></div>
-                      <div className="h-10 bg-gray-200 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Similar Products Skeleton */}
-                <div className="mt-8">
-                  <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {Array.from({ length: 4 }).map((_, index) => (
-                      <div
-                        key={index}
-                        className="border rounded-lg overflow-hidden"
-                      >
-                        <div className="h-[160px] bg-gray-200"></div>
-                        <div className="p-3 space-y-3">
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-200 rounded w-full"></div>
-                          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                          <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <span className="text-gray-900 font-medium truncate max-w-[150px] sm:max-w-none">
+                {product.name}
+              </span>
             </div>
+          </nav>
 
-            {/* Right Column - Product Details Skeleton */}
-            <div className="hidden md:flex w-full max-w-md">
-              <div className="bg-white border rounded-lg p-6 shadow-md w-full">
-                <div className="space-y-4">
-                  <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                  <div className="space-y-2">
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col md:flex-row gap-4 md:justify-between w-full">
-            {/* Left Column - Product Images and Info */}
-            <div className="w-full">
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {/* Left Column - Product Images and Info (2 columns on desktop) */}
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
               {/* Product Image Gallery */}
-              <ProductImageGallery
-                images={images}
-                liked={liked}
-                toggling={toggling}
-                onLike={onLikeClick}
-              />
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <ProductImageGallery
+                  images={images}
+                  product={product}
+                  productId={product._id}
+                />
+              </div>
 
               {/* Product Information Sections */}
-              <ProductAccordion product={product!} />
+              {product && (
+                <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                  <ProductAccordion product={product} />
+                </div>
+              )}
 
               {/* Safety Tips Section */}
               <SafetyTipsSection />
 
               {/* Similar Products */}
-              <SimilarProducts
-                products={similarProducts}
-                loading={similarProductsLoading}
-              />
-
-              {/* Product Details for Mobile */}
-              <div className="flex md:hidden w-full h-full mt-2 md:justify-end">
-                {currentProduct && (
-                  <ProductDetails
-                    postedDate={currentProduct.postedDate}
-                    condition={currentProduct.condition as "Brand New" | "Used"}
-                    product={product}
-                  />
-                )}
-              </div>
-            </div>
-
-            {/* Right Column - Product Details for Desktop */}
-            <div className="hidden md:flex w-full h-full mt-2 md:justify-end">
-              {currentProduct && (
-                <ProductDetails
-                  postedDate={currentProduct.postedDate}
-                  condition={currentProduct.condition as "Brand New" | "Used"}
-                  product={product}
-                />
+              {similarProducts.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                  <SimilarProducts products={similarProducts} loading={false} />
+                </div>
               )}
             </div>
+
+            {/* Right Column - Product Details Sidebar (1 column on desktop) */}
+            <div className="lg:col-span-1">
+              {/* Sticky sidebar on desktop, normal flow on mobile */}
+              <div className="lg:sticky lg:top-6">
+                <ProductDetailsSidebar
+                  product={product}
+                  postedDate={postedDate}
+                />
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      </main>
+
       <Footer />
     </div>
   );

@@ -1,80 +1,74 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
-
-interface Product {
-  _id: string;
-  slug: string;
-  name: string;
-  description?: string;
-  images?: Array<{
-    url: string;
-    altText?: string;
-    isPrimary?: boolean;
-    _id: string;
-  }>;
-  listingLocation?: { city?: string; country?: string };
-  features?: string[];
-  price?: { currentPrice?: number; discountedPrice?: number };
-}
+import { ServerProductData } from "@/lib/server/product-service";
 
 interface SimilarProductsProps {
-  products: Product[];
-  loading: boolean;
+  products: ServerProductData[];
+  loading?: boolean;
   maxItems?: number;
 }
 
 export const SimilarProducts: React.FC<SimilarProductsProps> = ({
   products,
-  loading,
+  loading = false,
   maxItems = 4,
 }) => {
+  if (loading || !products.length) {
+    return null;
+  }
+
   return (
-    <div className="mt-8 mb-8 px-4 md:px-0 max-w-7xl mx-auto">
-      <h3 className="font-medium text-lg mb-4">You might also like these</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {loading
-          ? Array.from({ length: maxItems }).map((_, index) => (
-              <ProductCardSkeleton key={index} />
-            ))
-          : products.slice(0, maxItems).map((product) => (
-              <Link href={`/product/${product.slug}`} key={product._id}>
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="relative h-[160px] cursor-pointer">
-                    <Image
-                      src={product.images?.[0]?.url || "/placeholder.svg"}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold text-gray-900">
+        You might also like
+      </h3>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        {products.slice(0, maxItems).map((product) => (
+          <Link
+            key={product._id}
+            href={`/product/${product.slug}`}
+            className="group"
+          >
+            <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col bg-white">
+              {/* Image Container */}
+              <div className="relative h-32 sm:h-40 w-full bg-gray-100 overflow-hidden">
+                <Image
+                  src={product.images?.[0]?.url || "/placeholder.svg"}
+                  alt={product.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                />
+                {product.price?.discountedPrice && (
+                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    Discount
                   </div>
-                  <div className="p-3 cursor-pointer">
-                    <h4 className="font-medium text-sm">{product.name}</h4>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                      {product.description}
-                    </p>
-                    <div className="flex gap-2 md:gap-1 mt-2 w-full justify-start md:justify-center">
-                      <div className="text-xs md:text-[10px] bg-gray-100 px-2 py-1 rounded">
-                        {product.listingLocation?.city}
-                      </div>
-                      {product.features?.map((feature, index) => (
-                        <div
-                          key={index}
-                          className="text-xs bg-gray-100 px-2 py-1 rounded"
-                        >
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="font-medium text-sm mt-2">
-                      Current Price: ₦
-                      {product.price?.currentPrice?.toLocaleString()}
-                    </div>
-                  </div>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="p-2 sm:p-3 flex flex-col grow">
+                <h4 className="font-medium text-xs sm:text-sm text-gray-900 line-clamp-2 group-hover:text-blue-600">
+                  {product.name}
+                </h4>
+
+                {product.listingLocation?.city && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    {product.listingLocation.city}
+                  </p>
+                )}
+
+                <div className="mt-auto pt-2 flex items-center justify-between">
+                  <span className="text-sm sm:text-base font-bold text-gray-900">
+                    ₦
+                    {(product.price?.currentPrice || 0).toLocaleString("en-NG")}
+                  </span>
                 </div>
-              </Link>
-            ))}
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

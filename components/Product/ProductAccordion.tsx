@@ -1,32 +1,11 @@
 import React from "react";
-import Image from "next/image";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { ProductData } from "@/hooks/useProductData";
-
-interface Review {
-  id: number;
-  name: string;
-  avatar: string;
-  rating: number;
-  date: string;
-  message: string;
-  replies: Array<{
-    id: number;
-    name: string;
-    avatar: string;
-    date: string;
-    message: string;
-  }>;
-}
-
-interface ProductAccordionProps {
-  product: ProductData;
-}
+import { ServerProductData } from "@/lib/server/product-service";
 
 interface FacilityItem {
   label?: string;
@@ -35,229 +14,139 @@ interface FacilityItem {
   detail?: string;
 }
 
+interface ProductAccordionProps {
+  product: ServerProductData;
+}
+
 export const ProductAccordion: React.FC<ProductAccordionProps> = ({
   product,
 }) => {
-  // Mock reviews data - in real app this would come from API
-  const reviews: Review[] = [
-    {
-      id: 1,
-      name: "Jimoh Adesina",
-      avatar: "/profile.png",
-      rating: 5,
-      date: "12/1/2024",
-      message:
-        "10 days from the date of delivery. We ask you make sure the items have not been worn, washed, or damaged, and that you ship the item(s) back in their original packaging and box.",
-      replies: [
-        {
-          id: 101,
-          name: "Joe",
-          avatar: "/profile.png",
-          date: "12/1/2024",
-          message:
-            "10 days from the date of delivery. We ask you make sure the items have not been worn, washed, or damaged, and that you ship the item(s) back in their original packaging and box.",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Dominic",
-      avatar: "/profile.png",
-      rating: 4,
-      date: "12/1/2024",
-      message:
-        "10 days from the date of delivery. We ask you make sure the items have not been worn, washed, or damaged, and that you ship the item(s) back in their original packaging and box.",
-      replies: [],
-    },
-  ];
-
-  const overviewData = [
-    { facility: "Wifi", detail: "No" },
-    { facility: "Water", detail: "Yes" },
-    { facility: "Generator", detail: "You pay weekly for fuel" },
-    { facility: "Neighbor", detail: "3 apartment" },
-  ];
+  const facilities = product.facility?.facilities || [];
+  const features = product.features || [];
+  const description = product.description || "";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-0 divide-y divide-gray-200">
       <Accordion
         type="single"
         collapsible
         defaultValue="description"
-        className="space-y-4"
+        className="w-full px-2"
       >
         {/* Description Section */}
-        <AccordionItem value="description" className="border-b pb-4">
-          <AccordionTrigger className="flex items-center justify-between w-full text-left py-2">
-            <span className="font-medium">Description</span>
-          </AccordionTrigger>
-          <AccordionContent className="mt-2 text-gray-600">
-            <p>{product?.description || product?.name}</p>
-          </AccordionContent>
-        </AccordionItem>
+        {description && (
+          <AccordionItem value="description" className="border-none">
+            <AccordionTrigger className="hover:no-underline py-4 px-0 text-base font-semibold hover:text-blue-600">
+              Description
+            </AccordionTrigger>
+            <AccordionContent className="pb-4 text-gray-700 text-sm leading-relaxed">
+              {description}
+            </AccordionContent>
+          </AccordionItem>
+        )}
 
-        {/* Overview Section */}
-        <AccordionItem value="overview" className="border-b pb-4">
-          <AccordionTrigger className="flex items-center justify-between w-full text-left py-2">
-            <span className="font-medium">Overview</span>
-          </AccordionTrigger>
-          <AccordionContent className="mt-2 space-y-4">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-white">
-                <thead>
-                  <tr className="bg-[#F5F5F5] text-[#525252]">
-                    <th className="border border-[#F5F5F5] px-4 py-2 text-left">
-                      Facilities
-                    </th>
-                    <th className="border border-[#F5F5F5] px-4 py-2 text-left">
-                      Details
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(product?.facility?.facilities || overviewData).map(
-                    (item: FacilityItem, index: number) => (
-                      <tr key={index} className="bg-white text-[#525252]">
-                        <td className="border border-[#F5F5F5] px-4 py-2">
-                          {item.label || item.facility}
-                        </td>
-                        <td className="border border-[#F5F5F5] px-4 py-2">
-                          {item.value || item.detail}
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
-            </div>
+        {/* Specifications Section */}
+        {(features.length > 0 || facilities.length > 0) && (
+          <AccordionItem value="specs" className="border-none">
+            <AccordionTrigger className="hover:no-underline py-4 px-0 text-base font-semibold hover:text-blue-600">
+              Specifications
+            </AccordionTrigger>
+            <AccordionContent className="pb-4 space-y-4">
+              {features.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3">Features</h4>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {features.map((feature, index) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 text-sm text-gray-700"
+                      >
+                        <span className="text-blue-500 font-bold">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-            {/* Property Description */}
-            <p className="text-[#525252] text-sm mt-4">
-              16 bed en suite property to let, 4 wheelchair access bedrooms,
-              with communal kitchens and dining/lounge areas. Reception/office
-              with a surveillance monitor. CCTV throughout inside and out.
-            </p>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Reviews Section */}
-        <AccordionItem value="reviews" className="border-b pb-4">
-          <AccordionTrigger className="flex items-center justify-between w-full text-left py-2">
-            <span className="font-medium">Reviews</span>
-          </AccordionTrigger>
-          <AccordionContent className="mt-2 space-y-4 flex flex-col md:flex-row gap-12 justify-between">
-            {/* Overall Rating */}
-            <div className="flex w-full flex-col">
-              <p className="text-2xl font-bold text-white">4</p>
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <span
-                    key={index}
-                    className={`text-yellow-400 text-xl ${
-                      index < 4 ? "" : "opacity-50"
-                    }`}
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-              <p className="text-gray-400 text-sm mt-2">Overall rating</p>
-              <div className="mt-2 space-y-1">
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <div key={rating} className="flex items-center gap-2">
-                    <span className="text-sm">{rating}</span>
-                    <div className="h-2 bg-white rounded-md flex-grow">
-                      <div
-                        className={`h-full bg-gray-600 rounded-md`}
-                        style={{ width: `${rating * 20}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Reviews List */}
-            <div>
-              {reviews.map((review) => (
-                <div key={review.id} className="space-y-4">
-                  {/* Main Review */}
-                  <div className="flex gap-4">
-                    <Image
-                      src={review.avatar}
-                      alt={review.name}
-                      width={55}
-                      height={55}
-                      className="rounded-full h-[46px] w-[64px]"
-                    />
-                    <div>
-                      <p className="font-semibold">{review.name}</p>
-                      <div className="flex items-center">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <span
+              {facilities.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-3">Facilities</h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-100 border border-gray-200">
+                          <th className="px-4 py-2 text-left font-medium text-gray-900">
+                            Name
+                          </th>
+                          <th className="px-4 py-2 text-left font-medium text-gray-900">
+                            Details
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {facilities.map((item: FacilityItem, index: number) => (
+                          <tr
                             key={index}
-                            className={`text-yellow-400 text-lg ${
-                              index < review.rating ? "" : "opacity-50"
-                            }`}
+                            className="border-b border-gray-200 hover:bg-gray-50"
                           >
-                            ★
-                          </span>
+                            <td className="px-4 py-2 text-gray-700 font-medium">
+                              {item.label || item.facility || "—"}
+                            </td>
+                            <td className="px-4 py-2 text-gray-600">
+                              {item.value || item.detail || "—"}
+                            </td>
+                          </tr>
                         ))}
-                        <span className="text-sm text-gray-400 ml-2">
-                          {review.date}
-                        </span>
-                      </div>
-                      <p className="text-gray-400 text-sm mt-1">
-                        {review.message}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Replies */}
-                  {review.replies.length > 0 && (
-                    <div className="ml-12 space-y-4">
-                      {review.replies.map((reply) => (
-                        <div key={reply.id} className="flex gap-4">
-                          <Image
-                            src={reply.avatar}
-                            alt={reply.name}
-                            width={55}
-                            height={55}
-                            className="rounded-full h-[46px] w-[64px]"
-                          />
-                          <div>
-                            <p className="font-medium text-gray-300">
-                              {reply.name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {reply.date}
-                            </p>
-                            <p className="text-gray-400 text-sm mt-1">
-                              {reply.message}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-4 text-gray-400 text-sm">
-                    <button className="flex items-center gap-1">
-                      <span className="text-lg">💬</span> See messages
-                    </button>
-                    <span>|</span>
-                    <button className="flex items-center gap-1">
-                      <span className="text-lg">✉️</span> Reply messages
-                    </button>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-              ))}
-              <button className="text-green-400 font-semibold text-sm">
-                More reviews
-              </button>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {/* Product Details Section */}
+        <AccordionItem value="details" className="border-none">
+          <AccordionTrigger className="hover:no-underline py-4 px-0 text-base font-semibold hover:text-blue-600">
+            Product Details
+          </AccordionTrigger>
+          <AccordionContent className="pb-4 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {product.condition && (
+                <div>
+                  <p className="text-xs uppercase text-gray-600 font-semibold mb-1">
+                    Condition
+                  </p>
+                  <p className="text-sm text-gray-900 font-medium">
+                    {product.condition}
+                  </p>
+                </div>
+              )}
+              {product.listingLocation?.city && (
+                <div>
+                  <p className="text-xs uppercase text-gray-600 font-semibold mb-1">
+                    Location
+                  </p>
+                  <p className="text-sm text-gray-900 font-medium">
+                    {product.listingLocation.city}
+                    {product.listingLocation.country &&
+                      `, ${product.listingLocation.country}`}
+                  </p>
+                </div>
+              )}
+              {product.createdAt && (
+                <div>
+                  <p className="text-xs uppercase text-gray-600 font-semibold mb-1">
+                    Posted
+                  </p>
+                  <p className="text-sm text-gray-900 font-medium">
+                    {new Date(product.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
             </div>
-            {/* More Reviews */}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
