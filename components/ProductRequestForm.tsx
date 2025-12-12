@@ -7,6 +7,13 @@ import { Category, Subcategory } from "@/types/category/category";
 import { toast } from "sonner";
 import { apiClientUser } from "@/lib/interceptor";
 import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProductRequestFormProps {
   isOpen: boolean;
@@ -268,55 +275,63 @@ export default function ProductRequestForm({
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Category *
               </label>
-              <select
+              <Select
                 value={formData.category}
-                onChange={(e) => handleCategoryChange(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent"
-                required
+                onValueChange={(value) => handleCategoryChange(value)}
                 disabled={categoriesLoading}
               >
-                <option value="">
-                  {categoriesLoading ? "Loading..." : "Select a category"}
-                </option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full focus:ring-2 focus:ring-[#1F058F] focus:border-transparent">
+                  <SelectValue
+                    placeholder={
+                      categoriesLoading ? "Loading..." : "Select a category"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category._id} value={category._id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Subcategory *
               </label>
-              <select
+              <Select
                 value={formData.subCategory}
-                onChange={(e) =>
+                onValueChange={(value) =>
                   setFormData((prev) => ({
                     ...prev,
-                    subCategory: e.target.value,
+                    subCategory: value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F058F] focus:border-transparent disabled:bg-gray-100"
-                required
                 disabled={
                   !selectedCategory || availableSubcategories.length === 0
                 }
               >
-                <option value="">
-                  {!selectedCategory
-                    ? "Select a category first"
-                    : availableSubcategories.length === 0
-                    ? "No subcategories available"
-                    : "Select a subcategory"}
-                </option>
-                {availableSubcategories.map((subcategory) => (
-                  <option key={subcategory._id} value={subcategory._id}>
-                    {subcategory.name}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full focus:ring-2 focus:ring-[#1F058F] focus:border-transparent disabled:bg-gray-100">
+                  <SelectValue
+                    placeholder={
+                      !selectedCategory
+                        ? "Select a category first"
+                        : availableSubcategories.length === 0
+                        ? "No subcategories available"
+                        : "Select a subcategory"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableSubcategories.map((subcategory) => (
+                    <SelectItem key={subcategory._id} value={subcategory._id}>
+                      {subcategory.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -371,11 +386,12 @@ export default function ProductRequestForm({
             {imagePreviewUrls.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                 {imagePreviewUrls.map((url, index) => (
-                  <div key={index} className="relative">
+                  <div key={index} className="relative w-full h-24">
                     <Image
                       src={url}
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
+                      fill
+                      className="object-cover rounded-lg"
                     />
                     <button
                       type="button"

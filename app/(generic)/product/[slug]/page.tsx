@@ -83,6 +83,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  // console.log("Product Detail Page - product:", product);
+
   // Fetch similar products
   const categorySlug = product.category?.slug || product.subCategory?.slug;
   const similarProducts = categorySlug
@@ -167,6 +169,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Safety Tips Section */}
               <SafetyTipsSection />
 
+              <div className="lg:hidden block lg:col-span-1">
+                {/* Sticky sidebar on desktop, normal flow on mobile */}
+                <div className="lg:sticky lg:top-6">
+                  <ProductDetailsSidebar
+                    product={product}
+                    postedDate={postedDate}
+                  />
+                </div>
+              </div>
+
               {/* Similar Products */}
               {similarProducts.length > 0 && (
                 <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
@@ -176,7 +188,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
 
             {/* Right Column - Product Details Sidebar (1 column on desktop) */}
-            <div className="lg:col-span-1">
+            <div className="hidden lg:block lg:col-span-1">
               {/* Sticky sidebar on desktop, normal flow on mobile */}
               <div className="lg:sticky lg:top-6">
                 <ProductDetailsSidebar

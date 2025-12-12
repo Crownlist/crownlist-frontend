@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import { Copy, MessageCircle, Heart, Share2 } from "lucide-react";
+import { Copy, MessageCircle, Heart, Share2, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { ServerProductData } from "@/lib/server/product-service";
@@ -177,6 +177,47 @@ export default function ProductDetailsSidebar({
     ? Math.round(((currentPrice - discountedPrice) / currentPrice) * 100)
     : null;
 
+  const copySellerContact = async () => {
+    // @ts-expect-error ignore
+    const email = product.seller?.email;
+    const phoneNumber = (product.seller as any)?.phoneNumber;
+    const contact = phoneNumber || email;
+
+    if (!contact) {
+      toast.error("No contact available for seller", {
+        position: "bottom-center",
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(contact);
+      toast.success(
+        phoneNumber
+          ? "Seller phone number copied to clipboard"
+          : "Seller email copied to clipboard",
+        {
+          position: "bottom-center",
+        }
+      );
+    } catch {
+      toast.error("Failed to copy seller contact", {
+        position: "bottom-center",
+      });
+    }
+  };
+
+  const callSeller = () => {
+    const phoneNumber = (product.seller as any)?.phoneNumber;
+    if (!phoneNumber) {
+      toast.error("Seller phone number not available", {
+        position: "bottom-center",
+      });
+      return;
+    }
+    window.location.href = `tel:${phoneNumber}`;
+  };
+
   return (
     <>
       <Toaster />
@@ -208,30 +249,79 @@ export default function ProductDetailsSidebar({
             </div>
           </div>
 
-          {/* Seller Information */}
+          {/* Seller Information - Enhanced */}
           {product.seller && (
             <div className="p-4 sm:p-6 border-b border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-200 shrink-0">
+              <div className="flex items-start gap-3 mb-3">
+                <div
+                  className="relative w-14 h-14 rounded-full overflow-hidden bg-gray-200 shrink-0 ring-1 ring-gray-100"
+                  aria-label={`${product.seller.fullName}`}
+                >
                   <Image
                     src={sellerImage}
-                    alt={product.seller.fullName}
+                    alt={product.seller.fullName || "Seller"}
                     fill
                     className="object-cover"
                   />
                 </div>
+
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
-                    {product.seller.fullName}
-                  </h4>
-                  {product.seller.rating && (
-                    <p className="text-xs text-gray-600">
-                      ⭐ {product.seller.rating} ({product.seller.reviews || 0}{" "}
-                      reviews)
-                    </p>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                      {product.seller.fullName}
+                    </h4>
+                    <span className="text-xs text-white bg-green-600 px-2 py-0.5 rounded font-medium">
+                      {(product.seller as any)?.accountType || "Seller"}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-600">
+                    {product.seller.rating ? (
+                      <span>
+                        ⭐ {product.seller.rating} (
+                        {product.seller.reviews || 0})
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">No ratings yet</span>
+                    )}
+
+                    <span aria-hidden="true">•</span>
+                    <span>
+                      {(product.seller as any)?.email ? (
+                        <a
+                          href={`mailto:${(product.seller as any)?.email}`}
+                          className="hover:underline"
+                        >
+                          {(product.seller as any)?.email}
+                        </a>
+                      ) : (
+                        "No contact"
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
+
+              {/* Trust / meta row */}
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded text-gray-700">
+                    🔒 Secure Transactions
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded text-gray-700">
+                    ⚡ Fast Response
+                  </span>
+                </div>
+                {/* <div className="text-xs text-gray-500">
+                  Member since{" "}
+                  {(product.seller as any)?.createdAt
+                    ? new Date(
+                        (product.seller as any)?.createdAt
+                      ).toLocaleDateString()
+                    : "—"}
+                </div> */}
+              </div>
+
               <div className="space-y-2">
                 {!isSeller && (
                   <>
@@ -240,8 +330,31 @@ export default function ProductDetailsSidebar({
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       <MessageCircle size={18} />
-                      Send Message
+                      Message Seller
                     </Button>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {(product.seller as any)?.phoneNumber && (
+                        <button
+                          onClick={callSeller}
+                          className="flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+                          title="Call seller"
+                        >
+                          <Phone size={16} />
+                          <span className="hidden sm:inline">Call</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={copySellerContact}
+                        className="flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+                        title="Copy seller contact"
+                      >
+                        <Copy size={16} />
+                        <span className="hidden sm:inline">Copy Contact</span>
+                        <span className="sm:hidden">Copy</span>
+                      </button>
+                    </div>
+
                     <Button
                       onClick={handleRequestEscrow}
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-2 text-sm sm:text-base"
