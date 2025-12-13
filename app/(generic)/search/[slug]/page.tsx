@@ -222,33 +222,21 @@ export default function SearchPage() {
       };
 
       // Submit to API
-      const response = await fetch("/api/request-product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+      await apiClientUser.post("/product-requests/create", payload);
+
+      toast.success("Product request submitted successfully!");
+      // Reset form
+      setFormData({
+        name: "",
+        description: "",
+        category: "",
+        subCategory: "",
+        phone: "",
+        images: [],
       });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        toast.success("Product request submitted successfully!");
-        // Reset form
-        setFormData({
-          name: "",
-          description: "",
-          category: "",
-          subCategory: "",
-          phone: "",
-          images: [],
-        });
-        setSelectedCategory(null);
-        setAvailableSubcategories([]);
-        setImagePreviewUrls([]);
-      } else {
-        toast.error(result.error || "Failed to submit request");
-      }
+      setSelectedCategory(null);
+      setAvailableSubcategories([]);
+      setImagePreviewUrls([]);
     } catch (error) {
       console.error("Error submitting request:", error);
       if (isUploadingImages) {

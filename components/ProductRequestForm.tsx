@@ -18,6 +18,7 @@ import {
 interface ProductRequestFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 interface ProductImage {
@@ -38,6 +39,7 @@ interface FormData {
 export default function ProductRequestForm({
   isOpen,
   onClose,
+  onSuccess,
 }: ProductRequestFormProps) {
   const { categories, loading: categoriesLoading } = useCategories();
   // console.log("categories", categories)
@@ -185,22 +187,11 @@ export default function ProductRequestForm({
       };
 
       // Submit to API
-      const response = await fetch("/api/request-product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      await apiClientUser.post("/product-requests/create", payload);
 
-      const result = await response.json();
-
-      if (response.ok) {
-        toast.success("Product request submitted successfully!");
-        onClose();
-      } else {
-        toast.error(result.error || "Failed to submit request");
-      }
+      toast.success("Product request submitted successfully!");
+      onSuccess?.();
+      onClose();
     } catch (error) {
       console.error("Error submitting request:", error);
       if (isUploadingImages) {
