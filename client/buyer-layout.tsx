@@ -21,9 +21,9 @@ export default function BuyerLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     router.refresh()
-    console.log("layoutt", data)
+    // console.log("layoutt", data)
     const user = data?.data.loggedInAccount.accountType
-    console.log('layout', user)
+    // console.log('layout', user)
     if (user == "Seller"){
       router.push('/seller/dashboard')
     }

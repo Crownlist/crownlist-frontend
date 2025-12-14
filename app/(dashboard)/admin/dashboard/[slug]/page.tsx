@@ -359,10 +359,10 @@ export default function SellerProductDetailsDynamic() {
                     <div className="text-gray-500 text-xs mb-1">Account Type</div>
                     <div className="font-medium">{data[0]?.seller?.accountType || "N/A"}</div>
                   </div>
-                  <div>
+                  {/* <div>
                     <div className="text-gray-500 text-xs mb-1">Seller ID</div>
                     <div className="font-medium text-xs break-all">{data[0]?.seller?._id || data[0]?.seller || "N/A"}</div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}

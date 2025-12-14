@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { AlignJustify, ChevronDown, ChevronUp, X } from "lucide-react";
+import { AlignJustify, ChevronDown, ChevronUp, Facebook, Instagram, Send, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,17 +108,15 @@ const Header = ({ hidden }: props) => {
 
   return (
     <nav
-      className={`bg-white sticky inset-0 z-[999] shadow-sm transition-transform duration-300 ${
-        isNavbarVisible ? "translate-y-0" : "-translate-y-full"
-      }`}
+      className={`bg-white sticky inset-0 z-[999] shadow-sm transition-transform duration-300 ${isNavbarVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
     >
       <div className="container w-full mx-auto flex items-center justify-between gap-2">
         {/* Mobile Menu */}
 
         <div
           className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-sm transform transition-transform duration-300 ease-in-out 
-            ${
-              mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } md:hidden h-screen overflow-y-auto`}
         >
           <div className="h-full flex flex-col  gap-3">
@@ -342,7 +340,7 @@ const Header = ({ hidden }: props) => {
                       alt="Gmail"
                     />
                     <small className="text-[#131416] text-xs">
-                      Info@joelist.com.ng
+                      crownliststore@gmail.com
                     </small>
                   </div>
                   <div className="flex items-center gap-2">
@@ -358,37 +356,46 @@ const Header = ({ hidden }: props) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mt-2">
-                  <Link href="#">
+                  <Link
+                    href="https://www.tiktok.com/@crownlist.store?_r=1&_t=ZM-91eKDIG9uA8"
+                    target="blank"
+                  >
                     <Image
-                      src="/icons/twitter.svg"
-                      width={24}
-                      height={24}
-                      alt="Twitter"
+                      src="/tikk.svg"
+                      alt="TikTok"
+                      width={25}
+                      height={25}
+                      className="min-w-[25px]"
+                    />
+                  </Link>
+                  <Link
+                    href="https://wa.me/2349063301718"
+                    target="blank"
+                  >
+                    <Image
+                      src="/whatsapp.svg"
+                      alt="WhatsApp"
+                      width={25}
+                      height={25}
+                      className="min-w-5"
                     />
                   </Link>
                   <Link href="#">
-                    <Image
-                      src="/icons/linkedin.svg"
-                      width={24}
-                      height={24}
-                      alt="LinkedIn"
-                    />
+                    <Instagram size={20} />
                   </Link>
-                  <Link href="#">
-                    <Image
-                      src="/icons/instagram.svg"
-                      width={24}
-                      height={24}
-                      alt="Instagram"
-                    />
+                  <Link
+                    href="https://www.facebook.com/share/1GDX5ybABh/"
+                    target="blank"
+                  >
+                    <Facebook size={20} />
                   </Link>
-                  <Link href="#">
-                    <Image
-                      src="/icons/facebook.svg"
-                      width={24}
-                      height={24}
-                      alt="Facebook"
-                    />
+
+                  <Link
+                    href="https://t.me/crownliststore"
+                    target="blank"
+                    className="text-gray-800 hover:text-white transition-colors"
+                  >
+                    <Send size={20} />
                   </Link>
                 </div>
               </div>
@@ -477,11 +484,10 @@ const Header = ({ hidden }: props) => {
                   <div className="hidden md:flex items-start gap-1 justify-center">
                     <Button
                       size="sm"
-                      className={`${
-                        pathname == "/category"
-                          ? "border-2  border-b-crown-black border-x-transparent border-t-transparent"
-                          : "border-none"
-                      }  shadow-none px-2 py-1 rounded-none text-crown-black font-medium `}
+                      className={`${pathname == "/category"
+                        ? "border-2  border-b-crown-black border-x-transparent border-t-transparent"
+                        : "border-none"
+                        }  shadow-none px-2 py-1 rounded-none text-crown-black font-medium `}
                       variant="outline"
                       onClick={handleCat}
                     >

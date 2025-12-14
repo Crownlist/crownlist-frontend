@@ -100,12 +100,12 @@ export default function AdminProductRequestCard({
 
         <div className="mt-2">
           <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-            <span>By: {request.user.fullName}</span>
-            <span>📞 {request.phone}</span>
+            <span>By: {request?.user?.fullName}</span>
+            <span>📞 {request?.phone}</span>
           </div>
 
           <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-            <span>Subcategory: {request.subCategory.name}</span>
+            <span>Subcategory: {request?.subCategory?.name}</span>
           </div>
 
           {/* Action Buttons */}

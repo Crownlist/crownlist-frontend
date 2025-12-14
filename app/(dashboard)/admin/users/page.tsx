@@ -22,7 +22,7 @@ import { User, UsersResponse } from "@/types/user/user"
 import { apiClientAdmin } from "@/lib/interceptor"
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [accountType, setAccountType] = useState<string>("all")
+  const [userFilter, setUserFilter] = useState<string>("all")
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(42)
@@ -49,6 +49,13 @@ export default function UsersPage() {
     }
   }, [data?.data])
 
+  // Reset filter when data is refetched
+  useEffect(() => {
+    if (data) {
+      setUserFilter("all")
+    }
+  }, [data])
+
   // Apply filters when data or filter values change
   useEffect(() => {
     if (data?.data?.users) {
@@ -64,16 +71,35 @@ export default function UsersPage() {
         )
       }
 
-      // Filter by account type
-      if (accountType !== "all") {
-        result = result.filter(user => user.accountType === accountType)
+      // Filter by user status/account type
+      if (userFilter !== "all") {
+        switch (userFilter) {
+          case "active":
+            result = result.filter(user => user.isVerified && !user.isSuspended)
+            break
+          case "inactive":
+            result = result.filter(user => !user.isVerified || user.subscriptionStatus === "inactive")
+            break
+          case "blocked":
+            result = result.filter(user => user.isSuspended)
+            break
+          case "User":
+            result = result.filter(user => user.accountType === "User")
+            break
+          case "Seller":
+            result = result.filter(user => user.accountType === "Seller")
+            break
+          case "Admin":
+            result = result.filter(user => user.accountType === "Admin")
+            break
+        }
       }
 
       setFilteredUsers(result)
     } else {
       setFilteredUsers([])
     }
-  }, [data, searchTerm, accountType, data?.data?.users])
+  }, [data, searchTerm, userFilter, data?.data?.users])
 
   // Calculate stats
   const totalUsers = data?.data?.stats?.totalUsers || 0
@@ -132,13 +158,16 @@ export default function UsersPage() {
                 </Select>
               </div>
 
-              <Select value={accountType} onValueChange={setAccountType}>
+              <Select value={userFilter} onValueChange={setUserFilter}>
                 <SelectTrigger className="w-[180px]">
                   <Filter className="h-4 w-4 mr-2 text-gray-400" />
-                  <SelectValue placeholder="Filter by type" />
+                  <SelectValue placeholder="Filter users" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Users</SelectItem>
+                  <SelectItem value="active">Active Users</SelectItem>
+                  <SelectItem value="inactive">Inactive Users</SelectItem>
+                  <SelectItem value="blocked">Blocked Users</SelectItem>
                   <SelectItem value="User">Regular Users</SelectItem>
                   <SelectItem value="Seller">Sellers</SelectItem>
                   <SelectItem value="Admin">Admins</SelectItem>
@@ -150,6 +179,7 @@ export default function UsersPage() {
                 onClick={() => {
                   refetch()
                   setCurrentPage(1) // Reset to first page on refresh
+                  setUserFilter("all") // Reset filter on refresh
                 }}
                 className="h-10 w-10"
               >
@@ -337,7 +367,7 @@ export default function UsersPage() {
               </div>
               <h3 className="text-lg font-medium text-gray-900">No users found</h3>
               <p className="mt-1 text-sm text-gray-500">
-                {searchTerm || accountType !== 'all'
+                {searchTerm || userFilter !== 'all'
                   ? 'Try adjusting your search or filter to find what you\'re looking for.'
                   : 'There are no users in the system yet.'}
               </p>

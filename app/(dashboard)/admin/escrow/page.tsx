@@ -14,7 +14,7 @@ interface EscrowItem {
     details: {
         price: {
             currentPrice: number
-            discountedPrice: number
+            discountedPrice?: number
         }
         name: string
         slug: string
@@ -44,6 +44,8 @@ interface EscrowItem {
     status: string
     createdAt: string
     updatedAt: string
+    paymentReference?: string
+    paymentUrl?: string
 }
 
 interface Pagination {
@@ -93,8 +95,9 @@ export default function AdminEscrowPage() {
 
     const fetchEscrowDetails = async (escrowId: string) => {
         try {
-            const response = await apiClientUser.get(`/escrows/${escrowId}`)
-            setEscrowDetails(response.data.escrow)
+            const response = await apiClientAdmin.get(`/escrows/${escrowId}`)
+            console.log('escrow details', response.data.data)
+            setEscrowDetails(response.data.data)
             setShowEscrowDetails(true)
         } catch {
             toast.error("Failed to fetch escrow details")
@@ -150,9 +153,10 @@ export default function AdminEscrowPage() {
             if (status) {
                 url += `&status=${status}`
             }
-            const response = await apiClientUser.get(url)
-            setEscrows(response.data.escrows)
-            setPagination(response.data.pagination)
+            const response = await apiClientAdmin.get(url)
+            console.log('escrows', response.data.data)
+            setEscrows(response.data.data.escrows)
+            setPagination(response.data.data.pagination)
         } catch {
             setError("Failed to load escrow data")
         } finally {

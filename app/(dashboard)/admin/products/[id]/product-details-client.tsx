@@ -75,9 +75,10 @@ export default function ProductDetailsClient({ productId }: { productId: string 
     queryFn: async () => {
       try {
         console.log("productId", productsData)
-        const response = await apiClientAdmin.get(`/products/all?${productId}`);
+        const response = await apiClientAdmin.get(`/products/one/${productId}`);
         console.log("resssr", response);
         const foundProduct = response.data.data.products
+        console.log("foundProduct", foundProduct)
         if (foundProduct) {
             setProduct(foundProduct);
             setSelectedStatus(foundProduct.status);
