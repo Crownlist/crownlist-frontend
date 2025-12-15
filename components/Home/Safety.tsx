@@ -174,7 +174,7 @@ const Safety = () => {
   }, [searchQuery, faqs]);
 
   return (
-    <div className="mx-auto p-6 space-y-8 w-full max-w-screen-md">
+    <div className="mx-auto p-6 space-y-8 w-full max-w-3xl">
       <div className="flex flex-col items-center text-center mb-10">
         <div className="bg-[#f2e9ff] text-[#6941c6] px-3 py-1 rounded-full text-sm font-medium mb-4">
           Safety Tips for CROWNLIST Users

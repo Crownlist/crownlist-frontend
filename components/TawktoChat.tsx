@@ -13,6 +13,9 @@ declare global {
 }
 
 export default function TawktoChat() {
+  if (true) {
+    return
+  }
   const pathname = usePathname();
   const isInitialized = useRef(false);
 

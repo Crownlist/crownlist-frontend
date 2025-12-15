@@ -26,6 +26,7 @@ export default function UserLayout({ children }: { children: ReactNode }) {
     if (user == "User") {
       router.push("/buyer/dashboard");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {

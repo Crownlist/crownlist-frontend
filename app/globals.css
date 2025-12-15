@@ -185,3 +185,8 @@
     display: none; /* Chrome, Safari and Opera */
   }
 }
+
+.toaster {
+  max-width: 90vw;
+  word-wrap: break-word;
+}

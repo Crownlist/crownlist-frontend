@@ -22,7 +22,7 @@ export default function AdminAuthLayout({ children }: { children: ReactNode }) {
           disableTransitionOnChange
         >
           <NextTopLoader color="#0177AB" showSpinner={false} />
-          <Toaster position="top-center" />
+          <Toaster position="top-right" />
           {children}
           <BackToTop />
         </ThemeProvider>

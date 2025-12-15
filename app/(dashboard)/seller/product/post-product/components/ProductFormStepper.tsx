@@ -34,7 +34,7 @@ export const ProductFormStepper = ({
   const progressPercentage = ((currentStep - 1) / (steps.length - 1)) * 100;
 
   return (
-    <div className="w-full max-w-sm mx-auto">
+    <div className="overflow-hidden w-full max-w-sm mx-auto">
       {/* Mobile Progress Bar */}
       <div className="md:hidden mb-6">
         <div className="flex justify-between items-center mb-2">
@@ -47,7 +47,7 @@ export const ProductFormStepper = ({
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-gradient-to-r from-[#1F058F] to-[#3b0ac7] h-2 rounded-full transition-all duration-500 ease-out"
+            className="bg-linear-to-r from-[#1F058F] to-[#3b0ac7] h-2 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
@@ -72,7 +72,7 @@ export const ProductFormStepper = ({
             return (
               <div key={step.number} className="relative flex items-start">
                 {/* Step Circle */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div
                     className={`
                       w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
@@ -146,7 +146,7 @@ export const ProductFormStepper = ({
         </div>
 
         {/* Progress Summary */}
-        <div className="mt-8 p-4 bg-gradient-to-r from-[#1F058F]/5 to-[#3b0ac7]/5 rounded-lg border border-[#1F058F]/10">
+        <div className="mt-8 p-4 bg-linear-to-r from-[#1F058F]/5 to-[#3b0ac7]/5 rounded-lg border border-[#1F058F]/10">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-700">Progress</p>
@@ -160,7 +160,7 @@ export const ProductFormStepper = ({
               </p>
               <div className="w-16 bg-gray-200 rounded-full h-1.5 mt-1">
                 <div
-                  className="bg-gradient-to-r from-[#1F058F] to-[#3b0ac7] h-1.5 rounded-full transition-all duration-500 ease-out"
+                  className="bg-linear-to-r from-[#1F058F] to-[#3b0ac7] h-1.5 rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
@@ -171,16 +171,13 @@ export const ProductFormStepper = ({
 
       {/* Mobile Compact Stepper */}
       <div className="md:hidden">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 gap-2">
           {steps.map((step, index) => {
             const isCompleted = step.number < currentStep;
             const isCurrent = step.number === currentStep;
 
             return (
-              <div
-                key={step.number}
-                className="flex flex-col items-center flex-1"
-              >
+              <div key={step.number} className="flex items-center flex-1">
                 <div
                   className={`
                     w-8 h-8 rounded-full flex items-center justify-center mb-1 transition-all duration-300
@@ -199,29 +196,29 @@ export const ProductFormStepper = ({
                     <span className="text-xs font-medium">{step.number}</span>
                   )}
                 </div>
-                <span
-                  className={`
-                    text-xs font-medium text-center leading-tight transition-colors duration-300
-                    ${
-                      isCompleted || isCurrent
-                        ? "text-gray-900"
-                        : "text-gray-500"
-                    }
-                  `}
-                >
-                  {step.title}
-                </span>
-
-                {/* Connector Line (except for last item) */}
-                {index < steps.length - 1 && (
-                  <div className="absolute top-4 left-1/2 w-full h-0.5 bg-gray-200 -z-10">
-                    <div
-                      className={`h-full bg-green-500 transition-all duration-500 ${
-                        isCompleted ? "w-full" : "w-0"
-                      }`}
-                    />
-                  </div>
-                )}
+                <div className="flex flex-col items-center flex-1">
+                  <span
+                    className={`
+                      text-xs font-medium text-center leading-tight transition-colors duration-300
+                      ${
+                        isCompleted || isCurrent
+                          ? "text-gray-900"
+                          : "text-gray-500"
+                      }
+                    `}
+                  >
+                    {step.title}
+                  </span>
+                  {index < steps.length - 1 && (
+                    <div className="flex-1 h-0.5 bg-gray-200 w-full mt-2">
+                      <div
+                        className={`h-full bg-green-500 transition-all duration-500 ${
+                          isCompleted ? "w-full" : "w-0"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}

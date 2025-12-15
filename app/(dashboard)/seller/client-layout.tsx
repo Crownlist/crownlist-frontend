@@ -16,7 +16,7 @@ export default function ClientLayout({ children }: RootLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col">
+    <div className="min-h-screen w-full overflow-hidden flex flex-col">
       {/* Fixed header */}
       <div className="fixed max-w-dvw top-0 left-0 right-0 z-50">
         <DashboardHeader />
@@ -45,8 +45,8 @@ export default function ClientLayout({ children }: RootLayoutProps) {
         </div>
 
         {/* Main content - scrollable without visible scrollbars */}
-        <main className="flex-1 ml-0 md:ml-64 bg-white overflow-auto scrollbar-hide h-[calc(100vh-64px)]">
-          <div className="h-full w-full">{children}</div>
+        <main className="flex-1 ml-0 md:ml-64 bg-white overflow-auto scrollbar-hide h-[calc(100vh-64px)] max-w-full">
+          <div className="h-full w-full max-w-full">{children}</div>
         </main>
       </div>
     </div>

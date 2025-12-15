@@ -6,7 +6,7 @@ import Wrapper from "@/client/wrapper";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import TawktoChat from "@/components/TawktoChat";
+// import TawktoChat from "@/components/TawktoChat";
 import SetVh from "@/components/SetVh";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -54,7 +54,7 @@ export default function RootLayout({
           {/* <ChatBot /> */}
           {/* <BottomNav/> */}
         </ReactQueryProvider>
-        <TawktoChat />
+        {/* <TawktoChat /> */}
         <Analytics />
         <SpeedInsights />
       </body>

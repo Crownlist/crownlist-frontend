@@ -1,172 +1,193 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Textarea } from "@/components/ui/textarea"
-import { Upload, X } from "lucide-react"
-import Header from "@/components/Header1"
-import Footer from "@/components/Footer"
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Upload, X } from "lucide-react";
+import Header from "@/components/Header1";
+import Footer from "@/components/Footer";
 //import Link from "next/link"
-import { Loader2 } from "lucide-react"
-import { apiClientPublic } from "@/lib/interceptor"
-import { useToast } from "@/lib/useToastMessage"
-import { SuccessModal } from "@/components/SuccessModal"
-import { useGetAuthUser } from "@/lib/useGetAuthUser"
-import { useSelector } from "react-redux"
-import { RootState } from "@/store"
+import { Loader2 } from "lucide-react";
+import { apiClientPublic } from "@/lib/interceptor";
+import { useToast } from "@/lib/useToastMessage";
+import { SuccessModal } from "@/components/SuccessModal";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface FeedbackIdeaResponse {
-  status: string
-  message?: string
+  status: string;
+  message?: string;
 }
 
 export default function ShareAnIdea() {
   //const [selectedTab, setSelectedTab] = useState("share-idea")
-  const [selectedIdea, setSelectedIdea] = useState("")
-  const [ideaDescription, setIdeaDescription] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [attachments, setAttachments] = useState<File[]>([])
-  const { handleMessage } = useToast()
-  const userData = useSelector((state: RootState) => state.userData?.userData)
-  const {} = useGetAuthUser("User")
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [selectedIdea, setSelectedIdea] = useState("");
+  const [ideaDescription, setIdeaDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [otherCategory, setOtherCategory] = useState("");
+  const { handleMessage } = useToast();
+  const userData = useSelector((state: RootState) => state.userData?.userData);
+  const {} = useGetAuthUser("User");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files) {
-      const newFiles = Array.from(files)
-      setAttachments(prev => [...prev, ...newFiles])
+      const newFiles = Array.from(files);
+      setAttachments((prev) => [...prev, ...newFiles]);
     }
-  }
+  };
 
   const removeFile = (index: number) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index))
-  }
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!ideaDescription.trim()) {
-      handleMessage('error', 'Please describe your idea.')
-      return
+      handleMessage("error", "Please describe your idea.");
+      return;
     }
 
     if (ideaDescription.trim().length < 20) {
-      handleMessage('error', 'Message must be at least 20 characters.')
-      return
+      handleMessage("error", "Message must be at least 20 characters.");
+      return;
     }
 
     if (!selectedIdea) {
-      handleMessage('error', 'Please select an idea category.')
-      return
+      handleMessage("error", "Please select an idea category.");
+      return;
     }
 
-    setIsSubmitting(true)
+    if (selectedIdea === "other" && !otherCategory.trim()) {
+      handleMessage("error", "Please specify the category for 'Other'.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       if (!userData) {
-        handleMessage('error', 'User data not available. Please log in.')
-        return
+        handleMessage("error", "User data not available. Please log in.");
+        return;
       }
 
-      const nameParts = userData.fullName?.split(' ') || []
-      const firstName = nameParts[0] || ''
-      const lastName = nameParts.slice(1).join(' ') || ''
+      const nameParts = userData.fullName?.split(" ") || [];
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
 
       // Prepare payload for idea submission
       const payload = {
         firstName,
         lastName,
         email: userData.email,
-        message: ideaDescription,
+        message: ideaDescription + (otherCategory ? `\nSpecified category: ${otherCategory}` : ''),
         category: selectedIdea,
-        attachments: []
-      }
+        attachments: [],
+      };
 
       // Send idea via API
-      const response: FeedbackIdeaResponse = await apiClientPublic.post('/feedback/idea', payload)
+      const response: FeedbackIdeaResponse = await apiClientPublic.post(
+        "/feedback/idea",
+        payload
+      );
 
       // Check if backend returned an error status
-      if (response?.status === 'error') {
-        handleMessage('error', response.message || 'An error occurred while sharing your idea.')
-        return
+      if (response?.status === "error") {
+        handleMessage(
+          "error",
+          response.message || "An error occurred while sharing your idea."
+        );
+        return;
       }
 
-      handleMessage('success', 'Your idea has been shared successfully!')
-      setShowSuccessModal(true)
-      setSelectedIdea("")
-      setIdeaDescription("")
-      setAttachments([])
+      handleMessage("success", "Your idea has been shared successfully!");
+      setShowSuccessModal(true);
+      setSelectedIdea("");
+      setIdeaDescription("");
+      setAttachments([]);
+      setOtherCategory("");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error: unknown) {
-      let errorMessage = 'Failed to share idea. Please try again.'
-      const errorType: 'error' | 'warning' = 'error'
+      let errorMessage = "Failed to share idea. Please try again.";
+      const errorType: "error" | "warning" = "error";
 
-      if (error && typeof error === 'object') {
+      if (error && typeof error === "object") {
         const err = error as {
-          response?: { status?: number; data?: { message?: string; code?: string; status?: string } }
-          message?: string
-        }
+          response?: {
+            status?: number;
+            data?: { message?: string; code?: string; status?: string };
+          };
+          message?: string;
+        };
 
         if (err.response) {
-          const status = err.response.status
-          const data = err.response.data
+          const status = err.response.status;
+          const data = err.response.data;
 
           if (status && (status === 400 || status === 422)) {
             // Validation error
-            errorMessage = data?.message || 'Invalid input. Please check your data.'
+            errorMessage =
+              data?.message || "Invalid input. Please check your data.";
           } else if (status && status >= 500) {
             // Server error
-            errorMessage = 'Server error. Please try again later.'
+            errorMessage = "Server error. Please try again later.";
           } else if (status && status >= 400) {
             // Other client error
-            errorMessage = data?.message || err.message || errorMessage
+            errorMessage = data?.message || err.message || errorMessage;
           } else {
             // Unknown error with response
-            errorMessage = data?.message || err.message || errorMessage
+            errorMessage = data?.message || err.message || errorMessage;
           }
         } else {
           // Network error or other error without response
-          if (err.message?.includes('Network') || err.message?.includes('fetch')) {
-            errorMessage = 'Network error. Please check your internet connection.'
+          if (
+            err.message?.includes("Network") ||
+            err.message?.includes("fetch")
+          ) {
+            errorMessage =
+              "Network error. Please check your internet connection.";
           } else if (err.message) {
-            errorMessage = err.message
+            errorMessage = err.message;
           }
         }
-      } else if (typeof error === 'string') {
-        errorMessage = error
+      } else if (typeof error === "string") {
+        errorMessage = error;
       }
 
-      handleMessage(errorType, errorMessage)
+      handleMessage(errorType, errorMessage);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-  <>
-   <Header hidden={false} />
+    <>
+      <Header hidden={false} />
 
-    <div className="min-h-screen bg-gray-50 mb-10">
+      <div className="min-h-screen bg-gray-50 mb-10">
+        <div className="max-w-2xl mx-auto px-4  items-center mb-12 pt-8">
+          <div
+            className={`px-6 py-2 text-center w-40 mx-auto items-center rounded-full text-sm font-medium bg-purple-100 text-purple-700 c shadow-sm mb-8 `}
+          >
+            Share feedback
+          </div>
 
-      <div className="max-w-2xl mx-auto px-4  items-center mb-12 pt-8">
-
-         <div
-              className={`px-6 py-2 text-center w-40 mx-auto items-center rounded-full text-sm font-medium bg-purple-100 text-purple-700 c shadow-sm mb-8 `}
-            >
-              Share feedback
-            </div>
-
-
-
-        {/* Navigation Tabs */}
-        {/* <div className="flex justify-center mb-8">
+          {/* Navigation Tabs */}
+          {/* <div className="flex justify-center mb-8">
           <div className="flex bg-purple-100 text-purple-700 rounded-full py-1 px-4 shadow-sm border">
 
             <Link
@@ -190,152 +211,200 @@ export default function ShareAnIdea() {
           </div>
         </div> */}
 
-        {/* Main Content */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Share an idea</h1>
-          <p className="text-gray-600 text-lg">
-            I have a suggestion or feature request. Can&#39;t find the answer you&#39;re looking for?{" "}
-            <a href="#" className="text-purple-600 underline hover:text-purple-700">
-              Please chat to our friendly team
-            </a>
-          </p>
-        </div>
-
-        {/* Form */}
-        <div className="bg-white rounded-xl shadow-sm border p-8 mb-12 ">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Select your idea */}
-            <div>
-              <Label className="text-base font-medium text-gray-900 mb-4 block">Select your idea</Label>
-              <RadioGroup value={selectedIdea} onValueChange={setSelectedIdea} className="grid grid-cols-2 md:grid-cols-3  gap-4">
-                <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="notification" id="notification" />
-                  <Label htmlFor="notification" className="cursor-pointer">
-                    Notification
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="inbox" id="inbox" />
-                  <Label htmlFor="inbox" className="cursor-pointer">
-                    Inbox
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="find-service" id="find-service" />
-                  <Label htmlFor="find-service" className="cursor-pointer">
-                    Find a service
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="fake-account" id="fake-account" />
-                  <Label htmlFor="fake-account" className="cursor-pointer">
-                    Fake account
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="payment" id="payment" />
-                  <Label htmlFor="payment" className="cursor-pointer">
-                    Payment
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="order" id="order" />
-                  <Label htmlFor="order" className="cursor-pointer">
-                    Order
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* Attach a file */}
-            <div>
-              <Label className="text-base font-medium text-gray-900 mb-4 block">Attach a file</Label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <div
-                onClick={handleFileClick}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+          {/* Main Content */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              Share an idea
+            </h1>
+            <p className="text-gray-600 text-lg">
+              I have a suggestion or feature request. Can&#39;t find the answer
+              you&#39;re looking for?{" "}
+              <a
+                href="https://wa.me/2349063301718"
+                className="text-purple-600 underline hover:text-purple-700"
               >
-                <Upload className="mx-auto h-8 w-8 text-gray-400 mb-4" />
-                <div className="text-gray-600">
-                  <span className="font-medium text-gray-900 underline">Click to upload</span> or drag and drop
-                </div>
-                <div className="text-sm text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 800×400px)</div>
+                Please chat to our friendly team
+              </a>
+            </p>
+          </div>
+
+          {/* Form */}
+          <div className="bg-white rounded-xl shadow-sm border p-8 mb-12 ">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Select your idea */}
+              <div>
+                <Label className="text-base font-medium text-gray-900 mb-4 block">
+                  Select your idea
+                </Label>
+                <RadioGroup
+                  value={selectedIdea}
+                  onValueChange={setSelectedIdea}
+                  className="grid grid-cols-2 md:grid-cols-3  gap-4"
+                >
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
+                    <RadioGroupItem value="notification" id="notification" />
+                    <Label htmlFor="notification" className="cursor-pointer">
+                      Notification
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
+                    <RadioGroupItem value="inbox" id="inbox" />
+                    <Label htmlFor="inbox" className="cursor-pointer">
+                      Inbox
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
+                    <RadioGroupItem
+                      value="find-a-service"
+                      id="find-a-service"
+                    />
+                    <Label htmlFor="find-a-service" className="cursor-pointer">
+                      Find a service
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
+                    <RadioGroupItem value="fake-account" id="fake-account" />
+                    <Label htmlFor="fake-account" className="cursor-pointer">
+                      Fake account
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
+                    <RadioGroupItem value="order" id="order" />
+                    <Label htmlFor="order" className="cursor-pointer">
+                      Order
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50">
+                    <RadioGroupItem value="other" id="other" />
+                    <Label htmlFor="other" className="cursor-pointer">
+                      Other
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
-              {attachments.length > 0 && (
-                <div className="mt-4">
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">Selected files:</Label>
-                  <div className="space-y-2">
-                    {attachments.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <Upload className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm text-gray-700 truncate max-w-xs">{file.name}</span>
-                          <span className="text-xs text-gray-500">({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeFile(index)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))}
+
+              {/* Conditional input for other category */}
+              {selectedIdea === "other" && (
+                <div>
+                  <Label className="text-base font-medium text-gray-900 mb-4 block">
+                    Please specify the category
+                  </Label>
+                  <Input
+                    placeholder="Enter custom category"
+                    value={otherCategory}
+                    onChange={(e) => setOtherCategory(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+              )}
+
+              {/* Attach a file */}
+              <div>
+                <Label className="text-base font-medium text-gray-900 mb-4 block">
+                  Attach a file
+                </Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <div
+                  onClick={handleFileClick}
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer"
+                >
+                  <Upload className="mx-auto h-8 w-8 text-gray-400 mb-4" />
+                  <div className="text-gray-600">
+                    <span className="font-medium text-gray-900 underline">
+                      Click to upload
+                    </span>{" "}
+                    or drag and drop
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    SVG, PNG, JPG or GIF (max. 800×400px)
                   </div>
                 </div>
-              )}
-            </div>
+                {attachments.length > 0 && (
+                  <div className="mt-4">
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Selected files:
+                    </Label>
+                    <div className="space-y-2">
+                      {attachments.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center w-full justify-between bg-gray-50 p-3 rounded-lg"
+                        >
+                          <div className="flex items-center max-w-[80%] space-x-3 grow">
+                            <Upload className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-700 truncate max-w-[50%]">
+                              {file.name}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              ({(file.size / 1024 / 1024).toFixed(1)} MB)
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
-            {/* Tell us about your idea */}
-            <div>
-              <Label htmlFor="idea-description" className="text-base font-medium text-gray-900 mb-4 block">
-                Tell us about your idea
-              </Label>
-              <Textarea
-                id="idea-description"
-                placeholder=""
-                value={ideaDescription}
-                onChange={(e) => setIdeaDescription(e.target.value)}
-                className="min-h-[120px] resize-none"
-              />
-            </div>
+              {/* Tell us about your idea */}
+              <div>
+                <Label
+                  htmlFor="idea-description"
+                  className="text-base font-medium text-gray-900 mb-4 block"
+                >
+                  Tell us about your idea
+                </Label>
+                <Textarea
+                  id="idea-description"
+                  placeholder=""
+                  value={ideaDescription}
+                  onChange={(e) => setIdeaDescription(e.target.value)}
+                  className="min-h-[120px] resize-none"
+                />
+              </div>
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-black hover:bg-gray-800 text-white py-3 text-base font-medium flex items-center justify-center"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  Sharing...
-                </>
-              ) : (
-                "Share idea"
-              )}
-            </Button>
-          </form>
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-black hover:bg-gray-800 text-white py-3 text-base font-medium flex items-center justify-center"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    Sharing...
+                  </>
+                ) : (
+                  "Share idea"
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
 
-    <SuccessModal
-      open={showSuccessModal}
-      onOpenChange={setShowSuccessModal}
-      title="Idea Shared!"
-      description="Your idea has been submitted successfully. Thank you for your feedback!"
-    />
+      <SuccessModal
+        open={showSuccessModal}
+        onOpenChange={setShowSuccessModal}
+        title="Idea Shared!"
+        description="Your idea has been submitted successfully. Thank you for your feedback!"
+      />
 
-      <Footer/>
-
+      <Footer />
     </>
-  )
+  );
 }
