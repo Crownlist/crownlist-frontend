@@ -129,7 +129,6 @@ export default function AdminEscrowPage() {
 
       <EscrowList
         escrows={escrows}
-        loading={loading}
         pagination={pagination}
         currentPage={currentPage}
         onChangePage={(p) => setCurrentPage(p)}

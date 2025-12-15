@@ -1,13 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { EscrowItem, Pagination } from "@/types/escrow";
 
 interface Props {
   escrows: EscrowItem[];
-  loading: boolean;
   pagination: Pagination;
   currentPage: number;
   onChangePage: (page: number) => void;
@@ -18,7 +16,6 @@ interface Props {
 
 export default function EscrowList({
   escrows,
-  loading,
   pagination,
   currentPage,
   onChangePage,
