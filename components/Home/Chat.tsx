@@ -798,16 +798,16 @@ export default function MessagingInterface() {
 
   // METHOD 1: Try using activeConversation.id (this is populated)
   if (state.activeConversation?.id) {
-    console.log(
-      "  🔧 FIX: Using activeConversation.id:",
-      state.activeConversation.id
-    );
+    // console.log(
+    //   "  🔧 FIX: Using activeConversation.id:",
+    //   state.activeConversation.id
+    // );
     currentMessages = state.messages[state.activeConversation.id] || [];
-    console.log(
-      "  🔧 Found messages with activeConversation.id:",
-      currentMessages.length,
-      "messages"
-    );
+    // console.log(
+    //   "  🔧 Found messages with activeConversation.id:",
+    //   currentMessages.length,
+    //   "messages"
+    // );
   }
 
   // FALLBACK: Try activeConversationId as key
@@ -1115,7 +1115,7 @@ export default function MessagingInterface() {
                 />
                 <Textarea
                   placeholder="Send a message"
-                  className="flex-1 resize-none border-gray-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[40px] max-h-[120px]"
+                  className="flex-1 resize-none border-gray-200 focus-visible:ring-0 focus-visible:ring-offset-0 min-h-10 max-h-[120px]"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   onKeyDown={handleKeyDown}
