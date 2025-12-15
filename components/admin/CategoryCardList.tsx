@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Image from "next/image";
 import { CategoryCard } from "./CategoryCard";
 import {
   Dialog,
@@ -351,9 +352,11 @@ export function CategoryCardList({
                     {/* Image preview */}
                     {imagePreview && (
                       <div className="mt-2">
-                        <img
+                        <Image
                           src={imagePreview}
                           alt="Image Preview"
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-cover rounded-md border"
                         />
                       </div>
@@ -400,9 +403,11 @@ export function CategoryCardList({
                     {/* Icon preview */}
                     {iconPreview && (
                       <div className="mt-2">
-                        <img
+                        <Image
                           src={iconPreview}
                           alt="Icon Preview"
+                          width={80}
+                          height={80}
                           className="w-20 h-20 object-cover rounded-md border"
                         />
                       </div>

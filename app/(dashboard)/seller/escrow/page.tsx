@@ -69,10 +69,8 @@ export default function SellerEscrowPage() {
     limit: 10,
     pages: 1,
   });
-  const [selectedEscrow, setSelectedEscrow] = useState<EscrowItem | null>(null);
   const [escrowDetails, setEscrowDetails] = useState<EscrowItem | null>(null);
   const [showEscrowDetails, setShowEscrowDetails] = useState(false);
-  const [actionLoading, setActionLoading] = useState(false);
 
   const router = useRouter();
 

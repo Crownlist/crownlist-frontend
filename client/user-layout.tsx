@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { useMgtKeys } from "@/lib/useMgtKeys";

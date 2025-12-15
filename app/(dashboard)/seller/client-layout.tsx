@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import DashboardHeader from "@/components/dashboard-header"
-import DashboardSidebar from "@/components/dashboard-sidebar"
-import MobileSidebar from "@/components/mobile-sidebar"
+import type React from "react";
+import { useState } from "react";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import DashboardHeader from "@/components/dashboard-header";
+import DashboardSidebar from "@/components/dashboard-sidebar";
+import MobileSidebar from "@/components/mobile-sidebar";
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function ClientLayout({ children }: RootLayoutProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col">
       {/* Fixed header */}
-      <div className="fixed top-0 left-0 right-0 z-50">
+      <div className="fixed max-w-dvw top-0 left-0 right-0 z-50">
         <DashboardHeader />
       </div>
 
-      <div className="flex flex-1 pt-[64px]">
+      <div className="flex flex-1 pt-16">
         {/* Mobile menu button */}
         <Button
           variant="ghost"
-        //   size="lg"
+          //   size="lg"
           className="fixed top-2.5 left-4 z-50 md:hidden h-10"
           onClick={() => setIsMobileMenuOpen(true)}
         >
@@ -34,10 +34,13 @@ export default function ClientLayout({ children }: RootLayoutProps) {
         </Button>
 
         {/* Mobile sidebar */}
-        <MobileSidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+        <MobileSidebar
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+        />
 
         {/* Fixed desktop sidebar */}
-        <div className="hidden md:block fixed left-0 top-[64px] bottom-0 w-64 overflow-hidden">
+        <div className="hidden md:block fixed left-0 top-16 bottom-0 w-64 overflow-hidden">
           <DashboardSidebar />
         </div>
 
@@ -47,5 +50,5 @@ export default function ClientLayout({ children }: RootLayoutProps) {
         </main>
       </div>
     </div>
-  )
+  );
 }
