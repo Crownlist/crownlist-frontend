@@ -262,6 +262,7 @@ export default function BuyerProductRequestsPage() {
         <ProductRequestForm
           isOpen={showFormModal}
           onClose={() => setShowFormModal(false)}
+          onSuccess={() => refetch()}
         />
       )}
     </div>

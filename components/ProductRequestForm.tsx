@@ -19,6 +19,7 @@ import {
 interface ProductRequestFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 interface ProductImage {
@@ -39,6 +40,7 @@ interface FormData {
 export default function ProductRequestForm({
   isOpen,
   onClose,
+  onSuccess,
 }: ProductRequestFormProps) {
   const { categories, loading: categoriesLoading } = useCategories();
   // console.log("categories", categories)
@@ -197,31 +199,11 @@ export default function ProductRequestForm({
       });
 
       // Submit to API
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
+      await apiClientUser.post("/product-requests/create", payload);
 
-      if (authToken) {
-        headers.Authorization = `Bearer ${authToken}`;
-        console.log("Authorization header added");
-      } else {
-        console.log("No Authorization header added - token is null/undefined");
-      }
-
-      const response = await fetch("/api/request-product", {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        toast.success("Product request submitted successfully!");
-        onClose();
-      } else {
-        toast.error(result.error || "Failed to submit request");
-      }
+      toast.success("Product request submitted successfully!");
+      onSuccess?.();
+      onClose();
     } catch (error) {
       console.error("Error submitting request:", error);
       if (isUploadingImages) {
