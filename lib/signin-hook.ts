@@ -44,20 +44,26 @@ export const useAdminSigninHook = () => {
         obfuscateToken(true, data?.data.refreshToken)
       );
 
-      // 3. Handle redirection (as you're already doing)
+      // 3. Handle redirection: prioritize server-provided role over any callback URL
+      const role = data?.data.account.accountType;
+      const origin = location.origin;
+
+      if (role === "Seller") {
+        location.replace(origin + "/seller/dashboard");
+        return;
+      }
+
+      // Default to buyer/profile for User or unknown roles
+      if (role === "User" || !role) {
+        location.replace(origin + "/buyer/profile");
+        return;
+      }
+
+      // Fallback: if role didn't match above, but a return URL exists, use it
       if (sessionStorage.getItem("returnUserTo")) {
-        location.replace(
-          location.origin + sessionStorage.getItem("returnUserTo")
-        );
+        location.replace(origin + sessionStorage.getItem("returnUserTo"));
       } else {
-        console.log(location.origin);
-        if (data?.data.account.accountType == "User") {
-          location.replace(location.origin + "/buyer/profile");
-        } else if (data?.data.account.accountType == "Seller") {
-          location.replace(location.origin + "/seller/dashboard");
-        } else {
-          location.replace(location.origin + "/buyer/profile");
-        }
+        location.replace(origin + "/buyer/profile");
       }
     },
     onError: async (error: any, variables: { email: any }) => {
