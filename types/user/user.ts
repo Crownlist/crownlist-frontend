@@ -1,4 +1,5 @@
 export interface User {
+  isSuspended: any;
   _id: string;
   fullName: string;
   email: string;

@@ -267,7 +267,9 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-medium">Seller Information</h3>
-                <Button variant="outline" size="sm">View Store</Button>
+                <Link href={`/admin/users/${userId}/seller-products`}>
+                  <Button variant="outline" size="sm">View Store</Button>
+                </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center p-4 border rounded-lg">

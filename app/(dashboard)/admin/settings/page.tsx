@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { apiClientUser } from "@/lib/interceptor"
+import { apiClientAdmin } from "@/lib/interceptor"
 import { ConfirmationModal } from "@/components/ConfirmationModal"
 
 interface SettingsSection {
@@ -67,7 +67,8 @@ export default function SettingsPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true)
-      const res = await apiClientUser.get("/settings")
+      const res = await apiClientAdmin.get("/settings")
+      console.log("settings", res)
       const data = res?.data?.data?.settings || res?.data?.settings
       setSettings(data)
     } catch (error: any) {
@@ -83,7 +84,7 @@ export default function SettingsPage() {
     if (!settings) return
     try {
       setUpdating(true)
-      await apiClientUser.patch(`/settings/${section}`, settings[section])
+      await apiClientAdmin.patch(`/settings/${section}`, settings[section])
       toast.success(`${section.charAt(0).toUpperCase() + section.slice(1)} settings updated successfully`)
     } catch (error: any) {
       toast.error(error?.response?.data?.message || `Failed to update ${section} settings`)
@@ -104,7 +105,7 @@ export default function SettingsPage() {
     setConfirmModalOpen(false)
     try {
       setResetting(true)
-      await apiClientUser.post("/settings/reset", { settingsType: resetType })
+      await apiClientAdmin.post("/settings/reset", { settingsType: resetType })
       toast.success(`${resetType === "all" ? "All" : resetType.charAt(0).toUpperCase() + resetType.slice(1)} settings reset successfully`)
       await fetchSettings()
     } catch (error: any) {

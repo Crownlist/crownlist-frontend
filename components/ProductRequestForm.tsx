@@ -6,6 +6,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { Category, Subcategory } from "@/types/category/category";
 import { toast } from "sonner";
 import { apiClientUser } from "@/lib/interceptor";
+import { obfuscateToken } from "@/constants/encryptData";
 import Image from "next/image";
 import {
   Select,
@@ -135,6 +136,7 @@ export default function ProductRequestForm({
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("handleSubmit called");
     e.preventDefault();
 
     if (
@@ -185,6 +187,16 @@ export default function ProductRequestForm({
         subCategory: formData.subCategory,
         phone: formData.phone,
       };
+
+      // Get auth token from localStorage and decode it
+      const storedToken = localStorage.getItem("leoKey");
+      const authToken = storedToken ? obfuscateToken(false, storedToken) : null;
+
+      console.log("Token debug:", {
+        storedToken: storedToken ? "present" : "null",
+        authToken: authToken ? "present" : "null",
+        authTokenLength: authToken?.length
+      });
 
       // Submit to API
       await apiClientUser.post("/product-requests/create", payload);

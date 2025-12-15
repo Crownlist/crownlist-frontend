@@ -21,7 +21,7 @@ export default function UserLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const user = data?.data.loggedInAccount.accountType
-    console.log('layout', user)
+    // console.log('layout', user)
     if (user == "User"){
       router.push('/buyer/profile')
     }

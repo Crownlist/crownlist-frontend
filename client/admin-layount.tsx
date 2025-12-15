@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const { removeOrionKeys, getOrionKeys } = useMgtKeys();
     const { data} = useGetAuthUser("Admin");
     const router = useRouter()  
-   console.log(adminData, data)
+  //  console.log(adminData, data)
     useEffect(() => {
       sessionStorage.setItem("returnTo", pathname);
     }, [pathname]);

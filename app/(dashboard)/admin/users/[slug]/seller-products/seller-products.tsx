@@ -141,7 +141,23 @@ export function SellerProducts() {
   }
 
   if (!data || data.length === 0) {
-    return <div className="p-8 text-center text-muted-foreground">No products found for this seller.</div>;
+    return (
+      <>
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to User Details
+          </Button>
+        </div>
+        <div className="p-8 text-center text-muted-foreground">
+          No products found for this seller.
+        </div>
+      </>
+    )
   }
 
   return (
@@ -161,7 +177,7 @@ export function SellerProducts() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((product:any) => {
+        {data.map((product: any) => {
           const primaryImage = product?.images?.length > 0
             ? product?.images[0]?.url
             : '/placeholder-product.jpg';
@@ -180,7 +196,7 @@ export function SellerProducts() {
                   className="object-cover"
                 />
                 <div className="absolute top-2 right-2">
-                  <Badge  className="capitalize bg-white text-black">
+                  <Badge className="capitalize bg-white text-black">
                     {product.status}
                   </Badge>
                 </div>
