@@ -66,80 +66,103 @@ export function FacilitiesStep({
     currentSubcategory?.facilities.filter((f: Facility) => !f.mandatory) || [];
 
   return (
-    <div className="flex flex-col md:flex-row gap-10 flex-1">
-      <div className="order-2 md:order-1 flex w-full flex-col gap-10">
-        <div>
-          {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-            <Link
-              href="/seller/product"
-              className="hover:text-[#1F058F] transition-colors"
-            >
-              Products
-            </Link>
-            <ArrowRight className="w-3 h-3" />
-            <span className="text-gray-900 font-medium">Post Product</span>
-            <ArrowRight className="w-3 h-3" />
-            <span className="text-[#1F058F] font-medium">Other details</span>
-          </div>
+    <div className="flex flex-col lg:flex-row-reverse gap-8 lg:gap-12 flex-1">
+      <aside className="lg:order-1 lg:w-80 shrink-0">
+        <ProductFormStepper currentStep={currentStep} />
+      </aside>
 
-          <div className="flex-1">
-            <h1 className="text-2xl font-semibold">Other details</h1>
-            <p className="text-gray-500">Enter other details below</p>
-          </div>
+      <main className="order-2 lg:order-1 flex-1 min-w-0">
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mb-8">
+          <Link
+            href="/seller/product"
+            className="text-gray-600 hover:text-[#1F058F] transition-colors duration-200"
+          >
+            Products
+          </Link>
+          <ArrowRight className="w-3 h-3 text-gray-400" />
+          <span className="text-gray-700">Post Product</span>
+          <ArrowRight className="w-3 h-3 text-gray-400" />
+          <span className="text-[#1F058F] font-medium">Other details</span>
+        </nav>
 
-          {/* Mandatory Facilities */}
+        {/* Page Header */}
+        <div className="mb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+            Other details
+          </h1>
+          <p className="text-gray-600 text-base">
+            Complete the product details below to finish posting
+          </p>
+        </div>
+
+        {/* Form Content */}
+        <div className="space-y-10">
+          {/* Mandatory Facilities Section */}
           {mandatoryFacilities.length > 0 && (
-            <>
-              <h3 className="text-sm font-medium mb-2 mt-6 text-gray-700">
-                Mandatory Fields
-              </h3>
-              <div className="space-y-4">
-                {mandatoryFacilities.map((facility: Facility) => (
-                  <FacilityField
-                    key={facility._id}
-                    facility={facility}
-                    facilityValues={facilityValues}
-                    objectFieldOptions={objectFieldOptions}
-                    loadingObjectFields={loadingObjectFields}
-                    handleFacilityChange={handleFacilityChange}
-                    getFacilityKey={getFacilityKey}
-                    getArrayOptions={getArrayOptions}
-                    getFacilityArrayValue={getFacilityArrayValue}
-                    toggleMultiOption={toggleMultiOption}
-                  />
+            <section>
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-1 w-1 rounded-full bg-red-500"></div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Required Information
+                </h2>
+              </div>
+              <div className="space-y-4 sm:space-y-5 bg-gray-50 rounded-lg p-3 border border-gray-100">
+                {mandatoryFacilities.map((facility: Facility, idx: number) => (
+                  <div key={facility._id}>
+                    <FacilityField
+                      facility={facility}
+                      facilityValues={facilityValues}
+                      objectFieldOptions={objectFieldOptions}
+                      loadingObjectFields={loadingObjectFields}
+                      handleFacilityChange={handleFacilityChange}
+                      getFacilityKey={getFacilityKey}
+                      getArrayOptions={getArrayOptions}
+                      getFacilityArrayValue={getFacilityArrayValue}
+                      toggleMultiOption={toggleMultiOption}
+                    />
+                    {idx < mandatoryFacilities.length - 1 && (
+                      <div className="border-t border-gray-200 mt-5" />
+                    )}
+                  </div>
                 ))}
               </div>
-            </>
+            </section>
           )}
 
-          {/* Optional Facilities */}
+          {/* Optional Facilities Section */}
           {optionalFacilities.length > 0 && (
-            <>
-              <h3 className="text-sm font-medium my-2 mt-5 sm:mt-5 text-gray-700">
-                Optional Fields
-              </h3>
-              <div className="space-y-4">
-                {optionalFacilities.map((facility: Facility) => (
-                  <FacilityField
-                    key={facility._id}
-                    facility={facility}
-                    facilityValues={facilityValues}
-                    objectFieldOptions={objectFieldOptions}
-                    loadingObjectFields={loadingObjectFields}
-                    handleFacilityChange={handleFacilityChange}
-                    getFacilityKey={getFacilityKey}
-                    getArrayOptions={getArrayOptions}
-                    getFacilityArrayValue={getFacilityArrayValue}
-                    toggleMultiOption={toggleMultiOption}
-                  />
+            <section>
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-1 w-1 rounded-full bg-gray-400"></div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Additional Information
+                </h2>
+              </div>
+              <div className="space-y-4 sm:space-y-5 bg-gray-50 rounded-lg p-6 border border-gray-100">
+                {optionalFacilities.map((facility: Facility, idx: number) => (
+                  <div key={facility._id}>
+                    <FacilityField
+                      facility={facility}
+                      facilityValues={facilityValues}
+                      objectFieldOptions={objectFieldOptions}
+                      loadingObjectFields={loadingObjectFields}
+                      handleFacilityChange={handleFacilityChange}
+                      getFacilityKey={getFacilityKey}
+                      getArrayOptions={getArrayOptions}
+                      getFacilityArrayValue={getFacilityArrayValue}
+                      toggleMultiOption={toggleMultiOption}
+                    />
+                    {idx < optionalFacilities.length - 1 && (
+                      <div className="border-t border-gray-200 mt-5" />
+                    )}
+                  </div>
                 ))}
               </div>
-            </>
+            </section>
           )}
         </div>
-      </div>
-      <ProductFormStepper currentStep={currentStep} />
+      </main>
     </div>
   );
 }
@@ -172,136 +195,206 @@ function FacilityField({
   const facilityKey = getFacilityKey(facility);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-sm:pb-5">
-      <Input value={facility.label} readOnly className="bg-gray-100" />
-      <div>
-        {facility.dataType === "boolean" ? (
-          <div className="flex items-center gap-3">
-            <Switch
-              checked={Boolean(facilityValues[facilityKey])}
-              onCheckedChange={(val) => handleFacilityChange(facilityKey, val)}
-            />
-            <span className="text-sm text-gray-600">
-              {facility.description}
-            </span>
-          </div>
-        ) : facility.dataType === "number" ? (
-          <Input
-            type="number"
-            placeholder={facility.description}
-            value={(facilityValues[facilityKey] as string | undefined) || ""}
-            onChange={(e) => handleFacilityChange(facilityKey, e.target.value)}
-          />
-        ) : facility.dataType === "array" ? (
-          <div className="space-y-2">
-            {facility.selectType === "single" ? (
-              <ReactSelect
-                value={
-                  getFacilityArrayValue(facilityKey)[0]
-                    ? {
-                        value: getFacilityArrayValue(facilityKey)[0],
-                        label: getFacilityArrayValue(facilityKey)[0],
-                      }
-                    : null
+    <div className="py-0">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-start">
+        {/* Label */}
+        <div className="sm:col-span-1">
+          <label className="block text-sm font-medium text-gray-900">
+            {facility.label}
+          </label>
+          {facility.description && (
+            <p className="text-xs text-gray-500 mt-1">{facility.description}</p>
+          )}
+        </div>
+
+        {/* Input Field */}
+        <div className="sm:col-span-2">
+          {facility.dataType === "boolean" ? (
+            <div className="flex items-center gap-3 h-10">
+              <Switch
+                checked={Boolean(facilityValues[facilityKey])}
+                onCheckedChange={(val) =>
+                  handleFacilityChange(facilityKey, val)
                 }
-                onChange={(option) =>
-                  handleFacilityChange(
-                    facilityKey,
-                    option?.value ? [option.value] : []
-                  )
-                }
-                options={getArrayOptions(facility).map((opt) => ({
-                  value: opt,
-                  label: opt,
-                }))}
-                placeholder={facility.description || "Select option"}
-                className="react-select-container"
-                classNamePrefix="react-select"
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    minHeight: "40px",
-                    borderColor: "#d1d5db",
-                    "&:hover": {
-                      borderColor: "#9ca3af",
-                    },
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    maxHeight: "300px",
-                  }),
-                }}
+                className="data-[state=checked]:bg-[#1F058F]"
               />
-            ) : (
-              <div className="flex flex-wrap gap-3">
-                {getArrayOptions(facility).map((opt, index) => {
-                  const checked =
-                    getFacilityArrayValue(facilityKey).includes(opt);
-                  return (
-                    <label
-                      key={index}
-                      className="flex items-center gap-2 text-sm"
-                    >
-                      <Checkbox
-                        checked={checked}
-                        onCheckedChange={(v: any) =>
-                          toggleMultiOption(facilityKey, opt, Boolean(v))
+              <span className="text-sm text-gray-600">
+                {Boolean(facilityValues[facilityKey]) ? "Enabled" : "Disabled"}
+              </span>
+            </div>
+          ) : facility.dataType === "number" ? (
+            <Input
+              type="number"
+              placeholder={facility.description || "Enter a number"}
+              value={(facilityValues[facilityKey] as string | undefined) || ""}
+              onChange={(e) =>
+                handleFacilityChange(facilityKey, e.target.value)
+              }
+              className="w-full"
+            />
+          ) : facility.dataType === "array" ? (
+            <div className="space-y-3">
+              {facility.selectType === "single" ? (
+                <ReactSelect
+                  value={
+                    getFacilityArrayValue(facilityKey)[0]
+                      ? {
+                          value: getFacilityArrayValue(facilityKey)[0],
+                          label: getFacilityArrayValue(facilityKey)[0],
                         }
-                      />
-                      <span>{opt}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ) : facility.dataType === "object" ? (
-          <ReactSelect
-            value={
-              (facilityValues[facilityKey] as string | undefined)
-                ? {
-                    value: facilityValues[facilityKey] as string,
-                    label: facilityValues[facilityKey] as string,
+                      : null
                   }
-                : null
-            }
-            onChange={(option) =>
-              handleFacilityChange(facilityKey, option?.value || "")
-            }
-            options={(objectFieldOptions[facilityKey] || []).map((opt) => ({
-              value: opt,
-              label: opt,
-            }))}
-            isDisabled={loadingObjectFields[facilityKey]}
-            placeholder={
-              loadingObjectFields[facilityKey]
-                ? "Loading..."
-                : facility.description || "Select option"
-            }
-            className="react-select-container"
-            classNamePrefix="react-select"
-            styles={{
-              control: (base) => ({
-                ...base,
-                minHeight: "40px",
-                borderColor: "#d1d5db",
-                "&:hover": {
-                  borderColor: "#9ca3af",
-                },
-              }),
-              menu: (base) => ({
-                ...base,
-                maxHeight: "300px",
-              }),
-            }}
-          />
-        ) : (
-          <Input
-            placeholder={facility.description}
-            value={(facilityValues[facilityKey] as string | undefined) || ""}
-            onChange={(e) => handleFacilityChange(facilityKey, e.target.value)}
-          />
-        )}
+                  onChange={(option) =>
+                    handleFacilityChange(
+                      facilityKey,
+                      option?.value ? [option.value] : []
+                    )
+                  }
+                  options={getArrayOptions(facility).map((opt) => ({
+                    value: opt,
+                    label: opt,
+                  }))}
+                  placeholder={facility.description || "Select option"}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  isClearable
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: "40px",
+                      borderColor: "#e5e7eb",
+                      borderRadius: "6px",
+                      backgroundColor: "#ffffff",
+                      "&:hover": {
+                        borderColor: "#9ca3af",
+                      },
+                      "&:focus-within": {
+                        borderColor: "#1F058F",
+                        boxShadow: "0 0 0 3px rgba(31, 5, 143, 0.1)",
+                      },
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      maxHeight: "300px",
+                      borderRadius: "6px",
+                      boxShadow:
+                        "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                    }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isSelected
+                        ? "#1F058F"
+                        : state.isFocused
+                        ? "#f3f4f6"
+                        : "#ffffff",
+                      color: state.isSelected ? "#ffffff" : "#111827",
+                    }),
+                  }}
+                />
+              ) : (
+                <div className="flex flex-wrap gap-3">
+                  {getArrayOptions(facility).map((opt, index) => {
+                    const checked =
+                      getFacilityArrayValue(facilityKey).includes(opt);
+                    return (
+                      <label
+                        key={index}
+                        className="flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 cursor-pointer transition-colors hover:bg-gray-50 hover:border-gray-300"
+                      >
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={(v: any) =>
+                            toggleMultiOption(facilityKey, opt, Boolean(v))
+                          }
+                          className="data-[state=checked]:bg-[#1F058F] data-[state=checked]:border-[#1F058F]"
+                        />
+                        <span className="text-sm text-gray-700 font-medium">
+                          {opt}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : facility.dataType === "object" ? (
+            <ReactSelect
+              value={
+                (facilityValues[facilityKey] as string | undefined)
+                  ? {
+                      value: facilityValues[facilityKey] as string,
+                      label: facilityValues[facilityKey] as string,
+                    }
+                  : null
+              }
+              onChange={(option) =>
+                handleFacilityChange(facilityKey, option?.value || "")
+              }
+              options={(objectFieldOptions[facilityKey] || []).map((opt) => ({
+                value: opt,
+                label: opt,
+              }))}
+              isDisabled={loadingObjectFields[facilityKey]}
+              placeholder={
+                loadingObjectFields[facilityKey]
+                  ? "Loading..."
+                  : facility.description || "Select option"
+              }
+              className="react-select-container"
+              classNamePrefix="react-select"
+              isClearable={!loadingObjectFields[facilityKey]}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: "40px",
+                  borderColor: "#e5e7eb",
+                  borderRadius: "6px",
+                  backgroundColor: loadingObjectFields[facilityKey]
+                    ? "#f9fafb"
+                    : "#ffffff",
+                  "&:hover": {
+                    borderColor: loadingObjectFields[facilityKey]
+                      ? "#e5e7eb"
+                      : "#9ca3af",
+                  },
+                  "&:focus-within": {
+                    borderColor: loadingObjectFields[facilityKey]
+                      ? "#e5e7eb"
+                      : "#1F058F",
+                    boxShadow: loadingObjectFields[facilityKey]
+                      ? "none"
+                      : "0 0 0 3px rgba(31, 5, 143, 0.1)",
+                  },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  maxHeight: "300px",
+                  borderRadius: "6px",
+                  boxShadow:
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isSelected
+                    ? "#1F058F"
+                    : state.isFocused
+                    ? "#f3f4f6"
+                    : "#ffffff",
+                  color: state.isSelected ? "#ffffff" : "#111827",
+                }),
+              }}
+            />
+          ) : (
+            <Input
+              placeholder={facility.description || "Enter value"}
+              value={(facilityValues[facilityKey] as string | undefined) || ""}
+              onChange={(e) =>
+                handleFacilityChange(facilityKey, e.target.value)
+              }
+              className="w-full"
+            />
+          )}
+        </div>
       </div>
     </div>
   );

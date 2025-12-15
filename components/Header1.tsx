@@ -5,7 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { AlignJustify, ChevronDown, ChevronUp, Facebook, Instagram, Send, X } from "lucide-react";
+import {
+  AlignJustify,
+  ChevronDown,
+  ChevronUp,
+  Facebook,
+  Instagram,
+  Send,
+  X,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,7 +75,7 @@ const Header = ({ hidden }: props) => {
   const savedRoute =
     userData?.accountType === "User" ? "/buyer/saved" : "/seller/saved";
   const dashboardRoute =
-    userData?.accountType === "User" ? "/buyer/profile" : "/seller/dashboard";
+    userData?.accountType === "User" ? "/buyer/dashboard" : "/seller/dashboard";
 
   const navItems = [
     //{ title: "Profile", link: '/buyer/profile' },
@@ -108,15 +116,17 @@ const Header = ({ hidden }: props) => {
 
   return (
     <nav
-      className={`bg-white sticky inset-0 z-[999] shadow-sm transition-transform duration-300 ${isNavbarVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
+      className={`bg-white sticky inset-0 z-[999] shadow-sm transition-transform duration-300 ${
+        isNavbarVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
     >
       <div className="container w-full mx-auto flex items-center justify-between gap-2">
         {/* Mobile Menu */}
 
         <div
           className={`fixed inset-y-0 left-0 z-40 w-full max-w-sm bg-white shadow-sm transform transition-transform duration-300 ease-in-out 
-            ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+            ${
+              mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
             } md:hidden h-screen overflow-y-auto`}
         >
           <div className="h-full flex flex-col  gap-3">
@@ -368,10 +378,7 @@ const Header = ({ hidden }: props) => {
                       className="min-w-[25px]"
                     />
                   </Link>
-                  <Link
-                    href="https://wa.me/2349063301718"
-                    target="blank"
-                  >
+                  <Link href="https://wa.me/2349063301718" target="blank">
                     <Image
                       src="/whatsapp.svg"
                       alt="WhatsApp"
@@ -484,10 +491,11 @@ const Header = ({ hidden }: props) => {
                   <div className="hidden md:flex items-start gap-1 justify-center">
                     <Button
                       size="sm"
-                      className={`${pathname == "/category"
-                        ? "border-2  border-b-crown-black border-x-transparent border-t-transparent"
-                        : "border-none"
-                        }  shadow-none px-2 py-1 rounded-none text-crown-black font-medium `}
+                      className={`${
+                        pathname == "/category"
+                          ? "border-2  border-b-crown-black border-x-transparent border-t-transparent"
+                          : "border-none"
+                      }  shadow-none px-2 py-1 rounded-none text-crown-black font-medium `}
                       variant="outline"
                       onClick={handleCat}
                     >
