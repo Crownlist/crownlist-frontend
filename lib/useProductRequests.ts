@@ -10,22 +10,30 @@ import {
 } from "@/types/product/request";
 
 export const getProductRequests = async (
-  params: ProductRequestSearchParams = {},
-  // userType: "seller" | "buyer" 
+  params: ProductRequestSearchParams = {}
+  // userType: "seller" | "buyer"
 ): Promise<ProductRequestsResponse> => {
   const { q, page = 1, limit = 10 } = params;
 
   // For sellers: /product-requests or /product-requests/search
   // For buyers: /product-requests/me or /product-requests/me/search (if available)
-  const baseEndpoint = params.userType === "buyer" ? "/product-requests/me" : "/product-requests";
-  const searchEndpoint = params.userType === "buyer" ? "/product-requests/me/search" : "/product-requests/search";
+  const baseEndpoint =
+    params.userType === "buyer" ? "/product-requests/me" : "/product-requests";
+  const searchEndpoint =
+    params.userType === "buyer"
+      ? "/product-requests/me/search"
+      : "/product-requests/search";
 
   // If search query is provided, use search endpoint
   const endpoint = q
     ? `${searchEndpoint}?q=${encodeURIComponent(q)}&limit=${limit}&page=${page}`
     : `${baseEndpoint}?page=${page}&limit=${limit}`;
 
-  return params.userType === "buyer" ? apiClientUser(endpoint) :  params.userType === "seller" ? apiClientUser(endpoint): apiClientAdmin(endpoint);
+  return params.userType === "buyer"
+    ? apiClientUser(endpoint)
+    : params.userType === "seller"
+    ? apiClientUser(endpoint)
+    : apiClientAdmin(endpoint);
 };
 
 export const getProductRequestsAdmin = async (
@@ -36,15 +44,21 @@ export const getProductRequestsAdmin = async (
 
   // For sellers: /product-requests or /product-requests/search
   // For buyers: /product-requests/me or /product-requests/me/search (if available)
-  const baseEndpoint = userType === "buyer" ? "/product-requests/me" : "/product-requests";
-  const searchEndpoint = userType === "buyer" ? "/product-requests/me/search" : "/product-requests/search";
+  const baseEndpoint =
+    userType === "buyer" ? "/product-requests/me" : "/product-requests";
+  const searchEndpoint =
+    userType === "buyer"
+      ? "/product-requests/me/search"
+      : "/product-requests/search";
 
   // If search query is provided, use search endpoint
   const endpoint = q
     ? `${searchEndpoint}?q=${encodeURIComponent(q)}&limit=${limit}&page=${page}`
     : `${baseEndpoint}?page=${page}&limit=${limit}`;
 
-  return userType === "buyer" ? apiClientUser(endpoint) : apiClientAdmin(endpoint);
+  return userType === "buyer"
+    ? apiClientUser(endpoint)
+    : apiClientAdmin(endpoint);
 };
 
 export const getProductRequestDetails = async (
@@ -58,13 +72,19 @@ export const updateProductRequestStatus = async (
   status: string
 ): Promise<any> => {
   return apiClientAdmin(`/product-requests/update/${id}`, {
-    method: 'PATCH',
-    data: { status }
+    method: "PATCH",
+    data: { status },
+  });
+};
+
+export const deleteProductRequest = async (id: string): Promise<any> => {
+  return apiClientAdmin(`/product-requests/delete/${id}`, {
+    method: "DELETE",
   });
 };
 
 export const useProductRequests = (
-  params: ProductRequestSearchParams = {},
+  params: ProductRequestSearchParams = {}
   // userType: "seller" | "buyer" = "seller"
 ) => {
   const { q, page = 1, limit = 10 } = params;
@@ -75,7 +95,6 @@ export const useProductRequests = (
     keepPreviousData: true,
   });
 };
-
 
 export const useProductRequestsAdmin = (
   params: ProductRequestSearchParams = {},
@@ -89,7 +108,6 @@ export const useProductRequestsAdmin = (
     keepPreviousData: true,
   });
 };
-
 
 export const useProductRequestDetails = (id: string, enabled = true) => {
   return useQuery({

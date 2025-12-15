@@ -1,23 +1,25 @@
-
-import type React from "react"
-import "./globals.css"
-import { Inter } from "next/font/google"
-import Wrapper from "@/client/wrapper"
+import type React from "react";
+import "./globals.css";
+import { Inter } from "next/font/google";
+import Wrapper from "@/client/wrapper";
 // import BottomNav from "@/components/BottomNav"
-import ReactQueryProvider from "@/providers/ReactQueryProvider"
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import TawktoChat from "@/components/TawktoChat"
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import TawktoChat from "@/components/TawktoChat";
+import SetVh from "@/components/SetVh";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  metadataBase: new URL('https://crownlist.store'),
+  metadataBase: new URL("https://crownlist.store"),
   title: "Crownlist - Buy and Sell Locally",
-  description: "Find great deals on furniture, clothes, electronics, and more near you.",
+  description:
+    "Find great deals on furniture, clothes, electronics, and more near you.",
   openGraph: {
     title: "Crownlist - Buy and Sell Locally",
-    description: "Find great deals on furniture, clothes, electronics, and more near you.",
+    description:
+      "Find great deals on furniture, clothes, electronics, and more near you.",
     images: [
       {
         url: "/newlogo2.jpg",
@@ -32,28 +34,30 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Crownlist - Buy and Sell Locally",
-    description: "Find great deals on furniture, clothes, electronics, and more near you.",
+    description:
+      "Find great deals on furniture, clothes, electronics, and more near you.",
     images: ["/newlogo2.jpg"],
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light" style={{colorScheme: "light"}}>
+    <html lang="en" className="light" style={{ colorScheme: "light" }}>
       <body className={inter.className}>
-          <ReactQueryProvider>
-            <Wrapper>{children}</Wrapper>
-            {/* <ChatBot /> */}
-            {/* <BottomNav/> */}
-          </ReactQueryProvider>
-          <TawktoChat />
-          <Analytics />
-          <SpeedInsights />
+        <ReactQueryProvider>
+          <Wrapper>{children}</Wrapper>
+          <SetVh />
+          {/* <ChatBot /> */}
+          {/* <BottomNav/> */}
+        </ReactQueryProvider>
+        <TawktoChat />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
-  )
+  );
 }

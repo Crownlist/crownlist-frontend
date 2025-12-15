@@ -13,6 +13,7 @@ import {
   Database,
   List,
   Shield,
+  FileText,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -117,6 +118,20 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             <span>Users</span>
           </Link>
 
+          <Link
+            href="/admin/admins"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+              pathname.includes("/admin/admins")
+                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium"
+                : "text-gray-700 hover:bg-gray-100"
+            )}
+            onClick={onClose}
+          >
+            <Shield className="h-5 w-5" />
+            <span>Admins</span>
+          </Link>
+
           {/* <Link
                         href="/admin/messages"
                         className={cn(
@@ -185,6 +200,20 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
           >
             <Shield className="h-5 w-5" />
             <span>Escrow Management</span>
+          </Link>
+
+          <Link
+            href="/admin/requests"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:text-primary font-semibold text-black",
+              pathname.includes("/admin/requests")
+                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F] font-medium"
+                : "text-gray-700 hover:bg-gray-100"
+            )}
+            onClick={onClose}
+          >
+            <FileText className="h-5 w-5" />
+            <span>Product Requests</span>
           </Link>
 
           {/* <Link

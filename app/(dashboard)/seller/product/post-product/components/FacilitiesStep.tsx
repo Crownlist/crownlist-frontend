@@ -66,7 +66,7 @@ export function FacilitiesStep({
     currentSubcategory?.facilities.filter((f: Facility) => !f.mandatory) || [];
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-10 flex-1">
+    <div className="flex flex-col md:flex-row gap-10 flex-1">
       <div className="order-2 md:order-1 flex w-full flex-col gap-10">
         <div>
           {/* Breadcrumb Navigation */}

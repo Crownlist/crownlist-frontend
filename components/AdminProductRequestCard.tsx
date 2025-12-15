@@ -1,21 +1,23 @@
 /* eslint-disable */
-"use client"
+"use client";
 
-import Image from "next/image"
-import { cn } from "@/lib/utils"
-import { ProductRequest } from "@/types/product/request"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
-import { CheckCircle, Eye } from "lucide-react"
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { ProductRequest } from "@/types/product/request";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { CheckCircle, Eye, Trash2 } from "lucide-react";
+import { useState } from "react";
 
-dayjs.extend(relativeTime)
+dayjs.extend(relativeTime);
 
 interface AdminProductRequestCardProps {
-  request: ProductRequest
-  viewMode?: "grid" | "list"
-  onApprove: (request: ProductRequest) => void
-  onViewDetails: (request: ProductRequest) => void
-  isLoading?: boolean
+  request: ProductRequest;
+  viewMode?: "grid" | "list";
+  onApprove: (request: ProductRequest) => void;
+  onViewDetails: (request: ProductRequest) => void;
+  onDelete?: (request: ProductRequest) => void;
+  isLoading?: boolean;
 }
 
 export default function AdminProductRequestCard({
@@ -23,45 +25,48 @@ export default function AdminProductRequestCard({
   viewMode = "grid",
   onApprove,
   onViewDetails,
+  onDelete,
   isLoading = false,
 }: AdminProductRequestCardProps) {
-  console.log("admin request", request)
+  console.log("admin request", request);
 
-  const primaryImage = request.images.find(img => img.isPrimary) || request.images[0]
+  const primaryImage =
+    request.images.find((img) => img.isPrimary) || request.images[0];
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'reviewing':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'live':
-        return 'bg-green-100 text-green-800'
-      case 'rejected':
-        return 'bg-red-100 text-red-800'
+      case "reviewing":
+        return "bg-yellow-100 text-yellow-800";
+      case "live":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800'
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
-  const canApprove = request.status.toLowerCase() === 'reviewing'
-  const canReject = request.status.toLowerCase() === 'reviewing'
+  const canApprove = request.status.toLowerCase() === "reviewing";
+  const canReject = request.status.toLowerCase() === "reviewing";
 
   const getActionButtonClass = (isDisabled: boolean) =>
     isDisabled || isLoading
       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300";
 
   return (
     <div
       className={cn(
         "group relative rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow bg-white",
-        viewMode === "list" && "flex",
+        viewMode === "list" && "flex"
       )}
     >
       <div
         className={cn(
           "relative",
-          viewMode === "grid" ? "aspect-square w-full" :
-          "aspect-4/3 w-[140px] sm:w-[200px]",
+          viewMode === "grid"
+            ? "aspect-square w-full"
+            : "aspect-4/3 w-[140px] sm:w-[200px]"
         )}
       >
         <Image
@@ -73,10 +78,12 @@ export default function AdminProductRequestCard({
 
         {/* Status Badge */}
         <div className="absolute top-2 left-2">
-          <span className={cn(
-            "text-xs px-2 py-1 rounded-full font-medium",
-            getStatusColor(request.status)
-          )}>
+          <span
+            className={cn(
+              "text-xs px-2 py-1 rounded-full font-medium",
+              getStatusColor(request.status)
+            )}
+          >
             {request.status}
           </span>
         </div>
@@ -87,7 +94,12 @@ export default function AdminProductRequestCard({
         </div>
       </div>
 
-      <div className={cn("p-3", viewMode === "list" && "flex-1 flex flex-col justify-between")}>
+      <div
+        className={cn(
+          "p-3",
+          viewMode === "list" && "flex-1 flex flex-col justify-between"
+        )}
+      >
         <div>
           <h3 className="font-medium text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
             {request.name}
@@ -117,7 +129,9 @@ export default function AdminProductRequestCard({
                 "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors",
                 getActionButtonClass(!canApprove)
               )}
-              title={canApprove ? "Approve request" : "Cannot approve this status"}
+              title={
+                canApprove ? "Approve request" : "Cannot approve this status"
+              }
             >
               <CheckCircle size={12} />
               Approve
@@ -143,9 +157,24 @@ export default function AdminProductRequestCard({
             >
               <Eye size={12} />
             </button>
+
+            <button
+              onClick={() => onDelete && onDelete(request)}
+              disabled={isLoading}
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors",
+                isLoading
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-red-600 hover:bg-red-50 border border-red-100"
+              )}
+              title="Delete request"
+            >
+              <Trash2 size={12} />
+              Delete
+            </button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

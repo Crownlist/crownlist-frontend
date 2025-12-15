@@ -106,7 +106,13 @@ export default function ProductPostFlow() {
     updateAltText,
     uploadAllImages,
   } = useImageUpload();
-  const { facilityValues, handleFacilityChange } = useFacilities();
+  const {
+    facilityValues,
+    handleFacilityChange,
+    mapProductFacilities,
+    clearFacilitiesOnSubcategoryChange,
+    loadObjectFieldOptions,
+  } = useFacilities();
   const { limitsCheckResult, checkingLimits, checkLimitsBeforeSubmit } =
     useSubscriptionLimits(
       selectedSubcategory,
@@ -190,6 +196,19 @@ export default function ProductPostFlow() {
     if (catId && selectedCategory !== catId) setSelectedCategory(catId);
     if (subId && selectedSubcategory !== subId) setSelectedSubcategory(subId);
     setStep((s) => (s < 2 ? 2 : s));
+
+    // Prefill facility values for edit mode once we know the subcategory
+    try {
+      mapProductFacilities(
+        editProduct,
+        subId || selectedSubcategory,
+        originalSubId,
+        subcategories,
+        editId
+      );
+    } catch (err) {
+      console.error("Failed to map product facilities:", err);
+    }
   }, [categories, subcategories, editProduct, editId]);
 
   // Fetch options for object-type facilities
@@ -626,7 +645,10 @@ export default function ProductPostFlow() {
 
   return (
     <div className="flex-1">
-      <div className="flex flex-col w-full min-h-screen mx-auto bg-white p-6">
+      <div
+        className="flex flex-col w-full mx-auto bg-white p-6"
+        style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}
+      >
         <div className="flex flex-col h-full mx-auto w-full md:pt-3">
           {renderCurrentStep()}
 
