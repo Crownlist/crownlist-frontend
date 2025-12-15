@@ -31,7 +31,7 @@ export const CategorySelectionStep = ({
         <p className="text-gray-500 mb-6">Select post category below</p>
       </div>
       <div className="flex flex-col md:flex-row md:justify-between gap-10 flex-1">
-        <div className="order-2 md:order-1 grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
+        <div className="order-2 md:order-1 grid grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
           {categories.map((cat) => (
             <div
               key={cat._id}
@@ -47,7 +47,7 @@ export const CategorySelectionStep = ({
                 alt={cat.name}
                 width={400}
                 height={250}
-                className="w-full h-28 sm:h-36 md:h-60 object-cover"
+                className="w-full h-28 sm:h-36 object-cover"
               />
               <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 flex items-end p-3 md:p-4">
                 <span className="text-white text-sm md:text-lg font-semibold">

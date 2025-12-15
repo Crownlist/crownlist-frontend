@@ -26,7 +26,7 @@ export default function DashboardHeader() {
   const { notifications } = useNotifications();
   const userData = data?.data.loggedInAccount;
 
-  console.log("disp", data);
+  // console.log("disp", data);
 
   const handleLogoutClick = () => {
     setLogoutModalOpen(true);
@@ -41,7 +41,7 @@ export default function DashboardHeader() {
   ).length;
 
   return (
-    <header className="bg-[#141414] text-white py-3 px-4 md:px-6 w-full sticky inset-0 z-[999]">
+    <header className="bg-crown-black text-white py-3 px-4 md:px-6 w-full sticky inset-0 z-999">
       <div className="flex items-center justify-between max-sm:justify-end">
         <div className="flex max-sm:hidden items-center gap-4 md:gap-8">
           <Link href="/" className="flex items-center">
@@ -74,7 +74,7 @@ export default function DashboardHeader() {
             >
               <Bell className="h-5 w-5 max-sm:h-7 max-sm:w-7" />
               {unreadCount > 0 && (
-                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-[20px]">
+                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center min-w-5">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
