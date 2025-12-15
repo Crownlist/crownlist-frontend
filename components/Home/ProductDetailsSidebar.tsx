@@ -327,32 +327,33 @@ export default function ProductDetailsSidebar({
                   <>
                     <Button
                       onClick={handleSendMessageClick}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-2 text-sm sm:text-base"
+                      className="w-full text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       <MessageCircle size={18} />
                       Message Seller
                     </Button>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center gap-2">
                       {(product.seller as any)?.phoneNumber && (
                         <button
                           onClick={callSeller}
-                          className="flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+                          className="flex grow items-center justify-center gap-2 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
                           title="Call seller"
                         >
                           <Phone size={16} />
                           <span className="hidden sm:inline">Call</span>
                         </button>
                       )}
-                      <button
+                      <Button
+                        variant={"outline"}
                         onClick={copySellerContact}
-                        className="flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-sm font-medium text-gray-700"
+                        className="grow text-sm font-medium"
                         title="Copy seller contact"
                       >
                         <Copy size={16} />
                         <span className="hidden sm:inline">Copy Contact</span>
                         <span className="sm:hidden">Copy</span>
-                      </button>
+                      </Button>
                     </div>
 
                     <Button

@@ -141,6 +141,14 @@ export default function MessagingInterface() {
 
       // If we have a conversation but no messages, try loading from API
       if (existingMessages.length === 0) {
+        // If this is a locally-created conversation (fallback), don't call the backend
+        if (state.activeConversationId.startsWith("local_")) {
+          console.log(
+            "⚠️ Active conversation is local; skipping fetchChatMessages for:",
+            state.activeConversationId
+          );
+          return;
+        }
         console.log(
           "📨 Auto-loading messages for active conversation:",
           state.activeConversationId
