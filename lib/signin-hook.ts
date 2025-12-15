@@ -53,13 +53,13 @@ export const useAdminSigninHook = () => {
         return;
       }
 
-      // Default to buyer/profile for User or unknown roles
-      if (role === "User" || !role) {
-        location.replace(origin + "/buyer/profile");
+      // For buyers, send to the new Buyer Dashboard by default
+      if (role === "User") {
+        location.replace(origin + "/buyer/dashboard");
         return;
       }
 
-      // Fallback: if role didn't match above, but a return URL exists, use it
+      // Unknown role: fallback to any stored return URL, else buyer profile
       if (sessionStorage.getItem("returnUserTo")) {
         location.replace(origin + sessionStorage.getItem("returnUserTo"));
       } else {

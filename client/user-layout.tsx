@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { useMgtKeys } from "@/lib/useMgtKeys";
 import { RootState } from "@/store";
@@ -14,16 +14,16 @@ export default function UserLayout({ children }: { children: ReactNode }) {
   const { userData } = useSelector((state: RootState) => state.userData);
   const { removeLeoKeys, getLeoKeys } = useMgtKeys();
   const { data } = useGetAuthUser("User");
-  const router = useRouter()   
+  const router = useRouter();
   useEffect(() => {
     sessionStorage.setItem("returnUserTo", pathname);
   }, [pathname]);
 
   useEffect(() => {
-    const user = data?.data.loggedInAccount.accountType
+    const user = data?.data.loggedInAccount.accountType;
     // console.log('layout', user)
-    if (user == "User"){
-      router.push('/buyer/profile')
+    if (user == "User") {
+      router.push("/buyer/dashboard");
     }
   }, [data]);
 
@@ -47,7 +47,11 @@ export default function UserLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {userData || isAuthenticated ? children : <CustomLoader text="Loading data..." />}
+      {userData || isAuthenticated ? (
+        children
+      ) : (
+        <CustomLoader text="Loading data..." />
+      )}
     </>
   );
 }
