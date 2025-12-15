@@ -2,6 +2,13 @@
 
 import React from "react";
 import { EscrowItem } from "@/types/escrow";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Props {
   open: boolean;
@@ -84,22 +91,23 @@ export default function EscrowStatusModal({
               <h3 className="font-semibold text-sm text-gray-700 mb-2">
                 New Status
               </h3>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1F058F] focus:border-transparent"
-                required
-              >
-                <option value="">Select new status...</option>
-                <option value="reviewing">Reviewing</option>
-                <option value="awaiting_payment">Awaiting Payment</option>
-                <option value="paid">Paid</option>
-                <option value="in_progress">In Progress</option>
-                <option value="delivered">Delivered</option>
-                <option value="released">Released</option>
-                <option value="declined">Declined</option>
-                <option value="refunded">Refunded</option>
-              </select>
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select new status..." />
+                </SelectTrigger>
+                <SelectContent className="z-[60000]">
+                  <SelectItem value="reviewing">Reviewing</SelectItem>
+                  <SelectItem value="awaiting_payment">
+                    Awaiting Payment
+                  </SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="released">Released</SelectItem>
+                  <SelectItem value="declined">Declined</SelectItem>
+                  <SelectItem value="refunded">Refunded</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {selectedStatus === "declined" && (

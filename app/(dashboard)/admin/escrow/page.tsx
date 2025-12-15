@@ -135,6 +135,7 @@ export default function AdminEscrowPage() {
         onView={(id) => fetchEscrowDetails(id)}
         onUpdateStatus={(item) => {
           setSelectedEscrow(item);
+          setSelectedStatus(item.status);
           setShowStatusModal(true);
         }}
         getStatusColor={getStatusColor}
@@ -150,6 +151,7 @@ export default function AdminEscrowPage() {
         }}
         onOpenStatus={(e: EscrowItem) => {
           setSelectedEscrow(e);
+          setSelectedStatus(e.status);
           setShowEscrowDetails(false);
           setShowStatusModal(true);
         }}

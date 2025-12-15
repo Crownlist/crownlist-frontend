@@ -12,7 +12,6 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { apiClientUser } from "@/lib/interceptor";
-import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 interface EscrowItem {
   _id: string;
@@ -73,9 +72,6 @@ export default function SellerEscrowPage() {
   const [selectedEscrow, setSelectedEscrow] = useState<EscrowItem | null>(null);
   const [escrowDetails, setEscrowDetails] = useState<EscrowItem | null>(null);
   const [showEscrowDetails, setShowEscrowDetails] = useState(false);
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [showDeclineModal, setShowDeclineModal] = useState(false);
-  const [declineReason, setDeclineReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   const router = useRouter();
@@ -117,46 +113,6 @@ export default function SellerEscrowPage() {
       productName: escrow.details.name || "Product",
     });
     router.push(`/seller/messages?${params.toString()}`);
-  };
-
-  const handleApproveEscrow = async () => {
-    if (!selectedEscrow) return;
-
-    setActionLoading(true);
-    try {
-      await apiClientUser.patch(`/escrows/status/${selectedEscrow._id}`, {
-        status: "accepted",
-      });
-      toast.success("Escrow approved successfully!");
-      setShowApprovalModal(false);
-      setSelectedEscrow(null);
-      fetchEscrows(currentPage); // Refresh the list
-    } catch {
-      toast.error("Failed to approve escrow");
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleDeclineEscrow = async () => {
-    if (!selectedEscrow) return;
-
-    setActionLoading(true);
-    try {
-      await apiClientUser.patch(`/escrows/status/${selectedEscrow._id}`, {
-        status: "declined",
-        reasonForDecline: declineReason || undefined,
-      });
-      toast.success("Escrow declined successfully!");
-      setShowDeclineModal(false);
-      setSelectedEscrow(null);
-      setDeclineReason("");
-      fetchEscrows(currentPage); // Refresh the list
-    } catch {
-      toast.error("Failed to decline escrow");
-    } finally {
-      setActionLoading(false);
-    }
   };
 
   const fetchEscrows = async (page: number) => {
@@ -621,90 +577,6 @@ export default function SellerEscrowPage() {
                       </Carousel>
                     </div>
                   )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Approve Confirm Modal */}
-      {showApprovalModal && selectedEscrow && (
-        <ConfirmationModal
-          open={showApprovalModal}
-          onOpenChange={(open) => {
-            setShowApprovalModal(open);
-            if (!open) setSelectedEscrow(null);
-          }}
-          onConfirm={handleApproveEscrow}
-          title="Approve Escrow"
-          description={`Are you sure you want to approve the escrow payment of ₦${selectedEscrow.amount.toLocaleString()} for "${
-            selectedEscrow.details.name
-          }"?`}
-          confirmText={actionLoading ? "Approving..." : "Approve"}
-          cancelText="Cancel"
-        />
-      )}
-
-      {/* Decline Confirm Modal */}
-      {showDeclineModal && selectedEscrow && (
-        <div
-          className="fixed inset-0 bg-black/55 bg-opacity-90 flex items-center justify-center z-50000 p-4"
-          onClick={() => {
-            setShowDeclineModal(false);
-            setSelectedEscrow(null);
-            setDeclineReason("");
-          }}
-        >
-          <div
-            className="bg-white rounded-lg max-w-md w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Decline Escrow</h2>
-                <button
-                  onClick={() => {
-                    setShowDeclineModal(false);
-                    setSelectedEscrow(null);
-                    setDeclineReason("");
-                  }}
-                  className="text-gray-500 hover:text-gray-700 text-xl"
-                >
-                  ×
-                </button>
-              </div>
-
-              <p className="text-sm text-gray-600 mb-4">
-                Please provide a reason for declining this escrow transaction.
-              </p>
-
-              <textarea
-                value={declineReason}
-                onChange={(e) => setDeclineReason(e.target.value)}
-                placeholder="Enter reason for declining..."
-                className="w-full p-2 border rounded-lg mb-4 h-24 resize-none"
-                maxLength={500}
-              />
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowDeclineModal(false);
-                    setSelectedEscrow(null);
-                    setDeclineReason("");
-                  }}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
-                  disabled={actionLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeclineEscrow}
-                  disabled={actionLoading}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
-                >
-                  {actionLoading ? "Declining..." : "Decline Escrow"}
-                </button>
               </div>
             </div>
           </div>
