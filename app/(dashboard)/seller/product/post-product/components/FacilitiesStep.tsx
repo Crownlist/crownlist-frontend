@@ -225,7 +225,7 @@ function FacilityField({
           ) : facility.dataType === "number" ? (
             <Input
               type="number"
-              placeholder={facility.description || "Enter a number"}
+              placeholder={"Enter a number"}
               value={(facilityValues[facilityKey] as string | undefined) || ""}
               onChange={(e) =>
                 handleFacilityChange(facilityKey, e.target.value)
@@ -254,7 +254,7 @@ function FacilityField({
                     value: opt,
                     label: opt,
                   }))}
-                  placeholder={facility.description || "Select option"}
+                  placeholder={"Select option"}
                   className="react-select-container"
                   classNamePrefix="react-select"
                   isClearable
@@ -338,7 +338,7 @@ function FacilityField({
               placeholder={
                 loadingObjectFields[facilityKey]
                   ? "Loading..."
-                  : facility.description || "Select option"
+                  : "Select option"
               }
               className="react-select-container"
               classNamePrefix="react-select"
@@ -386,7 +386,7 @@ function FacilityField({
             />
           ) : (
             <Input
-              placeholder={facility.description || "Enter value"}
+              placeholder={"Enter value"}
               value={(facilityValues[facilityKey] as string | undefined) || ""}
               onChange={(e) =>
                 handleFacilityChange(facilityKey, e.target.value)
