@@ -71,7 +71,7 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
 
               {facilities.length > 0 && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Facilities</h4>
+                  {/* <h4 className="font-medium text-gray-900 mb-3">Facilities</h4> */}
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>

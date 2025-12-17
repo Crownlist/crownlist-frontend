@@ -18,11 +18,14 @@ import {
 
 import { cn } from "@/lib/utils";
 import LogoutModal from "./logout-modal";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { useState } from "react";
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  const { data: userData } = useGetAuthUser("Admin");
 
   const handleClose = () => {
     setOpen(false);
@@ -88,18 +91,20 @@ export default function DashboardSidebar() {
           <span>Users</span>
         </Link>
 
-        <Link
-          href="/admin/admins"
-          className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
-            isActive("/admin/admins")
-              ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
-              : "text-gray-700 hover:bg-gray-100"
-          )}
-        >
-          <Shield className="h-5 w-5" />
-          <span>Admins</span>
-        </Link>
+        {userData?.data?.data?.loggedInAccount?.adminType !== "Sub-Admin" && (
+          <Link
+            href="/admin/admins"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium",
+              isActive("/admin/admins")
+                ? "bg-[#EDE9FF] text-[#1F058F] border-l-4 border-[#1F058F]"
+                : "text-gray-700 hover:bg-gray-100"
+            )}
+          >
+            <Shield className="h-5 w-5" />
+            <span>Admins</span>
+          </Link>
+        )}
 
         {/* <Link
           href="/admin/messages"

@@ -186,7 +186,7 @@ export function SellerProducts() {
             <Card
               key={product._id}
               className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => router.push(`/admin/products/${product._id}`)}
+              onClick={() => router.push(`/admin/dashboard/${product._id}`)}
             >
               <div className="relative h-48 w-full">
                 <Image

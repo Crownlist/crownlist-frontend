@@ -182,7 +182,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {/* Similar Products */}
               {similarProducts.length > 0 && (
                 <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                  <SimilarProducts products={similarProducts} loading={false} />
+                  <SimilarProducts
+                    products={similarProducts}
+                    loading={false}
+                    currentId={product._id}
+                    currentSlug={product.slug}
+                  />
                 </div>
               )}
             </div>
