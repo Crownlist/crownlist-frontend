@@ -59,12 +59,12 @@ export function ProductGrid({ products }: ProductGridProps) {
               <h3 className="font-medium min-h-12 text-base lg:text-lg mb-1">
                 {product.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2 h-10">
+              <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2">
                 {product.description}
               </p>
 
               <div className="flex items-center gap-4 mb-3">
-                <div className="flex items-center gap-1 text-gray-500 text-sm">
+                <div className="flex items-center gap-1 text-gray-500 text-xs sm:text-sm">
                   <MapPin size={14} />
                   <span>
                     {product.listingLocation?.city},{" "}
@@ -75,7 +75,8 @@ export function ProductGrid({ products }: ProductGridProps) {
 
               <div className="mb-3 flex gap-2 flex-wrap">
                 <FacilitiesRenderer
-                  facilities={product.facility?.facilities?.slice(0, 2) || []}
+                  facilities={product.facility?.facilities || []}
+                  maxDisplay={2}
                 />
               </div>
 

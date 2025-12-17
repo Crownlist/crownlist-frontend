@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Heart, MapPin } from "lucide-react";
 import { FacilitiesRenderer } from "./FacilitiesRenderer";
+import Link from "next/link";
 
 interface Facility {
   label: string;
@@ -35,7 +36,8 @@ export function ProductList({ products }: ProductListProps) {
   return (
     <div className="space-y-6">
       {products.map((product) => (
-        <div
+        <Link
+          href={`/product/${product.slug}`}
           key={product._id}
           className="border rounded-lg overflow-hidden flex flex-row w-full"
         >
@@ -58,7 +60,7 @@ export function ProductList({ products }: ProductListProps) {
 
           <div className="p-4 flex-1">
             <h3 className="font-medium text-lg mb-1">{product.name}</h3>
-            <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+            <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-3">
               {product.description}
             </p>
 
@@ -75,6 +77,7 @@ export function ProductList({ products }: ProductListProps) {
             <div className="mb-3">
               <FacilitiesRenderer
                 facilities={product.facility?.facilities || []}
+                maxDisplay={2}
               />
             </div>
 
@@ -94,7 +97,7 @@ export function ProductList({ products }: ProductListProps) {
               )}
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
