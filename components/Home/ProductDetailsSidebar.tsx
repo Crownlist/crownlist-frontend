@@ -228,12 +228,12 @@ export default function ProductDetailsSidebar({
             <div className="space-y-2">
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="text-3xl sm:text-4xl font-bold text-gray-900">
-                  ₦{currentPrice.toLocaleString("en-NG")}
+                  ₦{(discountedPrice || currentPrice).toLocaleString("en-NG")}
                 </span>
-                {discountedPrice && (
+                {discountedPrice && currentPrice && (
                   <>
                     <span className="text-lg text-gray-500 line-through">
-                      ₦{discountedPrice.toLocaleString("en-NG")}
+                      ₦{currentPrice.toLocaleString("en-NG")}
                     </span>
                     {discount && (
                       <span className="text-sm font-semibold bg-red-100 text-red-700 px-2 py-1 rounded">
