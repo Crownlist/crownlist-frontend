@@ -21,6 +21,9 @@ export default function BuyerProductRequestsPage() {
   );
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
+  const [requestToEdit, setRequestToEdit] = useState<ProductRequest | null>(
+    null
+  );
 
   const { data, isLoading, error, refetch } = useProductRequests({
     q: searchQuery || undefined,
@@ -42,6 +45,16 @@ export default function BuyerProductRequestsPage() {
   const handleCloseModal = () => {
     setShowDetailModal(false);
     setSelectedRequest(null);
+  };
+
+  const handleEditRequest = (request: ProductRequest) => {
+    setRequestToEdit(request);
+    setShowFormModal(true);
+  };
+
+  const handleCloseFormModal = () => {
+    setShowFormModal(false);
+    setRequestToEdit(null);
   };
 
   const requests = data?.data?.productRequests || [];
@@ -90,7 +103,10 @@ export default function BuyerProductRequestsPage() {
             {/* Controls Section - Responsive */}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
-                onClick={() => setShowFormModal(true)}
+                onClick={() => {
+                  setRequestToEdit(null);
+                  setShowFormModal(true);
+                }}
                 className="flex items-center gap-2 px-4 py-2 bg-[#1F058F] text-white rounded-lg hover:bg-[#1F058F]/90 transition-colors"
               >
                 <Plus size={16} />
@@ -167,7 +183,10 @@ export default function BuyerProductRequestsPage() {
               {!searchQuery && (
                 <div className="text-center text-gray-600 text-xs md:text-sm px-4">
                   <button
-                    onClick={() => setShowFormModal(true)}
+                    onClick={() => {
+                      setRequestToEdit(null);
+                      setShowFormModal(true);
+                    }}
                     className="px-6 py-2 bg-[#1F058F] text-white rounded-lg hover:bg-[#1F058F]/90 transition-colors"
                   >
                     Submit a product request to get started
@@ -198,6 +217,8 @@ export default function BuyerProductRequestsPage() {
                     request={request}
                     viewMode={viewMode}
                     onClick={handleViewRequest}
+                    onEdit={handleEditRequest}
+                    isCurrentUserBuyer={true}
                   />
                 ))}
               </div>
@@ -261,8 +282,12 @@ export default function BuyerProductRequestsPage() {
       {showFormModal && (
         <ProductRequestForm
           isOpen={showFormModal}
-          onClose={() => setShowFormModal(false)}
-          onSuccess={() => refetch()}
+          onClose={handleCloseFormModal}
+          onSuccess={() => {
+            refetch();
+            setRequestToEdit(null);
+          }}
+          requestToEdit={requestToEdit}
         />
       )}
     </div>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Upload, Loader2 } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { Category, Subcategory } from "@/types/category/category";
+import { ProductRequest } from "@/types/product/request";
 import { toast } from "sonner";
 import { apiClientUser } from "@/lib/interceptor";
 import { obfuscateToken } from "@/constants/encryptData";
@@ -20,6 +21,7 @@ interface ProductRequestFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  requestToEdit?: ProductRequest | null;
 }
 
 interface ProductImage {
@@ -35,12 +37,14 @@ interface FormData {
   subCategory: string;
   phone: string;
   images: File[];
+  existingImages: ProductImage[];
 }
 
 export default function ProductRequestForm({
   isOpen,
   onClose,
   onSuccess,
+  requestToEdit,
 }: ProductRequestFormProps) {
   const { categories, loading: categoriesLoading } = useCategories();
   // console.log("categories", categories)
@@ -51,6 +55,7 @@ export default function ProductRequestForm({
     subCategory: "",
     phone: "",
     images: [],
+    existingImages: [],
   });
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
@@ -62,6 +67,7 @@ export default function ProductRequestForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const isInitializingRef = useRef(false);
 
   // Reset form when modal closes
   useEffect(() => {
@@ -73,6 +79,7 @@ export default function ProductRequestForm({
         subCategory: "",
         phone: "",
         images: [],
+        existingImages: [],
       });
       setSelectedCategory(null);
       setAvailableSubcategories([]);
@@ -80,11 +87,57 @@ export default function ProductRequestForm({
     }
   }, [isOpen]);
 
+  // Populate form when editing
+  useEffect(() => {
+    if (
+      requestToEdit &&
+      isOpen &&
+      !categoriesLoading &&
+      categories.length > 0
+    ) {
+      isInitializingRef.current = true;
+
+      const category = categories.find(
+        (c) => c._id === requestToEdit.category._id
+      );
+
+      // Set category state directly
+      setSelectedCategory(category || null);
+      setAvailableSubcategories(category?.subCategories || []);
+
+      // Set form data
+      setFormData({
+        name: requestToEdit.name,
+        description: requestToEdit.description,
+        category: requestToEdit.category._id,
+        subCategory: requestToEdit.subCategory._id,
+        phone: requestToEdit.phone,
+        images: [],
+        existingImages: requestToEdit.images,
+      });
+
+      // Set preview URLs for existing images
+      const urls = requestToEdit.images.map((img) => img.url);
+      setImagePreviewUrls(urls);
+
+      // Allow changes after initialization
+      setTimeout(() => {
+        isInitializingRef.current = false;
+      }, 100);
+    }
+  }, [requestToEdit, isOpen, categoriesLoading, categories]);
+
   // Handle category change
   const handleCategoryChange = (categoryId: string) => {
-    const category = categories.find((c) => c._id === categoryId);
+    // Prevent execution during initialization
+    if (isInitializingRef.current) {
+      return;
+    }
+
+    const category = categories.find((cat) => cat._id === categoryId);
     setSelectedCategory(category || null);
     setAvailableSubcategories(category?.subCategories || []);
+
     setFormData((prev) => ({
       ...prev,
       category: categoryId,
@@ -109,11 +162,22 @@ export default function ProductRequestForm({
 
   // Remove image
   const removeImage = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
-    setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    if (index < formData.existingImages.length) {
+      // Removing existing image
+      setFormData((prev) => ({
+        ...prev,
+        existingImages: prev.existingImages.filter((_, i) => i !== index),
+      }));
+      setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      // Removing new image
+      const newImageIndex = index - formData.existingImages.length;
+      setFormData((prev) => ({
+        ...prev,
+        images: prev.images.filter((_, i) => i !== newImageIndex),
+      }));
+      setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
   // Upload image to server
@@ -126,7 +190,6 @@ export default function ProductRequestForm({
       const res = await apiClientUser.post("/users/upload", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("image", res);
       return res?.data?.fileUrl;
     } catch (error) {
       console.error("Image upload error:", error);
@@ -136,7 +199,6 @@ export default function ProductRequestForm({
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("handleSubmit called");
     e.preventDefault();
 
     if (
@@ -155,7 +217,7 @@ export default function ProductRequestForm({
       return;
     }
 
-    if (formData.images.length === 0) {
+    if (formData.existingImages.length === 0 && formData.images.length === 0) {
       toast.error("Please select at least one image");
       return;
     }
@@ -182,7 +244,7 @@ export default function ProductRequestForm({
       const payload = {
         name: formData.name,
         description: formData.description,
-        images: uploadedImages,
+        images: [...formData.existingImages, ...uploadedImages],
         category: formData.category,
         subCategory: formData.subCategory,
         phone: formData.phone,
@@ -190,18 +252,21 @@ export default function ProductRequestForm({
 
       // Get auth token from localStorage and decode it
       const storedToken = localStorage.getItem("leoKey");
-      const authToken = storedToken ? obfuscateToken(false, storedToken) : null;
-
-      console.log("Token debug:", {
-        storedToken: storedToken ? "present" : "null",
-        authToken: authToken ? "present" : "null",
-        authTokenLength: authToken?.length
-      });
+      if (storedToken) {
+        obfuscateToken(false, storedToken);
+      }
 
       // Submit to API
-      await apiClientUser.post("/product-requests/create", payload);
-
-      toast.success("Product request submitted successfully!");
+      if (requestToEdit) {
+        await apiClientUser.patch(
+          `/product-requests/update/${requestToEdit._id}`,
+          payload
+        );
+        toast.success("Product request updated successfully!");
+      } else {
+        await apiClientUser.post("/product-requests/create", payload);
+        toast.success("Product request submitted successfully!");
+      }
       onSuccess?.();
       onClose();
     } catch (error) {
@@ -224,7 +289,9 @@ export default function ProductRequestForm({
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold">Request New Product</h2>
+          <h2 className="text-xl font-semibold">
+            {requestToEdit ? "Edit Product Request" : "Request New Product"}
+          </h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full"
@@ -306,12 +373,16 @@ export default function ProductRequestForm({
               </label>
               <Select
                 value={formData.subCategory}
-                onValueChange={(value) =>
+                onValueChange={(value) => {
+                  // Prevent execution during initialization
+                  if (isInitializingRef.current) {
+                    return;
+                  }
                   setFormData((prev) => ({
                     ...prev,
                     subCategory: value,
-                  }))
-                }
+                  }));
+                }}
                 disabled={
                   !selectedCategory || availableSubcategories.length === 0
                 }
