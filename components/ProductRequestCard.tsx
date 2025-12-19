@@ -108,16 +108,18 @@ export default function ProductRequestCard({
 
         <div className="mt-2">
           <div className="flex items-center justify-between mb-1">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit?.(request);
-              }}
-              className="text-[#1F058F] hover:text-blue-600 text-sm rounded transition-colors flex items-center gap-1"
-            >
-              <Edit size={14} />
-              Edit
-            </button>
+            {isCurrentUserBuyer && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit?.(request);
+                }}
+                className="text-[#1F058F] hover:text-blue-600 text-sm rounded transition-colors flex items-center gap-1"
+              >
+                <Edit size={14} />
+                Edit
+              </button>
+            )}
             {!isCurrentUserBuyer && (
               <button
                 onClick={(e) => {
