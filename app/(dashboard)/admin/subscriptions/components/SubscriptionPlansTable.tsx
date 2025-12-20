@@ -1,4 +1,5 @@
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,7 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
-import { SubscriptionPlan } from "../types";
+import { SubscriptionPlan, ListingLimitItem } from "../types";
+import { ListingLimitsModal } from "./ListingLimitsModal";
 
 interface SubscriptionPlansTableProps {
   plans: SubscriptionPlan[];
@@ -23,6 +25,70 @@ export const SubscriptionPlansTable = ({
   onDelete,
 }: SubscriptionPlansTableProps) => {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
+    null
+  );
+
+  const handleViewMore = (plan: SubscriptionPlan) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+
+  const renderListingLimits = (
+    listingLimit: ListingLimitItem[],
+    plan: SubscriptionPlan,
+    isMobile = false
+  ) => {
+    if (!Array.isArray(listingLimit) || listingLimit.length === 0) {
+      return <span className="text-gray-500 text-sm">-</span>;
+    }
+
+    const visibleLimits = listingLimit.slice(0, 2);
+    const hasMore = listingLimit.length > 2;
+
+    return (
+      <div className="space-y-1">
+        {visibleLimits.map((it) => (
+          <div
+            key={
+              it._id ??
+              `${
+                typeof it.subCategory === "string"
+                  ? it.subCategory
+                  : it.subCategory?._id
+              }-${it.limit}`
+            }
+            className={
+              isMobile
+                ? "text-sm text-gray-600 w-fit bg-gray-50 px-2 py-1 rounded"
+                : "text-sm"
+            }
+          >
+            <span className="font-medium">
+              {typeof it.subCategory === "string"
+                ? it.subCategory
+                : it.subCategory?.name}
+            </span>
+            : {it.limit}
+          </div>
+        ))}
+        {hasMore && (
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 h-auto text-[#1F058F] hover:text-[#1F058F]/80"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewMore(plan);
+            }}
+          >
+            View More ({listingLimit.length - 2} more)
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -53,35 +119,7 @@ export const SubscriptionPlansTable = ({
                 </TableCell>
                 <TableCell>₦{Number(p.amount).toLocaleString()}</TableCell>
                 <TableCell className="capitalize">{p.billing_cycle}</TableCell>
-                <TableCell>
-                  {Array.isArray(p.listingLimit) &&
-                  p.listingLimit.length > 0 ? (
-                    <div className="space-y-1">
-                      {p.listingLimit.map((it) => (
-                        <div
-                          key={
-                            it._id ??
-                            `${
-                              typeof it.subCategory === "string"
-                                ? it.subCategory
-                                : it.subCategory?._id
-                            }-${it.limit}`
-                          }
-                          className="text-sm"
-                        >
-                          <span className="font-medium">
-                            {typeof it.subCategory === "string"
-                              ? it.subCategory
-                              : it.subCategory?.name}
-                          </span>
-                          : {it.limit}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-gray-500 text-sm">-</span>
-                  )}
-                </TableCell>
+                <TableCell>{renderListingLimits(p.listingLimit, p)}</TableCell>
                 <TableCell>
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
@@ -171,32 +209,7 @@ export const SubscriptionPlansTable = ({
               <div className="text-sm font-medium text-gray-700 mb-1">
                 Listing Limits:
               </div>
-              {Array.isArray(p.listingLimit) && p.listingLimit.length > 0 ? (
-                <div className="space-y-1">
-                  {p.listingLimit.map((it) => (
-                    <div
-                      key={
-                        it._id ??
-                        `${
-                          typeof it.subCategory === "string"
-                            ? it.subCategory
-                            : it.subCategory?._id
-                        }-${it.limit}`
-                      }
-                      className="text-sm text-gray-600 w-fit bg-gray-50 px-2 py-1 rounded"
-                    >
-                      <span className="font-medium">
-                        {typeof it.subCategory === "string"
-                          ? it.subCategory
-                          : it.subCategory?.name}
-                      </span>
-                      : {it.limit}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <span className="text-sm text-gray-500">-</span>
-              )}
+              {renderListingLimits(p.listingLimit, p, true)}
             </div>
 
             {/* Created Date */}
@@ -235,6 +248,13 @@ export const SubscriptionPlansTable = ({
           </div>
         ))}
       </div>
+
+      <ListingLimitsModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        listingLimits={selectedPlan?.listingLimit || []}
+        planName={selectedPlan?.name || ""}
+      />
     </>
   );
 };
