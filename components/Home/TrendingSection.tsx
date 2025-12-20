@@ -1,6 +1,5 @@
 "use client";
 
-import SectionHeader from "@/components/Home/Section-header";
 import ProductSection from "@/components/Home/ProductSection";
 import { useProducts, ApiProduct } from "@/hooks/useProducts";
 
@@ -24,7 +23,6 @@ export default function TrendingSection({
 
   return (
     <div className="mb-8">
-      <SectionHeader title="Trending Now" showViewToggle={false} />
       {loadingProducts ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 md:gap-4">
           {[1, 2, 3, 4].map((i) => (
