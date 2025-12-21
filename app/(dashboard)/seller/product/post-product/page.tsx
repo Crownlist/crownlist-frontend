@@ -649,7 +649,7 @@ export default function ProductPostFlow() {
         className="flex flex-col w-full mx-auto bg-white p-6"
         style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}
       >
-        <div className="flex flex-col h-full mx-auto w-full  overflow-hidden md:pt-3">
+        <div className="flex flex-col h-full mx-auto w-full overflow-hidden md:pt-3">
           {renderCurrentStep()}
 
           {/* Action Buttons */}
@@ -671,7 +671,7 @@ export default function ProductPostFlow() {
               )}
               <Button
                 variant="default"
-                className="bg-[#1F058F]  grow hover:bg-[#1F058F]/90 px-8"
+                className="bg-[#1F058F] max-w-dvh grow hover:bg-[#1F058F]/90 px-8"
                 onClick={step === 3 ? handleModal : handleContinue}
                 disabled={
                   submitting ||
