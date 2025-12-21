@@ -219,7 +219,7 @@ function FacilityField({
                 className="data-[state=checked]:bg-[#1F058F]"
               />
               <span className="text-sm text-gray-600">
-                {Boolean(facilityValues[facilityKey]) ? "Enabled" : "Disabled"}
+                {Boolean(facilityValues[facilityKey]) ? "YES" : "NO"}
               </span>
             </div>
           ) : facility.dataType === "number" ? (

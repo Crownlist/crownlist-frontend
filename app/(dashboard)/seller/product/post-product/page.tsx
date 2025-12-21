@@ -649,7 +649,7 @@ export default function ProductPostFlow() {
         className="flex flex-col w-full mx-auto bg-white p-6"
         style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}
       >
-        <div className="flex flex-col h-full mx-auto w-full max-w-dvh overflow-hidden md:pt-3">
+        <div className="flex flex-col h-full mx-auto w-full  overflow-hidden md:pt-3">
           {renderCurrentStep()}
 
           {/* Action Buttons */}
@@ -658,7 +658,7 @@ export default function ProductPostFlow() {
               step === 5 ? "hidden" : ""
             }`}
           >
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-3 items-center max-w-dvh">
               {step > 1 && (
                 <Button
                   variant="outline"
@@ -671,7 +671,7 @@ export default function ProductPostFlow() {
               )}
               <Button
                 variant="default"
-                className="bg-[#1F058F] grow hover:bg-[#1F058F]/90 px-8"
+                className="bg-[#1F058F]  grow hover:bg-[#1F058F]/90 px-8"
                 onClick={step === 3 ? handleModal : handleContinue}
                 disabled={
                   submitting ||
@@ -685,7 +685,7 @@ export default function ProductPostFlow() {
             </div>
             <Button
               variant="outline"
-              className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10 px-8"
+              className="border-[#1F058F] text-[#1F058F] max-w-dvh hover:bg-[#1F058F]/10 px-8"
               onClick={() => setSubmitCancel(true)}
               disabled={submitting}
             >
