@@ -1,21 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import { Copy, MessageCircle, Heart, Share2, Phone } from "lucide-react";
+import { Copy, MessageCircle, Heart, Share2, Phone, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { ServerProductData } from "@/lib/server/product-service";
 import { cn } from "@/lib/utils";
 import { apiClientUser } from "@/lib/interceptor";
+import { useLikedProductsContext } from "@/context/LikedProductsContext";
+import { useToast } from "@/lib/useToastMessage";
+import { OnlyBuyerCanLikeModal } from "@/components/OnlyBuyerCanLikeModal";
 
 interface ProductDetailsSidebarProps {
   product: ServerProductData;
   postedDate: string;
 }
+
+type CopyActionType = "link" | "contact" | null;
 
 export default function ProductDetailsSidebar({
   product,
@@ -27,8 +32,12 @@ export default function ProductDetailsSidebar({
     "default" | "requestEscrow" | "confirmEscrow"
   >("default");
   const [isCreatingEscrow, setIsCreatingEscrow] = useState(false);
+  const [copiedAction, setCopiedAction] = useState<CopyActionType>(null);
+  const [showSellerModal, setShowSellerModal] = useState(false);
   const router = useRouter();
   const { data: authData } = useGetAuthUser("User");
+  const { toggleLike, products: likedProducts } = useLikedProductsContext();
+  const { handleMessage } = useToast();
 
   const isBuyerLoggedIn =
     authData?.data?.loggedInAccount?.accountType === "User";
@@ -38,6 +47,11 @@ export default function ProductDetailsSidebar({
   const isCurrentUserSeller =
     isSeller && product.seller?._id === authData?.data?.loggedInAccount?._id;
 
+  useEffect(() => {
+    const isLiked = likedProducts.some((p) => p._id === product._id);
+    setLiked(isLiked);
+  }, [likedProducts, product._id]);
+
   const isLoggedIn = () => {
     if (typeof window === "undefined") return false;
     return !!(
@@ -46,22 +60,40 @@ export default function ProductDetailsSidebar({
   };
 
   const handleLike = async (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.stopPropagation();
+    if (toggling) return;
 
-    if (!isLoggedIn()) {
+    // Check authentication
+    const isAuthenticated =
+      typeof window !== "undefined" && !!localStorage.getItem("leoKey");
+    if (!isAuthenticated) {
       router.push("/auth/login");
       return;
     }
 
+    // Check if user is seller
+    if (isSeller) {
+      setShowSellerModal(true);
+      return;
+    }
+
+    if (!product._id) return;
+
     setToggling(true);
+    const newLiked = !liked;
+    setLiked(newLiked);
+
     try {
-      // API call would go here
-      setLiked(!liked);
-      toast.success(liked ? "Removed from likes" : "Added to likes", {
-        position: "bottom-center",
-      });
-    } catch {
-      toast.error("Failed to like product", { position: "bottom-center" });
+      await toggleLike(product._id);
+      const message = newLiked
+        ? "Added to saved items"
+        : "Removed from saved items";
+      handleMessage("success", message);
+    } catch (err: unknown) {
+      setLiked(!newLiked); // revert
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to toggle like";
+      handleMessage("error", errorMessage);
     } finally {
       setToggling(false);
     }
@@ -106,19 +138,21 @@ export default function ProductDetailsSidebar({
     }
   };
 
-  const copyLink = async () => {
-    const link = `${
-      typeof window !== "undefined" ? window.location.origin : ""
-    }/product/${product.slug || product._id}`;
-    try {
-      await navigator.clipboard.writeText(link);
-      toast.success("Link copied to clipboard!", {
-        position: "bottom-center",
-      });
-    } catch {
-      toast.error("Failed to copy link", { position: "bottom-center" });
-    }
-  };
+  // const copyLink = async () => {
+  //   const link = `${
+  //     typeof window !== "undefined" ? window.location.origin : ""
+  //   }/product/${product.slug || product._id}`;
+  //   try {
+  //     await navigator.clipboard.writeText(link);
+  //     setCopiedAction("link");
+  //     toast.success("Link copied to clipboard!", {
+  //       position: "bottom-center",
+  //     });
+  //     setTimeout(() => setCopiedAction(null), 2000);
+  //   } catch {
+  //     toast.error("Failed to copy link", { position: "bottom-center" });
+  //   }
+  // };
 
   const handleRequestEscrow = async () => {
     if (!isBuyerLoggedIn) {
@@ -192,6 +226,7 @@ export default function ProductDetailsSidebar({
 
     try {
       await navigator.clipboard.writeText(contact);
+      setCopiedAction("contact");
       toast.success(
         phoneNumber
           ? "Seller phone number copied to clipboard"
@@ -200,6 +235,7 @@ export default function ProductDetailsSidebar({
           position: "bottom-center",
         }
       );
+      setTimeout(() => setCopiedAction(null), 2000);
     } catch {
       toast.error("Failed to copy seller contact", {
         position: "bottom-center",
@@ -347,12 +383,25 @@ export default function ProductDetailsSidebar({
                       <Button
                         variant={"outline"}
                         onClick={copySellerContact}
-                        className="grow text-sm font-medium"
+                        className={cn(
+                          "grow text-sm font-medium transition-all",
+                          copiedAction === "contact"
+                            ? "bg-green-50 border-green-500 text-green-700"
+                            : ""
+                        )}
                         title="Copy seller contact"
                       >
-                        <Copy size={16} />
-                        <span className="hidden sm:inline">Copy Contact</span>
-                        <span className="sm:hidden">Copy</span>
+                        {copiedAction === "contact" ? (
+                          <>
+                            <Check size={16} />
+                            <span className="">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={16} />
+                            <span className="">Copy Contact</span>
+                          </>
+                        )}
                       </Button>
                     </div>
 
@@ -360,7 +409,7 @@ export default function ProductDetailsSidebar({
                       onClick={handleRequestEscrow}
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-2 sm:py-3 rounded-lg font-semibold flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
-                      Request Escrow
+                      Buy with Escrow
                     </Button>
                   </>
                 )}
@@ -418,41 +467,62 @@ export default function ProductDetailsSidebar({
 
           {/* Action Buttons */}
           <div className="p-4 sm:p-6 space-y-3">
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Only show like button if user is logged in as buyer and not the seller */}
               {isBuyerLoggedIn && !isCurrentUserSeller && (
                 <button
                   onClick={handleLike}
                   disabled={toggling}
-                  className="py-2 sm:py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium text-gray-700 disabled:opacity-50"
+                  className={cn(
+                    "grow py-2 sm:py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-2 text-sm font-medium text-gray-700 disabled:opacity-50",
+                    liked && "border-red-300 bg-red-50"
+                  )}
                 >
                   <Heart
                     size={18}
                     className={cn(
-                      "transition-colors",
-                      liked ? "fill-red-500 text-red-500" : "text-gray-600"
+                      "transition-all duration-300",
+                      liked
+                        ? "fill-red-500 text-red-500 scale-110"
+                        : "text-gray-600 hover:scale-105"
                     )}
                   />
-                  <span className="hidden sm:inline">Like</span>
+                  <span className="hidden sm:inline">
+                    {liked ? "Liked" : "Like"}
+                  </span>
                 </button>
               )}
 
               <button
                 onClick={shareOnWhatsApp}
-                className="py-2 sm:py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium text-gray-700"
+                className="grow py-2 sm:py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium text-gray-700"
               >
                 <Share2 size={18} />
                 <span className="hidden sm:inline">Share</span>
               </button>
             </div>
 
-            <button
+            {/* <button
               onClick={copyLink}
-              className="w-full py-2 sm:py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium text-gray-700"
+              className={cn(
+                "w-full py-2 sm:py-3 rounded-lg border transition-all flex items-center justify-center gap-2 text-sm font-medium",
+                copiedAction === "link"
+                  ? "bg-green-50 border-green-500 text-green-700"
+                  : "border-gray-300 hover:bg-gray-50 text-gray-700"
+              )}
             >
-              <Copy size={18} />
-              Copy Link
-            </button>
+              {copiedAction === "link" ? (
+                <>
+                  <Check size={18} />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy size={18} />
+                  Copy Listing Link
+                </>
+              )}
+            </button> */}
           </div>
 
           {/* Safety Notice */}
@@ -591,6 +661,10 @@ export default function ProductDetailsSidebar({
           </div>
         </div>
       )}
+      <OnlyBuyerCanLikeModal
+        open={showSellerModal}
+        onOpenChange={setShowSellerModal}
+      />
     </>
   );
 }

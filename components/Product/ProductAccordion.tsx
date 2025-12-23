@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import { ServerProductData } from "@/lib/server/product-service";
 
@@ -25,15 +25,38 @@ interface ExpandedSections {
 export const ProductAccordion: React.FC<ProductAccordionProps> = ({
   product,
 }) => {
-  const facilities = product.facility?.facilities || [];
-  const features = product.features || [];
-  const description = product.description || "";
+  const facilities = useMemo(
+    () => product.facility?.facilities || [],
+    [product.facility?.facilities]
+  );
+  const features = useMemo(() => product.features || [], [product.features]);
+  const description = useMemo(
+    () => product.description || "",
+    [product.description]
+  );
+  const facilitiesContainerRef = useRef<HTMLDivElement>(null);
+  const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>("max-h-96");
 
   const [expanded, setExpanded] = useState<ExpandedSections>({
     description: false,
     features: false,
     facilities: false,
   });
+
+  // Calculate dynamic max-height based on content
+  useEffect(() => {
+    if (facilitiesContainerRef.current && !expanded.facilities) {
+      const contentHeight = facilitiesContainerRef.current.scrollHeight;
+      // If content is taller than 384px (max-h-96), increase the max-height to accommodate multivalue rows
+      if (contentHeight > 384) {
+        // Add some padding for safety and round up to nearest increment of 64px
+        const adjustedHeight = Math.ceil(contentHeight / 64) * 64 + 64;
+        setDynamicMaxHeight(`max-h-[${adjustedHeight}px]`);
+      } else {
+        setDynamicMaxHeight("max-h-96");
+      }
+    }
+  }, [expanded.facilities, facilities]);
 
   const toggleExpand = (section: keyof ExpandedSections) => {
     setExpanded((prev) => ({
@@ -129,6 +152,12 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
     );
   };
 
+  const cleanLabel = (label: string | undefined): string => {
+    if (!label) return "—";
+    // Remove "(Optional)" from the label
+    return label.replace(/\s*\(Optional\)\s*$/i, "").trim();
+  };
+
   return (
     <div className="space-y-6 p-2">
       {/* Description Section */}
@@ -181,8 +210,9 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
 
           {facilities.length > 0 && (
             <div
+              ref={facilitiesContainerRef}
               className={`transition-all ${
-                expanded.facilities ? "" : "max-h-96 overflow-hidden"
+                expanded.facilities ? "" : `${dynamicMaxHeight} overflow-hidden`
               }`}
             >
               <div className="overflow-x-auto">
@@ -201,12 +231,12 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
                     {facilities.map((item: FacilityItem, index: number) => (
                       <tr
                         key={index}
-                        className="border-b border-gray-200 hover:bg-gray-50"
+                        className="border-b border-gray-200 hover:bg-gray-50 align-top"
                       >
-                        <td className="px-4 py-2 text-gray-700 font-medium">
-                          {item.label || item.facility || "—"}
+                        <td className="px-4 py-2 text-gray-700 font-medium align-top">
+                          {cleanLabel(item.label || item.facility)}
                         </td>
-                        <td className="px-4 py-2 text-gray-600">
+                        <td className="px-4 py-2 text-gray-600 align-top">
                           {renderFacilityValue(item.value || item.detail)}
                         </td>
                       </tr>
@@ -214,7 +244,7 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
                   </tbody>
                 </table>
               </div>
-              {facilities.length > 5 && (
+              {facilities.length > 8 && (
                 <button
                   onClick={() => toggleExpand("facilities")}
                   className="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-2"

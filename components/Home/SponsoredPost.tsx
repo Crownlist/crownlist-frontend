@@ -6,7 +6,7 @@ import { Heart, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 //import ProductCard from "./Product-card"
 import { useRouter } from "next/navigation";
-import { useLikedProducts } from "@/hooks/useLikedProducts";
+import { useLikedProductsContext } from "@/context/LikedProductsContext";
 import { useToast } from "@/lib/useToastMessage";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { cn } from "@/lib/utils";
@@ -36,7 +36,7 @@ export default function SponsoredPost({
 }: SponsoredPostProps) {
   const router = useRouter();
   const { products: likedProducts, toggleLike: apiToggleLike } =
-    useLikedProducts();
+    useLikedProductsContext();
   const { handleMessage } = useToast();
   const { data: userData } = useGetAuthUser("User");
   const isBuyerLoggedIn =
@@ -94,6 +94,11 @@ export default function SponsoredPost({
 
     try {
       await apiToggleLike(id);
+      const isLiked = isItemLiked(id);
+      const message = isLiked
+        ? "Removed from saved items"
+        : "Added to saved items";
+      handleMessage("success", message);
       // Success - the likedProducts list will be updated automatically by the hook
     } catch (err: any) {
       handleMessage("error", err.message || "Failed to toggle like");

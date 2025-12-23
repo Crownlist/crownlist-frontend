@@ -4,9 +4,9 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useLikedProducts } from "@/hooks/useLikedProducts";
+import { useLikedProductsContext } from "@/context/LikedProductsContext";
 import { useToast } from "@/lib/useToastMessage";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
@@ -49,7 +49,7 @@ export default function ProductCard({
   useBreadcrumbRouting = false,
   isLiked = false,
 }: ProductCardProps) {
-  const { toggleLike } = useLikedProducts();
+  const { toggleLike, products: likedProducts } = useLikedProductsContext();
   const { handleMessage } = useToast();
   const [liked, setLiked] = useState<boolean>(isLiked);
   const [toggling, setToggling] = useState(false);
@@ -57,6 +57,11 @@ export default function ProductCard({
   const [showSellerModal, setShowSellerModal] = useState(false);
   const router = useRouter();
   const { data: userData } = useGetAuthUser("User");
+
+  useEffect(() => {
+    const isLiked = likedProducts.some((p) => p._id === id);
+    setLiked(isLiked);
+  }, [likedProducts, id]);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,15 +71,20 @@ export default function ProductCard({
     const isAuthenticated =
       typeof window !== "undefined" && !!localStorage.getItem("leoKey");
     if (!isAuthenticated) {
-      setShowLoginPrompt(true);
+      router.push("/auth/login");
       return;
     }
 
     // Check if user is seller
-    if (userData?.data?.data?.loggedInAccount?.accountType === "Seller") {
+    if (
+      userData?.data?.loggedInAccount?.accountType === "Seller" ||
+      userData?.data?.loggedInAccount?.accountType === "Admin"
+    ) {
       setShowSellerModal(true);
       return;
     }
+
+    if (!id) return;
 
     setToggling(true);
     const newLiked = !liked;
@@ -82,9 +92,15 @@ export default function ProductCard({
 
     try {
       await toggleLike(String(id));
-    } catch (err: any) {
+      const message = newLiked
+        ? "Added to saved items"
+        : "Removed from saved items";
+      handleMessage("success", message);
+    } catch (err: unknown) {
       setLiked(!newLiked); // revert
-      handleMessage("error", err.message || "Failed to toggle like");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to toggle like";
+      handleMessage("error", errorMessage);
     } finally {
       setToggling(false);
     }
@@ -127,15 +143,20 @@ export default function ProductCard({
           {/* Like button - Only show for logged-in buyers */}
           {userData?.data?.loggedInAccount?.accountType === "User" && (
             <button
-              className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 flex items-center justify-center hover:bg-white transition-colors"
+              className={cn(
+                "absolute top-2 right-2 h-8 w-8 rounded-full bg-white/80 flex items-center justify-center hover:bg-white transition-all",
+                liked && "bg-red-50"
+              )}
               onClick={handleLike}
               disabled={toggling}
               aria-label={liked ? "Unlike" : "Like"}
             >
               <Heart
                 className={cn(
-                  "h-5 w-5 transition-colors",
-                  liked ? "fill-red-500 text-red-500" : "text-gray-500"
+                  "h-5 w-5 transition-all duration-300",
+                  liked
+                    ? "fill-red-500 text-red-500 scale-110"
+                    : "text-gray-500 hover:scale-105"
                 )}
               />
             </button>

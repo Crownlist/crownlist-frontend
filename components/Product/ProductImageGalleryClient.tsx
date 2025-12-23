@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ChevronRight, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useLikedProducts } from "@/hooks/useLikedProducts";
+import { useLikedProductsContext } from "@/context/LikedProductsContext";
 import { useToast } from "@/lib/useToastMessage";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { OnlyBuyerCanLikeModal } from "@/components/OnlyBuyerCanLikeModal";
+import Lightbox from "yet-another-react-lightbox";
+import Counter from "yet-another-react-lightbox/plugins/counter";
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/counter.css";
 
 interface ProductImageGalleryClientProps {
   images: string[];
@@ -23,8 +27,9 @@ export default function ProductImageGalleryClient({
   const [liked, setLiked] = useState(false);
   const [toggling, setToggling] = useState(false);
   const [showSellerModal, setShowSellerModal] = useState(false);
+  const [showLightbox, setShowLightbox] = useState(false);
   const router = useRouter();
-  const { toggleLike } = useLikedProducts();
+  const { toggleLike, products: likedProducts } = useLikedProductsContext();
   const { handleMessage } = useToast();
   const { data: userData } = useGetAuthUser("User");
 
@@ -32,6 +37,13 @@ export default function ProductImageGalleryClient({
   const isSeller =
     userData?.data?.loggedInAccount?.accountType === "Seller" ||
     userData?.data?.loggedInAccount?.accountType === "Admin";
+
+  useEffect(() => {
+    if (productId) {
+      const isLiked = likedProducts.some((p) => p._id === productId);
+      setLiked(isLiked);
+    }
+  }, [likedProducts, productId]);
 
   const nextImage = () => {
     setCurrentImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
@@ -72,6 +84,10 @@ export default function ProductImageGalleryClient({
 
     try {
       await toggleLike(productId);
+      const message = newLiked
+        ? "Added to saved items"
+        : "Removed from saved items";
+      handleMessage("success", message);
     } catch (err: unknown) {
       setLiked(!newLiked); // revert
       const errorMessage =
@@ -92,7 +108,10 @@ export default function ProductImageGalleryClient({
     >
       {/* Main Image */}
       <div className="relative bg-white rounded-lg overflow-hidden">
-        <div className="relative w-full aspect-square sm:aspect-auto sm:h-[500px]">
+        <div
+          className="relative w-full aspect-square sm:aspect-auto sm:h-[500px] cursor-pointer hover:opacity-95 transition-opacity"
+          onClick={() => setShowLightbox(true)}
+        >
           <Image
             src={images[currentImage] || "/placeholder.svg"}
             alt={`Product image ${currentImage + 1}`}
@@ -107,15 +126,18 @@ export default function ProductImageGalleryClient({
             <button
               onClick={handleLike}
               disabled={toggling}
-              className="absolute top-3 right-3 sm:top-4 sm:right-4 h-10 w-10 sm:h-12 sm:w-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+              className={cn(
+                "absolute top-3 right-3 sm:top-4 sm:right-4 h-10 w-10 sm:h-12 sm:w-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all disabled:opacity-50",
+                liked && "animate-pulse"
+              )}
               aria-label={liked ? "Unlike" : "Like"}
             >
               <Heart
                 className={cn(
-                  "h-6 w-6 sm:h-7 sm:w-7 transition-colors",
+                  "h-6 w-6 sm:h-7 sm:w-7 transition-all duration-300",
                   liked
-                    ? "fill-red-500 text-red-500"
-                    : "text-gray-400 hover:text-red-500"
+                    ? "fill-red-500 text-red-500 scale-110"
+                    : "text-gray-400 hover:text-red-500 hover:scale-105"
                 )}
               />
             </button>
@@ -182,6 +204,18 @@ export default function ProductImageGalleryClient({
       <OnlyBuyerCanLikeModal
         open={showSellerModal}
         onOpenChange={setShowSellerModal}
+      />
+
+      {/* Lightbox Gallery */}
+      <Lightbox
+        open={showLightbox}
+        close={() => setShowLightbox(false)}
+        slides={images.map((src) => ({ src }))}
+        index={currentImage}
+        plugins={[Counter]}
+        on={{
+          view: ({ index }) => setCurrentImage(index ?? 0),
+        }}
       />
     </div>
   );

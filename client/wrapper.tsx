@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import BackToTop from "@/components/BackToTop";
 import BottomNav from "@/components/BottomNav";
 import { usePathname } from "next/navigation";
+import { LikedProductsProvider } from "@/context/LikedProductsContext";
 const queryClient = new QueryClient();
 
 export default function Wrapper({ children }: { children: ReactNode }) {
@@ -22,18 +23,20 @@ export default function Wrapper({ children }: { children: ReactNode }) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <NextTopLoader color="#0177AB" showSpinner={false} />
-          <Toaster position="top-center" />
-          {children}
-          {showBottomNav && <BottomNav />}
-          <BackToTop />
-        </ThemeProvider>
+        <LikedProductsProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <NextTopLoader color="#0177AB" showSpinner={false} />
+            <Toaster position="top-center" />
+            {children}
+            {showBottomNav && <BottomNav />}
+            <BackToTop />
+          </ThemeProvider>
+        </LikedProductsProvider>
       </QueryClientProvider>
     </Provider>
   );
