@@ -1,25 +1,47 @@
 /* eslint-disable */
 "use client";
-import Image from "next/image";
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { countries } from "@/constants/countries";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/custom-input";
 import { useRouter } from "next/navigation";
+
+interface BannerContent {
+  image: string;
+  heading: string;
+  subheading: string;
+}
+
+const bannerContent: BannerContent[] = [
+  {
+    image: "/assets/images/london-united-kingdom.png",
+    heading: "Sell it, Find it, Enjoy it !",
+    subheading:
+      "Connect with Local Sellers and Discover Exactly What You've Been Searching For",
+  },
+  {
+    image: "/assets/images/fashion-clothing-hangers.png",
+    heading: "Buy with Escrow — Avoid scams",
+    subheading:
+      "Your money is held safely and only released after you receive your item.",
+  },
+  {
+    image: "/assets/images/living-room.png",
+    heading: "Can't Find What You Need? Request It",
+    subheading:
+      "Tell us what you want, and sellers will contact you directly. Tap Request on the bottom navigation to get started.",
+  },
+  {
+    image: "/assets/images/student-housing.png",
+    heading: "Find Student Housing Near Your School",
+    subheading: "Go to Property, then select Student Apartment.",
+  },
+];
 
 const Hero = () => {
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
-  const [open, setOpen] = useState(false);
-  const [filteredCountries, setFilteredCountries] = useState(countries);
-  const [heroImages, setHeroImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -39,15 +61,6 @@ const Hero = () => {
     }
   };
 
-  // Example: Fetch images dynamically or set them based on some condition
-  useEffect(() => {
-    setHeroImages([
-      "/assets/images/london-united-kingdom.png",
-      "/assets/images/fashion-clothing-hangers.png",
-      "/assets/images/living-room.png",
-    ]);
-  }, []);
-
   // Auto-slide functionality
   useEffect(() => {
     // Start the auto-slide interval
@@ -59,7 +72,7 @@ const Hero = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [heroImages]);
+  }, []);
 
   const startAutoSlide = useCallback(() => {
     if (intervalRef.current) {
@@ -68,10 +81,10 @@ const Hero = () => {
 
     intervalRef.current = setInterval(() => {
       setCurrentImageIndex((prevIndex) =>
-        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+        prevIndex === bannerContent.length - 1 ? 0 : prevIndex + 1
       );
     }, 5000);
-  }, [heroImages]);
+  }, []);
 
   const goToSlide = useCallback(
     (index: number) => {
@@ -85,29 +98,29 @@ const Hero = () => {
 
   const goToNextSlide = useCallback(() => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === bannerContent.length - 1 ? 0 : prevIndex + 1
     );
     startAutoSlide();
-  }, [heroImages.length, startAutoSlide]);
+  }, [startAutoSlide]);
 
   const goToPrevSlide = useCallback(() => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? heroImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? bannerContent.length - 1 : prevIndex - 1
     );
     startAutoSlide();
-  }, [heroImages.length, startAutoSlide]);
+  }, [startAutoSlide]);
 
   return (
     <div className="relative w-full overflow-hidden">
       {/* Background Images */}
       <div className="absolute inset-0 w-full ">
-        {heroImages.map((image, index) => (
+        {bannerContent.map((banner, index) => (
           <div
             key={index}
             className={`absolute inset-0 w-full h-full bg-center bg-no-repeat bg-cover transition-opacity duration-1000 ${
               currentImageIndex === index ? "opacity-100" : "opacity-0"
             }`}
-            style={{ backgroundImage: `url(${image})` }}
+            style={{ backgroundImage: `url(${banner.image})` }}
           />
         ))}
         <div className="absolute inset-0 bg-linear-to-r from-black/60 to-black/20"></div>
@@ -117,12 +130,11 @@ const Hero = () => {
       <div className="relative z-10 h-[350px] sm:h-[450px] md:h-[550px] lg:h-[650px]">
         <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 md:px-12 lg:px-0 lg:ml-52 text-white">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[60px] font-bold leading-tight lg:leading-[66px] text-shadow-sm">
-            Sell it, Find it, Enjoy it !
+            {bannerContent[currentImageIndex].heading}
           </h1>
 
           <p className="text-base md:text-lg font-normal mt-2 md:mt-5 text-shadow-sm max-w-[90%] lg:max-w-[600px]">
-            Connect with Local Sellers and Discover Exactly What You’ve
-            Been Searching For
+            {bannerContent[currentImageIndex].subheading}
           </p>
 
           <div className="w-full flex flex-col sm:flex-row items-center gap-2 sm:gap-0 relative mt-4 md:mt-7 lg:max-w-[600px]">
@@ -169,7 +181,7 @@ const Hero = () => {
 
       {/* Navigation Controls */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {heroImages.map((_, index) => (
+        {bannerContent.map((_, index) => (
           <button
             key={index}
             className={`w-2.5 h-2.5 rounded-full transition-all ${
