@@ -7,13 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import {
   Category,
   Subcategory,
   CreatePlanForm,
   ValidationErrors,
 } from "../types";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface PlanFormProps {
   formData: CreatePlanForm;
@@ -63,6 +64,30 @@ export const PlanForm = ({
   const subOptions = selectedCatForLimit
     ? subcategoriesByCat[selectedCatForLimit] || []
     : [];
+
+  const [isConfirmRemoveOpen, setIsConfirmRemoveOpen] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<{
+    subId: string;
+    name: string;
+  } | null>(null);
+
+  const handleRemoveClick = (subId: string, name: string) => {
+    setItemToRemove({ subId, name });
+    setIsConfirmRemoveOpen(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (itemToRemove) {
+      onRemoveLimitItem(itemToRemove.subId);
+      setIsConfirmRemoveOpen(false);
+      setItemToRemove(null);
+    }
+  };
+
+  const handleCancelRemove = () => {
+    setIsConfirmRemoveOpen(false);
+    setItemToRemove(null);
+  };
 
   return (
     <div className="space-y-4 py-2">
@@ -245,7 +270,7 @@ export const PlanForm = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => onRemoveLimitItem(subId!)}
+                        onClick={() => handleRemoveClick(subId!, name)}
                       >
                         Remove
                       </Button>
@@ -300,6 +325,17 @@ export const PlanForm = ({
           </Select>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={isConfirmRemoveOpen}
+        onClose={handleCancelRemove}
+        onConfirm={handleConfirmRemove}
+        title="Remove Listing Limit"
+        description={`Are you sure you want to remove the listing limit for "${itemToRemove?.name}"? This action cannot be undone.`}
+        confirmText="Remove"
+        cancelText="Cancel"
+        colour={true}
+      />
     </div>
   );
 };
