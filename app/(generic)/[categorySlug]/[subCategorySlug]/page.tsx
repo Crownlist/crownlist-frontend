@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
 import { EmptyState } from "@/components/EmptyState";
@@ -21,6 +21,9 @@ interface SubcategoryPageProps {
 }
 
 export default function SubcategoryPage({ params }: SubcategoryPageProps) {
+  const PRICE_MIN = 0;
+  const PRICE_MAX = 10_000_000;
+
   const [categorySlug, setCategorySlug] = useState<string>("");
   const [subCategorySlug, setSubCategorySlug] = useState<string>("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -40,9 +43,17 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   const [locationSearch, setLocationSearch] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
-  const [sliderValues, setSliderValues] = useState<number[]>([0, 1000000]);
+  const [debouncedPriceRange, setDebouncedPriceRange] = useState({
+    min: "",
+    max: "",
+  });
+  const [sliderValues, setSliderValues] = useState<number[]>([
+    PRICE_MIN,
+    PRICE_MAX,
+  ]);
   const [isFiltering, setIsFiltering] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const priceDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize params
   useEffect(() => {
@@ -54,17 +65,30 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     fetchParams();
   }, [params]);
 
-  // Reset current page when filters change
+  // Debounce price range changes (only trigger search after user stops typing)
+  useEffect(() => {
+    if (priceDebounceTimeoutRef.current) {
+      clearTimeout(priceDebounceTimeoutRef.current);
+    }
+
+    priceDebounceTimeoutRef.current = setTimeout(() => {
+      setDebouncedPriceRange(priceRange);
+      setCurrentPage(1);
+      setIsFiltering(true);
+    }, 500); // 500ms delay
+
+    return () => {
+      if (priceDebounceTimeoutRef.current) {
+        clearTimeout(priceDebounceTimeoutRef.current);
+      }
+    };
+  }, [priceRange.min, priceRange.max]);
+
+  // Reset current page when other filters change (not price, to avoid debounce)
   useEffect(() => {
     setCurrentPage(1);
     setIsFiltering(true);
-  }, [
-    isFeatured,
-    sortOption,
-    selectedLocation,
-    priceRange.min,
-    priceRange.max,
-  ]);
+  }, [isFeatured, sortOption, selectedLocation]);
 
   // Use the React Query hook for data fetching
   const {
@@ -77,8 +101,12 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     page: currentPage,
     sortBy: sortOption,
     isFeatured,
-    minPrice: priceRange.min ? parseInt(priceRange.min) : undefined,
-    maxPrice: priceRange.max ? parseInt(priceRange.max) : undefined,
+    minPrice: debouncedPriceRange.min
+      ? parseInt(debouncedPriceRange.min)
+      : undefined,
+    maxPrice: debouncedPriceRange.max
+      ? parseInt(debouncedPriceRange.max)
+      : undefined,
     location: selectedLocation || undefined,
   });
 
@@ -124,12 +152,61 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
     setSelectedLocation(selectedLocation === location ? "" : location);
   };
 
+  const clampPrice = (value: number) =>
+    Math.min(Math.max(value, PRICE_MIN), PRICE_MAX);
+
+  const normalizeRange = (minValue: number, maxValue: number) => {
+    const clampedMin = clampPrice(minValue);
+    const clampedMax = clampPrice(maxValue);
+    if (clampedMin > clampedMax) {
+      return [clampedMin, clampedMin] as [number, number];
+    }
+    return [clampedMin, clampedMax] as [number, number];
+  };
+
   const handleSliderChange = (values: number[]) => {
-    setSliderValues(values);
+    const [newMin, newMax] = normalizeRange(values[0], values[1] ?? values[0]);
+    setSliderValues([newMin, newMax]);
     setPriceRange({
-      min: values[0].toString(),
-      max: values[1].toString(),
+      min: newMin.toString(),
+      max: newMax.toString(),
     });
+  };
+
+  const handlePriceInputChange = (type: "min" | "max", rawValue: string) => {
+    const cleaned = rawValue.replace(/\D/g, "");
+
+    if (!cleaned) {
+      const [newMin, newMax] =
+        type === "min"
+          ? normalizeRange(PRICE_MIN, sliderValues[1])
+          : normalizeRange(sliderValues[0], PRICE_MAX);
+
+      setSliderValues([newMin, newMax]);
+      setPriceRange((prev) => ({
+        ...prev,
+        [type]: "",
+      }));
+      return;
+    }
+
+    const numericValue = clampPrice(Number(cleaned));
+
+    if (type === "min") {
+      const [newMin, newMax] = normalizeRange(numericValue, sliderValues[1]);
+      setSliderValues([newMin, newMax]);
+      setPriceRange({
+        min: numericValue.toString(),
+        max: newMax.toString(),
+      });
+    } else {
+      const [newMin, newMax] = normalizeRange(sliderValues[0], numericValue);
+      setSliderValues([newMin, newMax]);
+      setPriceRange({
+        min: newMin.toString(),
+        max: newMax.toString(),
+      });
+    }
   };
 
   const retryFetch = () => {
@@ -256,6 +333,8 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
           toggleLocation={toggleLocation}
           sliderValues={sliderValues}
           handleSliderChange={handleSliderChange}
+          priceRange={priceRange}
+          handlePriceInputChange={handlePriceInputChange}
         />
 
         <div className="flex flex-col md:flex-row gap-8">
@@ -268,6 +347,8 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             toggleLocation={toggleLocation}
             sliderValues={sliderValues}
             handleSliderChange={handleSliderChange}
+            priceRange={priceRange}
+            handlePriceInputChange={handlePriceInputChange}
             filteredLocations={filteredLocations}
           />
 

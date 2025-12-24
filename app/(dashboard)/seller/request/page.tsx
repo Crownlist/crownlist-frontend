@@ -183,10 +183,10 @@ export default function ProductRequestsPage() {
                   <p>
                     via email at{" "}
                     <a
-                      href="mailto:support@crownlist.com"
+                      href="mailto:crownliststore@gmail.com"
                       className="text-[#1F058F] hover:underline"
                     >
-                      support@crownlist.com
+                      crownliststore@gmail.com
                     </a>
                   </p>
                 </div>

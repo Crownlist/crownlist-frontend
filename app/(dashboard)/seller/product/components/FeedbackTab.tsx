@@ -27,8 +27,11 @@ export function FeedbackTab() {
             <p>For further assistance reach out via our 24/7</p>
             <p>
               via email at{" "}
-              <a href="mailto:support@crownlist.com" className="text-[#1F058F]">
-                support@crownlist.com
+              <a
+                href="mailto:crownliststore@gmail.com"
+                className="text-[#1F058F]"
+              >
+                crownliststore@gmail.com
               </a>
             </p>
           </div>

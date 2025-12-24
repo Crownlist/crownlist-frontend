@@ -10,6 +10,8 @@ interface FiltersSidebarProps {
   toggleLocation: (location: string) => void;
   sliderValues: number[];
   handleSliderChange: (values: number[]) => void;
+  priceRange: { min: string; max: string };
+  handlePriceInputChange: (type: "min" | "max", value: string) => void;
   filteredLocations: string[];
 }
 
@@ -22,8 +24,13 @@ export function FiltersSidebar({
   toggleLocation,
   sliderValues,
   handleSliderChange,
+  priceRange,
+  handlePriceInputChange,
   filteredLocations,
 }: FiltersSidebarProps) {
+  const PRICE_MIN = 0;
+  const PRICE_MAX = 10_000_000;
+
   return (
     <div className="hidden md:block w-[220px] md:h-[150px] shrink-0">
       <div className="space-y-4">
@@ -103,8 +110,8 @@ export function FiltersSidebar({
                   className="relative flex items-center select-none touch-none w-full h-5"
                   value={sliderValues}
                   onValueChange={handleSliderChange}
-                  max={1000000}
-                  min={0}
+                  max={PRICE_MAX}
+                  min={PRICE_MIN}
                   step={1000}
                 >
                   <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
@@ -123,6 +130,48 @@ export function FiltersSidebar({
               <div className="flex items-center justify-between text-sm text-gray-600">
                 <span>₦{sliderValues[0].toLocaleString()}</span>
                 <span>₦{sliderValues[1].toLocaleString()}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Min
+                  </label>
+                  <div className="flex items-center gap-2 rounded-md border border-gray-300 px-2 py-1.5">
+                    <span className="text-gray-500">₦</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={PRICE_MIN}
+                      max={PRICE_MAX}
+                      placeholder="0"
+                      className="w-full bg-transparent text-sm focus:outline-none"
+                      value={priceRange.min}
+                      onChange={(e) =>
+                        handlePriceInputChange("min", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Max
+                  </label>
+                  <div className="flex items-center gap-2 rounded-md border border-gray-300 px-2 py-1.5">
+                    <span className="text-gray-500">₦</span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={PRICE_MIN}
+                      max={PRICE_MAX}
+                      placeholder="10,000,000"
+                      className="w-full bg-transparent text-sm focus:outline-none"
+                      value={priceRange.max}
+                      onChange={(e) =>
+                        handlePriceInputChange("max", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
