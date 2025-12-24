@@ -307,7 +307,7 @@ export default function Footer() {
             <p className="text-sm text-center text-gray-500 mb-2 md:mb-0">
               ©2025 Crownlist. All rights reserved.
             </p>
-            <p className="text-xs text-center text-gray-600">
+            <p className="text-base text-center text-white">
               Company Reg. No: 8453568
             </p>
           </div>

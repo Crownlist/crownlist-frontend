@@ -1,5 +1,3 @@
-
-
 export const faqData = [
   {
     id: 1,
@@ -23,7 +21,7 @@ export const faqData = [
     id: 4,
     question: "How can I contact customer support?",
     answer:
-      "You can reach our support team via the 'Contact Us' page or by emailing info@crownlist.com.",
+      "You can reach our support team via the 'Contact Us' page or by emailing crownliststore@gmail.com.",
   },
   {
     id: 5,

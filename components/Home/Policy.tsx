@@ -1,118 +1,140 @@
+"use client";
 
-"use client"
-
-
-import React from 'react';
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const privacyPolicy = {
-  lastUpdated: '20 Jan 2025',
-  introduction: `At CROWNLIST, accessible from [yourwebsite.com], we prioritize the privacy of our users. This Privacy Policy outlines the types of information we collect, how we use and share that information, and your rights regarding your personal data.`,
+  lastUpdated: "20 Jan 2025",
+  introduction: `At CROWNLIST, we prioritize the privacy of our users. This Privacy Policy outlines the types of information we collect, how we use and share that information, and your rights regarding your personal data.`,
   consent: {
-    title: 'Consent',
-    content: 'By using our platform, you consent to our Privacy Policy and agree to its terms.',
+    title: "Consent",
+    content:
+      "By using our platform, you consent to our Privacy Policy and agree to its terms.",
   },
   informationWeCollect: {
-    title: 'What information do we collect?',
-    content: 'We collect several types of information from and about users of our platform, including:',
+    title: "What information do we collect?",
+    content:
+      "We collect several types of information from and about users of our platform, including:",
     types: [
       {
         id: 1,
-        title: 'Personal Information',
+        title: "Personal Information",
         details: [
-          '- Information that can identify you, such as your name, email address, phone number, and postal address.',
-          '- Information you provide when creating an account or posting ads.',
+          "- Information that can identify you, such as your name, email address, phone number, and postal address.",
+          "- Information you provide when creating an account or posting ads.",
         ],
       },
       {
         id: 2,
-        title: 'Automatically Collected Information',
+        title: "Automatically Collected Information",
         details: [
-          '- Usage details, IP addresses, browser type, and operating system.',
-          '- Information collected through cookies and similar technologies.',
+          "- Usage details, IP addresses, browser type, and operating system.",
+          "- Information collected through cookies and similar technologies.",
         ],
       },
       {
         id: 3,
-        title: 'User Contribution',
+        title: "User Contribution",
         details: [
-          '- Information you provide in public areas of the platform, including advertisements and messages.',
+          "- Information you provide in public areas of the platform, including advertisements and messages.",
         ],
       },
     ],
   },
   howWeUseYourInformation: {
-    title: 'How do we use your information?',
-    content: 'We may use the information we collect for various purposes, including to:',
+    title: "How do we use your information?",
+    content:
+      "We may use the information we collect for various purposes, including to:",
     uses: [
-      '- Provide, operate, and maintain our platform.',
-      '- Improve, personalize, and expand our services.',
-      '- Communicate with you about your account and provide customer support.',
-      '- Send you marketing communications and updates.',
-      '- Analyze usage and trends to enhance user experience.',
+      "- Provide, operate, and maintain our platform.",
+      "- Improve, personalize, and expand our services.",
+      "- Communicate with you about your account and provide customer support.",
+      "- Send you marketing communications and updates.",
+      "- Analyze usage and trends to enhance user experience.",
     ],
   },
   disclosureOfYourInformation: {
-    title: 'How long do we keep your information?',
-    content: 'We may share your information with:',
+    title: "How long do we keep your information?",
+    content: "We may share your information with:",
     recipients: [
-      '- Service providers and partners who assist in our operations.',
-      '- Law enforcement agencies if required by law.',
-      '- Third parties in the event of a merger, acquisition, or sale of assets.',
+      "- Service providers and partners who assist in our operations.",
+      "- Law enforcement agencies if required by law.",
+      "- Third parties in the event of a merger, acquisition, or sale of assets.",
     ],
   },
   cookiesAndTrackingTechnologies: {
-    title: 'Do we use cookies and other tracking technologies?',
+    title: "Do we use cookies and other tracking technologies?",
     content:
-      'CROWNLIST uses cookies and similar tracking technologies to enhance user experience. You can manage cookie preferences through your browser settings.',
+      "CROWNLIST uses cookies and similar tracking technologies to enhance user experience. You can manage cookie preferences through your browser settings.",
   },
   dataSecurity: {
-    title: 'How do we keep your information safe?',
+    title: "How do we keep your information safe?",
     content:
-      'We implement security measures to protect your personal information from unauthorized access, use, alteration, and disclosure. However, no method of transmission over the internet is completely secure.',
+      "We implement security measures to protect your personal information from unauthorized access, use, alteration, and disclosure. However, no method of transmission over the internet is completely secure.",
   },
   yourRights: {
-    title: 'What are your privacy rights?',
-    content: 'You have the following rights regarding your personal data:',
+    title: "What are your privacy rights?",
+    content: "You have the following rights regarding your personal data:",
     rights: [
-      { name: 'Access', description: 'Request copies of your personal data.' },
-      { name: 'Rectification', description: 'Request correction of inaccurate information.' },
-      { name: 'Erasure', description: 'Request deletion of your personal data under certain conditions.' },
-      { name: 'Restriction', description: 'Request restriction of processing your personal data.' },
-      { name: 'Objection', description: 'Object to the processing of your personal data.' },
-      { name: 'Data Portability', description: 'Request transfer of your personal data to another organization.' },
+      { name: "Access", description: "Request copies of your personal data." },
+      {
+        name: "Rectification",
+        description: "Request correction of inaccurate information.",
+      },
+      {
+        name: "Erasure",
+        description:
+          "Request deletion of your personal data under certain conditions.",
+      },
+      {
+        name: "Restriction",
+        description: "Request restriction of processing your personal data.",
+      },
+      {
+        name: "Objection",
+        description: "Object to the processing of your personal data.",
+      },
+      {
+        name: "Data Portability",
+        description:
+          "Request transfer of your personal data to another organization.",
+      },
     ],
-    contactToExerciseRights: 'To exercise these rights, please contact us at [support@crownlist.com].',
+    contactToExerciseRights:
+      'To exercise these rights, please contact us at <a href="mailto:crownliststore@gmail.com" style="color: inherit; text-decoration: underline; cursor: pointer;">crownliststore@gmail.com</a>.',
   },
   childrensInformation: {
     title: "Children's Information",
     content:
-      'CROWNLIST does not knowingly collect personal information from children under the age of 13. If you believe we have collected such information, please contact us immediately.',
+      "CROWNLIST does not knowingly collect personal information from children under the age of 13. If you believe we have collected such information, please contact us immediately.",
   },
   changesToThisPrivacyPolicy: {
-    title: 'Changes to This Privacy Policy',
+    title: "Changes to This Privacy Policy",
     content:
-      'We may update this Privacy Policy from time to time. Any changes will be posted on this page, and we encourage you to review it periodically.',
+      "We may update this Privacy Policy from time to time. Any changes will be posted on this page, and we encourage you to review it periodically.",
   },
   contactUs: {
-    title: 'How can you contact us about this policy?',
-    content: 'For questions or concerns regarding this Privacy Policy, please contact us at [support@crownlist.com].',
+    title: "How can you contact us about this policy?",
+    content:
+      'For questions or concerns regarding this Privacy Policy, please contact us at <a href="mailto:crownliststore@gmail.com" style="color: inherit; text-decoration: underline; cursor: pointer;">crownliststore@gmail.com</a>.',
   },
 };
 
 const Policy = () => {
-
   const pathname = usePathname();
   return (
-    <div className='flex flex-col w-full mt-10'>
-
-       <div className="flex flex-col items-center text-center mb-10">
-        <div className="bg-[#f2e9ff] text-[#6941c6] px-3 py-1 rounded-full text-sm font-medium mb-4">Legal</div>
-        <h2 className="text-4xl font-bold mb-2">We care about your well-being</h2>
+    <div className="flex flex-col w-full mt-10">
+      <div className="flex flex-col items-center text-center mb-10">
+        <div className="bg-[#f2e9ff] text-[#6941c6] px-3 py-1 rounded-full text-sm font-medium mb-4">
+          Legal
+        </div>
+        <h2 className="text-4xl font-bold mb-2">
+          We care about your well-being
+        </h2>
         <p className="text-gray-600 max-w-xl">
-          Your privacy is important to us at Untitled. We respect your privacy regarding any information we may collect from you across our website.{" "}
-      
+          Your privacy is important to us at Untitled. We respect your privacy
+          regarding any information we may collect from you across our website.{" "}
         </p>
       </div>
 
@@ -141,8 +163,6 @@ const Policy = () => {
         </div>
       </div>
 
-
-
       {/* <div className='bg-[#1F058F]'>
         <div className='flex items-center justify-center p-4 text-white py-8 text-center'>
           <div className='flex flex-col items-center gap-3'>
@@ -153,25 +173,30 @@ const Policy = () => {
         </div>
       </div> */}
 
-      <div className='max-w-4xl mx-auto p-6 space-y-8'>
+      <div className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Consent */}
-        <Section index={1} title={privacyPolicy.consent.title} content={<p>{privacyPolicy.consent.content}</p>} />
+        <Section
+          index={1}
+          title={privacyPolicy.consent.title}
+          content={<p>{privacyPolicy.consent.content}</p>}
+        />
 
         {/* Information We Collect */}
-        <Section 
+        <Section
           index={2}
           title={privacyPolicy.informationWeCollect.title}
           content={
-           
             <>
-              <p className='ml-6 text-gray-600 '>{privacyPolicy.informationWeCollect.content}</p>
-              <ul className='ml-12 space-y-2 text-gray-600 list-disc'>
+              <p className="ml-6 text-gray-600 ">
+                {privacyPolicy.informationWeCollect.content}
+              </p>
+              <ul className="ml-12 space-y-2 text-gray-600 list-disc">
                 {privacyPolicy.informationWeCollect.types.map((type) => (
                   <li key={type.id}>
-                    <strong >{type.title}</strong>
-                    <ul className='ml-6 list-disc'>
+                    <strong>{type.title}</strong>
+                    <ul className="ml-6 list-disc">
                       {type.details.map((detail, i) => (
-                        <li key={i}>{detail.replace(/^-\s*/, '')}</li>
+                        <li key={i}>{detail.replace(/^-\s*/, "")}</li>
                       ))}
                     </ul>
                   </li>
@@ -187,10 +212,12 @@ const Policy = () => {
           title={privacyPolicy.howWeUseYourInformation.title}
           content={
             <>
-              <p className='ml-6 text-gray-600'>{privacyPolicy.howWeUseYourInformation.content}</p>
-              <ul className='ml-12 list-disc text-gray-600'>
+              <p className="ml-6 text-gray-600">
+                {privacyPolicy.howWeUseYourInformation.content}
+              </p>
+              <ul className="ml-12 list-disc text-gray-600">
                 {privacyPolicy.howWeUseYourInformation.uses.map((use, i) => (
-                  <li key={i}>{use.replace(/^-\s*/, '')}</li>
+                  <li key={i}>{use.replace(/^-\s*/, "")}</li>
                 ))}
               </ul>
             </>
@@ -203,11 +230,15 @@ const Policy = () => {
           title={privacyPolicy.disclosureOfYourInformation.title}
           content={
             <>
-              <p className='ml-6 text-gray-600'>{privacyPolicy.disclosureOfYourInformation.content}</p>
-              <ul className='ml-12 list-disc text-gray-600'>
-                {privacyPolicy.disclosureOfYourInformation.recipients.map((item, i) => (
-                  <li key={i}>{item.replace(/^-\s*/, '')}</li>
-                ))}
+              <p className="ml-6 text-gray-600">
+                {privacyPolicy.disclosureOfYourInformation.content}
+              </p>
+              <ul className="ml-12 list-disc text-gray-600">
+                {privacyPolicy.disclosureOfYourInformation.recipients.map(
+                  (item, i) => (
+                    <li key={i}>{item.replace(/^-\s*/, "")}</li>
+                  )
+                )}
               </ul>
             </>
           }
@@ -221,15 +252,23 @@ const Policy = () => {
             ...privacyPolicy.yourRights,
             content: (
               <>
-                <p className='ml-6 text-gray-600'>{privacyPolicy.yourRights.content}</p>
-                <ul className='ml-12 list-disc text-gray-600'>
+                <p className="ml-6 text-gray-600">
+                  {privacyPolicy.yourRights.content}
+                </p>
+                <ul className="ml-12 list-disc text-gray-600">
                   {privacyPolicy.yourRights.rights.map((right, i) => (
                     <li key={i}>
                       <strong>{right.name}:</strong> {right.description}
                     </li>
                   ))}
                 </ul>
-                <p className='ml-6 text-gray-600 mt-2'>{privacyPolicy.yourRights.contactToExerciseRights}</p>
+                <p className="ml-6 text-gray-600 mt-2">
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: privacyPolicy.yourRights.contactToExerciseRights,
+                    }}
+                  />
+                </p>
               </>
             ),
           },
@@ -237,7 +276,18 @@ const Policy = () => {
           // privacyPolicy.changesToThisPrivacyPolicy,
           privacyPolicy.contactUs,
         ].map((section, idx) => (
-          <Section key={idx} index={5 + idx} title={section.title} content={<p>{section.content}</p>} />
+          <Section
+            key={idx}
+            index={5 + idx}
+            title={section.title}
+            content={
+              section.title === "How can you contact us about this policy?" ? (
+                <p dangerouslySetInnerHTML={{ __html: section.content }} />
+              ) : (
+                <p>{section.content}</p>
+              )
+            }
+          />
         ))}
       </div>
     </div>
@@ -245,7 +295,6 @@ const Policy = () => {
 };
 
 const Section = ({
- 
   title,
   content,
 }: {
@@ -253,10 +302,10 @@ const Section = ({
   title: string;
   content: React.ReactNode;
 }) => (
-  <section className='space-y-4'>
-    <div className='flex gap-2'>
+  <section className="space-y-4">
+    <div className="flex gap-2">
       {/* <span className='text-[#52a9ff]'>{index}.</span> */}
-      <h2 className='font-bold text-xl md:3xl'>{title}</h2>
+      <h2 className="font-bold text-xl md:3xl">{title}</h2>
     </div>
     <div>{content}</div>
   </section>

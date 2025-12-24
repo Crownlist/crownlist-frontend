@@ -1,27 +1,33 @@
-"use client"
+"use client";
 
-import Link from "next/link"
+import Link from "next/link";
 // import { Button } from "@/components/ui/button"
-import { Receipt } from "lucide-react"
+import { Receipt } from "lucide-react";
 // import { useRouter } from "next/navigation"
 
 export default function BillingsSettingsPage() {
-    // const router = useRouter()
-    // const handleClick = ( ) => {
-    //     // e.preventDefault()
-    //    router.push('/seller/settings/billings/1')
-    // }
+  // const router = useRouter()
+  // const handleClick = ( ) => {
+  //     // e.preventDefault()
+  //    router.push('/seller/settings/billings/1')
+  // }
   return (
     <div className="p-4 md:p-6">
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
-       {/* Tabs */}
-       <div className="border rounded-lg mb-8 border-[#1F058F]">
+      {/* Tabs */}
+      <div className="border rounded-lg mb-8 border-[#1F058F]">
         <div className="flex">
-          <Link href="/seller/settings/profile" className="px-6 py-4  text-gray-700  hover:bg-gray-50 rounded-l-lg font-medium">
+          <Link
+            href="/seller/settings/profile"
+            className="px-6 py-4  text-gray-700  hover:bg-gray-50 rounded-l-lg font-medium"
+          >
             Profile
           </Link>
-          <Link href="/seller/settings/billings" className="px-6 py-4 text-white bg-[#1F058F] rounded-l-lg font-medium">
+          <Link
+            href="/seller/settings/billings"
+            className="px-6 py-4 text-white bg-[#1F058F] rounded-l-lg font-medium"
+          >
             Billings
           </Link>
           {/* <Link href="/seller/settings/pricing" className="px-6 py-4  text-gray-700  hover:bg-gray-50 rounded-l-lg font-medium">
@@ -41,7 +47,9 @@ export default function BillingsSettingsPage() {
             <Receipt className="w-full h-full" />
           </div>
           <h3 className="text-xl font-medium mb-2">No billing</h3>
-          <p className="text-gray-500 mb-6">You currently have no billing history to display</p>
+          <p className="text-gray-500 mb-6">
+            You currently have no billing history to display
+          </p>
           {/* <Button className="bg-[#1F058F] hover:bg-[#2a0bc0]" onClick={handleClick}>Pricing </Button> */}
         </div>
       </div>
@@ -51,11 +59,11 @@ export default function BillingsSettingsPage() {
         <p>For further assistance reach out via our 24/7</p>
         <p>
           via email at{" "}
-          <a href="mailto:support@crownlist.com" className="text-[#1F058F]">
-            support@crownlist.com
+          <a href="mailto:crownliststore@gmail.com" className="text-[#1F058F]">
+            crownliststore@gmail.com
           </a>
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,13 @@
-"use client"
+"use client";
 
 import React, { useState, useMemo } from "react";
-import { ShieldCheck, UserCheck, BadgeCheck, UserMinus, FileQuestionIcon } from "lucide-react";
+import {
+  ShieldCheck,
+  UserCheck,
+  BadgeCheck,
+  UserMinus,
+  FileQuestionIcon,
+} from "lucide-react";
 
 import {
   Accordion,
@@ -63,7 +69,7 @@ const Safety = () => {
   //   },
   //   contactUs: {
   //     title: "Contact Us",
-  //     content: "If you have any questions or need further assistance, please contact us at support@crownlist.com.",
+  //     content: "If you have any questions or need further assistance, please contact us at crownliststore@gmail.com.",
   //   },
   // };
 
@@ -75,14 +81,15 @@ const Safety = () => {
   //   </ul>
   // );
 
-  const faqs = useMemo(() => [
-    {
-      id: 1,
-      question: "General Safety Tips",
-      icon: (
-        <ShieldCheck className="text-[#6941c6] mr-2 inline-block" size={20} />
-      ),
-      answer: `
+  const faqs = useMemo(
+    () => [
+      {
+        id: 1,
+        question: "General Safety Tips",
+        icon: (
+          <ShieldCheck className="text-[#6941c6] mr-2 inline-block" size={20} />
+        ),
+        answer: `
       <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Trust Your Instincts:</strong> If you are uncomfortable with the terms of a transaction, do not proceed.</li>
         <li><strong>Protect Your Personal Information:</strong> Never share sensitive details such as bank account numbers, ATM card details, or copies of your ID.</li>
@@ -90,14 +97,14 @@ const Safety = () => {
         <li><strong>Keep Records:</strong> Maintain copies of all correspondence (emails, ads, chats, letters, etc.) and contact details of the other party.</li>
       </ul>
     `,
-    },
-    {
-      id: 2,
-      question: "Buyers’ Safety Tips",
-      icon: (
-        <UserCheck className="text-[#00982B] mr-2 inline-block" size={20} />
-      ),
-      answer: `
+      },
+      {
+        id: 2,
+        question: "Buyers’ Safety Tips",
+        icon: (
+          <UserCheck className="text-[#00982B] mr-2 inline-block" size={20} />
+        ),
+        answer: `
       <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Be Cautious of Unrealistic Offers:</strong> Watch out for deals that seem too good to be true or items priced significantly lower than market value.</li>
         <li><strong>Avoid Pre-Payments:</strong> Do not send any payments until you have met the seller and signed a purchase agreement. Always use the Escrow option to enjoy 100% Buyer Protection.</li>
@@ -105,14 +112,14 @@ const Safety = () => {
         <li><strong>Pay Upon Satisfaction:</strong> Only pay when you are satisfied with the item and collect it immediately.</li>
       </ul>
     `,
-    },
-    {
-      id: 3,
-      question: "Sellers to Avoid",
-      icon: (
-        <UserMinus className="text-[#F59E42] mr-2 inline-block" size={20} />
-      ),
-      answer: `
+      },
+      {
+        id: 3,
+        question: "Sellers to Avoid",
+        icon: (
+          <UserMinus className="text-[#F59E42] mr-2 inline-block" size={20} />
+        ),
+        answer: `
       <div style="font-weight:600;margin-bottom:4px;">Avoid seller who:</div>
       <ul style="list-style-type:disc; padding-left:1.5em;">
         <li>Request advance payment or a deposit before delivering the item.</li>
@@ -120,28 +127,28 @@ const Safety = () => {
         <li>Ask for personal information such as your ID, bank details, or debit/credit card numbers.</li>
       </ul>
     `,
-    },
-    {
-      id: 4,
-      question: "Sellers’ Safety Tips",
-      icon: (
-        <BadgeCheck className="text-[#1F058F] mr-2 inline-block" size={20} />
-      ),
-      answer: `
+      },
+      {
+        id: 4,
+        question: "Sellers’ Safety Tips",
+        icon: (
+          <BadgeCheck className="text-[#1F058F] mr-2 inline-block" size={20} />
+        ),
+        answer: `
       <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Collect Full Payment:</strong> Ensure you receive full payment before delivering any goods.</li>
         <li><strong>Deliver What You Advertised:</strong> Make sure the item you deliver matches the description in your ad.</li>
         <li><strong>Limit Financial Information Sharing:</strong> Only provide the necessary financial information required for payment.</li>
       </ul>
     `,
-    },
-    {
-      id: 5,
-      question: "Buyers to Avoid",
-      icon: (
-        <UserMinus className="text-[#E11D48] mr-2 inline-block" size={20} />
-      ),
-      answer: `
+      },
+      {
+        id: 5,
+        question: "Buyers to Avoid",
+        icon: (
+          <UserMinus className="text-[#E11D48] mr-2 inline-block" size={20} />
+        ),
+        answer: `
       <div style="font-weight:600;margin-bottom:4px;">Avoid buyer who:</div>
       <ul style="list-style-type:disc; padding-left:1.5em;">
         <li>Insist on using a cheque.</li>
@@ -150,26 +157,32 @@ const Safety = () => {
         <li>Are located in foreign countries without a clear reason.</li>
       </ul>
     `,
-    },
-    {
-      id: 6,
-      question: "Need Further Assistance?",
-       icon: (
-        <FileQuestionIcon className="text-[#1F058F] mr-2 inline-block" size={20} />
-      ),
-      answer: `
-      <p>If you have any questions or need further assistance, please contact us at <a href="mailto:support@crownlist.com">support@crownlist.com</a>.</p>
+      },
+      {
+        id: 6,
+        question: "Need Further Assistance?",
+        icon: (
+          <FileQuestionIcon
+            className="text-[#1F058F] mr-2 inline-block"
+            size={20}
+          />
+        ),
+        answer: `
+      <p>If you have any questions or need further assistance, please contact us at <a href="mailto:crownliststore@gmail.com">crownliststore@gmail.com</a>.</p>
     `,
-    },
-  ], []);
+      },
+    ],
+    []
+  );
 
   const filteredFaqs = useMemo(() => {
     if (!searchQuery.trim()) {
       return faqs;
     }
-    return faqs.filter((faq) =>
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+    return faqs.filter(
+      (faq) =>
+        faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery, faqs]);
 

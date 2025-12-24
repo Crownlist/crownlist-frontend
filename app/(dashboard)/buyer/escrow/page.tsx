@@ -197,8 +197,11 @@ export default function EscrowPage() {
             <p>For further assistance reach out via our 24/7</p>
             <p>
               via email at{" "}
-              <a href="mailto:support@crownlist.com" className="text-[#1a0066]">
-                support@crownlist.com
+              <a
+                href="mailto:crownliststore@gmail.com"
+                className="text-[#1a0066]"
+              >
+                crownliststore@gmail.com
               </a>
             </p>
           </div>
