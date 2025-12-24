@@ -100,7 +100,7 @@ const Safety = () => {
       answer: `
       <ul style="list-style-type:disc; padding-left:1.5em;">
         <li><strong>Be Cautious of Unrealistic Offers:</strong> Watch out for deals that seem too good to be true or items priced significantly lower than market value.</li>
-        <li><strong>Avoid Pre-Payments:</strong> Do not send any payments until you have met the seller and signed a purchase agreement.</li>
+        <li><strong>Avoid Pre-Payments:</strong> Do not send any payments until you have met the seller and signed a purchase agreement. Always use the Escrow option to enjoy 100% Buyer Protection.</li>
         <li><strong>Inspect Before Paying:</strong> Meet in a safe, public location and check the item thoroughly before making payment.</li>
         <li><strong>Pay Upon Satisfaction:</strong> Only pay when you are satisfied with the item and collect it immediately.</li>
       </ul>

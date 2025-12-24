@@ -356,14 +356,14 @@ export default function SignupForm({
             <p className="text-[12px] text-center text-balance">
               By clicking &quot;continue&quot;, you agree to Crownlist`&apos;s{" "}
               <Link
-                href="#"
+                href="/terms-and-conditions"
                 className="underline underline-offset-3 font-medium"
               >
                 Terms of use
               </Link>{" "}
               and{" "}
               <Link
-                href="#"
+                href="/privacy-policy"  
                 className="underline underline-offset-3 font-medium"
               >
                 Privacy Policy
