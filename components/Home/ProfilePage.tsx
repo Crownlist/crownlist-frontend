@@ -53,7 +53,8 @@ export default function ProfilePage() {
     country: '',
     city: '',
     address: '',
-    profilePicture: ''
+    profilePicture: '',
+    authMethod: ''
   })
 
   const { data } = useGetAuthUser("User");
@@ -669,125 +670,127 @@ export default function ProfilePage() {
           </div>
         </form>
 
-        {/* Security/Password Form */}
-        <form onSubmit={handlePasswordSubmit}>
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <h2 className="text-lg font-semibold mb-4">Security</h2>
-            <p className="text-gray-600 mb-4">Update your account password (minimum 8 characters)</p>
+        {/* Security/Password Form - Only show for non-Google users */}
+        {userData.authMethod !== "Google" && (
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+              <h2 className="text-lg font-semibold mb-4">Security</h2>
+              <p className="text-gray-600 mb-4">Update your account password (minimum 8 characters)</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="oldPassword">Old Password</Label>
-                <div className="relative">
-                  <Input
-                    id="oldPassword"
-                    name="oldPassword"
-                    type={showOldPassword ? "text" : "password"}
-                    value={passwordFormData.oldPassword}
-                    onChange={handlePasswordChange}
-                    placeholder="Enter old password"
-                    disabled={isPasswordSubmitting}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowOldPassword(!showOldPassword)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showOldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="oldPassword">Old Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="oldPassword"
+                      name="oldPassword"
+                      type={showOldPassword ? "text" : "password"}
+                      value={passwordFormData.oldPassword}
+                      onChange={handlePasswordChange}
+                      placeholder="Enter old password"
+                      disabled={isPasswordSubmitting}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    >
+                      {showOldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      name="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordFormData.newPassword}
+                      onChange={handlePasswordChange}
+                      placeholder="Enter new password"
+                      disabled={isPasswordSubmitting}
+                      minLength={8}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    >
+                      {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordFormData.confirmPassword}
+                      onChange={handlePasswordChange}
+                      placeholder="Confirm new password"
+                      disabled={isPasswordSubmitting}
+                      className={
+                        passwordFormData.confirmPassword && passwordFormData.newPassword !== passwordFormData.confirmPassword
+                          ? 'border-red-500'
+                          : ''
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
+                    </button>
+                  </div>
+                  {passwordFormData.confirmPassword && passwordFormData.newPassword !== passwordFormData.confirmPassword && (
+                    <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
+                  )}
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="newPassword"
-                    name="newPassword"
-                    type={showNewPassword ? "text" : "password"}
-                    value={passwordFormData.newPassword}
-                    onChange={handlePasswordChange}
-                    placeholder="Enter new password"
-                    disabled={isPasswordSubmitting}
-                    minLength={8}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={passwordFormData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    placeholder="Confirm new password"
-                    disabled={isPasswordSubmitting}
-                    className={
-                      passwordFormData.confirmPassword && passwordFormData.newPassword !== passwordFormData.confirmPassword
-                        ? 'border-red-500'
-                        : ''
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-                </div>
-                {passwordFormData.confirmPassword && passwordFormData.newPassword !== passwordFormData.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
-                )}
+
+              {/* Password Form Buttons */}
+              <div className="flex justify-center gap-4 mt-6">
+                <Button
+                  type="submit"
+                  className="bg-[#1F058F] text-white py-2 px-10 rounded-full min-w-[140px]"
+                  disabled={
+                    isPasswordSubmitting ||
+                    !passwordFormData.oldPassword ||
+                    !passwordFormData.newPassword ||
+                    passwordFormData.newPassword !== passwordFormData.confirmPassword ||
+                    passwordFormData.newPassword.length < 8
+                  }
+                >
+                  {isPasswordSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Changing...
+                    </>
+                  ) : (
+                    "Change Password"
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="py-2 px-10 rounded-full"
+                  onClick={handlePasswordCancel}
+                  disabled={isPasswordSubmitting}
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
-
-            {/* Password Form Buttons */}
-            <div className="flex justify-center gap-4 mt-6">
-              <Button
-                type="submit"
-                className="bg-[#1F058F] text-white py-2 px-10 rounded-full min-w-[140px]"
-                disabled={
-                  isPasswordSubmitting ||
-                  !passwordFormData.oldPassword ||
-                  !passwordFormData.newPassword ||
-                  passwordFormData.newPassword !== passwordFormData.confirmPassword ||
-                  passwordFormData.newPassword.length < 8
-                }
-              >
-                {isPasswordSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Changing...
-                  </>
-                ) : (
-                  "Change Password"
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="py-2 px-10 rounded-full"
-                onClick={handlePasswordCancel}
-                disabled={isPasswordSubmitting}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
     </div>
   );
