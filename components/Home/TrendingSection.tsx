@@ -48,9 +48,9 @@ export default function TrendingSection({
             image: p.images?.[0]?.url || "/placeholder.svg",
             title: p.name,
             description: p.description || "",
-            price: p.price?.currentPrice
-              ? `₦${p.price.currentPrice.toLocaleString()}`
-              : "",
+            price: "",
+            originalPrice: p.price?.currentPrice || undefined,
+            discountedPrice: p.price?.discountedPrice || undefined,
             time: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "",
             location: p.listingLocation
               ? `${p.listingLocation.city || ""}${

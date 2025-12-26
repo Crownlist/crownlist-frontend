@@ -58,7 +58,7 @@ const Header = ({ hidden }: props) => {
   useEffect(() => {
     // Check if either userData or adminData exists
     if (userData) {
-      console.log("api", userData, isLoading);
+      // console.log("api", userData, isLoading);
       setIsLoggedIn(true);
     } else {
       // If both are null, the user is logged out

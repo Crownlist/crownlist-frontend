@@ -39,9 +39,9 @@ export default function SponsoredSection() {
                 }${p.listingLocation.country || ""}`
               : "",
             category: "Featured",
-            price: p.price?.currentPrice
-              ? `₦${p.price.currentPrice.toLocaleString()}`
-              : "",
+            price: "",
+            originalPrice: p.price?.currentPrice || undefined,
+            discountedPrice: p.price?.discountedPrice || undefined,
           }))}
         />
       )}

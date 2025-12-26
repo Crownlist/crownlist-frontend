@@ -12,11 +12,10 @@ export const signin = (
 };
 
 export const useAdminSigninHook = () => {
-
   const { mutateAsync: submit, isLoading } = useMutation({
     mutationFn: signin,
     onSuccess: (data) => {
-      console.log('orion', data)
+      console.log("orion", data);
       localStorage.setItem("orion", data?.data.admin._id);
       localStorage.setItem(
         "orionKey",
@@ -44,7 +43,6 @@ export const useAdminSigninHook = () => {
   const onSubmit: SubmitHandler<AdminSigninForm> = async (data) => {
     try {
       await submit(data);
-      toast.success("success, Login Successfully. Redirecting...");
     } catch (error) {
       toast.error(`error, ${String(error)}`);
     }
