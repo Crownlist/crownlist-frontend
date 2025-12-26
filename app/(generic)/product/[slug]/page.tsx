@@ -31,9 +31,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  console.log(slug)
   const product = await fetchProductBySlug(slug);
-  console.log("Product Detail Page - product:", product);
 
   if (!product) {
     return {

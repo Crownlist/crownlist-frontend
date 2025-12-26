@@ -35,7 +35,7 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
     [product.description]
   );
   const facilitiesContainerRef = useRef<HTMLDivElement>(null);
-  const [dynamicMaxHeight, setDynamicMaxHeight] = useState<string>("max-h-96");
+  const [showToggle, setShowToggle] = useState<boolean>(false);
 
   const [expanded, setExpanded] = useState<ExpandedSections>({
     description: false,
@@ -43,20 +43,14 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
     facilities: false,
   });
 
-  // Calculate dynamic max-height based on content
+  // Calculate if content exceeds max height
   useEffect(() => {
-    if (facilitiesContainerRef.current && !expanded.facilities) {
+    if (facilitiesContainerRef.current) {
       const contentHeight = facilitiesContainerRef.current.scrollHeight;
-      // If content is taller than 384px (max-h-96), increase the max-height to accommodate multivalue rows
-      if (contentHeight > 384) {
-        // Add some padding for safety and round up to nearest increment of 64px
-        const adjustedHeight = Math.ceil(contentHeight / 64) * 64 + 64;
-        setDynamicMaxHeight(`max-h-[${adjustedHeight}px]`);
-      } else {
-        setDynamicMaxHeight("max-h-96");
-      }
+      const MAX_HEIGHT = 384; // 24rem / 96
+      setShowToggle(contentHeight > MAX_HEIGHT);
     }
-  }, [expanded.facilities, facilities]);
+  }, [facilities]);
 
   const toggleExpand = (section: keyof ExpandedSections) => {
     setExpanded((prev) => ({
@@ -209,13 +203,16 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
           )}
 
           {facilities.length > 0 && (
-            <div
-              ref={facilitiesContainerRef}
-              className={`transition-all ${
-                expanded.facilities ? "" : `${dynamicMaxHeight} overflow-hidden`
-              }`}
-            >
-              <div className="overflow-x-auto">
+            <div>
+              <div
+                ref={facilitiesContainerRef}
+                style={{
+                  maxHeight: expanded.facilities ? "none" : "384px",
+                  overflow: expanded.facilities ? "visible" : "hidden",
+                  transition: "max-height 0.3s ease-in-out",
+                }}
+                className="overflow-x-auto"
+              >
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-100 border border-gray-200">
@@ -244,7 +241,7 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
                   </tbody>
                 </table>
               </div>
-              {facilities.length > 8 && (
+              {showToggle && (
                 <button
                   onClick={() => toggleExpand("facilities")}
                   className="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-2"

@@ -2,10 +2,22 @@
 
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from "react";
+import React, {
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+} from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/custom-input";
-import { Select, SelectContent, SelectValue, SelectItem, SelectTrigger } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectValue,
+  SelectItem,
+  SelectTrigger,
+} from "../ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { uniqueCountries } from "@/constants/countries";
@@ -41,44 +53,49 @@ interface PasswordFormData {
   confirmPassword: string;
 }
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
 
 export default function ProfilePage() {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [userData, setUserData] = useState({
-    fullName: '',
-    phoneNumber: '',
-    email: '',
-    country: '',
-    city: '',
-    address: '',
-    profilePicture: '',
-    authMethod: ''
-  })
+    fullName: "",
+    phoneNumber: "",
+    email: "",
+    country: "",
+    city: "",
+    address: "",
+    profilePicture: "",
+    authMethod: "",
+  });
 
   const { data } = useGetAuthUser("User");
 
   // Loading states
-  const [isLoading, setIsLoading] = useState(true)
-  const [isProfileSubmitting, setIsProfileSubmitting] = useState(false)
-  const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false)
-  const [isImageUploading, setIsImageUploading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProfileSubmitting, setIsProfileSubmitting] = useState(false);
+  const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   // Image states
-  const [currentImage, setCurrentImage] = useState("")
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [uploadProgress, setUploadProgress] = useState(0)
+  const [currentImage, setCurrentImage] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     if (data) {
-      const user: any = data?.data?.loggedInAccount
-      setUserData(user)
-      setCurrentImage(user?.profilePicture || "")
-      setIsLoading(false)
+      const user: any = data?.data?.loggedInAccount;
+      setUserData(user);
+      setCurrentImage(user?.profilePicture || "");
+      setIsLoading(false);
     }
-  }, [data])
+  }, [data]);
 
   const [profileFormData, setProfileFormData] = useState<ProfileFormData>({
     fullName: "",
@@ -93,13 +110,13 @@ export default function ProfilePage() {
   const [passwordFormData, setPasswordFormData] = useState<PasswordFormData>({
     oldPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   // Update form data when userData changes
   useEffect(() => {
     if (userData) {
-      console.log('cityy', userData)
+      console.log("cityy", userData);
       setProfileFormData({
         fullName: userData?.fullName || "",
         email: userData?.email || "",
@@ -119,39 +136,43 @@ export default function ProfilePage() {
   // Validate file before upload
   const validateFile = (file: File): string | null => {
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      return "Please select a valid image file (JPEG, PNG, or WebP)"
+      return "Please select a valid image file (JPEG, PNG, or WebP)";
     }
     if (file.size > MAX_FILE_SIZE) {
-      return "File size must be less than 5MB"
+      return "File size must be less than 5MB";
     }
-    return null
-  }
+    return null;
+  };
 
   // Upload image with progress tracking
   const uploadImage = async (file: File): Promise<string> => {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('fileType', 'Profile-images')
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileType", "Profile-images");
 
     try {
       const response = await apiClientUser.post("/users/upload", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            setUploadProgress(progress)
+            const progress = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(progress);
           }
-        }
-      })
+        },
+      });
 
-      return response.data.fileUrl
+      return response.data.fileUrl;
     } catch (error: any) {
-      console.error('Image upload error:', error)
-      throw new Error(error.response?.data?.message || "Failed to upload image")
+      console.error("Image upload error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to upload image"
+      );
     }
-  }
+  };
 
   const handleProfileChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -160,44 +181,47 @@ export default function ProfilePage() {
   };
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPasswordFormData({ ...passwordFormData, [e.target.name]: e.target.value });
+    setPasswordFormData({
+      ...passwordFormData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
 
     if (file) {
-      const validationError = validateFile(file)
+      const validationError = validateFile(file);
       if (validationError) {
-        toast.error(validationError)
+        toast.error(validationError);
         // Clear the input
         if (fileInputRef.current) {
-          fileInputRef.current.value = ''
+          fileInputRef.current.value = "";
         }
-        return
+        return;
       }
 
-      setSelectedFile(file)
-      const previewUrl = URL.createObjectURL(file)
-      setImagePreview(previewUrl)
-      toast.success("Image selected successfully")
+      setSelectedFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+      toast.success("Image selected successfully");
     } else {
-      clearImageSelection()
+      clearImageSelection();
     }
   };
 
   // Clear image selection
   const clearImageSelection = () => {
-    setSelectedFile(null)
+    setSelectedFile(null);
     if (imagePreview) {
-      URL.revokeObjectURL(imagePreview)
+      URL.revokeObjectURL(imagePreview);
     }
-    setImagePreview(null)
-    setUploadProgress(0)
+    setImagePreview(null);
+    setUploadProgress(0);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   // Profile form submission
   const handleProfileSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -208,35 +232,37 @@ export default function ProfilePage() {
   // Confirmation modal state
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [pendingSubmission, setPendingSubmission] = useState<(() => Promise<void>) | null>(null);
+  const [pendingSubmission, setPendingSubmission] = useState<
+    (() => Promise<void>) | null
+  >(null);
 
   // Handle profile update after confirmation
   const executeProfileUpdate = async () => {
     setIsProfileSubmitting(true);
     try {
-      let profilePictureUrl = currentImage
+      let profilePictureUrl = currentImage;
 
       // Upload new image if selected
       if (selectedFile) {
-        setIsImageUploading(true)
-        setUploadProgress(0)
+        setIsImageUploading(true);
+        setUploadProgress(0);
 
         try {
-          profilePictureUrl = await uploadImage(selectedFile)
-          toast.success("Image uploaded successfully")
+          profilePictureUrl = await uploadImage(selectedFile);
+          toast.success("Image uploaded successfully");
         } catch (uploadError: any) {
-          toast.error(uploadError.message)
-          return
+          toast.error(uploadError.message);
+          return;
         } finally {
-          setIsImageUploading(false)
-          setUploadProgress(0)
+          setIsImageUploading(false);
+          setUploadProgress(0);
         }
       }
 
       // Validate required fields
       if (!profileFormData.fullName.trim()) {
-        toast.error("Full name is required")
-        return
+        toast.error("Full name is required");
+        return;
       }
 
       // Update profile with new data
@@ -247,19 +273,18 @@ export default function ProfilePage() {
         city: profileFormData.city, // assuming city maps to state
         address: profileFormData.address,
         profilePicture: profilePictureUrl,
-        accountType: "User" // or whatever account type is appropriate
-      })
+        accountType: "User", // or whatever account type is appropriate
+      });
 
       // Update local state
-      setCurrentImage(profilePictureUrl)
-      clearImageSelection()
-      toast.success("Profile updated successfully")
-
+      setCurrentImage(profilePictureUrl);
+      clearImageSelection();
+      toast.success("Profile updated successfully");
     } catch (error: any) {
-      console.error('Update profile error:', error)
-      toast.error(error.response?.data?.message || "Failed to update profile")
+      console.error("Update profile error:", error);
+      toast.error(error.response?.data?.message || "Failed to update profile");
     } finally {
-      setIsProfileSubmitting(false)
+      setIsProfileSubmitting(false);
     }
   };
 
@@ -279,7 +304,11 @@ export default function ProfilePage() {
     e.preventDefault();
     setIsPasswordSubmitting(true);
 
-    if (!passwordFormData.oldPassword || !passwordFormData.newPassword || !passwordFormData.confirmPassword) {
+    if (
+      !passwordFormData.oldPassword ||
+      !passwordFormData.newPassword ||
+      !passwordFormData.confirmPassword
+    ) {
       toast.error("Please fill in all password fields");
       setIsPasswordSubmitting(false);
       return;
@@ -292,7 +321,7 @@ export default function ProfilePage() {
     }
 
     if (passwordFormData.newPassword.length < 8) {
-      toast.error( "New password must be at least 8 characters long");
+      toast.error("New password must be at least 8 characters long");
       setIsPasswordSubmitting(false);
       return;
     }
@@ -300,21 +329,21 @@ export default function ProfilePage() {
     try {
       await apiClientUser.patch("/users/password", {
         oldPassword: passwordFormData.oldPassword,
-        newPassword: passwordFormData.newPassword
-      })
+        newPassword: passwordFormData.newPassword,
+      });
 
-      toast.success("Password changed successfully")
+      toast.success("Password changed successfully");
 
       setPasswordFormData({
         oldPassword: "",
         newPassword: "",
-        confirmPassword: ""
-      })
+        confirmPassword: "",
+      });
     } catch (error: any) {
-      console.error('Password change error:', error)
-      toast.error(error.response?.data?.message || "Failed to change password")
+      console.error("Password change error:", error);
+      toast.error(error.response?.data?.message || "Failed to change password");
     } finally {
-      setIsPasswordSubmitting(false)
+      setIsPasswordSubmitting(false);
     }
   };
 
@@ -329,7 +358,7 @@ export default function ProfilePage() {
         address: userData?.address || "",
         countryCode: "+234",
       });
-      clearImageSelection()
+      clearImageSelection();
       toast("Profile changes discarded");
     }
   };
@@ -338,7 +367,7 @@ export default function ProfilePage() {
     setPasswordFormData({
       oldPassword: "",
       newPassword: "",
-      confirmPassword: ""
+      confirmPassword: "",
     });
     toast("Password changes discarded");
   };
@@ -346,16 +375,16 @@ export default function ProfilePage() {
   // Cleanup preview URLs
   useEffect(() => {
     return () => {
-      if (imagePreview) URL.revokeObjectURL(imagePreview)
-    }
-  }, [imagePreview])
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
 
   if (isLoading || !userData) {
     return (
       <div className="min-h-screen bg-gray-50 flex justify-center items-center">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
-    )
+    );
   }
 
   return (
@@ -366,20 +395,21 @@ export default function ProfilePage() {
           <DialogHeader>
             <DialogTitle>Confirm Changes</DialogTitle>
             <DialogDescription>
-              Are you sure you want to update your profile? This action cannot be undone.
+              Are you sure you want to update your profile? This action cannot
+              be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={handleCancel}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               onClick={handleConfirm}
               disabled={isSubmitting}
             >
@@ -389,7 +419,7 @@ export default function ProfilePage() {
                   Updating...
                 </>
               ) : (
-                'Update Profile'
+                "Update Profile"
               )}
             </Button>
           </DialogFooter>
@@ -471,13 +501,18 @@ export default function ProfilePage() {
                   {isImageUploading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    <Image src="/cloud.png" alt="cloud" width={20} height={20} />
+                    <Image
+                      src="/cloud.png"
+                      alt="cloud"
+                      width={20}
+                      height={20}
+                    />
                   )}
                   <span>{selectedFile ? "Change Image" : "Upload Image"}</span>
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept={ALLOWED_FILE_TYPES.join(',')}
+                    accept={ALLOWED_FILE_TYPES.join(",")}
                     className="hidden"
                     onChange={handleImageUpload}
                     disabled={isImageUploading || isProfileSubmitting}
@@ -521,7 +556,12 @@ export default function ProfilePage() {
                   <div className="w-[120px] sm:w-[120px]">
                     <Select
                       value={profileFormData.countryCode}
-                      onValueChange={(value) => setProfileFormData((prev) => ({ ...prev, countryCode: value }))}
+                      onValueChange={(value) =>
+                        setProfileFormData((prev) => ({
+                          ...prev,
+                          countryCode: value,
+                        }))
+                      }
                       disabled={isProfileSubmitting}
                     >
                       <SelectTrigger className="w-full cursor-pointer rounded-l-lg rounded-r-none">
@@ -549,12 +589,14 @@ export default function ProfilePage() {
                       const cleaned = e.target.value.replace(/\D/g, "");
                       const limited = cleaned.slice(0, 15);
                       const syntheticEvent = {
-                        target: Object.assign(
-                          e.target,
-                          { name: "phone", value: limited }
-                        )
+                        target: Object.assign(e.target, {
+                          name: "phone",
+                          value: limited,
+                        }),
                       };
-                      handleProfileChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
+                      handleProfileChange(
+                        syntheticEvent as React.ChangeEvent<HTMLInputElement>
+                      );
                     }}
                     placeholder="081 000 0000"
                     className="rounded-r-lg rounded-l-none"
@@ -567,7 +609,14 @@ export default function ProfilePage() {
                 <Label htmlFor="country">Country</Label>
                 <ReactSelect
                   id="country"
-                  value={countries.find(c => c.name === profileFormData.country) ? { value: profileFormData.country, label: profileFormData.country } : null}
+                  value={
+                    countries.find((c) => c.name === profileFormData.country)
+                      ? {
+                          value: profileFormData.country,
+                          label: profileFormData.country,
+                        }
+                      : null
+                  }
                   onChange={(option) => {
                     setProfileFormData((prev) => ({
                       ...prev,
@@ -575,24 +624,32 @@ export default function ProfilePage() {
                       city: "",
                     }));
                   }}
-                  options={countries.map(country => ({ value: country.name, label: country.name }))}
+                  options={countries.map((country) => ({
+                    value: country.name,
+                    label: country.name,
+                  }))}
                   isDisabled={isProfileSubmitting}
                   placeholder="Select country"
+                  defaultValue={
+                    countries.find((c) => c.name === "Nigeria")
+                      ? { value: "Nigeria", label: "Nigeria" }
+                      : null
+                  }
                   className="react-select-container"
                   classNamePrefix="react-select"
                   styles={{
                     control: (base) => ({
                       ...base,
-                      minHeight: '40px',
-                      borderColor: '#d1d5db',
-                      '&:hover': {
-                        borderColor: '#9ca3af'
-                      }
+                      minHeight: "40px",
+                      borderColor: "#d1d5db",
+                      "&:hover": {
+                        borderColor: "#9ca3af",
+                      },
                     }),
                     menu: (base) => ({
                       ...base,
-                      maxHeight: '250px'
-                    })
+                      maxHeight: "250px",
+                    }),
                   }}
                 />
               </div>
@@ -601,28 +658,50 @@ export default function ProfilePage() {
                 <Label htmlFor="city">State</Label>
                 <ReactSelect
                   id="city"
-                  value={nigerianStates.find(s => s.value === profileFormData.city) ? { value: profileFormData.city, label: nigerianStates.find(s => s.value === profileFormData.city)!.label } : null}
+                  value={
+                    nigerianStates.find((s) => s.value === profileFormData.city)
+                      ? {
+                          value: profileFormData.city,
+                          label: nigerianStates.find(
+                            (s) => s.value === profileFormData.city
+                          )!.label,
+                        }
+                      : null
+                  }
                   onChange={(option) => {
-                    setProfileFormData((prev) => ({ ...prev, city: option?.value || "" }));
+                    setProfileFormData((prev) => ({
+                      ...prev,
+                      city: option?.value || "",
+                    }));
                   }}
-                  options={nigerianStates.filter(state => state.value !== "Select a state").map(state => ({ value: state.value, label: state.label }))}
-                  isDisabled={isProfileSubmitting}
-                  placeholder="Select a state"
+                  options={nigerianStates
+                    .filter((state) => state.value !== "Select a state")
+                    .map((state) => ({
+                      value: state.value,
+                      label: state.label,
+                    }))}
+                  isDisabled={isProfileSubmitting || !profileFormData.country}
+                  placeholder={
+                    !profileFormData.country
+                      ? "Please select country first"
+                      : "Select a state"
+                  }
                   className="react-select-container"
                   classNamePrefix="react-select"
                   styles={{
-                    control: (base) => ({
+                    control: (base, state) => ({
                       ...base,
-                      minHeight: '40px',
-                      borderColor: '#d1d5db',
-                      '&:hover': {
-                        borderColor: '#9ca3af'
-                      }
+                      minHeight: "40px",
+                      borderColor: state.isDisabled ? "#f3f4f6" : "#d1d5db",
+                      backgroundColor: state.isDisabled ? "#f9fafb" : "white",
+                      "&:hover": {
+                        borderColor: state.isDisabled ? "#f3f4f6" : "#9ca3af",
+                      },
                     }),
                     menu: (base) => ({
                       ...base,
-                      maxHeight: '250px'
-                    })
+                      maxHeight: "250px",
+                    }),
                   }}
                 />
               </div>
@@ -675,7 +754,9 @@ export default function ProfilePage() {
           <form onSubmit={handlePasswordSubmit}>
             <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
               <h2 className="text-lg font-semibold mb-4">Security</h2>
-              <p className="text-gray-600 mb-4">Update your account password (minimum 8 characters)</p>
+              <p className="text-gray-600 mb-4">
+                Update your account password (minimum 8 characters)
+              </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -695,7 +776,11 @@ export default function ProfilePage() {
                       onClick={() => setShowOldPassword(!showOldPassword)}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                     >
-                      {showOldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showOldPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -717,7 +802,11 @@ export default function ProfilePage() {
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                     >
-                      {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showNewPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -733,14 +822,18 @@ export default function ProfilePage() {
                       placeholder="Confirm new password"
                       disabled={isPasswordSubmitting}
                       className={
-                        passwordFormData.confirmPassword && passwordFormData.newPassword !== passwordFormData.confirmPassword
-                          ? 'border-red-500'
-                          : ''
+                        passwordFormData.confirmPassword &&
+                        passwordFormData.newPassword !==
+                          passwordFormData.confirmPassword
+                          ? "border-red-500"
+                          : ""
                       }
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                     >
                       {showConfirmPassword ? (
@@ -750,9 +843,13 @@ export default function ProfilePage() {
                       )}
                     </button>
                   </div>
-                  {passwordFormData.confirmPassword && passwordFormData.newPassword !== passwordFormData.confirmPassword && (
-                    <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
-                  )}
+                  {passwordFormData.confirmPassword &&
+                    passwordFormData.newPassword !==
+                      passwordFormData.confirmPassword && (
+                      <p className="text-red-500 text-xs mt-1">
+                        Passwords do not match
+                      </p>
+                    )}
                 </div>
               </div>
 
@@ -765,7 +862,8 @@ export default function ProfilePage() {
                     isPasswordSubmitting ||
                     !passwordFormData.oldPassword ||
                     !passwordFormData.newPassword ||
-                    passwordFormData.newPassword !== passwordFormData.confirmPassword ||
+                    passwordFormData.newPassword !==
+                      passwordFormData.confirmPassword ||
                     passwordFormData.newPassword.length < 8
                   }
                 >

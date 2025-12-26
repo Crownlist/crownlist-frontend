@@ -63,9 +63,28 @@ export const SimilarProducts: React.FC<SimilarProductsProps> = ({
                   {product.description || ""}
                 </p>
 
-                <p className="font-semibold text-sm mt-1.5">
-                  ₦{(product.price?.currentPrice || 0).toLocaleString("en-NG")}
-                </p>
+                <div className="mt-1.5">
+                  {product.price?.discountedPrice ? (
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-sm text-red-600">
+                        ₦{product.price.discountedPrice.toLocaleString("en-NG")}
+                      </p>
+                      <p className="text-xs text-gray-500 line-through">
+                        ₦
+                        {(product.price?.currentPrice || 0).toLocaleString(
+                          "en-NG"
+                        )}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="font-semibold text-sm">
+                      ₦
+                      {(product.price?.currentPrice || 0).toLocaleString(
+                        "en-NG"
+                      )}
+                    </p>
+                  )}
+                </div>
 
                 <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
                   {product.listingLocation?.city && (
