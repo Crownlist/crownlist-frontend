@@ -3,6 +3,7 @@ export interface Category {
   name: string;
   imageUrl: string;
   status: string;
+  subCategories?: Subcategory[];
 }
 
 export interface Facility {

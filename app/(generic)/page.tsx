@@ -9,9 +9,19 @@ import TrendingSection from "@/components/Home/TrendingSection";
 import SponsoredSection from "@/components/Home/SponsoredSection";
 import FeaturedSubcategoriesSection from "@/components/Home/FeaturedSubcategoriesSection";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import JoinChannelsModal from "@/components/JoinChannelsModal";
 
 export default function Home() {
   const router = useRouter();
+  const [showJoinModal, setShowJoinModal] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowJoinModal(true);
+    }, 30000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSeeMore = (url: string) => {
     router.push(url);
@@ -19,6 +29,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
+      <JoinChannelsModal open={showJoinModal} onOpenChange={setShowJoinModal} />
       {/* Header */}
       <Header hidden={true} />
 

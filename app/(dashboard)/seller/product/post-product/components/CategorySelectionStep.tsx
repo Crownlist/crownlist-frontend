@@ -35,11 +35,19 @@ export const CategorySelectionStep = ({
           {categories.map((cat) => (
             <div
               key={cat._id}
-              onClick={() => onCategorySelect(cat._id)}
-              className={`relative rounded-lg overflow-hidden group cursor-pointer border transition ${
-                selectedCategory === cat._id
-                  ? "border-[#1F058F] border-2 shadow-lg"
-                  : "border-gray-200 hover:shadow-md"
+              onClick={() => {
+                const hasSubs =
+                  Array.isArray(cat.subCategories) &&
+                  cat.subCategories.length > 0;
+                if (hasSubs) onCategorySelect(cat._id);
+              }}
+              className={`relative rounded-lg overflow-hidden group border transition ${
+                Array.isArray(cat.subCategories) && cat.subCategories.length > 0
+                  ? "cursor-pointer " +
+                    (selectedCategory === cat._id
+                      ? "border-[#1F058F] border-2 shadow-lg"
+                      : "border-gray-200 hover:shadow-md")
+                  : "cursor-not-allowed border-gray-200 opacity-70"
               }`}
             >
               <Image
@@ -54,6 +62,11 @@ export const CategorySelectionStep = ({
                   {cat.name}
                 </span>
               </div>
+              {(!cat.subCategories || cat.subCategories.length === 0) && (
+                <div className="absolute top-2 left-2 bg-yellow-500/90 text-white text-[10px] md:text-xs px-2 py-1 rounded">
+                  Coming soon
+                </div>
+              )}
               {selectedCategory === cat._id && (
                 <div className="absolute -top-0.5 -right-0.5 bg-[#1F058F] rounded-bl-[30px] p-2 md:p-5">
                   <Check className="text-white w-3 h-3 md:w-4 md:h-4" />
