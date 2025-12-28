@@ -587,139 +587,141 @@ export default function ProfileSettingsPage() {
         </div>
       </form>
 
-      {/* Password Change Section - Enhanced validation */}
-      <form onSubmit={handlePasswordSubmit}>
-        <div className="mb-10">
-          <h2 className="text-lg font-medium mb-1">Change Password</h2>
-          <p className="text-gray-600 mb-6">
-            Update your account password (minimum 8 characters)
-          </p>
+      {/* Password Change Section - Only show for non-Google users */}
+      {user.authMethod !== "Google" && (
+        <form onSubmit={handlePasswordSubmit}>
+          <div className="mb-10">
+            <h2 className="text-lg font-medium mb-1">Change Password</h2>
+            <p className="text-gray-600 mb-6">
+              Update your account password (minimum 8 characters)
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Old password
-              </label>
-              <div className="relative">
-                <Input
-                  name="oldPassword"
-                  type={showOldPassword ? "text" : "password"}
-                  value={passwordData.oldPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full pr-10"
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowOldPassword(!showOldPassword)}
-                >
-                  {showOldPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Old password
+                </label>
+                <div className="relative">
+                  <Input
+                    name="oldPassword"
+                    type={showOldPassword ? "text" : "password"}
+                    value={passwordData.oldPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowOldPassword(!showOldPassword)}
+                  >
+                    {showOldPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                New password
-              </label>
-              <div className="relative">
-                <Input
-                  name="newPassword"
-                  type={showNewPassword ? "text" : "password"}
-                  value={passwordData.newPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full pr-10"
-                  minLength={8}
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                >
-                  {showNewPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New password
+                </label>
+                <div className="relative">
+                  <Input
+                    name="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    className="w-full pr-10"
+                    minLength={8}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm new password
-              </label>
-              <div className="relative">
-                <Input
-                  name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={passwordData.confirmPassword}
-                  onChange={handlePasswordChange}
-                  className={`w-full pr-10 ${
-                    passwordData.confirmPassword &&
-                    passwordData.newPassword !== passwordData.confirmPassword
-                      ? "border-red-500"
-                      : ""
-                  }`}
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm new password
+                </label>
+                <div className="relative">
+                  <Input
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    className={`w-full pr-10 ${
+                      passwordData.confirmPassword &&
+                      passwordData.newPassword !== passwordData.confirmPassword
+                        ? "border-red-500"
+                        : ""
+                    }`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+                {passwordData.confirmPassword &&
+                  passwordData.newPassword !== passwordData.confirmPassword && (
+                    <p className="text-red-500 text-xs mt-1">
+                      Passwords do not match
+                    </p>
                   )}
-                </button>
               </div>
-              {passwordData.confirmPassword &&
-                passwordData.newPassword !== passwordData.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">
-                    Passwords do not match
-                  </p>
-                )}
             </div>
           </div>
-        </div>
 
-        {/* Password Action Buttons */}
-        <div className="flex gap-4">
-          <Button
-            type="submit"
-            className="bg-[#1F058F] hover:bg-[#2a0bc0]"
-            disabled={
-              !passwordData.oldPassword ||
-              !passwordData.newPassword ||
-              passwordData.newPassword !== passwordData.confirmPassword ||
-              passwordData.newPassword.length < 8
-            }
-          >
-            Change Password
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() =>
-              setPasswordData({
-                oldPassword: "",
-                newPassword: "",
-                confirmPassword: "",
-              })
-            }
-          >
-            Clear
-          </Button>
-        </div>
-      </form>
+          {/* Password Action Buttons */}
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              className="bg-[#1F058F] hover:bg-[#2a0bc0]"
+              disabled={
+                !passwordData.oldPassword ||
+                !passwordData.newPassword ||
+                passwordData.newPassword !== passwordData.confirmPassword ||
+                passwordData.newPassword.length < 8
+              }
+            >
+              Change Password
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                setPasswordData({
+                  oldPassword: "",
+                  newPassword: "",
+                  confirmPassword: "",
+                })
+              }
+            >
+              Clear
+            </Button>
+          </div>
+        </form>
+      )}
 
       {/* Confirmation Modals */}
       <ConfirmationModal

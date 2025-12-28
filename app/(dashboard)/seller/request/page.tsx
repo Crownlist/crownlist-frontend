@@ -11,6 +11,15 @@ import { useState } from "react";
 import { useProductRequests } from "@/lib/useProductRequests";
 import { ProductRequest } from "@/types/product/request";
 import { useToast } from "@/lib/useToastMessage";
+import { useCategories } from "@/hooks/useCategories";
+import { Category, Subcategory } from "@/types/category/category";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ProductRequestsPage() {
   const [openCat, setOpenCat] = useState(false);
@@ -23,19 +32,56 @@ export default function ProductRequestsPage() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedRequestForContact, setSelectedRequestForContact] =
     useState<ProductRequest | null>(null);
+
+  // Category and subcategory filter state
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([]);
+
   console.log(selectedRequest);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { handleMessage } = useToast();
 
+  // Categories hook
+  const { categories, loading: categoriesLoading } = useCategories();
+
   const { data, isLoading, error, refetch } = useProductRequests({
     q: searchQuery || undefined,
+    category: selectedCategoryId || undefined,
+    subCategory: selectedSubcategoryId || undefined,
     userType: "seller",
+    page: currentPage,
+    limit: 12,
   });
 
   console.log("data", data);
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    const category = categories.find((cat) => cat._id === categoryId);
+    setSelectedCategoryId(categoryId);
+    setSelectedCategory(category || null);
+    setAvailableSubcategories(category?.subCategories || []);
+    setSelectedSubcategoryId(""); // Reset subcategory when category changes
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleSubcategoryChange = (subcategoryId: string) => {
+    setSelectedSubcategoryId(subcategoryId);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCategoryId("");
+    setSelectedSubcategoryId("");
+    setSelectedCategory(null);
+    setAvailableSubcategories([]);
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   const handleViewRequest = (request: ProductRequest) => {
@@ -86,29 +132,59 @@ export default function ProductRequestsPage() {
               </button>
             </div>
 
-            {/* Controls Section - Responsive */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              {/* <div className="flex items-center gap-3 flex-wrap">
-                                Category Filter
-                                <div className="flex items-center gap-2 border-r border-gray-300 pr-3">
-                                    <LayoutGrid size={16} className="text-gray-500" />
-                                    <button
-                                    className="text-sm font-medium text-gray-700 hover:text-gray-900"
-                                    onClick={handleCat}
-                                >
-                                    Category
-                                </button>
-                                </div>
+            {/* Filter Controls */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Category Filter */}
+              <div className="flex items-center gap-2">
+                <Select
+                  value={selectedCategoryId}
+                  onValueChange={handleCategoryChange}
+                  disabled={categoriesLoading}
+                >
+                  <SelectTrigger className="w-[140px] focus:ring-2 focus:ring-[#1F058F] focus:border-transparent">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category._id} value={category._id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                                Sort By
-                                <div className="flex items-center gap-2">
-                                <SlidersHorizontal size={16} className="text-gray-500" />
-                                <span className="text-sm">Sort by:</span>
-                                <button className="flex items-center">
-                                    <ChevronDown size={12} />
-                                </button>
-                            </div>
-                            </div> */}
+              {/* Subcategory Filter */}
+              <div className="flex items-center gap-2">
+                <Select
+                  value={selectedSubcategoryId}
+                  onValueChange={handleSubcategoryChange}
+                  disabled={!selectedCategory || availableSubcategories.length === 0}
+                >
+                  <SelectTrigger className="w-[140px] focus:ring-2 focus:ring-[#1F058F] focus:border-transparent disabled:bg-gray-100">
+                    <SelectValue placeholder="Subcategory" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Subcategories</SelectItem>
+                    {availableSubcategories.map((subcategory) => (
+                      <SelectItem key={subcategory._id} value={subcategory._id}>
+                        {subcategory.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Clear Filters */}
+              {(selectedCategoryId || selectedSubcategoryId || searchQuery) && (
+                <button
+                  onClick={handleClearFilters}
+                  className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
           </div>
 

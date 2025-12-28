@@ -73,5 +73,7 @@ export interface ProductRequestSearchParams {
   q?: string;
   page?: number;
   limit?: number;
-  userType?: "seller" | "buyer"
+  userType?: "seller" | "buyer";
+  category?: string;
+  subCategory?: string;
 }
