@@ -212,8 +212,17 @@ export default function SponsoredPost({
                   ₦{currentItem.originalPrice.toLocaleString()}
                 </div>
               </div>
+            ) : currentItem.discountedPrice ? (
+              <div className="text-xl font-bold text-white">
+                ₦{currentItem.discountedPrice.toLocaleString()}
+              </div>
             ) : (
-              <div className="text-xl font-bold">{currentItem.price}</div>
+              <div className="text-xl font-bold">
+                {currentItem.price ||
+                  (currentItem.originalPrice
+                    ? `₦${currentItem.originalPrice.toLocaleString()}`
+                    : "N/A")}
+              </div>
             )}
           </div>
         </div>

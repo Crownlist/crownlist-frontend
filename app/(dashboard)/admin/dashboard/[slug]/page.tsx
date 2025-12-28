@@ -6,7 +6,13 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { apiClientAdmin } from "@/lib/interceptor";
 import { PromoteProductModal } from "@/components/promote-product-modal";
 import { toast } from "sonner";
@@ -42,8 +48,8 @@ export default function SellerProductDetailsDynamic() {
   const [showPromoteModal, setShowPromoteModal] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
-  const [status, setStatus] = useState<string>('');
-  const [reasonForDecline, setReasonForDecline] = useState('');
+  const [status, setStatus] = useState<string>("");
+  const [reasonForDecline, setReasonForDecline] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -52,11 +58,11 @@ export default function SellerProductDetailsDynamic() {
         setLoading(true);
         setError(null);
         const res = await apiClientAdmin.get(`/products/all?product_id=${id}`);
-        console.log("res", res?.data?.data?.products)
+        console.log("res", res?.data?.data?.products);
         const p: any = res?.data?.data?.products;
-        console.log("p", p)
+        console.log("p", p);
         setData(p);
-        setStatus(p?.status || '');
+        setStatus(p?.status || "");
       } catch (e: any) {
         setError(e?.message || "Failed to load product");
       } finally {
@@ -76,19 +82,18 @@ export default function SellerProductDetailsDynamic() {
     try {
       setIsUpdatingStatus(true);
 
-      const payload = status === 'declined'
-        ? { status, reasonForDecline }
-        : { status };
+      const payload =
+        status === "declined" ? { status, reasonForDecline } : { status };
 
       await apiClientAdmin.patch(`/products/status/${data[0]?._id}`, payload);
 
       // Update local data
-      setData((prev: any) => prev ? { ...prev, status } : null);
+      setData((prev: any) => (prev ? { ...prev, status } : null));
       setShowStatusModal(false);
-      toast.success('Status updated successfully');
+      toast.success("Status updated successfully");
     } catch (error) {
-      console.error('Error updating status:', error);
-      toast.error('Failed to update status');
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
     } finally {
       router.refresh();
       setIsUpdatingStatus(false);
@@ -108,10 +113,7 @@ export default function SellerProductDetailsDynamic() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Status</label>
-            <Select
-              value={status}
-              onValueChange={(value) => setStatus(value)}
-            >
+            <Select value={status} onValueChange={(value) => setStatus(value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
@@ -123,9 +125,11 @@ export default function SellerProductDetailsDynamic() {
             </Select>
           </div>
 
-          {status === 'declined' && (
+          {status === "declined" && (
             <div>
-              <label className="block text-sm font-medium mb-1">Reason for Decline</label>
+              <label className="block text-sm font-medium mb-1">
+                Reason for Decline
+              </label>
               <textarea
                 key="reason-textarea"
                 className="w-full p-2 border rounded"
@@ -147,13 +151,20 @@ export default function SellerProductDetailsDynamic() {
             </button>
             <button
               onClick={handleStatusUpdate}
-              disabled={!status || (status === 'declined' && !reasonForDecline.trim()) || isUpdatingStatus}
-              className={`px-4 py-2 text-sm font-medium text-white rounded-md ${!status || (status === 'declined' && !reasonForDecline.trim()) || isUpdatingStatus
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-[#1a0066] hover:bg-[#160052]'
-                }`}
+              disabled={
+                !status ||
+                (status === "declined" && !reasonForDecline.trim()) ||
+                isUpdatingStatus
+              }
+              className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
+                !status ||
+                (status === "declined" && !reasonForDecline.trim()) ||
+                isUpdatingStatus
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#1a0066] hover:bg-[#160052]"
+              }`}
             >
-              {isUpdatingStatus ? 'Updating...' : 'Update Status'}
+              {isUpdatingStatus ? "Updating..." : "Update Status"}
             </button>
           </div>
         </div>
@@ -162,16 +173,27 @@ export default function SellerProductDetailsDynamic() {
   );
 
   const imgs = Array.isArray(data[0].images)
-    ? (data[0].images as any[]).map((i) => (typeof i === "string" ? { url: i } : i))
+    ? (data[0].images as any[]).map((i) =>
+        typeof i === "string" ? { url: i } : i
+      )
     : [];
   // current image for carousel
   const primary = imgs.length
-    ? (imgs[Math.min(imgIndex, imgs.length - 1)]?.url || imgs[0]?.url || "/product1.png")
+    ? imgs[Math.min(imgIndex, imgs.length - 1)]?.url ||
+      imgs[0]?.url ||
+      "/product1.png"
     : "/product1.png";
   const price = data[0].price?.currentPrice;
   const discount = data[0].price?.discountedPrice;
   const ngn = (val?: number) =>
-    typeof val === "number" ? new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val) : "";
+    typeof val === "number"
+      ? new Intl.NumberFormat("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(val)
+      : "";
 
   // Helper: render facility value nicely when stored as string like ['a','b']
   const renderFacilityValue = (val: any) => {
@@ -183,7 +205,7 @@ export default function SellerProductDetailsDynamic() {
         const jsonish = s.replace(/'/g, '"');
         const arr = JSON.parse(jsonish);
         if (Array.isArray(arr)) return arr.join(", ");
-      } catch { }
+      } catch {}
     }
     return s;
   };
@@ -192,7 +214,13 @@ export default function SellerProductDetailsDynamic() {
     <div className="mx-auto px-6 py-6">
       {/* Basic breadcrumb */}
       <nav className="text-sm text-muted-foreground mb-4">
-        <Link href="/admin/dashboard" className="hover:underline text-[#1F058F]">Dashboard</Link> &gt; <span className="text-[#1F058F]">Details</span>
+        <Link
+          href="/admin/dashboard"
+          className="hover:underline text-[#1F058F]"
+        >
+          Dashboard
+        </Link>{" "}
+        &gt; <span className="text-[#1F058F]">Details</span>
       </nav>
 
       {/* Hero image with carousel controls when multiple images exist */}
@@ -202,7 +230,9 @@ export default function SellerProductDetailsDynamic() {
           <>
             <button
               aria-label="Previous image"
-              onClick={() => setImgIndex((prev) => (prev - 1 + imgs.length) % imgs.length)}
+              onClick={() =>
+                setImgIndex((prev) => (prev - 1 + imgs.length) % imgs.length)
+              }
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full w-9 h-9 flex items-center justify-center hover:bg-black/60"
             >
               ‹
@@ -218,7 +248,9 @@ export default function SellerProductDetailsDynamic() {
               {imgs.slice(0, 8).map((_, i) => (
                 <span
                   key={i}
-                  className={`h-1.5 w-1.5 rounded-full ${i === imgIndex ? 'bg-white' : 'bg-white/50'}`}
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    i === imgIndex ? "bg-white" : "bg-white/50"
+                  }`}
                 />
               ))}
             </div>
@@ -233,9 +265,18 @@ export default function SellerProductDetailsDynamic() {
             <button
               key={idx}
               onClick={() => setImgIndex(idx)}
-              className={`relative w-24 h-24 rounded-md overflow-hidden border ${idx === imgIndex ? 'border-[#1F058F] ring-2 ring-[#1F058F]/30' : ''}`}
+              className={`relative w-24 h-24 rounded-md overflow-hidden border ${
+                idx === imgIndex
+                  ? "border-[#1F058F] ring-2 ring-[#1F058F]/30"
+                  : ""
+              }`}
             >
-              <Image src={img.url} alt={`Image ${idx + 1}`} fill className="object-cover" />
+              <Image
+                src={img.url}
+                alt={`Image ${idx + 1}`}
+                fill
+                className="object-cover"
+              />
             </button>
           ))}
         </div>
@@ -245,175 +286,213 @@ export default function SellerProductDetailsDynamic() {
       {/* {data?.map((data: any) => {
         return (
           <> */}
-            <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <h1 className="text-2xl font-semibold">{data[0]?.name}</h1>
-              <div className="flex gap-4 mt-6">
-                <Button
-                  variant="outline"
-                  className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10"
-                  onClick={() => {
-                    setStatus(data[0]?.status || '');
-                    setReasonForDecline('');
-                    setShowStatusModal(true);
-                  }}
-                >
-                  Update Status
-                </Button>
-              </div>
-            </div>
-            <PromoteProductModal
-              isOpen={showPromoteModal}
-              onClose={() => setShowPromoteModal(false)}
-              productId={data[0]?._id}
-            />  
+      <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <h1 className="text-2xl font-semibold">{data[0]?.name}</h1>
+        <div className="flex gap-4 mt-6">
+          <Button
+            variant="outline"
+            className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10"
+            onClick={() => {
+              setStatus(data[0]?.status || "");
+              setReasonForDecline("");
+              setShowStatusModal(true);
+            }}
+          >
+            Update Status
+          </Button>
+        </div>
+      </div>
+      <PromoteProductModal
+        isOpen={showPromoteModal}
+        onClose={() => setShowPromoteModal(false)}
+        productId={data[0]?._id}
+      />
 
-            {/* Status Update Modal */}
-            {showStatusModal && <StatusUpdateModal />}
-            <div className="flex items-center gap-4 mt-2">
-              {price != null && (
-                <span className="text-xl font-bold text-[#1F058F]">{ngn(data[0]?.discount)}</span>
-              )}
-              {discount != null && (
-                <span className="line-through text-gray-500">{ngn(data[0]?.price)}</span>
-              )}
-            </div>
+      {/* Status Update Modal */}
+      {showStatusModal && <StatusUpdateModal />}
+      <div className="flex items-center gap-4 mt-2">
+        {discount != null ? (
+          <>
+            <span className="text-xl font-bold text-[#1F058F]">
+              {ngn(discount)}
+            </span>
+            {price != null && (
+              <span className="line-through text-gray-500">{ngn(price)}</span>
+            )}
+          </>
+        ) : price != null ? (
+          <span className="text-xl font-bold text-[#1F058F]">{ngn(price)}</span>
+        ) : null}
+      </div>
 
-            {/* Location */}
-            {
-              (data[0]?.listingLocation?.country || data[0]?.listingLocation?.city) && (
-                <p className="text-sm text-gray-500 mt-1">
-                  {data[0]?.listingLocation?.city || ""}
-                  {data[0]?.listingLocation?.city && data[0]?.listingLocation?.country ? ", " : ""}
-                  {data[0]?.listingLocation?.country || ""}
-                </p>
-              )
-            }
+      {/* Location */}
+      {(data[0]?.listingLocation?.country ||
+        data[0]?.listingLocation?.city) && (
+        <p className="text-sm text-gray-500 mt-1">
+          {data[0]?.listingLocation?.city || ""}
+          {data[0]?.listingLocation?.city && data[0]?.listingLocation?.country
+            ? ", "
+            : ""}
+          {data[0]?.listingLocation?.country || ""}
+        </p>
+      )}
 
-            {/* Description */}
-            {
-              data[0]?.description && (
-                <div className="mt-5">
-                  <h2 className="font-medium mb-2">Description</h2>
-                  <p className="text-sm text-gray-700 whitespace-pre-line">{data[0]?.description}</p>
-                </div>
-              )
-            }
+      {/* Description */}
+      {data[0]?.description && (
+        <div className="mt-5">
+          <h2 className="font-medium mb-2">Description</h2>
+          <p className="text-sm text-gray-700 whitespace-pre-line">
+            {data[0]?.description}
+          </p>
+        </div>
+      )}
 
-            {/* Meta info */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div className="border rounded-md p-3 text-sm">
-                <div className="text-gray-500 text-xs mb-1">Status</div>
-                <div className="font-medium capitalize">{data[0]?.status || "-"}</div>
-              </div>
-              <div className="border rounded-md p-3 text-sm">
-                <div className="text-gray-500 text-xs mb-1">Slug</div>
-                <div className="font-medium break-all">{data[0]?.slug || "-"}</div>
-              </div>
-              <div className="border rounded-md p-3 text-sm">
-                <div className="text-gray-500 text-xs mb-1">Featured</div>
-                <div className="font-medium">{data[0]?.isFeatured ? "Yes" : "No"}</div>
-              </div>
-            </div>
+      {/* Meta info */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="border rounded-md p-3 text-sm">
+          <div className="text-gray-500 text-xs mb-1">Status</div>
+          <div className="font-medium capitalize">{data[0]?.status || "-"}</div>
+        </div>
+        <div className="border rounded-md p-3 text-sm">
+          <div className="text-gray-500 text-xs mb-1">Slug</div>
+          <div className="font-medium break-all">{data[0]?.slug || "-"}</div>
+        </div>
+        <div className="border rounded-md p-3 text-sm">
+          <div className="text-gray-500 text-xs mb-1">Featured</div>
+          <div className="font-medium">
+            {data[0]?.isFeatured ? "Yes" : "No"}
+          </div>
+        </div>
+      </div>
 
-            {/* Likes & Ratings */}
-            <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <div className="border rounded-md p-3 text-center">
-                <div className="text-xs text-gray-500">Total Likes</div>
-                <div className="text-lg font-semibold">{data[0]?.likes?.totalLikes ?? 0}</div>
-              </div>
-              <div className="border rounded-md p-3 text-center">
-                <div className="text-xs text-gray-500">Average Rating</div>
-                <div className="text-lg font-semibold">{data[0]?.ratings?.averageRating ?? 0}</div>
-              </div>
-              <div className="border rounded-md p-3 text-center">
-                <div className="text-xs text-gray-500">Total Ratings</div>
-                <div className="text-lg font-semibold">{data[0]?.ratings?.totalRatings ?? 0}</div>
-              </div>
-              {/* <div className="border rounded-md p-3 text-center">
+      {/* Likes & Ratings */}
+      <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="border rounded-md p-3 text-center">
+          <div className="text-xs text-gray-500">Total Likes</div>
+          <div className="text-lg font-semibold">
+            {data[0]?.likes?.totalLikes ?? 0}
+          </div>
+        </div>
+        <div className="border rounded-md p-3 text-center">
+          <div className="text-xs text-gray-500">Average Rating</div>
+          <div className="text-lg font-semibold">
+            {data[0]?.ratings?.averageRating ?? 0}
+          </div>
+        </div>
+        <div className="border rounded-md p-3 text-center">
+          <div className="text-xs text-gray-500">Total Ratings</div>
+          <div className="text-lg font-semibold">
+            {data[0]?.ratings?.totalRatings ?? 0}
+          </div>
+        </div>
+        {/* <div className="border rounded-md p-3 text-center">
                 <div className="text-xs text-gray-500">Liked By</div>
                 <div className="text-xs break-all">{(data.likes?.likedBy || []).slice(0, 3).join(", ")}{(data.likes?.likedBy?.length || 0) > 3 ? "…" : ""}</div>
               </div> */}
-            </div>
+      </div>
 
-            {/* Seller Details */}
-            {data[0]?.seller && (
-              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="font-medium text-blue-900">Seller Information</h2>
-                  <Link href={`/admin/users/${data[0]?.seller?._id || data[0]?.seller}`}>
-                    <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100">
-                      View Seller Details
-                    </Button>
-                  </Link>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="text-gray-500 text-xs mb-1">Seller Name</div>
-                    <div className="font-medium">{data[0]?.seller?.fullName || data[0]?.seller?.name || "N/A"}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500 text-xs mb-1">Seller Email</div>
-                    <div className="font-medium">{data[0]?.seller?.email || "N/A"}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500 text-xs mb-1">Account Type</div>
-                    <div className="font-medium">{data[0]?.seller?.accountType || "N/A"}</div>
-                  </div>
-                  {/* <div>
+      {/* Seller Details */}
+      {data[0]?.seller && (
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-medium text-blue-900">Seller Information</h2>
+            <Link
+              href={`/admin/users/${data[0]?.seller?._id || data[0]?.seller}`}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              >
+                View Seller Details
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <div className="text-gray-500 text-xs mb-1">Seller Name</div>
+              <div className="font-medium">
+                {data[0]?.seller?.fullName || data[0]?.seller?.name || "N/A"}
+              </div>
+            </div>
+            <div>
+              <div className="text-gray-500 text-xs mb-1">Seller Email</div>
+              <div className="font-medium">
+                {data[0]?.seller?.email || "N/A"}
+              </div>
+            </div>
+            <div>
+              <div className="text-gray-500 text-xs mb-1">Account Type</div>
+              <div className="font-medium">
+                {data[0]?.seller?.accountType || "N/A"}
+              </div>
+            </div>
+            {/* <div>
                     <div className="text-gray-500 text-xs mb-1">Seller ID</div>
                     <div className="font-medium text-xs break-all">{data[0]?.seller?._id || data[0]?.seller || "N/A"}</div>
                   </div> */}
-                </div>
-              </div>
-            )}
+          </div>
+        </div>
+      )}
 
-            {/* Timestamps */}
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              <div className="border rounded-md p-3">
-                <div className="text-gray-500 text-xs mb-1">Created</div>
-                <div>{data[0]?.createdAt ? new Date(data[0]?.createdAt).toLocaleString() : "-"}</div>
-              </div>
-              <div className="border rounded-md p-3">
-                <div className="text-gray-500 text-xs mb-1">Last Updated</div>
-                <div>{data[0]?.updatedAt ? new Date(data[0]?.updatedAt).toLocaleString() : "-"}</div>
-              </div>
+      {/* Timestamps */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div className="border rounded-md p-3">
+          <div className="text-gray-500 text-xs mb-1">Created</div>
+          <div>
+            {data[0]?.createdAt
+              ? new Date(data[0]?.createdAt).toLocaleString()
+              : "-"}
+          </div>
+        </div>
+        <div className="border rounded-md p-3">
+          <div className="text-gray-500 text-xs mb-1">Last Updated</div>
+          <div>
+            {data[0]?.updatedAt
+              ? new Date(data[0]?.updatedAt).toLocaleString()
+              : "-"}
+          </div>
+        </div>
+      </div>
+
+      {/* Features */}
+      {Array.isArray(data[0]?.features) && data[0]?.features.length > 0 && (
+        <div className="mt-6">
+          <h2 className="font-medium mb-2">Features</h2>
+          <div className="flex flex-wrap gap-2">
+            {data[0]?.features.map((f: any) => (
+              <span
+                key={f}
+                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
+              >
+                {f}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Facilities (Other details) */}
+      {Array.isArray(data[0]?.facility?.facilities) &&
+        data[0]?.facility!.facilities!.length > 0 && (
+          <div className="mt-6">
+            <h2 className="font-medium mb-2">Other details</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {data[0]?.facility!.facilities!.map((f: any, idx: any) => (
+                <div
+                  key={`${f.label}-${f._id || idx}`}
+                  className="flex flex-col border rounded-md p-3"
+                >
+                  <span className="text-xs text-gray-500">{f.label}</span>
+                  <span className="text-sm text-gray-800">
+                    {renderFacilityValue(f.value)}
+                  </span>
+                </div>
+              ))}
             </div>
-
-
-
-            {/* Features */}
-            {
-              Array.isArray(data[0]?.features) && data[0]?.features.length > 0 && (
-                <div className="mt-6">
-                  <h2 className="font-medium mb-2">Features</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {data[0]?.features.map((f: any) => (
-                      <span key={f} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-
-            {/* Facilities (Other details) */}
-            {
-              Array.isArray(data[0]?.facility?.facilities) && data[0]?.facility!.facilities!.length > 0 && (
-                <div className="mt-6">
-                  <h2 className="font-medium mb-2">Other details</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {data[0]?.facility!.facilities!.map((f: any, idx: any) => (
-                      <div key={`${f.label}-${f._id || idx}`} className="flex flex-col border rounded-md p-3">
-                        <span className="text-xs text-gray-500">{f.label}</span>
-                        <span className="text-sm text-gray-800">{renderFacilityValue(f.value)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-          {/* </> */}
+          </div>
+        )}
+      {/* </> */}
       {/* //   ) */}
       {/* // })} */}
     </div>

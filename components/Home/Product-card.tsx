@@ -192,8 +192,17 @@ export default function ProductCard({
                   ₦{originalPrice.toLocaleString()}
                 </p>
               </div>
+            ) : discountedPrice ? (
+              <p className="font-bold text-sm text-gray-900">
+                ₦{discountedPrice.toLocaleString()}
+              </p>
             ) : (
-              <p className="font-semibold text-sm">{price}</p>
+              <p className="font-semibold text-sm">
+                {price ||
+                  (originalPrice
+                    ? `₦${originalPrice.toLocaleString()}`
+                    : "N/A")}
+              </p>
             )}
           </div>
 

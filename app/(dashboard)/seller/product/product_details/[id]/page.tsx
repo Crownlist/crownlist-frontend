@@ -13,11 +13,16 @@ type Product = {
   _id: string;
   name: string;
   description?: string;
-  images?: Array<{ url: string; altText?: string; isPrimary?: boolean }> | string[];
+  images?:
+    | Array<{ url: string; altText?: string; isPrimary?: boolean }>
+    | string[];
   price?: { currentPrice?: number; discountedPrice?: number };
   listingLocation?: { country?: string; city?: string };
   features?: string[];
-  facility?: { _id?: string; facilities?: Array<{ label: string; value: any; _id?: string }> };
+  facility?: {
+    _id?: string;
+    facilities?: Array<{ label: string; value: any; _id?: string }>;
+  };
   likes?: { totalLikes?: number; likedBy?: string[] };
   ratings?: { averageRating?: number; totalRatings?: number };
   slug?: string;
@@ -45,7 +50,8 @@ export default function SellerProductDetailsDynamic() {
         setLoading(true);
         setError(null);
         const res = await apiClientUser.get(`/products/one/${id}`);
-        const p: Product = (res as any)?.data?.product ?? (res as any)?.data ?? (res as any);
+        const p: Product =
+          (res as any)?.data?.product ?? (res as any)?.data ?? (res as any);
         setData(p || null);
       } catch (e: any) {
         setError(e?.message || "Failed to load product");
@@ -61,16 +67,27 @@ export default function SellerProductDetailsDynamic() {
   if (!data) return <div className="p-6">Product not found.</div>;
 
   const imgs = Array.isArray(data.images)
-    ? (data.images as any[]).map((i) => (typeof i === "string" ? { url: i } : i))
+    ? (data.images as any[]).map((i) =>
+        typeof i === "string" ? { url: i } : i
+      )
     : [];
   // current image for carousel
   const primary = imgs.length
-    ? (imgs[Math.min(imgIndex, imgs.length - 1)]?.url || imgs[0]?.url || "/product1.png")
+    ? imgs[Math.min(imgIndex, imgs.length - 1)]?.url ||
+      imgs[0]?.url ||
+      "/product1.png"
     : "/product1.png";
   const price = data.price?.currentPrice;
   const discount = data.price?.discountedPrice;
   const ngn = (val?: number) =>
-    typeof val === "number" ? new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val) : "";
+    typeof val === "number"
+      ? new Intl.NumberFormat("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(val)
+      : "";
 
   // Helper: render facility value nicely when stored as string like ['a','b']
   const renderFacilityValue = (val: any) => {
@@ -91,7 +108,10 @@ export default function SellerProductDetailsDynamic() {
     <div className="mx-auto px-6 py-6">
       {/* Basic breadcrumb */}
       <nav className="text-sm text-muted-foreground mb-4">
-        <Link href="/seller/product" className="hover:underline text-[#1F058F]">Products</Link> &gt; <span className="text-[#1F058F]">Details</span>
+        <Link href="/seller/product" className="hover:underline text-[#1F058F]">
+          Products
+        </Link>{" "}
+        &gt; <span className="text-[#1F058F]">Details</span>
       </nav>
 
       {/* Hero image with carousel controls when multiple images exist */}
@@ -101,7 +121,9 @@ export default function SellerProductDetailsDynamic() {
           <>
             <button
               aria-label="Previous image"
-              onClick={() => setImgIndex((prev) => (prev - 1 + imgs.length) % imgs.length)}
+              onClick={() =>
+                setImgIndex((prev) => (prev - 1 + imgs.length) % imgs.length)
+              }
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full w-9 h-9 flex items-center justify-center hover:bg-black/60"
             >
               ‹
@@ -117,7 +139,9 @@ export default function SellerProductDetailsDynamic() {
               {imgs.slice(0, 8).map((_, i) => (
                 <span
                   key={i}
-                  className={`h-1.5 w-1.5 rounded-full ${i === imgIndex ? 'bg-white' : 'bg-white/50'}`}
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    i === imgIndex ? "bg-white" : "bg-white/50"
+                  }`}
                 />
               ))}
             </div>
@@ -132,9 +156,18 @@ export default function SellerProductDetailsDynamic() {
             <button
               key={idx}
               onClick={() => setImgIndex(idx)}
-              className={`relative w-24 h-24 rounded-md overflow-hidden border ${idx === imgIndex ? 'border-[#1F058F] ring-2 ring-[#1F058F]/30' : ''}`}
+              className={`relative w-24 h-24 rounded-md overflow-hidden border ${
+                idx === imgIndex
+                  ? "border-[#1F058F] ring-2 ring-[#1F058F]/30"
+                  : ""
+              }`}
             >
-              <Image src={img.url} alt={`Image ${idx + 1}`} fill className="object-cover" />
+              <Image
+                src={img.url}
+                alt={`Image ${idx + 1}`}
+                fill
+                className="object-cover"
+              />
             </button>
           ))}
         </div>
@@ -147,7 +180,7 @@ export default function SellerProductDetailsDynamic() {
           <Button asChild>
             <Link href={`/seller/product/edit/${data._id}`}>Edit Product</Link>
           </Button>
-          <Button 
+          <Button
             variant="outline"
             className="border-[#1F058F] text-[#1F058F] hover:bg-[#1F058F]/10"
             onClick={() => setShowPromoteModal(true)}
@@ -156,25 +189,33 @@ export default function SellerProductDetailsDynamic() {
           </Button>
         </div>
       </div>
-      <PromoteProductModal 
+      <PromoteProductModal
         isOpen={showPromoteModal}
         onClose={() => setShowPromoteModal(false)}
         productId={data._id}
       />
       <div className="flex items-center gap-4 mt-2">
-        {price != null && (
-          <span className="text-xl font-bold text-[#1F058F]">{ngn(discount)}</span>
-        )}
-        {discount != null && (
-          <span className="line-through text-gray-500">{ngn(price)}</span>
-        )}
+        {discount != null ? (
+          <>
+            <span className="text-xl font-bold text-[#1F058F]">
+              {ngn(discount)}
+            </span>
+            {price != null && (
+              <span className="line-through text-gray-500">{ngn(price)}</span>
+            )}
+          </>
+        ) : price != null ? (
+          <span className="text-xl font-bold text-[#1F058F]">{ngn(price)}</span>
+        ) : null}
       </div>
 
       {/* Location */}
       {(data.listingLocation?.country || data.listingLocation?.city) && (
         <p className="text-sm text-gray-500 mt-1">
           {data.listingLocation?.city || ""}
-          {data.listingLocation?.city && data.listingLocation?.country ? ", " : ""}
+          {data.listingLocation?.city && data.listingLocation?.country
+            ? ", "
+            : ""}
           {data.listingLocation?.country || ""}
         </p>
       )}
@@ -183,7 +224,9 @@ export default function SellerProductDetailsDynamic() {
       {data.description && (
         <div className="mt-5">
           <h2 className="font-medium mb-2">Description</h2>
-          <p className="text-sm text-gray-700 whitespace-pre-line">{data.description}</p>
+          <p className="text-sm text-gray-700 whitespace-pre-line">
+            {data.description}
+          </p>
         </div>
       )}
 
@@ -219,19 +262,28 @@ export default function SellerProductDetailsDynamic() {
       <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="border rounded-md p-3 text-center">
           <div className="text-xs text-gray-500">Total Likes</div>
-          <div className="text-lg font-semibold">{data.likes?.totalLikes ?? 0}</div>
+          <div className="text-lg font-semibold">
+            {data.likes?.totalLikes ?? 0}
+          </div>
         </div>
         <div className="border rounded-md p-3 text-center">
           <div className="text-xs text-gray-500">Average Rating</div>
-          <div className="text-lg font-semibold">{data.ratings?.averageRating ?? 0}</div>
+          <div className="text-lg font-semibold">
+            {data.ratings?.averageRating ?? 0}
+          </div>
         </div>
         <div className="border rounded-md p-3 text-center">
           <div className="text-xs text-gray-500">Total Ratings</div>
-          <div className="text-lg font-semibold">{data.ratings?.totalRatings ?? 0}</div>
+          <div className="text-lg font-semibold">
+            {data.ratings?.totalRatings ?? 0}
+          </div>
         </div>
         <div className="border rounded-md p-3 text-center">
           <div className="text-xs text-gray-500">Liked By</div>
-          <div className="text-xs break-all">{(data.likes?.likedBy || []).slice(0, 3).join(", ")}{(data.likes?.likedBy?.length || 0) > 3 ? "…" : ""}</div>
+          <div className="text-xs break-all">
+            {(data.likes?.likedBy || []).slice(0, 3).join(", ")}
+            {(data.likes?.likedBy?.length || 0) > 3 ? "…" : ""}
+          </div>
         </div>
       </div>
 
@@ -239,15 +291,17 @@ export default function SellerProductDetailsDynamic() {
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
         <div className="border rounded-md p-3">
           <div className="text-gray-500 text-xs mb-1">Created</div>
-          <div>{data.createdAt ? new Date(data.createdAt).toLocaleString() : "-"}</div>
+          <div>
+            {data.createdAt ? new Date(data.createdAt).toLocaleString() : "-"}
+          </div>
         </div>
         <div className="border rounded-md p-3">
           <div className="text-gray-500 text-xs mb-1">Last Updated</div>
-          <div>{data.updatedAt ? new Date(data.updatedAt).toLocaleString() : "-"}</div>
+          <div>
+            {data.updatedAt ? new Date(data.updatedAt).toLocaleString() : "-"}
+          </div>
         </div>
       </div>
-
-      
 
       {/* Features */}
       {Array.isArray(data.features) && data.features.length > 0 && (
@@ -255,7 +309,10 @@ export default function SellerProductDetailsDynamic() {
           <h2 className="font-medium mb-2">Features</h2>
           <div className="flex flex-wrap gap-2">
             {data.features.map((f) => (
-              <span key={f} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
+              <span
+                key={f}
+                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
+              >
                 {f}
               </span>
             ))}
@@ -264,19 +321,25 @@ export default function SellerProductDetailsDynamic() {
       )}
 
       {/* Facilities (Other details) */}
-      {Array.isArray(data.facility?.facilities) && data.facility!.facilities!.length > 0 && (
-        <div className="mt-6">
-          <h2 className="font-medium mb-2">Other details</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {data.facility!.facilities!.map((f, idx) => (
-              <div key={`${f.label}-${f._id || idx}`} className="flex flex-col border rounded-md p-3">
-                <span className="text-xs text-gray-500">{f.label}</span>
-                <span className="text-sm text-gray-800">{renderFacilityValue(f.value)}</span>
-              </div>
-            ))}
+      {Array.isArray(data.facility?.facilities) &&
+        data.facility!.facilities!.length > 0 && (
+          <div className="mt-6">
+            <h2 className="font-medium mb-2">Other details</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {data.facility!.facilities!.map((f, idx) => (
+                <div
+                  key={`${f.label}-${f._id || idx}`}
+                  className="flex flex-col border rounded-md p-3"
+                >
+                  <span className="text-xs text-gray-500">{f.label}</span>
+                  <span className="text-sm text-gray-800">
+                    {renderFacilityValue(f.value)}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
