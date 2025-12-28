@@ -19,6 +19,8 @@ import { apiClientUser } from "@/lib/interceptor";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { useRouter } from "next/navigation";
+import ReactSelect from "react-select";
+import { nigerianStates } from "@/constants/states";
 
 interface UserProfile {
   fullName: string;
@@ -498,7 +500,7 @@ export default function ProfileSettingsPage() {
                 Country
               </label>
               <Select
-                value={formData.country}
+                value={formData.country || "Nigeria"}
                 onValueChange={(value) => handleSelectChange("country", value)}
                 disabled={isSubmitting}
               >
@@ -515,21 +517,52 @@ export default function ProfileSettingsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 State
               </label>
-              <Select
-                value={formData.city}
-                onValueChange={(value) => handleSelectChange("city", value)}
-                disabled={isSubmitting}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select state" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Lagos">Lagos</SelectItem>
-                  <SelectItem value="Abuja">Abuja</SelectItem>
-                  <SelectItem value="Kano">Kano</SelectItem>
-                  <SelectItem value="Kwara">Kwara</SelectItem>
-                </SelectContent>
-              </Select>
+              <ReactSelect
+                value={
+                  nigerianStates.find((s) => s.value === formData.city)
+                    ? {
+                        value: formData.city,
+                        label: nigerianStates.find(
+                          (s) => s.value === formData.city
+                        )!.label,
+                      }
+                    : null
+                }
+                onChange={(option) => {
+                  handleSelectChange("city", option?.value || "");
+                }}
+                options={nigerianStates
+                  .filter((state) => state.value !== "Select a state")
+                  .map((state) => ({ value: state.value, label: state.label }))}
+                isDisabled={isSubmitting || !formData.country}
+                placeholder={
+                  !formData.country
+                    ? "Please select country first"
+                    : "Select a state"
+                }
+                className="react-select-container"
+                classNamePrefix="react-select"
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    minHeight: "40px",
+                    borderColor: state.isDisabled ? "#f3f4f6" : "#d1d5db",
+                    backgroundColor: state.isDisabled ? "#f9fafb" : "white",
+                    "&:hover": {
+                      borderColor: state.isDisabled ? "#f3f4f6" : "#9ca3af",
+                    },
+                  }),
+                  option: (base, state) => ({
+                    ...base,
+                    backgroundColor: state.isSelected
+                      ? "#3b82f6"
+                      : state.isFocused
+                      ? "#e0e7ff"
+                      : "white",
+                    color: state.isSelected ? "white" : "black",
+                  }),
+                }}
+              />
             </div>
 
             <div>

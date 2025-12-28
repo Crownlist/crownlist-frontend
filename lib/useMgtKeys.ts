@@ -8,19 +8,23 @@ type hookProps = () => {
 
 export const useMgtKeys: hookProps = () => {
   const removeOrionKeys = () => {
-    localStorage.getItem("orion") && localStorage.removeItem("orion");
-    localStorage.getItem("orionKey") && localStorage.removeItem("orionKey");
-    localStorage.getItem("orionLoop") && localStorage.removeItem("orionLoop");
+    // Remove all orion-related keys (no need to check if they exist first)
+    localStorage.removeItem("orion");
+    localStorage.removeItem("orionKey");
+    localStorage.removeItem("orionLoop");
   };
 
   const removeLeoKeys = () => {
-    localStorage.getItem("leo") && localStorage.removeItem("leo");
-    localStorage.getItem("leoKey") && localStorage.removeItem("leoKey");
-    localStorage.getItem("leoLoop") && localStorage.removeItem("leoLoop");
+    // Remove all leo-related keys (no need to check if they exist first)
+    localStorage.removeItem("leo");
+    localStorage.removeItem("leoKey");
+    localStorage.removeItem("leoLoop");
+    localStorage.removeItem("leoName");
+    localStorage.removeItem("leoAccountType");
   };
 
   const getOrionKeys = () => {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     const isStorePresent =
       localStorage.getItem("orion") &&
       localStorage.getItem("orionKey") &&
@@ -30,7 +34,7 @@ export const useMgtKeys: hookProps = () => {
   };
 
   const getLeoKeys = () => {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     const isUserPresent =
       localStorage.getItem("leo") &&
       localStorage.getItem("leoKey") &&

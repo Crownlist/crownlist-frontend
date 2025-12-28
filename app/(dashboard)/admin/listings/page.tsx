@@ -418,13 +418,19 @@ export default function AdminListings() {
 
                         <div className="col-span-2">
                           <div className="flex flex-col">
-                            <span className="text-sm font-semibold">
-                              ₦{product.price.currentPrice.toLocaleString()}
-                            </span>
-                            {product.price.discountedPrice && (
-                              <span className="text-xs text-gray-500 line-through">
-                                ₦
-                                {product.price.discountedPrice.toLocaleString()}
+                            {product.price.discountedPrice ? (
+                              <>
+                                <span className="text-sm font-bold text-gray-900">
+                                  ₦
+                                  {product.price.discountedPrice.toLocaleString()}
+                                </span>
+                                <span className="text-xs text-gray-500 line-through">
+                                  ₦{product.price.currentPrice.toLocaleString()}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-sm font-semibold">
+                                ₦{product.price.currentPrice.toLocaleString()}
                               </span>
                             )}
                           </div>
@@ -542,9 +548,24 @@ export default function AdminListings() {
                             {product.slug}
                           </p>
                           <div className="flex items-center justify-between">
-                            <span className="text-lg font-semibold text-gray-900">
-                              ₦{product.price.currentPrice.toLocaleString()}
-                            </span>
+                            <div className="flex flex-col">
+                              {product.price.discountedPrice ? (
+                                <>
+                                  <span className="text-lg font-bold text-gray-900">
+                                    ₦
+                                    {product.price.discountedPrice.toLocaleString()}
+                                  </span>
+                                  <span className="text-sm text-gray-500 line-through">
+                                    ₦
+                                    {product.price.currentPrice.toLocaleString()}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="text-lg font-semibold text-gray-900">
+                                  ₦{product.price.currentPrice.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
                             <div className="flex items-center space-x-2">
                               <Badge
                                 variant={getStatusBadgeVariant(product.status)}
@@ -601,14 +622,24 @@ export default function AdminListings() {
                             </p>
                           </div>
                           {product.price.discountedPrice && (
-                            <div className="col-span-2">
-                              <span className="font-medium text-gray-600">
-                                Original Price:
-                              </span>
-                              <p className="mt-1 text-gray-500 line-through">
-                                ₦
-                                {product.price.discountedPrice.toLocaleString()}
-                              </p>
+                            <div className="col-span-2 space-y-2">
+                              <div>
+                                <span className="font-medium text-gray-600">
+                                  Discounted Price:
+                                </span>
+                                <p className="mt-1 font-bold text-gray-900">
+                                  ₦
+                                  {product.price.discountedPrice.toLocaleString()}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="font-medium text-gray-600">
+                                  Original Price:
+                                </span>
+                                <p className="mt-1 text-gray-500 line-through">
+                                  ₦{product.price.currentPrice.toLocaleString()}
+                                </p>
+                              </div>
                             </div>
                           )}
                         </div>

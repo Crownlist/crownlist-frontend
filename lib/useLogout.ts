@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { userTypeProps } from "./useGetAuthUser";
 import { apiClientPublic } from "./interceptor";
@@ -18,48 +18,79 @@ export const logout = (logoutData: LogoutProps): Promise<any> => {
   return apiClientPublic.patch(`/auth/logout`, logoutData);
 };
 
+/**
+ * Performs local logout cleanup - clears all local storage, cache, and redirects
+ * This should always be called regardless of API success/failure
+ */
+const performLocalLogout = (
+  userType: userTypeProps,
+  removeOrionKeys: () => void,
+  removeLeoKeys: () => void,
+  dispatch: ReturnType<typeof useDispatch>,
+  queryClient: ReturnType<typeof useQueryClient>
+) => {
+  // Clear React Query cache
+  queryClient.clear();
+
+  if (userType === "Admin") {
+    removeOrionKeys();
+    dispatch(updateAdminData(null));
+    // Use location.replace to prevent back navigation to authenticated pages
+    window.location.replace(window.location.origin + "/auth/admin/sign-in");
+  } else {
+    removeLeoKeys();
+    // Use location.replace to prevent back navigation to authenticated pages
+    window.location.replace(window.location.origin + "/auth/login");
+  }
+};
+
 export const useLogout = (userType: userTypeProps) => {
   const dispatch = useDispatch();
-
+  const queryClient = useQueryClient();
   const { removeOrionKeys, removeLeoKeys } = useMgtKeys();
 
-  const {
-    mutateAsync: mutateLogout,
-    isLoading,
-    data,
-  } = useMutation({
+  const { mutateAsync: mutateLogout, isLoading } = useMutation({
     mutationFn: () => {
-      console.log(data);
-      if (userType === "Admin") {
-        return logout({
-          refreshToken: obfuscateToken(
-            false,
-            localStorage.getItem("orionLoop") ?? ""
-          ),
-          accountType: userType,
-        });
-      } else {
-        return logout({
-          refreshToken: obfuscateToken(
-            false,
-            localStorage.getItem("leoLoop") ?? ""
-          ),
-          accountType: userType,
-        });
+      const refreshToken =
+        userType === "Admin"
+          ? localStorage.getItem("orionLoop") ?? ""
+          : localStorage.getItem("leoLoop") ?? "";
+
+      // If no refresh token exists, resolve immediately
+      // (user might already be partially logged out)
+      if (!refreshToken) {
+        return Promise.resolve({ skipApi: true });
       }
+
+      return logout({
+        refreshToken: obfuscateToken(false, refreshToken),
+        accountType: userType,
+      });
     },
     onSuccess: () => {
-      toast.success("Logout Successfully. Redirecting...");
+      toast.success("Logout successful. Redirecting...");
+      performLocalLogout(
+        userType,
+        removeOrionKeys,
+        removeLeoKeys,
+        dispatch,
+        queryClient
+      );
+    },
+    onError: (error: unknown) => {
+      // Log the error for debugging but still perform local logout
+      console.error("Logout API error:", error);
 
-      if (userType === "Admin") {
-        removeOrionKeys();
-        dispatch(updateAdminData(null));
-        location.replace(location.origin + "/auth/admin/sign-in");
-      } else {
-        // dispatch(updateAdminData(null));
-        removeLeoKeys();
-        location.replace(location.origin + "/auth/login");
-      }
+      // Even if server logout fails, we should still clear local state
+      // This ensures users can always log out from their device
+      toast.info("Logging out locally...");
+      performLocalLogout(
+        userType,
+        removeOrionKeys,
+        removeLeoKeys,
+        dispatch,
+        queryClient
+      );
     },
   });
 

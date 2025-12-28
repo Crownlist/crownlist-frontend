@@ -88,7 +88,7 @@ export default function BuyerDashboardPage() {
             </div>
           </Link>
 
-          <Link href="/buyer/notifications" className="block">
+          <Link href="/buyer/notification" className="block">
             <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition">
               <div className="flex items-center justify-between">
                 <div>

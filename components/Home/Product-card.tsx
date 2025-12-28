@@ -18,6 +18,8 @@ interface ProductCardProps {
   image: string;
   title: string;
   price: string;
+  originalPrice?: number;
+  discountedPrice?: number;
   description: string;
   location?: string;
   isSponsored?: boolean;
@@ -37,6 +39,8 @@ export default function ProductCard({
   image,
   title,
   price,
+  originalPrice,
+  discountedPrice,
   description,
   location,
   isSponsored,
@@ -178,7 +182,20 @@ export default function ProductCard({
             {description}
           </p>
 
-          <p className="font-semibold text-sm mt-1.5">{price}</p>
+          <div className="mt-1.5">
+            {discountedPrice && originalPrice ? (
+              <div className="flex flex-col">
+                <p className="font-bold text-sm text-gray-900">
+                  ₦{discountedPrice.toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500 line-through">
+                  ₦{originalPrice.toLocaleString()}
+                </p>
+              </div>
+            ) : (
+              <p className="font-semibold text-sm">{price}</p>
+            )}
+          </div>
 
           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
             {location && (

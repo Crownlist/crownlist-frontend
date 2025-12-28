@@ -12,6 +12,8 @@ interface Product {
   image: string;
   title: string;
   price: string;
+  originalPrice?: number;
+  discountedPrice?: number;
   description: string;
   location?: string;
   time?: string;
@@ -70,6 +72,8 @@ export default function ProductSection({
               image={product.image}
               title={product.title}
               price={product.price}
+              originalPrice={product.originalPrice}
+              discountedPrice={product.discountedPrice}
               description={product.description}
               location={product.location}
               isSponsored={product.isSponsored}

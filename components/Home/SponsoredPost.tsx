@@ -20,6 +20,8 @@ interface ProductItem {
   location: string;
   category: string;
   price: string;
+  originalPrice?: number;
+  discountedPrice?: number;
   image: string;
 }
 
@@ -200,7 +202,20 @@ export default function SponsoredPost({
             </span>
           </div>
 
-          <div className="text-xl font-bold">{currentItem.price}</div>
+          <div>
+            {currentItem.discountedPrice && currentItem.originalPrice ? (
+              <div className="flex flex-col">
+                <div className="text-xl font-bold text-white">
+                  ₦{currentItem.discountedPrice.toLocaleString()}
+                </div>
+                <div className="text-sm text-white/70 line-through">
+                  ₦{currentItem.originalPrice.toLocaleString()}
+                </div>
+              </div>
+            ) : (
+              <div className="text-xl font-bold">{currentItem.price}</div>
+            )}
+          </div>
         </div>
 
         {/* Slide Indicators */}
