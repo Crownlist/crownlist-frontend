@@ -62,7 +62,8 @@ export default function ProductRequestsPage() {
   };
 
   const handleCategoryChange = (categoryId: string) => {
-    if (categoryId === "all-categories") {
+    // Handle empty string values (when Select clears selection)
+    if (!categoryId || categoryId === "all-categories") {
       setSelectedCategoryId("all-categories");
       setSelectedCategory(null);
       setAvailableSubcategories([]);
@@ -78,7 +79,12 @@ export default function ProductRequestsPage() {
   };
 
   const handleSubcategoryChange = (subcategoryId: string) => {
-    setSelectedSubcategoryId(subcategoryId);
+    // Handle empty string values (when Select clears selection)
+    if (!subcategoryId || subcategoryId === "all-subcategories") {
+      setSelectedSubcategoryId("all-subcategories");
+    } else {
+      setSelectedSubcategoryId(subcategoryId);
+    }
     setCurrentPage(1); // Reset to first page when filtering
   };
 
@@ -144,12 +150,12 @@ export default function ProductRequestsPage() {
               {/* Category Filter */}
               <div className="flex items-center gap-2">
                 <Select
-                  value={selectedCategoryId}
+                  value={selectedCategoryId || "all-categories"}
                   onValueChange={handleCategoryChange}
                   disabled={categoriesLoading}
                 >
                   <SelectTrigger className="w-[140px] focus:ring-2 focus:ring-[#1F058F] focus:border-transparent">
-                    <SelectValue placeholder="Category" />
+                    <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all-categories">All Categories</SelectItem>
@@ -165,12 +171,12 @@ export default function ProductRequestsPage() {
               {/* Subcategory Filter */}
               <div className="flex items-center gap-2">
                 <Select
-                  value={selectedSubcategoryId}
+                  value={selectedSubcategoryId || "all-subcategories"}
                   onValueChange={handleSubcategoryChange}
                   disabled={!selectedCategory || availableSubcategories.length === 0}
                 >
                   <SelectTrigger className="w-[140px] focus:ring-2 focus:ring-[#1F058F] focus:border-transparent disabled:bg-gray-100">
-                    <SelectValue placeholder="Subcategory" />
+                    <SelectValue placeholder="Select Subcategory" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all-subcategories">All Subcategories</SelectItem>
