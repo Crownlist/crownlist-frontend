@@ -34,8 +34,8 @@ export default function ProductRequestsPage() {
     useState<ProductRequest | null>(null);
 
   // Category and subcategory filter state
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all-categories");
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>("all-subcategories");
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([]);
 
@@ -48,8 +48,8 @@ export default function ProductRequestsPage() {
 
   const { data, isLoading, error, refetch } = useProductRequests({
     q: searchQuery || undefined,
-    category: selectedCategoryId || undefined,
-    subCategory: selectedSubcategoryId || undefined,
+    category: selectedCategoryId === "all-categories" ? undefined : selectedCategoryId || undefined,
+    subCategory: selectedSubcategoryId === "all-subcategories" ? undefined : selectedSubcategoryId || undefined,
     userType: "seller",
     page: currentPage,
     limit: 12,
@@ -62,11 +62,18 @@ export default function ProductRequestsPage() {
   };
 
   const handleCategoryChange = (categoryId: string) => {
-    const category = categories.find((cat) => cat._id === categoryId);
-    setSelectedCategoryId(categoryId);
-    setSelectedCategory(category || null);
-    setAvailableSubcategories(category?.subCategories || []);
-    setSelectedSubcategoryId(""); // Reset subcategory when category changes
+    if (categoryId === "all-categories") {
+      setSelectedCategoryId("all-categories");
+      setSelectedCategory(null);
+      setAvailableSubcategories([]);
+      setSelectedSubcategoryId("all-subcategories");
+    } else {
+      const category = categories.find((cat) => cat._id === categoryId);
+      setSelectedCategoryId(categoryId);
+      setSelectedCategory(category || null);
+      setAvailableSubcategories(category?.subCategories || []);
+      setSelectedSubcategoryId("all-subcategories"); // Reset subcategory when category changes
+    }
     setCurrentPage(1); // Reset to first page when filtering
   };
 
@@ -76,8 +83,8 @@ export default function ProductRequestsPage() {
   };
 
   const handleClearFilters = () => {
-    setSelectedCategoryId("");
-    setSelectedSubcategoryId("");
+    setSelectedCategoryId("all-categories");
+    setSelectedSubcategoryId("all-subcategories");
     setSelectedCategory(null);
     setAvailableSubcategories([]);
     setSearchQuery("");
@@ -145,7 +152,7 @@ export default function ProductRequestsPage() {
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all-categories">All Categories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category._id} value={category._id}>
                         {category.name}
@@ -166,7 +173,7 @@ export default function ProductRequestsPage() {
                     <SelectValue placeholder="Subcategory" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Subcategories</SelectItem>
+                    <SelectItem value="all-subcategories">All Subcategories</SelectItem>
                     {availableSubcategories.map((subcategory) => (
                       <SelectItem key={subcategory._id} value={subcategory._id}>
                         {subcategory.name}
@@ -177,7 +184,7 @@ export default function ProductRequestsPage() {
               </div>
 
               {/* Clear Filters */}
-              {(selectedCategoryId || selectedSubcategoryId || searchQuery) && (
+              {(selectedCategoryId !== "all-categories" || selectedSubcategoryId !== "all-subcategories" || searchQuery) && (
                 <button
                   onClick={handleClearFilters}
                   className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
