@@ -227,6 +227,8 @@ const StatusUpdateModal: React.FC<StatusUpdateModalProps> = React.memo(
   )
 );
 
+StatusUpdateModal.displayName = "StatusUpdateModal";
+
 export default function AdminListings() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [listingsData, setListingsData] = useState<ListingsData | null>(null);
