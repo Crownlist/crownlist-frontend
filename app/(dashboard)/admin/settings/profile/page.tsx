@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useGetAuthUser } from "@/lib/useGetAuthUser";
+import { apiClientAdmin } from "@/lib/interceptor";
 
 export default function AdminProfileSettingsPage() {
   // Profile form state
@@ -94,22 +95,28 @@ export default function AdminProfileSettingsPage() {
       return;
     }
 
+    if (passwordData.newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+
     setIsPasswordLoading(true);
 
     try {
-      // TODO: Implement password change API call
-      // await apiClientUser.put("/admin/change-password", {
-      //   oldPassword: passwordData.oldPassword,
-      //   newPassword: passwordData.newPassword
-      // })
+      await apiClientAdmin.patch("/admins/password", {
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword,
+      });
       toast.success("Password changed successfully");
       setPasswordData({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-    } catch (error) {
-      toast.error(`Failed to change password, ${error}`);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || "Failed to change password";
+      toast.error(message);
     } finally {
       setIsPasswordLoading(false);
     }

@@ -196,7 +196,7 @@ export default function SettingsPage() {
     setIsPasswordLoading(true);
 
     try {
-      await apiClientAdmin.patch("/users/password", {
+      await apiClientAdmin.patch("/admins/password", {
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
       });
