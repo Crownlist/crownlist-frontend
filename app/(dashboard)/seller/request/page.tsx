@@ -7,7 +7,7 @@ import RequestSearch from "@/components/RequestSearch";
 import CustomLoader from "@/components/CustomLoader";
 import { AlignJustify, LayoutGrid } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useProductRequests } from "@/lib/useProductRequests";
 import { ProductRequest } from "@/types/product/request";
 import { useToast } from "@/lib/useToastMessage";
@@ -47,13 +47,48 @@ export default function ProductRequestsPage() {
   const { categories, loading: categoriesLoading } = useCategories();
 
   const { data, isLoading, error, refetch } = useProductRequests({
-    q: searchQuery || undefined,
-    category: selectedCategoryId === "all-categories" ? undefined : selectedCategoryId || undefined,
-    subCategory: selectedSubcategoryId === "all-subcategories" ? undefined : selectedSubcategoryId || undefined,
     userType: "seller",
-    page: currentPage,
-    limit: 12,
   });
+
+  // Client-side filtering logic
+  const allRequests = data?.data?.productRequests || [];
+
+  const filteredRequests = useMemo(() => {
+    let filtered = allRequests;
+
+    // Filter by category
+    if (selectedCategoryId !== "all-categories") {
+      filtered = filtered.filter(request => request.category._id === selectedCategoryId);
+    }
+
+    // Filter by subcategory
+    if (selectedSubcategoryId !== "all-subcategories") {
+      filtered = filtered.filter(request => request.subCategory._id === selectedSubcategoryId);
+    }
+
+    // Filter by search query (case-insensitive)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(request =>
+        request.name.toLowerCase().includes(query) ||
+        request.description.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  }, [allRequests, selectedCategoryId, selectedSubcategoryId, searchQuery]);
+
+  // Calculate pagination for filtered results
+  const itemsPerPage = 12;
+  const totalFilteredItems = filteredRequests.length;
+  const totalPages = Math.ceil(totalFilteredItems / itemsPerPage);
+
+  // Get current page items
+  const paginatedRequests = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredRequests.slice(startIndex, endIndex);
+  }, [filteredRequests, currentPage, itemsPerPage]);
 
   console.log("data", data);
   const handleSearch = (query: string) => {
@@ -101,9 +136,6 @@ export default function ProductRequestsPage() {
     setSelectedRequest(request);
     // Open the request detail modal
   };
-
-  const requests = data?.data?.productRequests || [];
-  const pagination = data?.data?.pagination;
 
   return (
     <div className="p-4 md:p-6 flex flex-col w-full min-h-screen bg-gray-50">
@@ -246,7 +278,7 @@ export default function ProductRequestsPage() {
             <div className="flex justify-center items-center py-12">
               <CustomLoader />
             </div>
-          ) : requests.length === 0 ? (
+          ) : paginatedRequests.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="mb-4">
                 <Image
@@ -257,16 +289,16 @@ export default function ProductRequestsPage() {
                 />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2 text-center">
-                {searchQuery
+                {searchQuery || selectedCategoryId !== "all-categories" || selectedSubcategoryId !== "all-subcategories"
                   ? "No matching requests found"
                   : "No product requests"}
               </h3>
               <p className="text-gray-500 text-center text-sm md:text-base px-4 mb-4">
-                {searchQuery
-                  ? `No requests match "${searchQuery}". Try a different search term.`
+                {searchQuery || selectedCategoryId !== "all-categories" || selectedSubcategoryId !== "all-subcategories"
+                  ? "Try adjusting your filters or search terms."
                   : "There are currently no product requests to display."}
               </p>
-              {!searchQuery && (
+              {!searchQuery && selectedCategoryId === "all-categories" && selectedSubcategoryId === "all-subcategories" && (
                 <div className="text-center text-gray-600 text-xs md:text-sm px-4">
                   <p>For further assistance reach out via our 24/7 support</p>
                   <p>
@@ -286,7 +318,7 @@ export default function ProductRequestsPage() {
               {/* Results count */}
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
-                  Showing {requests.length} of {pagination?.total || 0} requests
+                  Showing {paginatedRequests.length} of {totalFilteredItems} requests
                 </p>
               </div>
 
@@ -298,7 +330,7 @@ export default function ProductRequestsPage() {
                     : "space-y-3"
                 }
               >
-                {requests.map((request) => (
+                {paginatedRequests.map((request) => (
                   <ProductRequestCard
                     key={request._id}
                     request={request}
@@ -312,7 +344,7 @@ export default function ProductRequestsPage() {
                 ))}
               </div>
               {/* Pagination */}
-              {pagination && pagination.pages > 1 && (
+              {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-2 pt-6">
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
@@ -324,7 +356,7 @@ export default function ProductRequestsPage() {
 
                   <div className="flex items-center gap-1">
                     {Array.from(
-                      { length: pagination.pages },
+                      { length: totalPages },
                       (_, i) => i + 1
                     ).map((page) => (
                       <button
@@ -344,10 +376,10 @@ export default function ProductRequestsPage() {
                   <button
                     onClick={() =>
                       setCurrentPage(
-                        Math.min(pagination.pages, currentPage + 1)
+                        Math.min(totalPages, currentPage + 1)
                       )
                     }
-                    disabled={currentPage === pagination.pages}
+                    disabled={currentPage === totalPages}
                     className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
