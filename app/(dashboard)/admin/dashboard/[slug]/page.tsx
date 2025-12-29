@@ -195,18 +195,30 @@ export default function SellerProductDetailsDynamic() {
         }).format(val)
       : "";
 
-  // Helper: render facility value nicely when stored as string like ['a','b']
+  // Helper: render facility value nicely and convert booleans to Yes/No
   const renderFacilityValue = (val: any) => {
     if (val == null) return "";
-    if (Array.isArray(val)) return val.join(", ");
-    const s = String(val);
-    if (s.trim().startsWith("[") && s.trim().endsWith("]")) {
+
+    const toYesNo = (v: any): string => {
+      if (typeof v === "boolean") return v ? "Yes" : "No";
+      if (v === "true") return "Yes";
+      if (v === "false") return "No";
+      return String(v);
+    };
+
+    if (Array.isArray(val)) return val.map(toYesNo).join(", ");
+
+    const s = String(val).trim();
+    if (s.startsWith("[") && s.endsWith("]")) {
       try {
         const jsonish = s.replace(/'/g, '"');
         const arr = JSON.parse(jsonish);
-        if (Array.isArray(arr)) return arr.join(", ");
+        if (Array.isArray(arr)) return arr.map(toYesNo).join(", ");
       } catch {}
     }
+
+    if (s === "true" || s === "false") return s === "true" ? "Yes" : "No";
+
     return s;
   };
 
@@ -362,6 +374,14 @@ export default function SellerProductDetailsDynamic() {
           <div className="font-medium">
             {data[0]?.isFeatured ? "Yes" : "No"}
           </div>
+        </div>
+        <div className="border rounded-md p-3 text-sm">
+          <div className="text-gray-500 text-xs mb-1">Category</div>
+          <div className="font-medium">{data[0]?.category?.name || "-"}</div>
+        </div>
+        <div className="border rounded-md p-3 text-sm">
+          <div className="text-gray-500 text-xs mb-1">Subcategory</div>
+          <div className="font-medium">{data[0]?.subCategory?.name || "-"}</div>
         </div>
       </div>
 
