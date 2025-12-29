@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { MoreHorizontal, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -72,82 +72,31 @@ interface StatusModalState {
   reasonForDecline: string;
 }
 
-export default function AdminListings() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [listingsData, setListingsData] = useState<ListingsData | null>(null);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(10);
-  const router = useRouter();
+interface StatusUpdateModalProps {
+  statusModal: StatusModalState;
+  setStatusModal: React.Dispatch<React.SetStateAction<StatusModalState>>;
+  isSubmitting: boolean;
+  showConfirmation: boolean;
+  setShowConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
+  pendingStatus: "live" | "declined" | null;
+  setPendingStatus: React.Dispatch<
+    React.SetStateAction<"live" | "declined" | null>
+  >;
+  handleStatusUpdate: () => void;
+}
 
-  const [statusModal, setStatusModal] = useState<StatusModalState>({
-    isOpen: false,
-    listingId: null,
-    status: "",
-    reasonForDecline: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [pendingStatus, setPendingStatus] = useState<
-    "live" | "declined" | null
-  >(null);
-
-  const handleStatusUpdate = async () => {
-    if (!statusModal.listingId || !pendingStatus) return;
-
-    setIsSubmitting(true);
-
-    const payload =
-      pendingStatus === "declined"
-        ? {
-            status: pendingStatus,
-            reasonForDecline: statusModal.reasonForDecline,
-          }
-        : {
-            status: pendingStatus,
-          };
-
-    try {
-      await apiClientAdmin.patch(
-        `/products/status/${statusModal.listingId}`,
-        payload
-      );
-
-      // Close the modal and reset states
-      setStatusModal({
-        isOpen: false,
-        listingId: null,
-        status: "",
-        reasonForDecline: "",
-      });
-      setShowConfirmation(false);
-      setPendingStatus(null);
-
-      // Refresh the listings data
-      fetchListings();
-
-      toast.success("Status updated successfully");
-    } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update status");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const openStatusModal = (listingId: string, currentStatus: string) => {
-    setStatusModal({
-      isOpen: true,
-      listingId,
-      status: currentStatus as "live" | "declined",
-      reasonForDecline: "",
-    });
-  };
-
-  // Status Update Modal Component
-  const StatusUpdateModal = () => (
+// Status Update Modal Component
+const StatusUpdateModal: React.FC<StatusUpdateModalProps> = React.memo(
+  ({
+    statusModal,
+    setStatusModal,
+    isSubmitting,
+    showConfirmation,
+    setShowConfirmation,
+    pendingStatus,
+    setPendingStatus,
+    handleStatusUpdate,
+  }) => (
     <div
       className={`fixed inset-0 bg-black/85 bg-opacity-50 flex items-center justify-center z-50 ${
         !statusModal.isOpen ? "hidden" : ""
@@ -190,7 +139,6 @@ export default function AdminListings() {
                 Reason for Decline
               </label>
               <textarea
-                key="reason-textarea"
                 className="w-full p-2 border rounded"
                 rows={3}
                 placeholder="Please provide a reason for declining this listing"
@@ -276,7 +224,82 @@ export default function AdminListings() {
         </div>
       </div>
     </div>
-  );
+  )
+);
+
+export default function AdminListings() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [listingsData, setListingsData] = useState<ListingsData | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
+  const router = useRouter();
+
+  const [statusModal, setStatusModal] = useState<StatusModalState>({
+    isOpen: false,
+    listingId: null,
+    status: "",
+    reasonForDecline: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<
+    "live" | "declined" | null
+  >(null);
+
+  const handleStatusUpdate = async () => {
+    if (!statusModal.listingId || !pendingStatus) return;
+
+    setIsSubmitting(true);
+
+    const payload =
+      pendingStatus === "declined"
+        ? {
+            status: pendingStatus,
+            reasonForDecline: statusModal.reasonForDecline,
+          }
+        : {
+            status: pendingStatus,
+          };
+
+    try {
+      await apiClientAdmin.patch(
+        `/products/status/${statusModal.listingId}`,
+        payload
+      );
+
+      // Close the modal and reset states
+      setStatusModal({
+        isOpen: false,
+        listingId: null,
+        status: "",
+        reasonForDecline: "",
+      });
+      setShowConfirmation(false);
+      setPendingStatus(null);
+
+      // Refresh the listings data
+      fetchListings();
+
+      toast.success("Status updated successfully");
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openStatusModal = (listingId: string, currentStatus: string) => {
+    setStatusModal({
+      isOpen: true,
+      listingId,
+      status: currentStatus as "live" | "declined",
+      reasonForDecline: "",
+    });
+  };
 
   // Fetch listings data
   const fetchListings = useCallback(async () => {
@@ -341,7 +364,16 @@ export default function AdminListings() {
         <div className="flex justify-center items-center h-64">
           <p>Loading listings...</p>
         </div>
-        <StatusUpdateModal />
+        <StatusUpdateModal
+          statusModal={statusModal}
+          setStatusModal={setStatusModal}
+          isSubmitting={isSubmitting}
+          showConfirmation={showConfirmation}
+          setShowConfirmation={setShowConfirmation}
+          pendingStatus={pendingStatus}
+          setPendingStatus={setPendingStatus}
+          handleStatusUpdate={handleStatusUpdate}
+        />
       </div>
     );
   }
@@ -753,7 +785,16 @@ export default function AdminListings() {
       )}
 
       {/* Status Update Modal */}
-      <StatusUpdateModal />
+      <StatusUpdateModal
+        statusModal={statusModal}
+        setStatusModal={setStatusModal}
+        isSubmitting={isSubmitting}
+        showConfirmation={showConfirmation}
+        setShowConfirmation={setShowConfirmation}
+        pendingStatus={pendingStatus}
+        setPendingStatus={setPendingStatus}
+        handleStatusUpdate={handleStatusUpdate}
+      />
     </div>
   );
 }
