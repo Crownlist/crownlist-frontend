@@ -114,14 +114,15 @@ export const useSearchFunctionality = ({
     // Then perform search with updated values
     performAdvancedSearch(
       searchQuery,
-      "1", // Reset to first page
+      location,
+      1, // Reset to first page
       filterType === "featured" ? (value as boolean) : isFeatured,
       filterType === "sort" ? (value as string) : sortBy
     );
   };
 
   const handlePageChange = (page: number) => {
-    performAdvancedSearch(searchQuery, page.toString(), isFeatured, sortBy);
+    performAdvancedSearch(searchQuery, location, page, isFeatured, sortBy);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
