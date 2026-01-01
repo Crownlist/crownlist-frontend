@@ -15,6 +15,7 @@ import {
   ErrorState,
 } from "@/components/Subcategory";
 import { useSubcategoryProductsQuery } from "@/hooks/useSubcategoryProducts";
+import { useSubcategoryDetails } from "@/hooks/useSubcategoryDetails";
 
 interface SubcategoryPageProps {
   params: Promise<{ categorySlug: string; subCategorySlug: string }>;
@@ -33,12 +34,6 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   // Filters state
   const [isFeatured, setIsFeatured] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedFilters, setExpandedFilters] = useState<{
-    [key: string]: boolean;
-  }>({
-    location: false,
-    price: false,
-  });
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
@@ -53,6 +48,9 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   ]);
   const [isFiltering, setIsFiltering] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [selectedFacilities, setSelectedFacilities] = useState<
+    Record<string, string | number | boolean>
+  >({});
   const priceDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize params
@@ -82,13 +80,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         clearTimeout(priceDebounceTimeoutRef.current);
       }
     };
-  }, [priceRange.min, priceRange.max]);
-
-  // Reset current page when other filters change (not price, to avoid debounce)
-  useEffect(() => {
-    setCurrentPage(1);
-    setIsFiltering(true);
-  }, [isFeatured, sortOption, selectedLocation]);
+  }, [priceRange]);
 
   // Use the React Query hook for data fetching
   const {
@@ -108,7 +100,10 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
       ? parseInt(debouncedPriceRange.max)
       : undefined,
     location: selectedLocation || undefined,
+    facilities: selectedFacilities,
   });
+
+  const { data: subcategoryData } = useSubcategoryDetails(subCategorySlug);
 
   // Reset filtering state when loading completes
   useEffect(() => {
@@ -122,12 +117,6 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
   }, [loading, subCategorySlug]);
 
   // Helper functions
-  const toggleFilter = (filter: string) => {
-    setExpandedFilters((prev) => ({
-      ...prev,
-      [filter]: !prev[filter],
-    }));
-  };
 
   const handleSortOptionSelect = (option: string) => {
     // Map display options to API sort parameters
@@ -211,6 +200,23 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
 
   const retryFetch = () => {
     refetchProducts();
+  };
+
+  const handleFacilityChange = (
+    label: string,
+    value: string | number | boolean | null | undefined
+  ) => {
+    setSelectedFacilities((prev) => {
+      const newFacilities = { ...prev };
+      if (value === "" || value === null || value === undefined) {
+        delete newFacilities[label];
+      } else {
+        newFacilities[label] = value;
+      }
+      return newFacilities;
+    });
+    setCurrentPage(1);
+    setIsFiltering(true);
   };
 
   const products = productsData?.products || [];
@@ -324,8 +330,6 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
         <MobileFilters
           showMobileFilters={showMobileFilters}
           setShowMobileFilters={setShowMobileFilters}
-          expandedFilters={expandedFilters}
-          toggleFilter={toggleFilter}
           locationSearch={locationSearch}
           setLocationSearch={setLocationSearch}
           filteredLocations={filteredLocations}
@@ -335,12 +339,15 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
           handleSliderChange={handleSliderChange}
           priceRange={priceRange}
           handlePriceInputChange={handlePriceInputChange}
+          facilities={
+            subcategoryData?.facilities.filter((f) => f.filterable) || []
+          }
+          selectedFacilities={selectedFacilities}
+          handleFacilityChange={handleFacilityChange}
         />
 
         <div className="flex flex-col md:flex-row gap-8">
           <FiltersSidebar
-            expandedFilters={expandedFilters}
-            toggleFilter={toggleFilter}
             locationSearch={locationSearch}
             setLocationSearch={setLocationSearch}
             selectedLocation={selectedLocation}
@@ -350,6 +357,11 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             priceRange={priceRange}
             handlePriceInputChange={handlePriceInputChange}
             filteredLocations={filteredLocations}
+            facilities={
+              subcategoryData?.facilities.filter((f) => f.filterable) || []
+            }
+            selectedFacilities={selectedFacilities}
+            handleFacilityChange={handleFacilityChange}
           />
 
           {/* Products Grid/List */}

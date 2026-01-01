@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ChevronRight, Upload, Loader2, X } from "lucide-react";
 import Header from "@/components/Header1";
 import Footer from "@/components/Footer";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useSearchState } from "@/hooks/useSearchState";
 import { useSearchFunctionality } from "@/hooks/useSearchFunctionality";
 import { useCategories } from "@/hooks/useCategories";
@@ -38,6 +38,8 @@ interface FormData {
 
 export default function SearchPage() {
   const { slug: searchSlug } = useParams();
+  const searchParams = useSearchParams();
+  const locationParam = searchParams.get("location") || "";
 
   // Form state for product request
   const { categories, loading: categoriesLoading } = useCategories();
@@ -63,6 +65,7 @@ export default function SearchPage() {
   const searchState = useSearchState();
   const {
     searchQuery,
+    location,
     isFeatured,
     sortBy,
     currentPage,
@@ -72,6 +75,7 @@ export default function SearchPage() {
     searchResults,
     hasSearched,
     setSearchQuery,
+    setLocation,
     setCurrentPage,
     resetSearch,
   } = searchState;
@@ -83,6 +87,7 @@ export default function SearchPage() {
     handlePageChange,
   } = useSearchFunctionality({
     searchQuery,
+    location,
     isFeatured,
     sortBy,
     currentPage,
@@ -98,15 +103,20 @@ export default function SearchPage() {
   // Initialize search on mount - prefill search input
   useEffect(() => {
     if (searchSlug && !hasSearched) {
-      const decodedQuery = decodeURIComponent(searchSlug as string);
+      const decodedQuery =
+        searchSlug === "slug" || searchSlug === "all"
+          ? ""
+          : decodeURIComponent(searchSlug as string);
       setSearchQuery(decodedQuery);
-      performAdvancedSearch(decodedQuery, 1, false, "newest");
+      setLocation(locationParam);
+      performAdvancedSearch(decodedQuery, locationParam, 1, false, "newest");
     }
   }, [searchSlug]);
 
   const handleClearFilters = () => {
     resetSearch();
     setSearchQuery("");
+    setLocation("");
   };
 
   // Form handlers for product request
@@ -261,7 +271,9 @@ export default function SearchPage() {
           <div className="container mx-auto px-4 py-3">
             <SearchBar
               searchQuery={searchQuery}
+              location={location}
               onSearchQueryChange={setSearchQuery}
+              onLocationChange={setLocation}
               onSearch={handleSearch}
               isMobile
             />
@@ -287,7 +299,9 @@ export default function SearchPage() {
             <div className="flex gap-4 items-center">
               <SearchBar
                 searchQuery={searchQuery}
+                location={location}
                 onSearchQueryChange={setSearchQuery}
+                onLocationChange={setLocation}
                 onSearch={handleSearch}
               />
 

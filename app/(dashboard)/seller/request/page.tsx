@@ -34,10 +34,16 @@ export default function ProductRequestsPage() {
     useState<ProductRequest | null>(null);
 
   // Category and subcategory filter state
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all-categories");
-  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>("all-subcategories");
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] =
+    useState<string>("all-categories");
+  const [selectedSubcategoryId, setSelectedSubcategoryId] =
+    useState<string>("all-subcategories");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [availableSubcategories, setAvailableSubcategories] = useState<
+    Subcategory[]
+  >([]);
 
   console.log(selectedRequest);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,27 +57,32 @@ export default function ProductRequestsPage() {
   });
 
   // Client-side filtering logic
-  const allRequests = data?.data?.productRequests || [];
+  const allRequests = useMemo(() => data?.data?.productRequests || [], [data]);
 
   const filteredRequests = useMemo(() => {
     let filtered = allRequests;
 
     // Filter by category
     if (selectedCategoryId !== "all-categories") {
-      filtered = filtered.filter(request => request.category._id === selectedCategoryId);
+      filtered = filtered.filter(
+        (request) => request.category._id === selectedCategoryId
+      );
     }
 
     // Filter by subcategory
     if (selectedSubcategoryId !== "all-subcategories") {
-      filtered = filtered.filter(request => request.subCategory._id === selectedSubcategoryId);
+      filtered = filtered.filter(
+        (request) => request.subCategory._id === selectedSubcategoryId
+      );
     }
 
     // Filter by search query (case-insensitive)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(request =>
-        request.name.toLowerCase().includes(query) ||
-        request.description.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (request) =>
+          request.name.toLowerCase().includes(query) ||
+          request.description.toLowerCase().includes(query)
       );
     }
 
@@ -190,7 +201,9 @@ export default function ProductRequestsPage() {
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all-categories">All Categories</SelectItem>
+                    <SelectItem value="all-categories">
+                      All Categories
+                    </SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category._id} value={category._id}>
                         {category.name}
@@ -205,13 +218,17 @@ export default function ProductRequestsPage() {
                 <Select
                   value={selectedSubcategoryId || "all-subcategories"}
                   onValueChange={handleSubcategoryChange}
-                  disabled={!selectedCategory || availableSubcategories.length === 0}
+                  disabled={
+                    !selectedCategory || availableSubcategories.length === 0
+                  }
                 >
                   <SelectTrigger className="w-[140px] focus:ring-2 focus:ring-[#1F058F] focus:border-transparent disabled:bg-gray-100">
                     <SelectValue placeholder="Select Subcategory" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all-subcategories">All Subcategories</SelectItem>
+                    <SelectItem value="all-subcategories">
+                      All Subcategories
+                    </SelectItem>
                     {availableSubcategories.map((subcategory) => (
                       <SelectItem key={subcategory._id} value={subcategory._id}>
                         {subcategory.name}
@@ -222,7 +239,9 @@ export default function ProductRequestsPage() {
               </div>
 
               {/* Clear Filters */}
-              {(selectedCategoryId !== "all-categories" || selectedSubcategoryId !== "all-subcategories" || searchQuery) && (
+              {(selectedCategoryId !== "all-categories" ||
+                selectedSubcategoryId !== "all-subcategories" ||
+                searchQuery) && (
                 <button
                   onClick={handleClearFilters}
                   className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
@@ -289,36 +308,43 @@ export default function ProductRequestsPage() {
                 />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2 text-center">
-                {searchQuery || selectedCategoryId !== "all-categories" || selectedSubcategoryId !== "all-subcategories"
+                {searchQuery ||
+                selectedCategoryId !== "all-categories" ||
+                selectedSubcategoryId !== "all-subcategories"
                   ? "No matching requests found"
                   : "No product requests"}
               </h3>
               <p className="text-gray-500 text-center text-sm md:text-base px-4 mb-4">
-                {searchQuery || selectedCategoryId !== "all-categories" || selectedSubcategoryId !== "all-subcategories"
+                {searchQuery ||
+                selectedCategoryId !== "all-categories" ||
+                selectedSubcategoryId !== "all-subcategories"
                   ? "Try adjusting your filters or search terms."
                   : "There are currently no product requests to display."}
               </p>
-              {!searchQuery && selectedCategoryId === "all-categories" && selectedSubcategoryId === "all-subcategories" && (
-                <div className="text-center text-gray-600 text-xs md:text-sm px-4">
-                  <p>For further assistance reach out via our 24/7 support</p>
-                  <p>
-                    via email at{" "}
-                    <a
-                      href="mailto:crownliststore@gmail.com"
-                      className="text-[#1F058F] hover:underline"
-                    >
-                      crownliststore@gmail.com
-                    </a>
-                  </p>
-                </div>
-              )}
+              {!searchQuery &&
+                selectedCategoryId === "all-categories" &&
+                selectedSubcategoryId === "all-subcategories" && (
+                  <div className="text-center text-gray-600 text-xs md:text-sm px-4">
+                    <p>For further assistance reach out via our 24/7 support</p>
+                    <p>
+                      via email at{" "}
+                      <a
+                        href="mailto:crownliststore@gmail.com"
+                        className="text-[#1F058F] hover:underline"
+                      >
+                        crownliststore@gmail.com
+                      </a>
+                    </p>
+                  </div>
+                )}
             </div>
           ) : (
             <div className="space-y-6">
               {/* Results count */}
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
-                  Showing {paginatedRequests.length} of {totalFilteredItems} requests
+                  Showing {paginatedRequests.length} of {totalFilteredItems}{" "}
+                  requests
                 </p>
               </div>
 
@@ -355,29 +381,26 @@ export default function ProductRequestsPage() {
                   </button>
 
                   <div className="flex items-center gap-1">
-                    {Array.from(
-                      { length: totalPages },
-                      (_, i) => i + 1
-                    ).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-md ${
-                          page === currentPage
-                            ? "text-[#1F058F] bg-[#EDE9FF] border-[#1F058F]"
-                            : "text-gray-500 bg-white border-gray-300"
-                        } border hover:bg-gray-50`}
-                      >
-                        {page}
-                      </button>
-                    ))}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-2 text-sm font-medium rounded-md ${
+                            page === currentPage
+                              ? "text-[#1F058F] bg-[#EDE9FF] border-[#1F058F]"
+                              : "text-gray-500 bg-white border-gray-300"
+                          } border hover:bg-gray-50`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    )}
                   </div>
 
                   <button
                     onClick={() =>
-                      setCurrentPage(
-                        Math.min(totalPages, currentPage + 1)
-                      )
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
                     }
                     disabled={currentPage === totalPages}
                     className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"

@@ -50,15 +50,13 @@ const Hero = () => {
   const handleSearch = () => {
     console.log("search", search);
     console.log("location", location);
-    if (search.trim() === "") {
-      router.push("/search/slug");
-    } else {
-      const searchTerm = search.trim().toLowerCase().replace(/\s+/g, "-");
-      const queryParams = location.trim()
-        ? `?location=${encodeURIComponent(location.trim())}`
-        : "";
-      router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`);
-    }
+    const searchTerm = search.trim()
+      ? search.trim().toLowerCase().replace(/\s+/g, "-")
+      : "all";
+    const queryParams = location.trim()
+      ? `?location=${encodeURIComponent(location.trim())}`
+      : "";
+    router.push(`/search/${encodeURIComponent(searchTerm)}${queryParams}`);
   };
 
   // Auto-slide functionality

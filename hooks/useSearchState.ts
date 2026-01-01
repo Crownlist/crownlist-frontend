@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export interface SearchFilters {
   query: string;
+  location: string;
   isFeatured: boolean;
   sortBy: string;
   currentPage: number;
@@ -28,6 +29,7 @@ export interface SearchResult {
 
 export const useSearchState = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,6 +50,7 @@ export const useSearchState = () => {
   const updateFilters = (updates: Partial<SearchFilters>) => {
     setCurrentPage(1); // Reset to first page when filters change
     if (updates.query !== undefined) setSearchQuery(updates.query);
+    if (updates.location !== undefined) setLocation(updates.location);
     if (updates.isFeatured !== undefined) setIsFeatured(updates.isFeatured);
     if (updates.sortBy !== undefined) setSortBy(updates.sortBy);
   };
@@ -55,6 +58,7 @@ export const useSearchState = () => {
   return {
     // State
     searchQuery,
+    location,
     isFeatured,
     sortBy,
     currentPage,
@@ -66,6 +70,7 @@ export const useSearchState = () => {
 
     // Setters
     setSearchQuery,
+    setLocation,
     setIsFeatured,
     setSortBy,
     setCurrentPage,

@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,7 +71,7 @@ export default function AdminResourcesPage() {
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
   const [pageHasData, setPageHasData] = useState(true);
 
-  const fetchResources = async () => {
+  const fetchResources = useCallback(async () => {
     try {
       setLoading(true);
       // Add page and limit as query params
@@ -99,7 +99,7 @@ export default function AdminResourcesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, pageSize]);
 
   const parseCsvFile = async (file: File) => {
     try {
@@ -141,7 +141,7 @@ export default function AdminResourcesPage() {
 
   useEffect(() => {
     fetchResources();
-  }, [page, pageSize]);
+  }, [fetchResources]);
 
   const copyApiEndpoint = (slug: string) => {
     const endpoint = `/resources/one/${slug}`;

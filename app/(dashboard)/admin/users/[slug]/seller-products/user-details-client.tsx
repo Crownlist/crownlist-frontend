@@ -1,15 +1,30 @@
 /*eslint-disable*/
-'use client';
+"use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Mail, Phone, Calendar, Check, X, Clock, Ban } from "lucide-react";
+import {
+  ChevronRight,
+  Mail,
+  Phone,
+  Calendar,
+  Check,
+  X,
+  Clock,
+  Ban,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { apiClientAdmin } from "@/lib/interceptor";
 import { format } from "date-fns";
@@ -31,16 +46,16 @@ type UserDetails = {
   finishTourGuide: boolean;
   createdAt: string;
   id: string;
-  phone?: string;
+  phoneNumber?: string;
 };
 
 export default function UserDetailsClient({ userId }: { userId: string }) {
   const [showBlockModal, setShowBlockModal] = useState(false);
-   const [showUnBlockModal, setShowUnBlockModal] = useState(false);
+  const [showUnBlockModal, setShowUnBlockModal] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<UserDetails>({
-    queryKey: ['user', userId],
+    queryKey: ["user", userId],
     queryFn: async () => {
       const response = await apiClientAdmin.get(`/users/${userId}`);
       return response.data.data;
@@ -49,46 +64,64 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
 
   const blockUserMutation = useMutation({
     mutationFn: async (blockDecision: boolean) => {
-      const response = await apiClientAdmin.patch('/users', {
+      const response = await apiClientAdmin.patch("/users", {
         userId,
-        blockDecision
+        blockDecision,
       });
       return response.data;
     },
     onSuccess: (data) => {
-      console.log('Block User API Response:', data); // Admin notification via console
-      toast.success(data.data.message || `User ${data.data?.isSuspended ? 'blocked' : 'unblocked'} successfully`);
+      console.log("Block User API Response:", data); // Admin notification via console
+      toast.success(
+        data.data.message ||
+          `User ${
+            data.data?.isSuspended ? "blocked" : "unblocked"
+          } successfully`
+      );
       setShowBlockModal(false);
       // Invalidate the user query to refresh the data
-      queryClient.invalidateQueries({ queryKey: ['user', userId] });
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
     },
     onError: (error: any) => {
-      console.error('Block User API Error:', error.response?.data || error); // Admin notification via console
-      toast.error(`Failed to block user: ${error?.response?.data?.message || error?.message || 'Unknown error'}`);
+      console.error("Block User API Error:", error.response?.data || error); // Admin notification via console
+      toast.error(
+        `Failed to block user: ${
+          error?.response?.data?.message || error?.message || "Unknown error"
+        }`
+      );
       setShowBlockModal(false);
-    }
+    },
   });
 
   const unblockUserMutation = useMutation({
     mutationFn: async (blockDecision: boolean) => {
-      const response = await apiClientAdmin.patch('/users', {
+      const response = await apiClientAdmin.patch("/users", {
         userId,
-        blockDecision
+        blockDecision,
       });
       return response.data;
     },
     onSuccess: (data) => {
-      console.log('Block User API Response:', data); // Admin notification via console
-      toast.success(data.data.message || `User ${data.data?.isSuspended ? 'blocked' : 'unblocked'} successfully`);
+      console.log("Block User API Response:", data); // Admin notification via console
+      toast.success(
+        data.data.message ||
+          `User ${
+            data.data?.isSuspended ? "blocked" : "unblocked"
+          } successfully`
+      );
       setShowUnBlockModal(false);
       // Invalidate the user query to refresh the data
-      queryClient.invalidateQueries({ queryKey: ['user', userId] });
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
     },
     onError: (error: any) => {
-      console.error('UnBlock User API Error:', error.response?.data || error); // Admin notification via console
-      toast.error(`Failed to Unblock user: ${error?.response?.data?.message || error?.message || 'Unknown error'}`);
+      console.error("UnBlock User API Error:", error.response?.data || error); // Admin notification via console
+      toast.error(
+        `Failed to Unblock user: ${
+          error?.response?.data?.message || error?.message || "Unknown error"
+        }`
+      );
       setShowUnBlockModal(false);
-    }
+    },
   });
 
   const handleBlockUser = () => {
@@ -97,7 +130,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
     blockUserMutation.mutate(true);
   };
 
-   const handleUnBlockUser = () => {
+  const handleUnBlockUser = () => {
     setShowUnBlockModal(false);
     // toast.loading("Blocking user...", { id: "block-user" });
     unblockUserMutation.mutate(false);
@@ -129,8 +162,8 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
 
   const user = data;
   const joinDate = new Date(user.createdAt);
-  const formattedJoinDate = format(joinDate, 'MMM d, yyyy');
-  const joinTimeAgo = format(joinDate, 'h:mm a');
+  const formattedJoinDate = format(joinDate, "MMM d, yyyy");
+  const joinTimeAgo = format(joinDate, "h:mm a");
 
   return (
     <div className="p-4 md:p-8">
@@ -172,10 +205,10 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                   <Mail className="h-4 w-4 mr-2" />
                   {user.email}
                 </div>
-                {user.phone && (
+                {user.phoneNumber && (
                   <div className="flex items-center text-gray-600 text-sm mt-1">
                     <Phone className="h-4 w-4 mr-2" />
-                    {user.phone}
+                    {user.phoneNumber}
                   </div>
                 )}
                 <div className="flex items-center text-gray-600 text-sm mt-1">
@@ -185,16 +218,24 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={user.accountType === 'Admin' ? 'default' : 'outline'}>
+                <Badge
+                  variant={user.accountType === "Admin" ? "default" : "outline"}
+                >
                   {user.accountType}
                 </Badge>
-                <Badge variant={user.isVerified ? 'default' : 'secondary'}>
-                  {user.isVerified ? 'Verified' : 'Unverified'}
+                <Badge variant={user.isVerified ? "default" : "secondary"}>
+                  {user.isVerified ? "Verified" : "Unverified"}
                 </Badge>
-                <Badge variant={user.subscriptionStatus === 'active' ? 'default' : 'outline'}>
-                  {user.subscriptionStatus === 'active' ? 'Subscribed' : 'Not Subscribed'}
+                <Badge
+                  variant={
+                    user.subscriptionStatus === "active" ? "default" : "outline"
+                  }
+                >
+                  {user.subscriptionStatus === "active"
+                    ? "Subscribed"
+                    : "Not Subscribed"}
                 </Badge>
-                {!user.isSuspended &&
+                {!user.isSuspended && (
                   <Button
                     size="sm"
                     onClick={openBlockModal}
@@ -202,20 +243,22 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                     className="ml-2 bg-red-600"
                   >
                     <Ban className="h-4 w-4 mr-2" />
-                    {blockUserMutation.isPending ? 'Blocking...' : 'Block User'}
+                    {blockUserMutation.isPending ? "Blocking..." : "Block User"}
                   </Button>
-                }
-                {user.isSuspended &&
+                )}
+                {user.isSuspended && (
                   <Button
                     size="sm"
                     onClick={openUnBlockModal}
                     disabled={unblockUserMutation.isPending}
                     className="ml-2 bg-red-600"
                   >
-                    <Ban className="h-4 w-4 mr-2" />             
-                    {unblockUserMutation.isPending ? 'Blocking...' : 'Unblock User'}
+                    <Ban className="h-4 w-4 mr-2" />
+                    {unblockUserMutation.isPending
+                      ? "Blocking..."
+                      : "Unblock User"}
                   </Button>
-                }
+                )}
               </div>
             </div>
           </div>
@@ -224,12 +267,16 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
 
       {/* User Details Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className={`grid w-full grid-cols-2 ${user.accountType === 'Seller' ? 'md:grid-cols-3' : 'md:grid-cols-2'} max-w-md mb-6`}>
+        <TabsList
+          className={`grid w-full grid-cols-2 ${
+            user.accountType === "Seller" ? "md:grid-cols-3" : "md:grid-cols-2"
+          } max-w-md mb-6`}
+        >
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
           {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
           {/* <TabsTrigger value="documents">Documents</TabsTrigger> */}
-          {user.accountType === 'Seller' && (
+          {user.accountType === "Seller" && (
             <TabsTrigger value="products">Products</TabsTrigger>
           )}
         </TabsList>
@@ -240,7 +287,7 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">User ID</p>
-                <p className="font-medium">{user.userCustomId || 'N/A'}</p>
+                <p className="font-medium">{user.userCustomId || "N/A"}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Authentication Method</p>
@@ -249,26 +296,36 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
               <div>
                 <p className="text-sm text-gray-500">Account Status</p>
                 <div className="flex items-center">
-                  <div className={`h-2 w-2 rounded-full mr-2 ${user.isVerified ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                  <span>{user.isVerified ? 'Active' : 'Pending Verification'}</span>
+                  <div
+                    className={`h-2 w-2 rounded-full mr-2 ${
+                      user.isVerified ? "bg-green-500" : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <span>
+                    {user.isVerified ? "Active" : "Pending Verification"}
+                  </span>
                 </div>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Member Since</p>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{formattedJoinDate} at {joinTimeAgo}</span>
+                  <span>
+                    {formattedJoinDate} at {joinTimeAgo}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {user.accountType === 'Seller' && (
+          {user.accountType === "Seller" && (
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-medium">Seller Information</h3>
                 <Link href={`/admin/users/${userId}/seller-products`}>
-                  <Button variant="outline" size="sm">View Store</Button>
+                  <Button variant="outline" size="sm">
+                    View Store
+                  </Button>
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -299,7 +356,9 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                 </div>
                 <div>
                   <p className="font-medium">Account Created</p>
-                  <p className="text-sm text-gray-500">{formattedJoinDate} at {joinTimeAgo}</p>
+                  <p className="text-sm text-gray-500">
+                    {formattedJoinDate} at {joinTimeAgo}
+                  </p>
                 </div>
               </div>
               <div className="text-center py-4 text-gray-500">
@@ -319,12 +378,15 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
                     <p className="font-medium">Email Verification</p>
                     <p className="text-sm text-gray-500">
                       {user.isVerified
-                        ? 'Your email is verified'
-                        : 'Please verify your email address'}
+                        ? "Your email is verified"
+                        : "Please verify your email address"}
                     </p>
                   </div>
-                  <Button variant={user.isVerified ? 'outline' : 'default'} size="sm">
-                    {user.isVerified ? 'Verified' : 'Verify Email'}
+                  <Button
+                    variant={user.isVerified ? "outline" : "default"}
+                    size="sm"
+                  >
+                    {user.isVerified ? "Verified" : "Verify Email"}
                   </Button>
                 </div>
               </div>
@@ -350,21 +412,27 @@ export default function UserDetailsClient({ userId }: { userId: string }) {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-medium">Documents</h3>
-              <Button variant="outline" size="sm">Upload Document</Button>
+              <Button variant="outline" size="sm">
+                Upload Document
+              </Button>
             </div>
             <div className="text-center py-8 text-gray-500">
               <p>No documents uploaded yet</p>
-              <p className="text-sm mt-2">Upload documents to verify your identity</p>
+              <p className="text-sm mt-2">
+                Upload documents to verify your identity
+              </p>
             </div>
           </div>
         </TabsContent>
 
-        {user.accountType === 'Seller' && (
+        {user.accountType === "Seller" && (
           <TabsContent value="products">
             <Card>
               <CardHeader>
                 <CardTitle>Seller ' s Products</CardTitle>
-                <CardDescription>Manage products listed by this seller</CardDescription>
+                <CardDescription>
+                  Manage products listed by this seller
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <SellerProducts />

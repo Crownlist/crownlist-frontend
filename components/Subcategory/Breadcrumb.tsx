@@ -10,6 +10,12 @@ export function Breadcrumb({ categorySlug, subcategorySlug }: BreadcrumbProps) {
   const formatTitle = (slug: string) =>
     slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
+  const truncateText = (text: string, maxLength: number = 20) => {
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
+  };
+
   const categoryTitle = formatTitle(categorySlug);
   const subcategoryTitle = formatTitle(subcategorySlug);
 
@@ -19,9 +25,13 @@ export function Breadcrumb({ categorySlug, subcategorySlug }: BreadcrumbProps) {
         Home
       </Link>
       <ChevronRight size={16} />
-      <span className="hover:text-gray-700">{categoryTitle}</span>
+      <span className="hover:text-gray-700 truncate">
+        {truncateText(categoryTitle)}
+      </span>
       <ChevronRight size={16} />
-      <span className="text-gray-700">{subcategoryTitle}</span>
+      <span className="text-gray-700 truncate">
+        {truncateText(subcategoryTitle)}
+      </span>
     </div>
   );
 }

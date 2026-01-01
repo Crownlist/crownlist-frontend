@@ -10,6 +10,7 @@ interface SearchApiResponse {
 
 interface UseSearchFunctionalityProps {
   searchQuery: string;
+  location: string;
   isFeatured: boolean;
   sortBy: string;
   currentPage: number;
@@ -24,6 +25,7 @@ interface UseSearchFunctionalityProps {
 
 export const useSearchFunctionality = ({
   searchQuery,
+  location,
   isFeatured,
   sortBy,
   currentPage,
@@ -39,6 +41,7 @@ export const useSearchFunctionality = ({
 
   const performAdvancedSearch = async (
     query: string = searchQuery,
+    loc: string = location,
     page: number = currentPage,
     featured: boolean = isFeatured,
     sort: string = sortBy
@@ -49,6 +52,7 @@ export const useSearchFunctionality = ({
       // Build query parameters
       const params = new URLSearchParams();
       if (query.trim()) params.append("q", query.trim());
+      if (loc.trim()) params.append("location", loc.trim());
       params.append("limit", "12");
       params.append("page", page.toString());
       if (featured) params.append("isFeatured", "true");
@@ -86,11 +90,14 @@ export const useSearchFunctionality = ({
   };
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      // Navigate to new search term route
-      const newUrl = `/search/${encodeURIComponent(searchQuery.trim())}`;
-      router.push(newUrl);
-    }
+    const searchTerm = searchQuery.trim()
+      ? searchQuery.trim().toLowerCase().replace(/\s+/g, "-")
+      : "all";
+    const queryParams = location.trim()
+      ? `?location=${encodeURIComponent(location.trim())}`
+      : "";
+    const newUrl = `/search/${encodeURIComponent(searchTerm)}${queryParams}`;
+    router.push(newUrl);
   };
 
   const handleFilterChange = (
@@ -107,14 +114,14 @@ export const useSearchFunctionality = ({
     // Then perform search with updated values
     performAdvancedSearch(
       searchQuery,
-      1, // Reset to first page
+      "1", // Reset to first page
       filterType === "featured" ? (value as boolean) : isFeatured,
       filterType === "sort" ? (value as string) : sortBy
     );
   };
 
   const handlePageChange = (page: number) => {
-    performAdvancedSearch(searchQuery, page, isFeatured, sortBy);
+    performAdvancedSearch(searchQuery, page.toString(), isFeatured, sortBy);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

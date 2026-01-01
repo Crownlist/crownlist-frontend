@@ -41,6 +41,7 @@ export const useSubcategoryProductsQuery = (
     minPrice?: number;
     maxPrice?: number;
     location?: string;
+    facilities?: Record<string, any>;
   } = {}
 ) => {
   const queryKey = [
@@ -53,6 +54,7 @@ export const useSubcategoryProductsQuery = (
     options.minPrice,
     options.maxPrice,
     options.location,
+    options.facilities,
   ];
 
   const query = useQuery({
@@ -70,6 +72,8 @@ export const useSubcategoryProductsQuery = (
       if (options.maxPrice !== undefined)
         queryParams.append("maxPrice", options.maxPrice.toString());
       if (options.location) queryParams.append("location", options.location);
+      if (options.facilities && Object.keys(options.facilities).length > 0)
+        queryParams.append("facilities", JSON.stringify(options.facilities));
 
       const response: ProductsResponse = await apiClientPublic.get(
         `/products?${queryParams.toString()}`

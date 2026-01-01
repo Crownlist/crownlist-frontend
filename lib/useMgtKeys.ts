@@ -1,4 +1,3 @@
-/* eslint-disable */
 type hookProps = () => {
   removeOrionKeys: () => void;
   removeLeoKeys: () => void;
