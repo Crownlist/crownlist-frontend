@@ -9,11 +9,13 @@ import {
   ProductAccordion,
   SafetyTipsSection,
   SimilarProducts,
+  ProductReviews,
 } from "@/components/Product";
 import ProductDetailsSidebar from "@/components/Home/ProductDetailsSidebar";
 import {
   fetchProductBySlug,
   fetchSimilarProducts,
+  fetchProductReviews,
   generateProductMetadata,
   formatProductDate,
 } from "@/lib/server/product-service";
@@ -32,7 +34,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const product = await fetchProductBySlug(slug);
-
+  console.log("product", product);
   if (!product) {
     return {
       title: "Product Not Found",
@@ -91,6 +93,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
     ? await fetchSimilarProducts(categorySlug, 4, product._id)
     : [];
 
+  // Fetch product reviews
+  const reviewsData = await fetchProductReviews(product._id);
+
   // Format data for display
   const images = product.images?.map((img) => img.url) || ["/placeholder.svg"];
   const postedDate = formatProductDate(product.createdAt);
@@ -133,9 +138,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {product.subCategory && (
                 <>
                   <Link
-                    href={`/${product.category?.slug || ""}/${
-                      product.subCategory.slug
-                    }`}
+                    href={`/${product.category?.slug || ""}/${product.subCategory.slug
+                      }`}
                     className="hover:text-gray-900 transition-colors truncate max-w-[150px] sm:max-w-none"
                   >
                     {product.subCategory.name}
@@ -163,6 +167,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {product && (
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                   <ProductAccordion product={product} />
+                </div>
+              )}
+
+              {/* Product Reviews */}
+              {reviewsData.reviews.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                  <ProductReviews
+                    reviews={reviewsData.reviews}
+                    pagination={reviewsData.pagination}
+                    productId={product._id}
+                  />
                 </div>
               )}
 
