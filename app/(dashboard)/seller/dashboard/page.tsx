@@ -41,7 +41,6 @@ interface DashboardData {
   metrics: {
     totalProducts: number;
     activeListings: number;
-    totalViews: number;
     potentialEarnings: string;
     subscriptionStatus: string;
     subscriptionPlan: {
@@ -139,7 +138,7 @@ export default function DashboardPage() {
 
       {/* Metric Cards */}
       <div className="mb-8 p-3">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="bg-white shadow-md py-2 md:py-3 lg:py-4 rounded-xl">
             <CardContent className="p-2 md:p-4 lg:p-6">
               <div className="text-sm text-gray-500 mb-1">Total Products</div>
@@ -159,16 +158,6 @@ export default function DashboardPage() {
               <div className="text-sm text-green-500 flex items-center">
                 <span>Live products</span>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white shadow-md py-2 md:py-3 lg:py-4 rounded-xl">
-            <CardContent className="p-2 md:p-4 lg:p-6">
-              <div className="text-sm text-gray-500 mb-1">Total Views</div>
-              <div className="text-xl md:text-2xl font-bold mb-1">
-                {metrics.totalViews.toLocaleString()}
-              </div>
-              <div className="text-sm text-gray-400">Product views</div>
             </CardContent>
           </Card>
 
