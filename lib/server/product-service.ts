@@ -114,7 +114,7 @@ export async function fetchProductBySlug(
   }
 
   try {
-    const response = await fetch(`${baseURL}/products/slug/${slug}`, {
+    const response = await fetch(`${baseURL}products/slug/${slug}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -196,7 +196,8 @@ export function generateProductMetadata(product: ServerProductData) {
   const title = `${product.name} | Crownlist - Buy & Sell Online`;
   const description =
     product.description?.slice(0, 160) ||
-    `${product.name} for sale on Crownlist. ${product.condition || "Quality"
+    `${product.name} for sale on Crownlist. ${
+      product.condition || "Quality"
     } product at ₦${(product.price?.currentPrice || 0).toLocaleString()}`;
 
   const imageUrl = product.images?.[0]?.url || "/og-image.jpg";
@@ -323,7 +324,7 @@ export async function fetchProductReviews(
         },
       }
     );
-   console.log("response", response)
+    console.log("response", response);
     if (!response.ok) {
       if (response.status === 404) {
         return {
@@ -340,15 +341,17 @@ export async function fetchProductReviews(
     }
 
     const data = (await response.json()) as { data: ReviewsResponse };
-    return data.data || {
-      reviews: [],
-      pagination: {
-        currentPage: 1,
-        totalPages: 0,
-        totalReviews: 0,
-        limit: 10,
-      },
-    };
+    return (
+      data.data || {
+        reviews: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 0,
+          totalReviews: 0,
+          limit: 10,
+        },
+      }
+    );
   } catch (error) {
     console.error(`Error fetching reviews for product ${productId}:`, error);
     return {
