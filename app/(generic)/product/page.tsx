@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils"
 function ProductContent() {
   const searchParams = useSearchParams()
   const { products: apiProducts, loading } = useProducts()
-
   const [liked, setLiked] = useState<boolean>(false)
   const [toggling, setToggling] = useState(false)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
