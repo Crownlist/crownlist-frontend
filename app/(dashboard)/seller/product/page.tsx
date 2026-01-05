@@ -14,6 +14,7 @@ import { DeclineMessageModal } from "./components/DeclineMessageModal";
 import { FeedbackTab } from "./components/FeedbackTab";
 import { ProductHeader } from "./components/ProductHeader";
 import { statusColor } from "./constants";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
 export default function ProductDashboard() {
   const [activeTab, setActiveTab] = useState("product");
@@ -31,12 +32,17 @@ export default function ProductDashboard() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Get current authenticated seller
+  const { data: authData } = useGetAuthUser("User");
+  const currentSellerId = authData?.data?.loggedInAccount?._id;
+
   // pagination from API
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalProducts, setTotalProducts] = useState<number>(0);
-
+  // const [totalProducts, setTotalProducts] = useState<number>(0);
+ 
+   
   const fetchProducts = async (pageNo = 1) => {
     try {
       setLoading(true);
@@ -47,7 +53,7 @@ export default function ProductDashboard() {
       const payload = res?.data || res;
       const list = payload?.products || [];
       setProducts(list);
-      setTotalProducts(payload?.totalProducts || list.length || 0);
+      // setTotalProducts(payload?.totalProducts || list.length || 0);
       setTotalPages(payload?.totalPages || 1);
       setPage(payload?.currentPage || pageNo);
     } catch (err: any) {
@@ -77,12 +83,23 @@ export default function ProductDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Client-side filter: Only show products belonging to the current seller
+  const sellerProducts = useMemo(() => {
+    if (!currentSellerId) return [];
+    return products.filter((product) => {
+      const productSellerId = typeof product.seller === "string"
+        ? product.seller
+        : product.seller?._id;
+      return productSellerId === currentSellerId;
+    });
+  }, [products, currentSellerId]);
+
   const filtered = useMemo(() => {
-    if (activeFilter === "all") return products;
-    return products.filter(
+    if (activeFilter === "all") return sellerProducts;
+    return sellerProducts.filter(
       (p) => String(p?.status || "").toLowerCase() === activeFilter
     );
-  }, [products, activeFilter]);
+  }, [sellerProducts, activeFilter]);
 
   return (
     <div className="p-6 bg-white min-h-screen">
@@ -126,7 +143,7 @@ export default function ProductDashboard() {
             <div className="flex flex-col h-64 items-center justify-center text-sm text-red-600">
               {error}
             </div>
-          ) : products.length === 0 ? (
+          ) : sellerProducts.length === 0 ? (
             <ProductEmptyState />
           ) : (
             <div className="space-y-4 gap-3 flex flex-col w-full h-full">
@@ -144,13 +161,13 @@ export default function ProductDashboard() {
           )}
 
           {/* Pagination */}
-          {products.length > 0 && (
+          {sellerProducts.length > 0 && (
             <PaginationControls
               page={page}
               totalPages={totalPages}
               limit={limit}
               filteredLength={filtered.length}
-              totalProducts={totalProducts}
+              totalProducts={sellerProducts.length}
               onPageChange={fetchProducts}
             />
           )}
