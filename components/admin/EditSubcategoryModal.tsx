@@ -24,6 +24,7 @@ import {
   FacilityErrors,
   Facility,
 } from "@/types/subcategory";
+import { StatusChangeConfirmationModal } from "./StatusChangeConfirmationModal";
 
 interface EditSubcategoryModalProps {
   subcategory: Subcategory | null;
@@ -58,6 +59,10 @@ export const EditSubcategoryModal = ({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const [facilityErrors, setFacilityErrors] = useState<FacilityErrors[]>([]);
+
+  // Status change confirmation states
+  const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (subcategory) {
@@ -203,6 +208,22 @@ export const EditSubcategoryModal = ({
     });
   };
 
+  // Handle status change request
+  const handleStatusChangeRequest = (newStatus: string) => {
+    if (newStatus !== formData.status) {
+      setPendingStatus(newStatus);
+      setIsStatusConfirmOpen(true);
+    }
+  };
+
+  // Confirm status change
+  const confirmStatusChange = () => {
+    if (pendingStatus) {
+      setFormData({ ...formData, status: pendingStatus });
+      setPendingStatus(null);
+    }
+  };
+
   useEffect(() => {
     return () => {
       if (imagePreview) URL.revokeObjectURL(imagePreview);
@@ -279,16 +300,12 @@ export const EditSubcategoryModal = ({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="">
                       <DropdownMenuItem
-                        onClick={() =>
-                          setFormData({ ...formData, status: "active" })
-                        }
+                        onClick={() => handleStatusChangeRequest("active")}
                       >
                         Active
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() =>
-                          setFormData({ ...formData, status: "inactive" })
-                        }
+                        onClick={() => handleStatusChangeRequest("inactive")}
                       >
                         Inactive
                       </DropdownMenuItem>
@@ -378,11 +395,24 @@ export const EditSubcategoryModal = ({
             {uploadingImage
               ? "Uploading..."
               : actionLoading
-              ? "Updating..."
-              : "Update"}
+                ? "Updating..."
+                : "Update"}
           </Button>
         </div>
       </DialogContent>
+
+      <StatusChangeConfirmationModal
+        isOpen={isStatusConfirmOpen}
+        onClose={() => {
+          setIsStatusConfirmOpen(false);
+          setPendingStatus(null);
+        }}
+        onConfirm={confirmStatusChange}
+        currentStatus={formData.status}
+        newStatus={pendingStatus || formData.status}
+        itemType="subcategory"
+        itemName={formData.name}
+      />
     </Dialog>
   );
 };

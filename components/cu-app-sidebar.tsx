@@ -20,6 +20,7 @@ import {
   Shield,
   Settings,
   Package,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,6 +45,11 @@ const items = [
     title: "Escrow",
     url: "/buyer/escrow",
     icon: Shield,
+  },
+  {
+    title: "Reviews",
+    url: "/buyer/reviews",
+    icon: Star,
   },
   {
     title: "Notification",
@@ -122,11 +128,10 @@ export function AppSidebar() {
             >
               <SidebarMenuButton
                 asChild
-                className={`hover:text-primary font-semibold text-black relative ${
-                  pathname.includes(item.url)
+                className={`hover:text-primary font-semibold text-black relative ${pathname.includes(item.url)
                     ? "text-[#2B2B2B] bg-gray-100 font-semibold"
                     : "hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <Link href={item.url} className="flex items-center">
                   <item.icon size={16} />

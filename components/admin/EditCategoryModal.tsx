@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { apiClientAdmin } from "@/lib/interceptor";
+import { StatusChangeConfirmationModal } from "./StatusChangeConfirmationModal";
 
 interface Category {
   _id: string;
@@ -52,6 +53,10 @@ export function EditCategoryModal({
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingIcon, setUploadingIcon] = useState(false);
+
+  // Status change confirmation states
+  const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<string | null>(null);
 
   // Inline errors for edit form
   const [editErrors, setEditErrors] = useState<{
@@ -192,6 +197,25 @@ export function EditCategoryModal({
     }
   };
 
+  // Handle status change request
+  const handleStatusChangeRequest = (newStatus: string) => {
+    if (newStatus !== editingCategory.status) {
+      setPendingStatus(newStatus);
+      setIsStatusConfirmOpen(true);
+    }
+  };
+
+  // Confirm status change
+  const confirmStatusChange = () => {
+    if (pendingStatus) {
+      setEditingCategory({
+        ...editingCategory,
+        status: pendingStatus,
+      });
+      setPendingStatus(null);
+    }
+  };
+
   return (
     <Dialog
       open={isEditModalOpen}
@@ -261,22 +285,12 @@ export function EditCategoryModal({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-[--radix-dropdown-menu-trigger-width]">
                       <DropdownMenuItem
-                        onClick={() =>
-                          setEditingCategory({
-                            ...editingCategory,
-                            status: "active",
-                          })
-                        }
+                        onClick={() => handleStatusChangeRequest("active")}
                       >
                         Active
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() =>
-                          setEditingCategory({
-                            ...editingCategory,
-                            status: "inactive",
-                          })
-                        }
+                        onClick={() => handleStatusChangeRequest("inactive")}
                       >
                         Inactive
                       </DropdownMenuItem>
@@ -444,14 +458,27 @@ export function EditCategoryModal({
               {uploadingImage
                 ? "Uploading Image..."
                 : uploadingIcon
-                ? "Uploading Icon..."
-                : loading
-                ? "Updating..."
-                : "Update"}
+                  ? "Uploading Icon..."
+                  : loading
+                    ? "Updating..."
+                    : "Update"}
             </Button>
           </div>
         </div>
       </DialogContent>
+
+      <StatusChangeConfirmationModal
+        isOpen={isStatusConfirmOpen}
+        onClose={() => {
+          setIsStatusConfirmOpen(false);
+          setPendingStatus(null);
+        }}
+        onConfirm={confirmStatusChange}
+        currentStatus={editingCategory.status}
+        newStatus={pendingStatus || editingCategory.status}
+        itemType="category"
+        itemName={editingCategory.name}
+      />
     </Dialog>
   );
 }

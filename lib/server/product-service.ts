@@ -312,7 +312,7 @@ export async function fetchProductReviews(
     });
 
     const response = await fetch(
-      `${baseURL}/product-reviews/product/${productId}?${params.toString()}`,
+      `${baseURL}product-reviews/product/${productId}?${params.toString()}`,
       {
         method: "GET",
         headers: {
