@@ -40,8 +40,9 @@ export default function ProductDashboard() {
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalProducts, setTotalProducts] = useState<number>(0);
-
+  // const [totalProducts, setTotalProducts] = useState<number>(0);
+ 
+   
   const fetchProducts = async (pageNo = 1) => {
     try {
       setLoading(true);
@@ -52,7 +53,7 @@ export default function ProductDashboard() {
       const payload = res?.data || res;
       const list = payload?.products || [];
       setProducts(list);
-      setTotalProducts(payload?.totalProducts || list.length || 0);
+      // setTotalProducts(payload?.totalProducts || list.length || 0);
       setTotalPages(payload?.totalPages || 1);
       setPage(payload?.currentPage || pageNo);
     } catch (err: any) {
