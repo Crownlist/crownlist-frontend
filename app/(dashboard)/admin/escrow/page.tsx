@@ -87,7 +87,7 @@ export default function AdminEscrowPage() {
     }
     setActionLoading(true);
     try {
-      await apiClientAdmin.post(`/escrows/${selectedEscrow._id}/status`, {
+      await apiClientAdmin.patch(`/escrows/status/${selectedEscrow._id}`, {
         status: selectedStatus,
         reason: reasonForDecline,
       });
