@@ -34,15 +34,31 @@ export default function ProductDashboard() {
 
   // Get current authenticated seller
   const { data: authData } = useGetAuthUser("User");
-  const currentSellerId = authData?.data?.loggedInAccount?._id;
+  const currentSellerId = authData?.data?.loggedInAccount?._id
+    ? String(authData.data.loggedInAccount._id)
+    : null;
+
+  const getProductSellerId = (product: any): string | null => {
+    if (!product) return null;
+    if (typeof product.seller === "string") return product.seller;
+    if (product.seller?._id) return String(product.seller._id);
+    if (product.seller?.id) return String(product.seller.id);
+    if (product.sellerId) return String(product.sellerId);
+    return null;
+  };
+
+  const belongsToCurrentSeller = (product: any): boolean => {
+    if (!currentSellerId) return false;
+    const sellerId = getProductSellerId(product);
+    return !!sellerId && sellerId === currentSellerId;
+  };
 
   // pagination from API
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
   // const [totalProducts, setTotalProducts] = useState<number>(0);
- 
-   
+
   const fetchProducts = async (pageNo = 1) => {
     try {
       setLoading(true);
@@ -52,7 +68,10 @@ export default function ProductDashboard() {
       });
       const payload = res?.data || res;
       const list = payload?.products || [];
-      setProducts(list);
+      const scopedList = currentSellerId
+        ? list.filter(belongsToCurrentSeller)
+        : list;
+      setProducts(scopedList);
       // setTotalProducts(payload?.totalProducts || list.length || 0);
       setTotalPages(payload?.totalPages || 1);
       setPage(payload?.currentPage || pageNo);
@@ -83,15 +102,15 @@ export default function ProductDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!currentSellerId) return;
+    setProducts((prev) => prev.filter(belongsToCurrentSeller));
+  }, [currentSellerId]);
+
   // Client-side filter: Only show products belonging to the current seller
   const sellerProducts = useMemo(() => {
     if (!currentSellerId) return [];
-    return products.filter((product) => {
-      const productSellerId = typeof product.seller === "string"
-        ? product.seller
-        : product.seller?._id;
-      return productSellerId === currentSellerId;
-    });
+    return products.filter(belongsToCurrentSeller);
   }, [products, currentSellerId]);
 
   const filtered = useMemo(() => {
