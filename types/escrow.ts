@@ -22,6 +22,7 @@ export interface EscrowPerson {
   email: string;
   accountType: string;
   profilePicture: string;
+  phone?: string;
 }
 
 export interface EscrowItem {

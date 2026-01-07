@@ -4,20 +4,22 @@ import { Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
-import {toast} from "sonner";
+import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
 import { Category, Subcategory } from "@/types/category/category";
 import { apiClientUser } from "@/lib/interceptor";
+import { LoginRequiredModal } from "@/components/LoginRequiredModal";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
-interface EmptyStateProps {
-  categorySlug?: string;
-  subcategorySlug?: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subcategorySlug }: EmptyStateProps) {
+export function EmptyState() {
   const { categories, loading: categoriesLoading } = useCategories();
 
   // State for form data
@@ -29,20 +31,31 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
     phone: "",
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-  const [availableSubcategories, setAvailableSubcategories] = useState<Subcategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [availableSubcategories, setAvailableSubcategories] = useState<
+    Subcategory[]
+  >([]);
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Check authentication
+  const { data: authData } = useGetAuthUser("User");
+  const userData = authData?.data.loggedInAccount;
+  const isLoggedIn = !!userData;
+  const isBuyer = userData?.accountType === "User";
 
   // Handle category change
   const handleCategoryChange = (categoryId: string) => {
-    const category = categories.find(c => c._id === categoryId);
+    const category = categories.find((c) => c._id === categoryId);
     setSelectedCategory(category || null);
     setAvailableSubcategories(category?.subCategories || []);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       category: categoryId,
-      subCategory: '' // Reset subcategory when category changes
+      subCategory: "", // Reset subcategory when category changes
     }));
   };
 
@@ -93,8 +106,19 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.description || !formData.category ||
-        !formData.subCategory || !formData.phone) {
+    // Check if user is logged in as buyer
+    if (!isLoggedIn || !isBuyer) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    if (
+      !formData.name ||
+      !formData.description ||
+      !formData.category ||
+      !formData.subCategory ||
+      !formData.phone
+    ) {
       toast("Please fill in all required fields");
       return;
     }
@@ -119,7 +143,7 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
       const uploadedImages = files.map((file, index) => ({
         url: `https://example.com/uploads/${file.name}`,
         altText: `Image ${index + 1}`,
-        isPrimary: index === 0
+        isPrimary: index === 0,
       }));
 
       const payload = {
@@ -128,10 +152,10 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
         images: uploadedImages,
         category: formData.category,
         subCategory: formData.subCategory,
-        phone: formData.phone
+        phone: formData.phone,
       };
 
-      await apiClientUser.post('/product-requests/create', payload);
+      await apiClientUser.post("/product-requests/create", payload);
 
       toast.success("Request submitted successfully!");
       setFormData({
@@ -149,9 +173,9 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
 
       // Handle different error formats from backend
       let errorMessage = "An error occurred.";
-      if (typeof error === 'string') {
+      if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object' && 'message' in error) {
+      } else if (error && typeof error === "object" && "message" in error) {
         errorMessage = (error as { message: string }).message;
       }
 
@@ -177,29 +201,35 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
           Can&apos;t find what you are looking for?
         </h2>
         <p className="text-gray-600 mb-8">
-          Kindly make use of the request form below to let us know what you&apos;re looking for.
+          Kindly make use of the request form below to let us know what
+          you&apos;re looking for.
         </p>
 
         {/* Request Product Form */}
         <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full">
           <div className="flex flex-col md:flex-row w-full justify-between">
-            <div className="p-6" >
+            <div className="p-6">
               <h3 className="text-xl font-medium mb-2">
                 Request product/services
               </h3>
               <p className="text-gray-500 mb-6">
-                If you can&apos;t find the product you&apos;re looking for, please
-                enter the product or service details below.
+                If you can&apos;t find the product you&apos;re looking for,
+                please enter the product or service details below.
               </p>
 
               <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-start">Product Name</label>
+                  <label className="block mb-2 text-sm font-medium text-start">
+                    Product Name
+                  </label>
                   <Input
                     name="name"
                     value={formData.name}
                     onChange={(e) => {
-                      const filteredValue = e.target.value.replace(/[0-9]/g, "");
+                      const filteredValue = e.target.value.replace(
+                        /[0-9]/g,
+                        ""
+                      );
                       setFormData((prev) => ({ ...prev, name: filteredValue }));
                     }}
                     className="w-full"
@@ -230,7 +260,9 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-start">Category</label>
+                    <label className="block mb-2 text-sm font-medium text-start">
+                      Category
+                    </label>
                     <Select
                       value={formData.category}
                       onValueChange={handleCategoryChange}
@@ -238,7 +270,13 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                       required
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder={categoriesLoading ? "Loading..." : "Select a category"} />
+                        <SelectValue
+                          placeholder={
+                            categoriesLoading
+                              ? "Loading..."
+                              : "Select a category"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
@@ -250,21 +288,29 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                     </Select>
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-start">Subcategory</label>
+                    <label className="block mb-2 text-sm font-medium text-start">
+                      Subcategory
+                    </label>
                     <Select
                       value={formData.subCategory}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, subCategory: value }))}
-                      disabled={!selectedCategory || availableSubcategories.length === 0}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, subCategory: value }))
+                      }
+                      disabled={
+                        !selectedCategory || availableSubcategories.length === 0
+                      }
                       required
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder={
-                          !selectedCategory
-                            ? "Select a category first"
-                            : availableSubcategories.length === 0
+                        <SelectValue
+                          placeholder={
+                            !selectedCategory
+                              ? "Select a category first"
+                              : availableSubcategories.length === 0
                               ? "No subcategories available"
                               : "Select a subcategory"
-                        } />
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {availableSubcategories.map((sub) => (
@@ -277,7 +323,9 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                   </div>
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-start">Image(s)</label>
+                  <label className="block mb-2 text-sm font-medium text-start">
+                    Image(s)
+                  </label>
                   <div
                     className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-[#1F058F] transition-colors"
                     onDrop={handleDrop}
@@ -318,7 +366,9 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
                   </div>
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-start">Description</label>
+                  <label className="block mb-2 text-sm font-medium text-start">
+                    Description
+                  </label>
                   <Textarea
                     name="description"
                     value={formData.description}
@@ -351,6 +401,12 @@ export function EmptyState({ categorySlug: _categorySlug, subcategorySlug: _subc
           </div>
         </div>
       </div>
+
+      {/* Login Required Modal */}
+      <LoginRequiredModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+      />
     </div>
   );
 }

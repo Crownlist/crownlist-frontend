@@ -20,6 +20,8 @@ import {
   SearchResults,
   SearchPagination,
 } from "@/components/Search";
+import { LoginRequiredModal } from "@/components/LoginRequiredModal";
+import { useGetAuthUser } from "@/lib/useGetAuthUser";
 
 interface ProductImage {
   url: string;
@@ -60,6 +62,13 @@ export default function SearchPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Check authentication
+  const { data: authData } = useGetAuthUser("User");
+  const userData = authData?.data.loggedInAccount;
+  const isLoggedIn = !!userData;
+  const isBuyer = userData?.accountType === "User";
 
   // Custom hooks
   const searchState = useSearchState();
@@ -180,6 +189,12 @@ export default function SearchPage() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if user is logged in as buyer
+    if (!isLoggedIn || !isBuyer) {
+      setShowLoginModal(true);
+      return;
+    }
 
     if (
       !formData.name ||
@@ -567,6 +582,12 @@ export default function SearchPage() {
         </div>
 
         <Footer />
+
+        {/* Login Required Modal */}
+        <LoginRequiredModal
+          open={showLoginModal}
+          onOpenChange={setShowLoginModal}
+        />
       </div>
     );
   }
@@ -614,6 +635,12 @@ export default function SearchPage() {
         </div>
       </div>
       <Footer />
+
+      {/* Login Required Modal */}
+      <LoginRequiredModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { ConfirmationModal } from "@/components/ConfirmationModal";
 import EscrowList from "@/components/admin/EscrowList";
 import EscrowDetailsModal from "@/components/admin/EscrowDetailsModal";
 import EscrowStatusModal from "@/components/admin/EscrowStatusModal";
+import EscrowContactModal from "@/components/admin/EscrowContactModal";
 import { EscrowItem, Pagination } from "@/types/escrow";
 
 export default function AdminEscrowPage() {
@@ -32,6 +33,11 @@ export default function AdminEscrowPage() {
   const [reasonForDecline, setReasonForDecline] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // Contact modal
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [selectedContactEscrow, setSelectedContactEscrow] =
+    useState<EscrowItem | null>(null);
 
   useEffect(() => {
     fetchEscrows(currentPage);
@@ -138,6 +144,10 @@ export default function AdminEscrowPage() {
           setSelectedStatus(item.status);
           setShowStatusModal(true);
         }}
+        onContact={(item) => {
+          setSelectedContactEscrow(item);
+          setShowContactModal(true);
+        }}
         getStatusColor={getStatusColor}
       />
 
@@ -195,6 +205,17 @@ export default function AdminEscrowPage() {
           cancelText="Cancel"
         />
       )}
+
+      {/* Contact modal */}
+      <EscrowContactModal
+        open={showContactModal}
+        seller={selectedContactEscrow?.seller || null}
+        buyer={selectedContactEscrow?.buyer || null}
+        onClose={() => {
+          setShowContactModal(false);
+          setSelectedContactEscrow(null);
+        }}
+      />
     </div>
   );
 }

@@ -369,10 +369,7 @@ export default function SubcategoryPage({ params }: SubcategoryPageProps) {
             {isFiltering ? (
               <LoadingSkeleton viewMode={viewMode} />
             ) : products.length === 0 ? (
-              <EmptyState
-                categorySlug={categorySlug}
-                subcategorySlug={subCategorySlug}
-              />
+              <EmptyState />
             ) : (
               <>
                 {viewMode === "grid" ? (
